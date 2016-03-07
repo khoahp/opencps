@@ -42,4 +42,5 @@ portlets/build-common-portlet.xml
 portlets/create.bat
 portlets/create.sh
 themes/
-
+.project
+portlets/opencps-portlet/.tern-project
