@@ -87,6 +87,9 @@
 			<finder-column name="companyId" />
 			<finder-column name="serviceNo"/>
 		</finder>
+        <finder name="ServiceNo" return-type="ServiceInfo">
+            <finder-column name="serviceNo"></finder-column>
+        </finder>
 		<reference package-path="com.liferay.portlet.asset" entity="AssetEntry" />
 	</entity>
 

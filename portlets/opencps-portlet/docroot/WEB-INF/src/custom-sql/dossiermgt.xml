@@ -213,7 +213,7 @@
 			AND 
 				opencps_dossierpart.partType IN (? , ?)
 			ORDER BY 
-				opencps_dev.opencps_dossier_file.dossierFileDate DESC
+				opencps_dossier_file.dossierFileDate DESC
 		]]>
 	</sql>
 	
@@ -992,6 +992,7 @@
 					AND opencps_dossier_log.actionInfo NOT IN("add-attachment-file","remove-attachment-file","clone-attachment-file")
 				)
 				OR opencps_dossier_log.syncStatus = 2)
+				AND (opencps_dossier_log.dossierStatus != 'system')
 			
 			ORDER BY modifiedDate DESC
 		]]>
@@ -1011,6 +1012,8 @@
 					AND opencps_dossier_log.actionInfo NOT IN("add-attachment-file","remove-attachment-file","clone-attachment-file")
 				)
 				OR opencps_dossier_log.syncStatus = 2)
+				AND (opencps_dossier_log.dossierStatus != 'system')
+				
 		]]>
 	</sql>
 	

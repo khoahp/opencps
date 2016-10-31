@@ -932,7 +932,7 @@
 		</portlet-class>
 		<init-param>
 			<name>view-template</name>
-			<value>/html/portlets/holidayconfig/admin/submitinstruction.jsp</value>
+			<value>/html/portlets/dossiermgt/submit/submitinstruction.jsp</value>
 		</init-param>
 		<init-param>
 			<name>template-path</name>

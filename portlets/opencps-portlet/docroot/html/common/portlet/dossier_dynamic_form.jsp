@@ -174,7 +174,7 @@
 
 <aui:form 
 	name="fm" action="<%=updateDynamicFormDataURL.toString() %>" 
-	method="post" onSubmit='<%= "event.preventDefault();" %>
+	method="post" onSubmit='<%= "event.preventDefault();" %>'
 >
 	<aui:input name="redirectURL" type="hidden" value="<%=currentURL %>"/>
 	<aui:input name="<%=DossierDisplayTerms.DOSSIER_ID %>" type="hidden" value="<%=dossierId %>"/>

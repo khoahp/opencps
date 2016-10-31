@@ -43,6 +43,7 @@ public class HolidayConfigSearch extends SearchContainer<DictItem> {
 	static {
 		headerNames.add("id");
 		headerNames.add("holiday-date");
+		headerNames.add("description");
 		headerNames.add("create-date");
 		headerNames.add("modified-date");
 		headerNames.add("inuse");

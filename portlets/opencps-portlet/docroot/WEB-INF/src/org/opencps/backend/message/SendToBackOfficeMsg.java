@@ -596,6 +596,18 @@ public class SendToBackOfficeMsg {
     	this.createRecptionDate = createRecptionDate;
     }
 
+	
+    public String getStepName() {
+    
+    	return stepName;
+    }
+
+	
+    public void setStepName(String stepName) {
+    
+    	this.stepName = stepName;
+    }
+
 	protected String requestCommand;
 	protected long processOrderId;
 	protected long dossierId;
@@ -631,5 +643,8 @@ public class SendToBackOfficeMsg {
 	protected Date resubmitDate;
 	protected Date createProcessOrderDate;
 	protected Date createRecptionDate;
+	
+	protected String stepName;
+	
 
 }

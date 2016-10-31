@@ -118,7 +118,8 @@ public class SubmitDossier {
 					DossierLocalServiceUtil.syncDossier(
 						syncDossier, syncDossierFiles, syncFileGroups,
 						syncFileGroupDossierParts, syncDLFileEntries, data,
-						syncDossierTemplate, serviceContext);
+						syncDossierTemplate, dossierMsgBody.getServiceConfig(),
+						dossierMsgBody.getServiceInfo(), serviceContext);
 				// TODO add log
 			}
 			else {

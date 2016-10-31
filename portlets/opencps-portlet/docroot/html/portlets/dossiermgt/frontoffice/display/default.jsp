@@ -427,7 +427,7 @@
 					
 					<div class='<%="span7 " + cssStatusColor %>'>
 						<%-- <%=PortletUtil.getDossierStatusLabel(dossier.getDossierStatus(), locale) %> --%>
-						<%= DictItemUtil.getDictItemName(dossier.getDossierStatus(), locale) %>
+						<%= DictItemUtil.getDictItemName(dossier.getDossierStatus(), locale)%>
 					</div>
 				</div>
 			</liferay-util:buffer>

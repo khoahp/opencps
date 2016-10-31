@@ -106,7 +106,7 @@
 		>
 		<liferay-ui:search-container-results>
 			<%
-				actionHistories =  ActionHistoryLocalServiceUtil.getActionHistoryByProcessOrderId(processOrderId, searchContainer.getStart(), searchContainer.getEnd());
+				actionHistories =  ActionHistoryLocalServiceUtil.getActionHistoryByProcessOrderId(processOrderId, searchContainer.getStart(), searchContainer.getEnd(),false);
 				
 				results = actionHistories;
 				total = ActionHistoryLocalServiceUtil

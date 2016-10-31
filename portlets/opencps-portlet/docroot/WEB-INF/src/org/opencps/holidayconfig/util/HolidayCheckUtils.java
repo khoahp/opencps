@@ -14,14 +14,31 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  */
+
 package org.opencps.holidayconfig.util;
 
 import java.util.Calendar;
 import java.util.Date;
 
-public class HolidayCheckUtils{
-	
+import org.opencps.processmgt.model.ActionHistory;
+import org.opencps.processmgt.model.ProcessStep;
+import org.opencps.processmgt.model.ProcessWorkflow;
+import org.opencps.processmgt.model.impl.ActionHistoryImpl;
+import org.opencps.processmgt.model.impl.ProcessStepImpl;
+import org.opencps.processmgt.model.impl.ProcessWorkflowImpl;
+import org.opencps.processmgt.service.ActionHistoryLocalServiceUtil;
+import org.opencps.processmgt.service.ProcessStepLocalServiceUtil;
+import org.opencps.processmgt.service.ProcessWorkflowLocalServiceUtil;
 
+import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.util.Validator;
+
+public class HolidayCheckUtils {
+
+	private static Log _log = LogFactoryUtil.getLog(HolidayCheckUtils.class);
 
 	/**
 	 * @param startDate
@@ -29,8 +46,7 @@ public class HolidayCheckUtils{
 	 * @param daysDuration
 	 * @return
 	 */
-	public static int checkActionDateOver(
-	    Date startDate, Date endDate, int daysDuration) {
+	public static int checkActionDateOver(Date startDate, Date endDate, int daysDuration) {
 
 		int dateOverNumbers = 0;
 
@@ -39,8 +55,7 @@ public class HolidayCheckUtils{
 			Calendar endDayCal = Calendar.getInstance();
 			endDayCal.setTime(endDate);
 
-			Calendar endDateMax =
-			    HolidayUtils.getEndDate(startDate, daysDuration);
+			Calendar endDateMax = HolidayUtils.getEndDate(startDate, daysDuration);
 
 			int endDay = endDayCal.get(Calendar.DATE);
 			int endDayMax = endDateMax.get(Calendar.DATE);
@@ -56,10 +71,58 @@ public class HolidayCheckUtils{
 		}
 		return dateOverNumbers;
 	}
-	
-	public static int getDayDelay(long processOrderId,long processWorkflowId){
-		return 0;
-		
+
+	/**
+	 * @param processOrderId
+	 * @param processWorkflowId
+	 * @return
+	 * @throws PortalException
+	 * @throws SystemException
+	 */
+	public static int getDayDelay(long processOrderId, long processWorkflowId)
+		throws PortalException, SystemException {
+
+		ActionHistory actionHistoryNewest = new ActionHistoryImpl();
+
+		ProcessWorkflow processWorkflow = new ProcessWorkflowImpl();
+
+		ProcessStep processStep = new ProcessStepImpl();
+
+		int dayDelay = 0;
+
+		try {
+			if (processOrderId > 0 && processWorkflowId > 0) {
+
+				actionHistoryNewest =
+					ActionHistoryLocalServiceUtil.getActionHistoryByProcessOrderId(
+						processWorkflowId, 1, 1, false).get(0);
+
+				if (Validator.isNotNull(actionHistoryNewest.getCreateDate())) {
+
+					processWorkflow =
+						ProcessWorkflowLocalServiceUtil.getProcessWorkflow(processWorkflowId);
+
+					if (processWorkflow.getPostProcessStepId() > 0) {
+						processStep =
+							ProcessStepLocalServiceUtil.getProcessStep(processWorkflow.getPostProcessStepId());
+
+						if (processStep.getDaysDuration() > 0) {
+							dayDelay =
+								checkActionDateOver(
+									actionHistoryNewest.getCreateDate(), new Date(),
+									processStep.getDaysDuration());
+						}
+					}
+				}
+			}
+		}
+		catch (PortalException e) {
+			// TODO Auto-generated catch block
+			_log.error(e);
+		}
+
+		return dayDelay;
+
 	}
-	
+
 }

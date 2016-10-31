@@ -279,7 +279,7 @@
 			<c:otherwise>
 				<%-- <%@ include file="/html/portlets/dossiermgt/frontoffice/dossier/result_display/result_default.jsp" %> --%>
 				<liferay-util:include 
-					page="/html/portlets/dossiermgt/frontoffice/dossier/result_display/result_order.jsp" 
+					page="/html/portlets/dossiermgt/frontoffice/dossier/result_display/result_default.jsp" 
 					servletContext="<%=application %>" 
 			/>
 			</c:otherwise>

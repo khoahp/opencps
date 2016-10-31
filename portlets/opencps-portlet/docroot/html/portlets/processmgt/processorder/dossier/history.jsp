@@ -89,7 +89,7 @@
 		>
 		<liferay-ui:search-container-results>
 			<%
-				actionHistories =  ActionHistoryLocalServiceUtil.getActionHistoryByProcessOrderId(processOrderId, searchContainer.getStart(), searchContainer.getEnd());
+				actionHistories =  ActionHistoryLocalServiceUtil.getActionHistoryByProcessOrderId(processOrderId, searchContainer.getStart(), searchContainer.getEnd(),false);
 				
 				results = actionHistories;
 				total = ActionHistoryLocalServiceUtil
@@ -134,7 +134,7 @@
 							</span>
 							
 							<span class="span8">
-								<%=actionHistory.getStepName()%>
+								<%= actionHistory.getStepName() %>
 							</span>
 						</aui:row>
 						

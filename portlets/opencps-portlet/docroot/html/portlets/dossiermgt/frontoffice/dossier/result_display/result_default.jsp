@@ -35,7 +35,9 @@
 <%
 	List<DossierPart> dossierPartsLevel1 = (List<DossierPart>) request.getAttribute("dossierPartsLevel1");
 	Dossier dossier = (Dossier) request.getAttribute("dossier");
+	
 %>
+
 
 <c:if test="<%= dossierPartsLevel1 != null && !dossierPartsLevel1.isEmpty() %>">
 
@@ -52,7 +54,7 @@
 		int partType = dossierPartLevel1.getPartType();
 		 
 	%>
-		
+	
 	<c:choose>
 		<c:when test="<%=partType == PortletConstants.DOSSIER_PART_TYPE_RESULT %>">
 			<%
@@ -61,7 +63,9 @@
 					for(DossierPart dossierPart : dossierParts){
 						DossierFile dossierFile = null;
 						try{
+
 							dossierFile = DossierFileLocalServiceUtil.getDossierFileInUse(dossier.getDossierId(), dossierPart.getDossierpartId());
+							
 						}catch(Exception e){
 							continue;
 						}
@@ -150,6 +154,11 @@
 			for(DossierFile df : dossierFiles) {
 			index++;
 			String fileURL = StringPool.BLANK;
+			
+			if(df.getFileEntryId() <= 0 || df.getSyncStatus() != PortletConstants.DOSSIER_FILE_SYNC_STATUS_SYNCSUCCESS){
+				continue;
+			}
+			
 			
 			try{
 				FileEntry fileEntry = DLFileEntryUtil.getFileEntry(df.getFileEntryId());

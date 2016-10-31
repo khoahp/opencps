@@ -156,16 +156,21 @@ public class PaymentRequestGenerator {
 	public static List<String> getMessagePayment(String pattern) {
 		
 		List<String> msgPayments = new ArrayList<String>();
-		
-		pattern = pattern.substring(pattern.indexOf(PAY_MESSAGE), pattern.lastIndexOf(PAY_MESSAGE)+1);
-		
-		String [] splitPattern = StringUtil.split(pattern, PAY_MESSAGE);
-		
-		for (String element : splitPattern) {
-			if (!element.trim().contentEquals("")) {
-				msgPayments.add(StringUtil.trimLeading(element));
+		try {
+			pattern = pattern.substring(pattern.indexOf(PAY_MESSAGE), pattern.lastIndexOf(PAY_MESSAGE)+1);
+			
+			String [] splitPattern = StringUtil.split(pattern, PAY_MESSAGE);
+			
+			for (String element : splitPattern) {
+				if (!element.trim().contentEquals("")) {
+					msgPayments.add(StringUtil.trimLeading(element));
+				}
 			}
 		}
+		catch (Exception e) {
+			
+		}
+
 
 		return msgPayments;
 	}

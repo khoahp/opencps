@@ -18,25 +18,24 @@
 package org.opencps.holidayconfig.portlet;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
 
-import org.opencps.datamgt.DuplicateItemException;
-import org.opencps.datamgt.EmptyItemCodeException;
-import org.opencps.datamgt.OutOfLengthItemCodeException;
-import org.opencps.datamgt.OutOfLengthItemNameException;
-import org.opencps.holidayconfig.model.HolidayConfig;
+import org.opencps.holidayconfig.model.HolidayConfigExtend;
+import org.opencps.holidayconfig.model.impl.HolidayConfigExtendImpl;
 import org.opencps.holidayconfig.search.HolidayConfigDisplayTerms;
+import org.opencps.holidayconfig.service.HolidayConfigExtendLocalServiceUtil;
 import org.opencps.holidayconfig.service.HolidayConfigLocalServiceUtil;
+import org.opencps.holidayconfig.util.HolidayUtils;
 import org.opencps.util.DateTimeUtil;
 import org.opencps.util.MessageKeys;
-import org.opencps.util.PortletPropsValues;
 import org.opencps.util.WebKeys;
 
-import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.servlet.SessionErrors;
@@ -65,10 +64,12 @@ public class HolidayConfigPortlet extends MVCPortlet {
 				HolidayConfigDisplayTerms.DESCRIPTION);
 
 		int status = ParamUtil.getInteger(actionRequest,
-				HolidayConfigDisplayTerms.HOLIDAY_STATUS,0);
+				HolidayConfigDisplayTerms.HOLIDAY_STATUS, 0);
 
-		String redirectURL = ParamUtil.getString(actionRequest, WebKeys.REDIRECT_URL);
-		String returnURL = ParamUtil.getString(actionRequest, WebKeys.RETURN_URL);
+		String redirectURL = ParamUtil.getString(actionRequest,
+				WebKeys.REDIRECT_URL);
+		String returnURL = ParamUtil.getString(actionRequest,
+				WebKeys.RETURN_URL);
 		try {
 
 			ServiceContext serviceContext = ServiceContextFactory
@@ -77,7 +78,7 @@ public class HolidayConfigPortlet extends MVCPortlet {
 			if (holidayId == 0) {
 
 				HolidayConfigLocalServiceUtil.addHoliday(holidayDate,
-						description,status,serviceContext);
+						description, status, serviceContext);
 
 				SessionMessages.add(actionRequest,
 						MessageKeys.HOLIDAYCONFIG_ADD_SUCESS);
@@ -100,6 +101,53 @@ public class HolidayConfigPortlet extends MVCPortlet {
 				actionResponse.sendRedirect(redirectURL);
 			}
 		}
+	}
+
+	public void updateHolidayExtend(ActionRequest actionRequest,
+			ActionResponse actionResponse) throws IOException {
+
+		int saturdayStatus = ParamUtil.getInteger(actionRequest, "_"
+				+ HolidayUtils.SATURDAY);
+		int sundayStatus = ParamUtil.getInteger(actionRequest, "_"
+				+ HolidayUtils.SUNDAY);
+
+		String returnURL = ParamUtil.getString(actionRequest,
+				WebKeys.RETURN_URL);
+
+		List<HolidayConfigExtend> holidayExtendList = new ArrayList<HolidayConfigExtend>();
+		HolidayConfigExtend holidayExtend = new HolidayConfigExtendImpl();
+
+		try {
+			holidayExtendList = HolidayConfigExtendLocalServiceUtil
+					.getHolidayConfigExtends(QueryUtil.ALL_POS,
+							QueryUtil.ALL_POS);
+
+			for (int i = 0; i < holidayExtendList.size(); i++) {
+				holidayExtend = holidayExtendList.get(i);
+
+				if (holidayExtend.getKey().equals(HolidayUtils.SATURDAY)) {
+					holidayExtend.setStatus(saturdayStatus);
+
+					HolidayConfigExtendLocalServiceUtil
+							.updateHolidayConfigExtend(holidayExtend);
+				}
+
+				if (holidayExtend.getKey().equals(HolidayUtils.SUNDAY)) {
+					holidayExtend.setStatus(sundayStatus);
+
+					HolidayConfigExtendLocalServiceUtil
+							.updateHolidayConfigExtend(holidayExtend);
+				}
+			}
+		} catch (Exception e) {
+			SessionErrors.add(actionRequest,
+					MessageKeys.HOLIDAYCONFIG_SYSTEM_EXCEPTION_OCCURRED);
+		} finally {
+			if (Validator.isNotNull(returnURL)) {
+				actionResponse.sendRedirect(returnURL);
+			}
+		}
+
 	}
 
 }

@@ -32,7 +32,6 @@ import org.opencps.dossiermgt.service.base.DossierFileLocalServiceBaseImpl;
 import org.opencps.processmgt.model.WorkflowOutput;
 import org.opencps.util.PortletConstants;
 
-import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
@@ -1293,11 +1292,17 @@ public class DossierFileLocalServiceImpl
 		try {
 			if (workflowOutputs != null) {
 				for (WorkflowOutput workflowOutput : workflowOutputs) {
-
+					
+					
 					List<DossierFile> dossierFileTemps =
 						dossierFileLocalService.getDossierFileByDID_SS_DPID_R(
 							dossierId, currentSyncStatus,
 							workflowOutput.getDossierPartId(), removed);
+					
+					System.out.println("FUCLLLLLLLLLLLLLLLLLLL" + dossierFileTemps.size());
+					
+					
+					
 					if (dossierFileTemps != null) {
 						for (DossierFile dossierFile : dossierFileTemps) {
 							dossierFile.setSyncStatus(syncStatus);
@@ -1334,7 +1339,9 @@ public class DossierFileLocalServiceImpl
 	public List<DossierFile> updateDossierFileSyncStatus(
 		long userId, int syncStatus, List<DossierFile> dossierFiles)
 		throws SystemException, NoSuchDossierStatusException, PortalException {
-
+		
+		System.out.println("DOSSSSSSSSSSSSSIERRRRRRRRRRR" + dossierFiles.size());
+		
 		Date now = new Date();
 		try {
 			if (dossierFiles != null) {

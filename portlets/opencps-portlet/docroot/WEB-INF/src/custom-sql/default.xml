@@ -9,4 +9,5 @@
 	<sql file="custom-sql/datamgt.xml" />
 	<sql file="custom-sql/accountmgt.xml" />
 	<sql file="custom-sql/datamgt.xml" />
+	<sql file="custom-sql/holidayconfig.xml" />
 </custom-sql>

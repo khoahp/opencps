@@ -1,5 +1,10 @@
 
 <%@page
+	import="org.opencps.holidayconfig.model.impl.HolidayConfigExtendImpl"%>
+<%@page
+	import="org.opencps.holidayconfig.service.HolidayConfigExtendLocalServiceUtil"%>
+<%@page import="org.opencps.holidayconfig.model.HolidayConfigExtend"%>
+<%@page
 	import="org.opencps.holidayconfig.search.HolidayConfigSearchTerms"%>
 <%@page
 	import="org.opencps.holidayconfig.permission.HolidayConfigPermission"%>
@@ -38,14 +43,51 @@
 <%
 	PortletURL iteratorURL = renderResponse.createRenderURL();
 	iteratorURL.setParameter("mvcPath", templatePath
-			+ "holidayconfig_list.jsp");
+	+ "holidayconfig_list.jsp");
 
 	boolean isPermission = HolidayConfigPermission.contains(
-			themeDisplay.getPermissionChecker(),
-			themeDisplay.getScopeGroupId(), ActionKeys.ADD_HOLIDAY);
+	themeDisplay.getPermissionChecker(),
+	themeDisplay.getScopeGroupId(), ActionKeys.ADD_HOLIDAY);
+	
+	
+	List<HolidayConfigExtend> holidayExtendList = new ArrayList<HolidayConfigExtend>();
+	HolidayConfigExtend holidayExtend = new HolidayConfigExtendImpl();
+	
+	holidayExtendList = HolidayConfigExtendLocalServiceUtil
+			.getHolidayConfigExtends(QueryUtil.ALL_POS,
+					QueryUtil.ALL_POS);
 %>
 <div
 	class="opencps-searchcontainer-wrapper-width-header default-box-shadow radius8">
+
+	<portlet:actionURL var="updateHolidayConfigURL"
+		name="updateHolidayExtend" />
+
+	<aui:form action="<%=updateHolidayConfigURL.toString()%>" method="post"
+		name="fm">
+
+		<aui:input name="<%=WebKeys.RETURN_URL%>" type="hidden"
+			value="<%=currentURL%>" />
+
+		<aui:fieldset>
+			<%
+				for (int i = 0; i < holidayExtendList.size(); i++) {
+					holidayExtend = holidayExtendList.get(i);
+			%>
+			<input type="checkbox"
+				name="<portlet:namespace/>_<%=holidayExtend.getKey() %>"
+				value="<%=holidayExtend.getStatus()%>"
+				<%=holidayExtend.getStatus() == WebKeys.ACTIVE ? "checked": ""%>>
+			<%=LanguageUtil.get(pageContext,holidayExtend.getKey())%>
+			</input>
+			<%
+				}
+			%>
+		</aui:fieldset>
+		<aui:fieldset>
+			<aui:button type="submit" name="submit" value="submit" />
+		</aui:fieldset>
+	</aui:form>
 
 	<liferay-ui:search-container
 		searchContainer="<%=new HolidayConfigSearch(renderRequest,
@@ -87,6 +129,8 @@
 						row.addText(DateTimeUtil.convertDateToString(
 								holidayconfig.getHoliday(),
 								DateTimeUtil._VN_DATE_FORMAT), editURL);
+						row.addText(holidayconfig.getDescription(),
+								editURL);
 						row.addText(DateTimeUtil.convertDateToString(
 								holidayconfig.getCreatedDate(),
 								DateTimeUtil._VN_DATE_TIME_FORMAT), editURL);

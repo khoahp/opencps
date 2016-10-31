@@ -322,6 +322,52 @@ public class SendToEngineMsg {
     
     	this.dossierStatus = dossierStatus;
     }
+	
+    public int getActorType() {
+    
+    	return actorType;
+    }
+
+	
+    public void setActorType(int actorType) {
+    
+    	this.actorType = actorType;
+    }
+	
+	public Date getSubmitDate() {
+	
+		return submitDate;
+	}
+
+	
+	public void setSubmitDate(Date submitDate) {
+	
+		this.submitDate = submitDate;
+	}
+
+	
+	public Date getFinishedDate() {
+	
+		return finishedDate;
+	}
+
+	
+	public void setFinishedDate(Date finishedDate) {
+	
+		this.finishedDate = finishedDate;
+	}
+
+	
+	public Date getReceiveDate() {
+	
+		return receiveDate;
+	}
+
+	
+	public void setReceiveDate(Date receiveDate) {
+	
+		this.receiveDate = receiveDate;
+	}
 	protected long dossierId;
 	protected long fileGroupId;
 	protected String event;
@@ -341,4 +387,9 @@ public class SendToEngineMsg {
 	protected long groupId;
 	protected long companyId;
 	protected Date actionDatetime;
+	protected int actorType;
+	
+	protected Date submitDate;
+	protected Date finishedDate;
+	protected Date receiveDate;
 }

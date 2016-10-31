@@ -38,7 +38,7 @@ public class HolidayConfigFinderImpl extends BasePersistenceImpl<HolidayConfig> 
 	
 	private static Log _log = LogFactoryUtil.getLog(HolidayConfigImpl.class);
 	
-	public List<HolidayConfig> getHolidayConfig(int remove) throws SystemException{
+	public List<HolidayConfig> getHolidayConfig(int status) throws SystemException{
 		
 		List<HolidayConfig> holidayConfigList = new ArrayList<HolidayConfig>();
 
@@ -46,6 +46,7 @@ public class HolidayConfigFinderImpl extends BasePersistenceImpl<HolidayConfig> 
 		
 		try {
 			session = openSession();
+			
 			
 			String sql = CustomSQLUtil.get(SQL_HOLIDAYCONFIG_FINDER);
 				
@@ -56,7 +57,7 @@ public class HolidayConfigFinderImpl extends BasePersistenceImpl<HolidayConfig> 
 			
 			QueryPos qPos = QueryPos.getInstance(query);
 			
-			qPos.add(remove);
+			qPos.add(status);
 			
 			holidayConfigList = (List<HolidayConfig>) query.list();
 

@@ -25,11 +25,11 @@ import org.opencps.backend.message.SendToBackOfficeMsg;
 import org.opencps.backend.message.SendToCallbackMsg;
 import org.opencps.backend.util.BackendUtils;
 import org.opencps.dossiermgt.model.Dossier;
-import org.opencps.dossiermgt.model.DossierFile;
 import org.opencps.dossiermgt.service.DossierFileLocalServiceUtil;
 import org.opencps.dossiermgt.service.DossierLocalServiceUtil;
 import org.opencps.dossiermgt.service.DossierLogLocalServiceUtil;
 import org.opencps.dossiermgt.util.ActorBean;
+import org.opencps.holidayconfig.util.HolidayCheckUtils;
 import org.opencps.jms.SyncServiceContext;
 import org.opencps.processmgt.model.WorkflowOutput;
 import org.opencps.processmgt.service.WorkflowOutputLocalServiceUtil;
@@ -83,6 +83,11 @@ public class SyncFromBackOffice implements MessageListener {
 			boolean statusUpdate = false;
 
 			try {
+				_log.info("Estimate date________________________________________:" + toBackOffice.getEstimateDatetime());
+				_log.info("Submit date________________________________________:" + toBackOffice.getSubmitDateTime());
+				_log.info("Fisnished date________________________________________:" + toBackOffice.getFinishDatetime());
+				_log.info("Receive date________________________________________:" + toBackOffice.getReceiveDatetime());
+				
 				statusUpdate =
 					DossierLocalServiceUtil.updateDossierStatus(
 						toBackOffice.getDossierId(),
@@ -102,12 +107,14 @@ public class SyncFromBackOffice implements MessageListener {
 				List<WorkflowOutput> workflowOutputs =
 					WorkflowOutputLocalServiceUtil.getByProcessWFPostback(
 						toBackOffice.getProcessWorkflowId(), true);
+				
+				System.out.println("PROCESS_WORKFLOWWWWWWWWWWWWW" + workflowOutputs.size());
+				
 				// Lat co trang thai dossier file
-				List<DossierFile> dossierFiles =
-					DossierFileLocalServiceUtil.updateDossierFileResultSyncStatus(
+				DossierFileLocalServiceUtil.updateDossierFileResultSyncStatus(
 						0, toBackOffice.getDossierId(),
-						PortletConstants.DOSSIER_FILE_SYNC_STATUS_NOSYNC,
 						PortletConstants.DOSSIER_FILE_SYNC_STATUS_REQUIREDSYNC,
+						PortletConstants.DOSSIER_FILE_SYNC_STATUS_SYNCSUCCESS,
 						0, workflowOutputs);
 
 				// Update DossierLog
@@ -166,10 +173,27 @@ public class SyncFromBackOffice implements MessageListener {
 				}
 
 				SendToCallbackMsg toCallBack = new SendToCallbackMsg();
-
+				
+				int dayDelay = HolidayCheckUtils.getDayDelay(toBackOffice.getProcessOrderId(), toBackOffice.getProcessWorkflowId());
+				int daysDoing = 0;
+				
 				toCallBack.setProcessOrderId(toBackOffice.getProcessOrderId());
-				toCallBack.setSyncStatus(statusUpdate ? "ok" : "error");
 				toCallBack.setDossierStatus(toBackOffice.getDossierStatus());
+				toCallBack.setUserId(toBackOffice.getActorId());
+				toCallBack.setGroupId(dossier.getGroupId());
+				toCallBack.setCompanyId(dossier.getCompanyId());
+				toCallBack.setProcessWorkflowId(toBackOffice.getProcessWorkflowId());
+				toCallBack.setActionDatetime(new Date());
+				toCallBack.setStepName(toBackOffice.getStepName());
+				toCallBack.setActionName(toBackOffice.getActionInfo());
+				toCallBack.setActionNote(toBackOffice.getMessageInfo());
+				toCallBack.setActionUserId(actorBean.getActorId());
+				toCallBack.setDaysDoing(daysDoing);
+				toCallBack.setDaysDelay(dayDelay);
+				toCallBack.setSyncStatus(statusUpdate ? "ok" : "error");
+				
+				_log.error("CALLLLLLLLLLLLLLLLLLLLLLLLLLLBACKKKKKKKKKKKKKKKKKKKKKKKKKKKK");
+				
 				Message sendToCallBack = new Message();
 
 				sendToCallBack.put("toCallback", toCallBack);
@@ -177,25 +201,36 @@ public class SyncFromBackOffice implements MessageListener {
 				MessageBusUtil.sendMessage(
 					"opencps/backoffice/engine/callback", sendToCallBack);
 				// Lat co trang thai dossier file
-				DossierFileLocalServiceUtil.updateDossierFileSyncStatus(
+/*				DossierFileLocalServiceUtil.updateDossierFileSyncStatus(
 					0, PortletConstants.DOSSIER_FILE_SYNC_STATUS_SYNCSUCCESS,
-					dossierFiles);
+					dossierFiles);*/
 			}
 			catch (Exception e) {
 				_log.error(e);
 			}
 
-			SendToCallbackMsg toCallBack = new SendToCallbackMsg();
+/*			SendToCallbackMsg toCallBack = new SendToCallbackMsg();
 
 			toCallBack.setProcessOrderId(toBackOffice.getProcessOrderId());
 			toCallBack.setSyncStatus(statusUpdate ? "ok" : "error");
 			toCallBack.setDossierStatus(toBackOffice.getDossierStatus());
+			toCallBack.setUserId(dossier.getUserId());
+			toCallBack.setGroupId(dossier.getUserId());
+			toCallBack.setCompanyId(dossier.getCompanyId());
+			toCallBack.setProcessWorkflowId(toBackOffice.getProcessWorkflowId());
+			toCallBack.setActionDatetime(new Date());
+			toCallBack.setStepName(toBackOffice.getStepName());
+			toCallBack.setActionName(toBackOffice.getActionInfo());
+			toCallBack.setActionNote(toBackOffice.getMessageInfo());
+			toCallBack.setActionUserId(actorBean.getActorId());
+			toCallBack.setDaysDoing(daysDoing);
+			toCallBack.setDaysDelay(dayDelay);
 			Message sendToCallBack = new Message();
 
 			sendToCallBack.put("toCallback", toCallBack);
 
 			MessageBusUtil.sendMessage(
-				"opencps/backoffice/engine/callback", sendToCallBack);
+				"opencps/backoffice/engine/callback", sendToCallBack);*/
 			
 			if (toBackOffice.getSyncStatus() == 2) {
 				sendEmailCustomer(toBackOffice.getDossierId());

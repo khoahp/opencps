@@ -551,6 +551,8 @@ public class ProcessOrderPortlet extends MVCPortlet {
 				? dossier.getReceptionNo() : StringPool.BLANK);
 			sendToEngineMsg.setSignature(signature ? 1 : 0);
 			sendToEngineMsg.setDossierStatus(dossier.getDossierStatus());
+			sendToEngineMsg.setActionDatetime(new Date());
+			sendToEngineMsg.setActorType(WebKeys.DOSSIER_ACTOR_EMPLOYEE);
 
 			message.put("msgToEngine", sendToEngineMsg);
 

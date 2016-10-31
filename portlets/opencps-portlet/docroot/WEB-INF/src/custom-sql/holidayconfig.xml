@@ -9,7 +9,7 @@
 	    	WHERE
 	    		(1 = 1)
 	    	AND 
-	    		(opencps_holidayconfig.remove = ?)
+	    		(opencps_holidayconfig.status = ?)
 		]]>
 	</sql>	
 </custom-sql>

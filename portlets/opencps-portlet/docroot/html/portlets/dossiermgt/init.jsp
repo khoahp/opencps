@@ -50,5 +50,6 @@
 	
 	boolean showTabDossierResultFirst = GetterUtil.getBoolean(preferences.getValue("showTabDossierResultFirst", "false"), false);
 	
+	boolean hiddenTreeNodeEqualNone = GetterUtil.getBoolean(preferences.getValue("hiddenTreeNodeEqualNone", "false"), false);
 %>
 
