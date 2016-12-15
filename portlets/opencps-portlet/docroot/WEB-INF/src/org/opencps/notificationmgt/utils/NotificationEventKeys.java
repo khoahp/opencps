@@ -24,38 +24,38 @@ public class NotificationEventKeys {
 
 	public class OFFICIALS {
 		
-		public static final String EVENT1= "101";
-		public static final String EVENT2= "102";
-		public static final String EVENT3= "103";
-		public static final String EVENT4= "104";
-		public static final String EVENT5= "105";
-		public static final String EVENT6= "106";
-		public static final String EVENT7= "107";
-		public static final String EVENT8= "108";
-		public static final String EVENT9= "109";
-		public static final String EVENT10= "110";
+		public static final String EVENT1= "NOTIS-101";
+		public static final String EVENT2= "NOTIS-102";
+		public static final String EVENT3= "NOTIS-103";
+		public static final String EVENT4= "NOTIS-104";
+		public static final String EVENT5= "NOTIS-105";
+		public static final String EVENT6= "NOTIS-106";
+		public static final String EVENT7= "NOTIS-107";
+		public static final String EVENT8= "NOTIS-108";
+		public static final String EVENT9= "NOTIS-109";
+		public static final String EVENT10= "NOTIS-110";
 
 	}
 
 	public class USERS_AND_ENTERPRISE {
 		
-		public static final String EVENT1= "201";
-		public static final String EVENT2= "202";
-		public static final String EVENT3= "203";
-		public static final String EVENT4= "204";
-		public static final String EVENT5= "205";
-		public static final String EVENT6= "206";
-		public static final String EVENT7= "207";
-		public static final String EVENT8= "208";
-		public static final String EVENT9= "209";
-		public static final String EVENT10= "210";
+		public static final String EVENT1= "NOTIS-201";
+		public static final String EVENT2= "NOTIS-202";
+		public static final String EVENT3= "NOTIS-203";
+		public static final String EVENT4= "NOTIS-204";
+		public static final String EVENT5= "NOTIS-205";
+		public static final String EVENT6= "NOTIS-206";
+		public static final String EVENT7= "NOTIS-207";
+		public static final String EVENT8= "NOTIS-208";
+		public static final String EVENT9= "NOTIS-209";
+		public static final String EVENT10= "NOTIS-210";
 		
 
 	}
 
 	public class ADMINTRATOR {
-		public static final String EVENT1= "301";
-		public static final String EVENT2= "302";
+		public static final String EVENT1= "NOTIS-301";
+		public static final String EVENT2= "NOTIS-302";
 	}
 	
 	public static final String GROUP1 = "/xu-ly-ho-so";
