@@ -6,6 +6,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.service.UserLocalServiceUtil;
 
 public class UnitTest {
@@ -24,8 +25,13 @@ public class UnitTest {
 	@Test
 	public void test() {
 	 
-		assertTrue(true);
+		assertTrue("OPENCPS",upperCase("opencps"));
 
+	}
+	
+	
+	protected String upperCase(String str) {
+	    return StringUtil.upperCase(str);
 	}
 	 
 	
