@@ -320,6 +320,9 @@ portlets/opencps-portlet/docroot/WEB-INF/util-taglib/.DS_Store
 
 portlets/opencps-portlet/docroot/WEB-INF/src/org/opencps/notificationmgt/model/impl/*
 portlets/opencps-portlet/docroot/WEB-INF/src/org/opencps/notificationmgt/service/base/*
+portlets/opencps-portlet/docroot/WEB-INF/src/org/opencps/notificationmgt/service/persistence/NotificationConfigPersistenceImpl.java
+portlets/opencps-portlet/docroot/WEB-INF/lib/opencps-portlet-taglib.jar
+
 portlets/opencps-portlet/docroot/WEB-INF/src/org/opencps/notificationmgt/service/persistence/NotificationEventConfigPersistenceImpl.java
 portlets/opencps-portlet/docroot/WEB-INF/src/org/opencps/notificationmgt/service/persistence/NotificationRedirectConfigPersistenceImpl.java
 portlets/opencps-portlet/docroot/WEB-INF/src/org/opencps/notificationmgt/service/persistence/NotificationStatusConfigPersistenceImpl.java
