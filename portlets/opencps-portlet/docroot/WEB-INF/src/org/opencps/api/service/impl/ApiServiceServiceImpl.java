@@ -215,7 +215,7 @@ public class ApiServiceServiceImpl extends ApiServiceServiceBaseImpl {
 			String serviceDomainIndex = serviceConfig.getServiceDomainIndex();
 			long govAgencyOrganizationId = serviceConfig.getGovAgencyOrganizationId();
 			String govAgencyName = serviceConfig.getGovAgencyName();
-			int serviceMode = 1; //TODO: hard fix for remote dossier
+			int serviceMode = 1; 
 			String serviceAdministrationIndex = serviceConfig.getServiceAdministrationIndex();
 			String subjectId = StringPool.BLANK;
 			
