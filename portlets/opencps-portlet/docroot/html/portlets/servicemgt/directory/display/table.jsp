@@ -59,19 +59,7 @@
 	
 	request.setAttribute(ServiceDisplayTerms.SERVICE_DOMAINCODE, domainCode);
 	
-	DictCollection collectionDomain = null;
-	DictItem curDictItem = null;
-	try {
-		collectionDomain = DictCollectionLocalServiceUtil.getDictCollection(scopeGroupId, WebKeys.SERVICE_DOMAIN);
-	} catch (Exception e) {
-		
-	}
-	
-	List<DictItem> dictItems = new ArrayList<DictItem>();
-	
-	if(Validator.isNotNull(collectionDomain)) {
-		dictItems = DictItemLocalServiceUtil.getDictItemsByDictCollectionId(collectionDomain.getDictCollectionId());
-	}
+	List<DictItem> dictItems = DictItemLocalServiceUtil.findDictItemsByG_DC_S(scopeGroupId, ServiceUtil.SERVICE_DOMAIN);
 	
 	String myComboTree = ProcessOrderUtils.generateComboboxTree(PortletPropsValues.DATAMGT_MASTERDATA_SERVICE_DOMAIN, PortletConstants.TREE_VIEW_ALL_ITEM, 
 			PortletConstants.TREE_VIEW_LEVER_2, false, renderRequest);
@@ -84,7 +72,7 @@
 <aui:script use="aui-base,aui-io">
 $(document).ready(function(){
 	var myComboTree = '<%=myComboTree %>';
-	var domainCode = '<%=domainCode%>';
+	var domainCode = '<%=HtmlUtil.escape(domainCode)%>';
 	var comboboxTree = $('#comboboxTree').comboTree({  
 		boundingBox: 'comboboxTree',
 		name: '#<portlet:namespace /><%=ServiceDisplayTerms.SERVICE_DOMAINCODE %>',
@@ -225,17 +213,12 @@ $(document).ready(function(){
 					<div class="row-fluid">
 						<div class="span12">
 							<%
-							ServiceConfig serviceConfig = null;
 							int mucDo = 2;
 							
-							try {
-								serviceConfig = ServiceConfigLocalServiceUtil.getServiceConfigByG_S(scopeGroupId, service.getServiceinfoId());
-							} catch(NoSuchServiceConfigException nssce) {
-								
-							}
+							List<ServiceConfig> serviceConfigs = ServiceConfigLocalServiceUtil.getServiceConfigsByS_G(service.getServiceinfoId(), scopeGroupId);
 							
-							if(serviceConfig != null) {
-								mucDo = serviceConfig.getServiceLevel();
+							if(serviceConfigs != null && serviceConfigs.size() > 0) {
+								mucDo = serviceConfigs.get(0).getServiceLevel();
 							}
 							%>
 							

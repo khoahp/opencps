@@ -47,14 +47,17 @@ public class ConfigurationDisrectoryImpl implements ConfigurationAction{
 		throws Exception {
 
 		long plidServiceDetail = ParamUtil.getLong(actionRequest, "plidServiceDetail");
-		String portletResource =
-					    ParamUtil.getString(actionRequest, "portletResource");
 		
-		PortletPreferences preferences =
-					    PortletPreferencesFactoryUtil.getPortletSetup(
-					        actionRequest, portletResource);
+		String style = ParamUtil.getString(actionRequest, "style", "default");
+		
+		String portletResource = ParamUtil.getString(actionRequest, "portletResource");
+		
+		PortletPreferences preferences = PortletPreferencesFactoryUtil.getPortletSetup(
+				actionRequest, portletResource);
 		
 		preferences.setValue("plidServiceDetail", String.valueOf(plidServiceDetail));
+		preferences.setValue("style", style);
+		
 		preferences.store();
 		
 		SessionMessages.add(actionRequest, "potlet-config-saved");

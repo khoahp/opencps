@@ -54,7 +54,7 @@
 <liferay-portlet:renderURL 
 		var="renderToSubmitOnline" 
 		portletName="<%=WebKeys.P26_SUBMIT_ONLINE %>"
-		plid="<%=Long.valueOf(plidServiceDetail) %>"
+		plid="<%=plidServiceDetail %>"
 		portletMode="VIEW"
 		windowState="<%=LiferayWindowState.NORMAL.toString() %>"
 	>

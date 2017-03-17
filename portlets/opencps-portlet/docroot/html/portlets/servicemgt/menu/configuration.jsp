@@ -27,6 +27,7 @@
 	<aui:select name="menuType" id="menuType">
 		<aui:option value="administrator" label="administrator"></aui:option>
 		<aui:option value="domain" label="domain"></aui:option>
+		<aui:option value="administrator_domain" label="administrator-domain"></aui:option>
 	</aui:select>
 
 	<aui:button type="submit" name="Save" value="save"></aui:button>
