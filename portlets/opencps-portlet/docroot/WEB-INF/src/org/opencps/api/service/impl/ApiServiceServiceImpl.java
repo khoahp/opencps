@@ -32,6 +32,7 @@ import org.opencps.api.service.ApiServiceLocalServiceUtil;
 import org.opencps.api.service.base.ApiServiceServiceBaseImpl;
 import org.opencps.api.util.APIServiceConstants;
 import org.opencps.api.util.APIUtils;
+import org.opencps.backend.message.PaymentFileObj;
 import org.opencps.backend.message.SendToEngineMsg;
 import org.opencps.backend.message.UserActionMsg;
 import org.opencps.dossiermgt.NoSuchDossierException;
@@ -49,7 +50,6 @@ import org.opencps.processmgt.NoSuchProcessOrderException;
 import org.opencps.processmgt.NoSuchProcessWorkflowException;
 import org.opencps.processmgt.model.ProcessOrder;
 import org.opencps.processmgt.model.ProcessWorkflow;
-import org.opencps.processmgt.service.ProcessWorkflowLocalServiceUtil;
 import org.opencps.servicemgt.model.ServiceInfo;
 import org.opencps.util.DLFolderUtil;
 import org.opencps.util.DateTimeUtil;
@@ -118,7 +118,7 @@ public class ApiServiceServiceImpl extends ApiServiceServiceBaseImpl {
 			APIServiceConstants.IN, serviceContext);
 	}
 	
-	@JSONWebService(value = "dossier", method = "POST")
+	@JSONWebService(value = "adddossier", method = "POST")
 	public JSONObject addDossier(String event, String dossierInfo) 
 		throws SystemException, PortalException {
 		
@@ -126,6 +126,8 @@ public class ApiServiceServiceImpl extends ApiServiceServiceBaseImpl {
 		
 		ServiceContext serviceContext = getServiceContext();
 		
+		_log.info("::DOSSIER_INFO:: " + dossierInfo);
+
 		long userId = 0;
 		
 		try {
@@ -203,9 +205,14 @@ public class ApiServiceServiceImpl extends ApiServiceServiceBaseImpl {
 				}
 			}
 			
+			
+			_log.info("::INFO:: " + serviceNo);
+			
 			ServiceInfo serviceInfo = serviceInfoPersistence.fetchByC_SN(
 				serviceContext.getCompanyId(), serviceNo);
 			
+			_log.info("::INFO:: " + serviceNo + serviceInfo.getServiceinfoId());
+
 			ServiceConfig serviceConfig = serviceConfigPersistence.findByG_S_G(
 				serviceContext.getScopeGroupId(), serviceInfo.getServiceinfoId(), govAgencyCode);
 			
@@ -356,6 +363,8 @@ public class ApiServiceServiceImpl extends ApiServiceServiceBaseImpl {
 			Message message = new Message();
 			
 			actionMsg.setAction(WebKeys.ACTION_SUBMIT_VALUE);
+			
+			actionMsg.setEvent(WebKeys.ACTION_ONEGATE_VALUE);
 
 			actionMsg.setDossierId(dossier.getDossierId());
 
@@ -399,6 +408,7 @@ public class ApiServiceServiceImpl extends ApiServiceServiceBaseImpl {
 		
 		return resultObj;
 	}
+	
 	
 	@JSONWebService(value = "dossiers", method = "GET")
 	public JSONObject searchDossierByUserAssignProcessOrder(String username)
@@ -842,7 +852,7 @@ public class ApiServiceServiceImpl extends ApiServiceServiceBaseImpl {
 			input.put("actioncode", actioncode);
 			input.put("actionnote", actionnote);
 			input.put("username", username);
-			
+
 			// insert log received
 			ApiServiceLocalServiceUtil.addLog(userId, APIServiceConstants.CODE_05, 
 				serviceContext.getRemoteAddr(), oid, 
@@ -979,6 +989,7 @@ public class ApiServiceServiceImpl extends ApiServiceServiceBaseImpl {
 			input.put("actioncode", actioncode);
 			input.put("actionnote", actionnote);
 			input.put("username", username);
+			input.put("currentstatus", currentstatus);
 
 			// insert log received
 			ApiServiceLocalServiceUtil.addLog(userId,
@@ -1018,14 +1029,16 @@ public class ApiServiceServiceImpl extends ApiServiceServiceBaseImpl {
 					: StringPool.BLANK);
 			sendToEngineMsg.setSignature(0);
 			sendToEngineMsg.setDossierStatus(dossier.getDossierStatus());
-
-			if (Validator.isNotNull(processWorkflow.getAutoEvent())) {
-				sendToEngineMsg.setEvent(processWorkflow.getAutoEvent());
-			} else {
-				sendToEngineMsg.setProcessWorkflowId(processWorkflow
-						.getProcessWorkflowId());
+			
+			if (Validator.isNotNull(processWorkflow)) {
+				if (Validator.isNotNull(processWorkflow.getAutoEvent())) {
+					sendToEngineMsg.setEvent(processWorkflow.getAutoEvent());
+				} else {
+					sendToEngineMsg.setProcessWorkflowId(processWorkflow
+							.getProcessWorkflowId());
+				}
 			}
-
+			
 			message.put("msgToEngine", sendToEngineMsg);
 
 			MessageBusUtil.sendMessage("opencps/backoffice/engine/destination",
@@ -1057,6 +1070,120 @@ public class ApiServiceServiceImpl extends ApiServiceServiceBaseImpl {
 
 		return resultObj;
 	}
+
+	@JSONWebService(value = "addpayment", method = "POST")
+	public JSONObject addPaymentFile(String oid, String actioncode,
+			String actionnote, String username, String currentstatus, String paymentfile) {
+
+		JSONObject resultObj = JSONFactoryUtil.createJSONObject();
+
+		ServiceContext serviceContext = getServiceContext();
+
+		long userId = 0;
+
+		try {
+			userId = getUserId();
+
+			JSONObject input = JSONFactoryUtil.createJSONObject();
+			
+			JSONObject paymentfileObj = JSONFactoryUtil.createJSONObject(paymentfile);
+			
+			input.put("oid", oid);
+			input.put("actioncode", actioncode);
+			input.put("actionnote", actionnote);
+			input.put("username", username);
+			input.put("currentstatus", currentstatus);
+			input.put("paymentfile", paymentfile);
+			
+			PaymentFileObj paymentObj = new PaymentFileObj();
+			
+			paymentObj.setTotalPayment(GetterUtil.getInteger(paymentfileObj.getString("totalPayment")));
+			paymentObj.setPaymentMethods(paymentfileObj.getString("paymentMethods"));
+			paymentObj.setPaymentName(paymentfileObj.getString("paymentMessages"));
+			paymentObj.setPaymentMessages(paymentfileObj.getString("paymentName"));
+			
+
+			// insert log received
+			ApiServiceLocalServiceUtil.addLog(userId,
+					APIServiceConstants.CODE_05,
+					serviceContext.getRemoteAddr(), oid, input.toString(),
+					APIServiceConstants.IN, serviceContext);
+
+			Dossier dossier = dossierPersistence.findByOID(oid);
+
+			ProcessOrder processOrder = processOrderPersistence.findByD_F(
+					dossier.getDossierId(), 0);
+
+			User user = userLocalService.getUserByScreenName(
+					dossier.getCompanyId(), username);
+
+			ProcessWorkflow processWorkflow = APIUtils.getProcessWorkflow(oid,
+					currentstatus, actioncode);
+			
+			String nextStatus = APIUtils.getPostDossierStatus(processWorkflow);
+
+			Message message = new Message();
+
+			SendToEngineMsg sendToEngineMsg = new SendToEngineMsg();
+
+			sendToEngineMsg.setCompanyId(dossier.getCompanyId());
+			sendToEngineMsg.setGroupId(dossier.getGroupId());
+			sendToEngineMsg.setActionNote(actionnote);
+			sendToEngineMsg.setAssignToUserId(0);
+			sendToEngineMsg.setActionUserId(user.getUserId());
+			sendToEngineMsg.setDossierId(dossier.getDossierId());
+			sendToEngineMsg.setFileGroupId(0);
+			sendToEngineMsg.setPaymentValue(GetterUtil.getDouble(0));
+			sendToEngineMsg.setProcessOrderId(processOrder.getProcessOrderId());
+			sendToEngineMsg.setPaymentFileObj(paymentObj);
+
+			sendToEngineMsg.setReceptionNo(Validator.isNotNull(dossier
+					.getReceptionNo()) ? dossier.getReceptionNo()
+					: StringPool.BLANK);
+			sendToEngineMsg.setSignature(0);
+			sendToEngineMsg.setDossierStatus(dossier.getDossierStatus());
+			
+			if (Validator.isNotNull(processWorkflow)) {
+				if (Validator.isNotNull(processWorkflow.getAutoEvent())) {
+					sendToEngineMsg.setEvent(processWorkflow.getAutoEvent());
+				} else {
+					sendToEngineMsg.setProcessWorkflowId(processWorkflow
+							.getProcessWorkflowId());
+				}
+			}
+			
+			message.put("msgToEngine", sendToEngineMsg);
+
+			MessageBusUtil.sendMessage("opencps/backoffice/engine/destination",
+					message);
+
+			resultObj.put("statusCode", "Success");
+			resultObj.put("currentStatus", nextStatus);
+
+		} catch (Exception e) {
+			_log.error(e);
+
+			resultObj = JSONFactoryUtil.createJSONObject();
+			resultObj.put("statusCode", "Error");
+
+			if (e instanceof NoSuchDossierException) {
+				resultObj.put("message", "DossierNotFound");
+			} else if (e instanceof NoSuchProcessOrderException) {
+				resultObj.put("message", "ProcessOrderNotFound");
+			} else if (e instanceof NoSuchProcessWorkflowException) {
+				resultObj.put("message", "ActionCodeNotFound");
+			} else {
+				resultObj.put("message", e.getClass().getName());
+			}
+		}
+
+		ApiServiceLocalServiceUtil.addLog(userId, APIServiceConstants.CODE_05,
+				serviceContext.getRemoteAddr(), oid, resultObj.toString(),
+				APIServiceConstants.OUT, serviceContext);
+
+		return resultObj;
+	}
+
 
 	@JSONWebService(value = "dossiers", method = "GET")
 	public JSONObject searchDossierByDS_RD_SN_U(String dossierstatus,

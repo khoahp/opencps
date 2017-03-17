@@ -890,4 +890,18 @@
 		<field name="dossierNextStatus" type="String" />
 		<field name="isSendNotification" type="boolean" />
 	</model>
+	<model name="org.opencps.apiremote.model.Remote">
+		<field name="apiLogId" type="long" />
+		<field name="companyId" type="long" />
+		<field name="groupId" type="long" />
+		<field name="userId" type="long" />
+		<field name="createDate" type="Date" />
+		<field name="modifiedDate" type="Date" />
+		<field name="oid" type="String" />
+		<field name="apiCode" type="String" />
+		<field name="ipAddress" type="String" />
+		<field name="httpAgent" type="String" />
+		<field name="params" type="String" />
+		<field name="status" type="String" />
+	</model>
 </model-hints>
