@@ -42,7 +42,7 @@
 	position: relative;
 	width: 100%;
 }
-.opencps-theme.ux .opencps-toolbar .search-input.input-keyword input[type="text"]{
+.opencps-theme.ux .opencps-toolbar .search-input.input-keyword input[type="text"] {
 	border-radius: 20px;
 	padding-left: 25px;
 	width: 100%;
@@ -53,7 +53,7 @@
 	top: 0;
 	right: 0;
 }
-.opencps-theme.ux .opencps-toolbar .search-input.input-keyword button{
+.opencps-theme.ux .opencps-toolbar .search-input.input-keyword button {
 	background: #0074cd none;
     border: 1px solid #0074cd;
     border-radius: 0 20px 20px 0;

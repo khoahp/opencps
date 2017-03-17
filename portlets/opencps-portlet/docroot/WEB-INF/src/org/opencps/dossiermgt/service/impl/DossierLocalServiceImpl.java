@@ -2426,4 +2426,10 @@ public class DossierLocalServiceImpl extends DossierLocalServiceBaseImpl {
 		return dossierFinder.countDossierSuggesstion(ownerOrganizationId, dossierFileNo, dossierStatus,
 				partTypesStr, templateFileNosStr, partNosStr);
 	}
+	
+	public List<Dossier> getByGovAndStatusAPI(String govAgencyCode, String dossierStatus,
+			int start, int end) throws SystemException {
+		return dossierFinder.searchDossierByGovAndStatusAPI(govAgencyCode, dossierStatus, start,
+				end);
+	}
 }

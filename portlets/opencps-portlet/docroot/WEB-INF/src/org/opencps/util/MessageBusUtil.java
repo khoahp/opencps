@@ -132,7 +132,7 @@ public class MessageBusUtil {
 		        "[$USER_ID$]", user
 		            .getUserId(),
 		        "[$USER_SCREENNAME$]", user
-		            .getScreenName());
+		            .getScreenName(),"[$HO_TEN_NGUOI_DK$]",user.getFullName());
 		subscriptionSender
 		    .setFrom(fromAddress, fromName);
 		subscriptionSender

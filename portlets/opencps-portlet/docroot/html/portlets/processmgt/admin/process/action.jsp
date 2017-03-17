@@ -55,70 +55,112 @@
 	<portlet:param name="serviceProcessId" value="<%= Validator.isNotNull(serviceProcess) ? Long.toString(serviceProcess.getServiceProcessId()) : StringPool.BLANK %>"/>
 	<portlet:param name="processWorkflowId" value="<%= Validator.isNotNull(workflow) ? Long.toString(workflow.getProcessWorkflowId()) : StringPool.BLANK %>"/>
 	<portlet:param name="redirectURL" value="<%=currentURL %>"/>
+	<portlet:param name="backURL" value='<%=currentURL + "#_15_WAR_opencpsportlet_tab=_15_WAR_opencpsportlet_action" %>'/>
 </liferay-portlet:renderURL>
 
 <aui:button-row>
 	<aui:button name="addAction" href="<%= editActionURL %>" value="add-action" ></aui:button>
 </aui:button-row>
 
-<liferay-ui:search-container searchContainer="<%= new WorkflowSearch(renderRequest, totalCount, iteratorURL) %>">
-		
-	<liferay-ui:search-container-results>
-		<%
-			WorkflowSearchTerms searchTerms = (WorkflowSearchTerms) searchContainer.getSearchTerms();
-		
-			total = totalCount;
-
-			results = ProcessWorkflowLocalServiceUtil.searchWorkflow(serviceProcessId, searchContainer.getStart(), searchContainer.getEnd());
+<div class="opencps-searchcontainer-wrapper default-box-shadow radius8">
+	<liferay-ui:search-container searchContainer="<%= new WorkflowSearch(renderRequest, totalCount, iteratorURL) %>">
 			
-			pageContext.setAttribute("results", results);
-			pageContext.setAttribute("total", total);
-		%>
-		
-	</liferay-ui:search-container-results>
-
-	<liferay-ui:search-container-row 
-		className="org.opencps.processmgt.model.ProcessWorkflow" 
-		modelVar="processWorkflow" 
-		keyProperty="processWorkflowId"
-	>
-		<%
-		
-			String preName = LanguageUtil.get(portletConfig, themeDisplay.getLocale(), "start-step");
+		<liferay-ui:search-container-results>
+			<%
+				WorkflowSearchTerms searchTerms = (WorkflowSearchTerms) searchContainer.getSearchTerms();
 			
-			String postName = LanguageUtil.get(portletConfig, themeDisplay.getLocale(), "end-step");
-			
-			if(!ProcessUtils.getPreProcessStepName(processWorkflow.getPreProcessStepId()).equals(StringPool.BLANK)) {
-				preName = ProcessUtils.getPreProcessStepName(processWorkflow.getPreProcessStepId());
-			}
-			
-			if(!ProcessUtils.getPostProcessStepName(processWorkflow.getPostProcessStepId()).equals(StringPool.BLANK)) {
-				postName = ProcessUtils.getPostProcessStepName(processWorkflow.getPostProcessStepId());
-			}
-			// no column
-			row.addText(String.valueOf(row.getPos() + 1));
-		
-			
-			// Pre StepName
-			row.addText(preName);
-
-			// workflow name
-			row.addText(processWorkflow.getActionName());
-
-			// Post StepName
-			row.addText(postName);
-			
-			if(isPermission) {
-				//action column
-				row.addJSP("center", SearchEntry.DEFAULT_VALIGN, templatePath + "workflow_actions.jsp", config.getServletContext(), request, response);
-			}
-		%>	
+				total = totalCount;
 	
-	</liferay-ui:search-container-row>	
+				results = ProcessWorkflowLocalServiceUtil.searchWorkflow(serviceProcessId, searchContainer.getStart(), searchContainer.getEnd());
+				
+				pageContext.setAttribute("results", results);
+				pageContext.setAttribute("total", total);
+			%>
+			
+		</liferay-ui:search-container-results>
+	
+		<liferay-ui:search-container-row 
+			className="org.opencps.processmgt.model.ProcessWorkflow" 
+			modelVar="processWorkflow" 
+			keyProperty="processWorkflowId"
+		>
+			<%
+			
+				String preName = LanguageUtil.get(portletConfig, themeDisplay.getLocale(), "start-step");
+				
+				String postName = LanguageUtil.get(portletConfig, themeDisplay.getLocale(), "end-step");
+				
+				if(!ProcessUtils.getPreProcessStepName(processWorkflow.getPreProcessStepId()).equals(StringPool.BLANK)) {
+					preName = ProcessUtils.getPreProcessStepName(processWorkflow.getPreProcessStepId());
+				}
+				
+				if(!ProcessUtils.getPostProcessStepName(processWorkflow.getPostProcessStepId()).equals(StringPool.BLANK)) {
+					postName = ProcessUtils.getPostProcessStepName(processWorkflow.getPostProcessStepId());
+				}
+			%>	
+			
+			<liferay-util:buffer var="rowIndex">
+				<div class="row-fluid min-width10">
+					<div class="span12">
+						<%=row.getPos() + 1 %>
+					</div>
+				</div>
+			</liferay-util:buffer>
+			
+			<liferay-util:buffer var="actionInfo">
+				<div class="row-fluid">
+					<div class="span6">
+						<div class="row-fluid">
+							<div class="span4 bold">
+								<liferay-ui:message key="action-name"/>
+							</div>
+							<div class="span8">
+								<%= processWorkflow.getActionName() %>
+							</div>
+						</div>
+					</div>
+					
+					<div class="span6">
+						<div class="row-fluid">
+							<div class="span4 bold">
+								<liferay-ui:message key="start-step"/>
+							</div>
+							<div class="span8">
+								<%= preName %>
+							</div>
+						</div>
+						<div class="row-fluid">
+							<div class="span4 bold">
+								<liferay-ui:message key="end-step"/>
+							</div>
+							<div class="span8">
+								<%= postName %>
+							</div>
+						</div>
+					</div>
+				</div>
+			</liferay-util:buffer>
+			
+			<%
+				row.addText(rowIndex);
+				
+				row.addText(actionInfo);
+				
+				if(isPermission) {
+					//action column
+					row.addJSP("center", SearchEntry.DEFAULT_VALIGN, templatePath + "workflow_actions.jsp", config.getServletContext(), request, response);
+				}
+			%>	
+			
+			
+			
+		</liferay-ui:search-container-row>	
+	
+		<liferay-ui:search-iterator paginate="false"/>
+	
+	</liferay-ui:search-container>
+</div>
 
-	<liferay-ui:search-iterator paginate="false"/>
-
-</liferay-ui:search-container>
 
 <%!
 	private int ITEM_PERPAGE = 100;

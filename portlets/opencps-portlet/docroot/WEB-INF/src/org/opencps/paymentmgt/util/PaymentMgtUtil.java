@@ -29,8 +29,8 @@ import org.opencps.dossiermgt.model.Dossier;
 import org.opencps.dossiermgt.service.DossierLocalServiceUtil;
 import org.opencps.dossiermgt.service.DossierLogLocalServiceUtil;
 import org.opencps.dossiermgt.util.ActorBean;
-import org.opencps.keypay.model.KeyPay;
 import org.opencps.notificationmgt.utils.NotificationUtils;
+import org.opencps.paymentmgt.keypay.model.KeyPay;
 import org.opencps.paymentmgt.model.PaymentConfig;
 import org.opencps.paymentmgt.model.PaymentFile;
 import org.opencps.paymentmgt.service.PaymentConfigLocalServiceUtil;
@@ -39,7 +39,6 @@ import org.opencps.paymentmgt.vtcpay.model.VTCPay;
 import org.opencps.util.PortletConstants;
 import org.opencps.util.WebKeys;
 
-import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
@@ -202,14 +201,19 @@ public class PaymentMgtUtil {
 			_log.info("=====isVerify:" + isVerify);
 
 			if (vtcPay.getReference_number().trim().length() > 0) {
+				
+				try{
 
-				paymentFile =
-					PaymentFileLocalServiceUtil.getByTransactionId(Long.parseLong(vtcPay.getReference_number()));
-
-				dossier = DossierLocalServiceUtil.getDossier(paymentFile.getDossierId());
+					paymentFile =
+						PaymentFileLocalServiceUtil.getByTransactionId(Long.parseLong(vtcPay.getReference_number()));
+	
+					dossier = DossierLocalServiceUtil.getDossier(paymentFile.getDossierId());
+				}catch(Exception e){
+					
+				}
 			}
 
-			if (isVerify && Validator.isNotNull(paymentFile)) {
+			if (isVerify && Validator.isNotNull(paymentFile) && Validator.isNotNull(dossier)) {
 				
 				Double amountDouble = paymentFile.getAmount();
 				int amountInt = amountDouble.intValue();
@@ -237,7 +241,7 @@ public class PaymentMgtUtil {
 	//					MessageBusUtil.sendMessage("opencps/frontoffice/out/destination", message);
 	
 						paymentFile.setPaymentStatus(PaymentMgtUtil.PAYMENT_STATUS_APPROVED);
-						paymentFile.setPaymentMethod(WebKeys.PAYMENT_METHOD_VTCPAY);
+						paymentFile.setPaymentMethod(WebKeys.PAYMENT_METHOD_KEYPAY);
 						
 						ActorBean actorBean = new ActorBean(1, dossier.getUserId());
 						
@@ -294,7 +298,7 @@ public class PaymentMgtUtil {
 			}
 
 		}
-		catch (SystemException | IOException | NumberFormatException | PortalException e) {
+		catch (SystemException | IOException | NumberFormatException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -310,15 +314,23 @@ public class PaymentMgtUtil {
 			Dossier dossier = null;
 			PaymentFile paymentFile = null;
 
-			// boolean isVerify = KeyPay.checkSecureHash(keyPay);
-			boolean isVerify = true;
+			boolean isVerify = KeyPay.checkSecureHash(keyPay);
+			_log.info("=====isVerify:"+isVerify);
+			_log.info("=====keyPay.getMerchant_trans_id():"+keyPay.getMerchant_trans_id());
+			_log.info("=====keyPay.getResponse_code():"+keyPay.getResponse_code());
+			
 			if (keyPay.getMerchant_trans_id().trim().length() > 0) {
-				paymentFile =
-					PaymentFileLocalServiceUtil.getByTransactionId(Long.parseLong(keyPay.getMerchant_trans_id()));
-
-				dossier = DossierLocalServiceUtil.getDossier(paymentFile.getDossierId());
+				
+				try{
+					paymentFile =
+						PaymentFileLocalServiceUtil.getByTransactionId(Long.parseLong(keyPay.getMerchant_trans_id()));
+	
+					dossier = DossierLocalServiceUtil.getDossier(paymentFile.getDossierId());
+				}catch(Exception e){
+					
+				}
 			}
-			if (isVerify) {
+			if (isVerify && Validator.isNotNull(paymentFile) && Validator.isNotNull(dossier)) {
 
 				if (Validator.isNotNull(paymentFile) &&
 					(paymentFile.getPaymentStatus() != PaymentMgtUtil.PAYMENT_STATUS_APPROVED)) {
@@ -397,7 +409,7 @@ public class PaymentMgtUtil {
 			}
 
 		}
-		catch (SystemException | IOException | NumberFormatException | PortalException e) {
+		catch (SystemException | IOException | NumberFormatException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

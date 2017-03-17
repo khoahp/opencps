@@ -32,7 +32,7 @@
 <%@page import="org.opencps.dossiermgt.RequiredDossierPartException"%>
 <%@page import="org.opencps.dossiermgt.service.DossierFileLocalServiceUtil"%>
 <%@page import="org.opencps.dossiermgt.service.DossierLocalServiceUtil"%>
-<%@page import="org.opencps.holidayconfig.util.HolidayUtils"%>
+<%@page import="org.opencps.holidayconfig.util.HolidayCheckUtils"%>
 <%@page import="org.opencps.processmgt.model.ProcessOrder"%>
 <%@page import="org.opencps.processmgt.model.ProcessWorkflow"%>
 <%@page import="org.opencps.processmgt.model.WorkflowOutput"%>
@@ -101,7 +101,7 @@
 	Date estimateDate = null;
 	
 	if(workflow != null && workflow.getGenerateDeadline() && Validator.isNotNull(receiveDate) && Validator.isNotNull(deadlinePattern)){
-		estimateDate = HolidayUtils.getEndDate(receiveDate, deadlinePattern);
+		estimateDate = HolidayCheckUtils.getEndDate(receiveDate, deadlinePattern);
 	}
 	
 	PortletUtil.SplitDate spd = null;

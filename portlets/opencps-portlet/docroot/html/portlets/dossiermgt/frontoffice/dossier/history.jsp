@@ -147,14 +147,15 @@
 
 				<aui:row>
 					<span class="span4 bold">
-						<liferay-ui:message key="step-name" />
+						<liferay-ui:message key="action" />
 					</span>
 					
 					<span class="span8">
-						<liferay-ui:message key="<%= dossierLog.getStepName() %>"/>
+						<liferay-ui:message key="<%= DossierMgtUtil.getDossierLogs(StringPool.BLANK, dossierLog.getActionInfo())  %>"/>
 					</span>
+					
 				</aui:row>
-			
+				
 				<aui:row>
 					<span class="span4 bold">
 						<liferay-ui:message key="dossier-status" />
@@ -193,17 +194,7 @@
 						<liferay-ui:message key="<%= dossierLog.getActorName() %>"/>
 					</span>
 				</aui:row>
-				
-				<aui:row>
-					<span class="span4 bold">
-						<liferay-ui:message key="action" />
-					</span>
-					
-					<span class="span8">
-						<liferay-ui:message key="<%= DossierMgtUtil.getDossierLogs(StringPool.BLANK, dossierLog.getActionInfo())  %>"/>
-					</span>
-					
-				</aui:row>
+
 				
 				<aui:row>
 					<span class="span4 bold">

@@ -38,7 +38,7 @@ import org.opencps.dossiermgt.model.ServiceConfig;
 import org.opencps.dossiermgt.service.DossierLogLocalServiceUtil;
 import org.opencps.dossiermgt.service.ServiceConfigLocalServiceUtil;
 import org.opencps.dossiermgt.util.ActorBean;
-import org.opencps.holidayconfig.util.HolidayUtils;
+import org.opencps.holidayconfig.util.HolidayCheckUtils;
 import org.opencps.notificationmgt.message.SendNotificationMessage;
 import org.opencps.notificationmgt.utils.NotificationEventKeys;
 import org.opencps.paymentmgt.model.PaymentFile;
@@ -508,7 +508,7 @@ public class BackOfficeProcessEngine implements MessageListener {
 					
 					if(processWorkflow != null && processWorkflow.getGenerateDeadline() && Validator.isNotNull(receiveDate) && Validator.isNotNull(deadlinePattern)){
 						
-						estimateDate = HolidayUtils.getEndDate(receiveDate, deadlinePattern);
+						estimateDate = HolidayCheckUtils.getEndDate(receiveDate, deadlinePattern);
 						
 						_log.info("======estimateDate:"+estimateDate);
 						
@@ -544,7 +544,7 @@ public class BackOfficeProcessEngine implements MessageListener {
 					currStep.getDossierStatus().equals(StringPool.BLANK)) {
 
 					estimateDatetime =
-						HolidayUtils.getEndDate(new Date(), processWorkflow.getDeadlinePattern());
+						HolidayCheckUtils.getEndDate(new Date(), processWorkflow.getDeadlinePattern());
 
 					toBackOffice.setEstimateDatetime(estimateDatetime);
 

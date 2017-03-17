@@ -32,7 +32,19 @@ import org.opencps.dossiermgt.model.DossierPart;
 import org.opencps.dossiermgt.model.impl.DossierImpl;
 import org.opencps.dossiermgt.service.DossierFileLocalServiceUtil;
 import org.opencps.dossiermgt.service.DossierLocalServiceUtil;
+import org.opencps.dossiermgt.service.DossierLogLocalServiceUtil;
 import org.opencps.dossiermgt.service.DossierPartLocalServiceUtil;
+import org.opencps.dossiermgt.util.ActorBean;
+import org.opencps.notificationmgt.utils.NotificationUtils;
+import org.opencps.paymentmgt.keypay.model.KeyPay;
+import org.opencps.paymentmgt.keypay.wssoap.KpWebservicesProxy;
+import org.opencps.paymentmgt.model.PaymentConfig;
+import org.opencps.paymentmgt.model.PaymentFile;
+import org.opencps.paymentmgt.service.PaymentFileLocalServiceUtil;
+import org.opencps.paymentmgt.util.PaymentMgtUtil;
+import org.opencps.paymentmgt.util.VTCPayEventKeys;
+import org.opencps.paymentmgt.vtcpay.model.VTCPay;
+import org.opencps.paymentmgt.vtcpay.wssoap.WSCheckTransSoapProxy;
 import org.opencps.processmgt.NoSuchProcessStepException;
 import org.opencps.processmgt.NoSuchWorkflowOutputException;
 import org.opencps.processmgt.model.ProcessOrder;
@@ -47,11 +59,19 @@ import org.opencps.processmgt.service.ProcessWorkflowLocalServiceUtil;
 import org.opencps.processmgt.service.SchedulerJobsLocalServiceUtil;
 import org.opencps.processmgt.service.WorkflowOutputLocalServiceUtil;
 import org.opencps.processmgt.util.ProcessUtils;
+import org.opencps.util.PortletConstants;
+import org.opencps.util.WebKeys;
 
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.messaging.Message;
 import com.liferay.portal.kernel.messaging.MessageBusUtil;
+import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.portal.kernel.util.Validator;
 
 
 /**
@@ -59,6 +79,8 @@ import com.liferay.portal.kernel.messaging.MessageBusUtil;
  *
  */
 public class SchedulerUtils {
+	
+	private static Log _log = LogFactoryUtil.getLog(SchedulerUtils.class);
 
 	/**
 	 * @param SchedulerJobs schJob
@@ -195,6 +217,155 @@ public class SchedulerUtils {
 
 		if (requiredFlag) {
 			throw new RequiredDossierPartException();
+		}
+	}
+	
+	public void checkVTCpayment(PaymentConfig paymentConfig,
+			PaymentFile paymentFile) throws Exception {
+
+		VTCPay vtcPay = new VTCPay(paymentConfig.getKeypayMerchantCode(),
+				String.valueOf(paymentFile.getKeypayTransactionId()),
+				paymentConfig.getBankInfo(), paymentConfig.getKeypaySecureKey());
+
+		int website_id = 0;
+		String order_code = StringPool.BLANK;
+		String receiver_acc = StringPool.BLANK;
+		String sign = StringPool.BLANK;
+
+		website_id = Integer.valueOf(vtcPay.getWebsite_id());
+		order_code = vtcPay.getOrder_code();
+		receiver_acc = vtcPay.getReceiver_acc();
+		sign = VTCPay.getSecureHashCodeCheckRequest(vtcPay);
+
+		String dataResult = StringPool.BLANK;
+
+		WSCheckTransSoapProxy checkTransSoapProxy = new WSCheckTransSoapProxy();
+
+		dataResult = checkTransSoapProxy.checkPartnerTransation(website_id,
+				order_code, receiver_acc, sign);
+
+		if (dataResult.trim().length() > 0) {
+			VTCPay vtcPayResult = VTCPay
+					.getSecureHashCodeCheckResponse(dataResult);
+
+			if (vtcPayResult.getOrder_code().trim().length() > 0) {
+
+				long transactionId = 0;
+				transactionId = Long.parseLong(vtcPayResult.getOrder_code());
+
+				if (paymentFile.getKeypayTransactionId() == transactionId) {
+
+					if (vtcPayResult.getResponsecode().equals(
+							VTCPayEventKeys.SUCCESS)) {
+
+						// kiem tra neu trang thai thanh
+						// cong
+						// thi cap nhat paymentfile,log
+						// gui notice
+						Dossier dossier = null;
+
+						try {
+							dossier = DossierLocalServiceUtil
+									.getDossier(paymentFile.getDossierId());
+						} catch (NoSuchDossierException e) {
+
+						}
+						if (Validator.isNotNull(dossier)) {
+
+							paymentFile
+									.setPaymentStatus(PaymentMgtUtil.PAYMENT_STATUS_APPROVED);
+							paymentFile
+									.setPaymentMethod(WebKeys.PAYMENT_METHOD_KEYPAY);
+							paymentFile.setPaymentGateStatusCode(Integer
+									.valueOf(VTCPayEventKeys.SUCCESS));
+
+							JSONObject jsonObject = null;
+
+							jsonObject = JSONFactoryUtil
+									.createJSONObject(paymentFile
+											.getPaymentGateResponseData());
+
+							jsonObject.put("status", VTCPayEventKeys.SUCCESS);
+
+							paymentFile.setPaymentGateResponseData(jsonObject
+									.toString());
+
+							ActorBean actorBean = new ActorBean(1,
+									dossier.getUserId());
+
+							DossierLogLocalServiceUtil
+									.addDossierLog(
+											dossier.getUserId(),
+											dossier.getGroupId(),
+											dossier.getCompanyId(),
+											dossier.getDossierId(),
+											paymentFile.getFileGroupId(),
+											PortletConstants.DOSSIER_STATUS_NEW,
+											PortletConstants.DOSSIER_ACTION_CONFIRM_PAYMENT,
+											PortletConstants.DOSSIER_ACTION_CONFIRM_PAYMENT,
+											new Date(), 1,
+											actorBean.getActor(),
+											actorBean.getActorId(),
+											actorBean.getActorName());
+
+							NotificationUtils.sendNotificationToAccountant(
+									dossier, paymentFile);
+						}
+
+					}
+					// truong hop khong tra ve thanh
+					// cong
+					// thi van luu lieu check , bao gom
+					// ca loi
+					JSONObject jsonData = JSONFactoryUtil.createJSONObject();
+					jsonData.put("reponsecode", vtcPayResult.getResponsecode());
+					jsonData.put("order_code", vtcPayResult.getOrder_code());
+					jsonData.put("amount", vtcPayResult.getAmount());
+
+					paymentFile.setPaymentGateCheckCode(Integer
+							.valueOf(vtcPayResult.getResponsecode()));
+					paymentFile.setPaymentGateCheckResponseData(jsonData
+							.toString());
+
+					PaymentFileLocalServiceUtil.updatePaymentFile(paymentFile);
+
+				}
+			}
+
+		}
+	}
+	
+	public void checkKEYPAYpayment(PaymentConfig paymentConfig,
+			PaymentFile paymentFile) throws Exception {
+
+		if (Validator.isNotNull(paymentConfig)
+				&& Validator.isNotNull(paymentFile)) {
+
+			JSONObject jsonObject = null;
+
+			jsonObject = JSONFactoryUtil.createJSONObject(paymentFile
+					.getPaymentGateResponseData());
+
+			KeyPay keyPay = new KeyPay(paymentConfig.getKeypayMerchantCode(),
+					String.valueOf(paymentFile.getKeypayTransactionId()),
+					jsonObject.getString("trans_id"),
+					paymentConfig.getKeypayMerchantCode(),
+					paymentConfig.getKeypaySecureKey());
+
+			String secure_hash = StringPool.BLANK;
+			secure_hash = KeyPay.getSecureHashCodeCheckRequest(keyPay);
+			
+			String dataResult = StringPool.BLANK;
+
+			KpWebservicesProxy keypay = new KpWebservicesProxy();
+			dataResult = keypay.querryBillStatus(keyPay.getMerchant_trans_id(),
+					keyPay.getGood_code(), keyPay.getTrans_id(),
+					keyPay.getMerchant_code(), secure_hash);
+			
+			if (dataResult.trim().length() > 0) {
+				
+				_log.info("===dataResult:"+dataResult);
+			}
 		}
 	}
 

@@ -67,8 +67,9 @@
 	<portlet:param name="mvcPath" value='<%=templatePath + "choose_service.jsp" %>'/>
 </portlet:renderURL>
 
-<aui:button name="chooseService" value="choose-service" cssClass="mg-b-20"/>
-
+<aui:button-row>
+	<aui:button name="chooseService" value="choose-service"/>
+</aui:button-row>
 
 <liferay-ui:search-container 
 		emptyResultsMessage="no-service-were-found"

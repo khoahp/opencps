@@ -17,7 +17,16 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 %>
-
+<%@page import="org.json.XML"%>
+<%@page import="com.liferay.portal.kernel.json.JSONFactoryUtil"%>
+<%@page import="com.liferay.portal.kernel.json.JSONObject"%>
+<%@page import="org.opencps.datamgt.service.DictItemLocalServiceUtil"%>
+<%@page import="org.opencps.datamgt.model.DictItem"%>
+<%@page import="org.opencps.util.PortletPropsValues"%>
+<%@page import="org.opencps.datamgt.service.DictCollectionLocalServiceUtil"%>
+<%@page import="org.opencps.datamgt.model.DictCollection"%>
+<%@page import="java.util.Map"%>
+<%@page import="java.util.HashMap"%>
 <%@page import="java.util.ArrayList"%>
 <%@page import="java.util.List"%>
 <%@page import="org.opencps.statisticsmgt.service.DossiersStatisticsLocalServiceUtil"%>
@@ -28,63 +37,84 @@
 <%@ include file="init.jsp" %>
 
 <%
-	
-	List<DossiersStatistics> dossiersStatistics =
-		DossiersStatisticsLocalServiceUtil.getStatsByGovAndDomain(scopeGroupId, startMonth, startYear, period, 
-			govCode, domainCode, level, notNullGov, notNullDomain);
+	List<String> codes = new ArrayList<String>();
 
-	JSONArray jsonArray =
-		DossiersStatisticsServiceUtil.statisticsDossierByCode(
-			dossiersStatistics, null, filterKey, currentMonth, currentYear,
-			locale);
-
-	String strJSON = jsonArray.toString();
-
-	System.out.println("###########################################################" +
-		jsonArray);
-%>
-<div class="widget-wrapper">
-	<div id="<portlet:namespace/>statistics"></div>
-</div>
-<script>
-	var strJSON = '<%=strJSON%>';
-	
-	var objects = JSON.parse(strJSON);
-	
-	var data = [];
-	
-	var ultimateColors = [['rgb(244, 98, 66)', 'rgb(8, 142, 62)', 'rgb(3, 51, 122)', 'rgb(247, 4, 4)', 'rgb(239, 247, 4)', 'rgb(247, 146, 4)']];
-	
-	var delta  = 1/objects.length;
-	
-	for(var i = 0; i < objects.length; i++){
+	if (domainDeepLevel > 1 && Validator.isNotNull(domainCodes) &&
+		!domainCodes.equalsIgnoreCase("all")) {
 		
-		var json = objects[i];
-		var lOffsetX = (i)*delta;
-		var uOffsetX = lOffsetX + delta * 0.9;
+		String[] arrCode = StringUtil.split(domainCodes);
 		
-		var item = {
-			  title: json.code,
-			  values: json.values,
-			  labels: json.labels,
-			  type: 'pie',
-			  name: json.code,
-			  marker: {
-			    colors: ultimateColors[0]
-			  },
-			  domain: {
-			    x: [lOffsetX, uOffsetX],
-			    y: [0, 1]
-			  },
-			  hoverinfo: 'label+percent+name'
+		DictCollection dictCollection =
+			DictCollectionLocalServiceUtil.getDictCollection(
+				scopeGroupId,
+				PortletPropsValues.DATAMGT_MASTERDATA_SERVICE_DOMAIN);
+
+		if (dictCollection != null) {
+			for (int i = 0; i < arrCode.length; i++) {
+				try {
+					String code = arrCode[i];
+					
+					DictItem dictItem =
+						DictItemLocalServiceUtil.getDictItemInuseByItemCode(
+							dictCollection.getDictCollectionId(), code);
+					
+					List<DictItem> dictItems =
+						DictItemLocalServiceUtil.getTreeItems(
+							dictItem.getTreeIndex(), 1);
+					
+					codes.add(code);
+					
+					if(dictItems != null){
+						for(DictItem item :dictItems){
+							codes.add(item.getItemCode());
+						}
+					}
+				}
+				catch (Exception e) {
+
+				}
+
+			}
 		}
-		data.push(item);
 	}
 	
-	var layout = {
-		title: '<%=chartTitle%>',
-		height: 400
-	};
+	if(codes != null && !codes.isEmpty()){
+		domainCodes = StringUtil.merge(codes);
+		System.out.println(domainCodes);
+	}
+
+	List<DossiersStatistics> dossiersStatistics =
+		DossiersStatisticsLocalServiceUtil.getStatsByGovAndDomain(
+			scopeGroupId, startMonth, startYear, period, govCodes,
+			domainCodes, level, domainDeepLevel);
 	
-	Plotly.newPlot('<portlet:namespace/>statistics', data, layout);
-</script>
+	JSONArray jsonArray =
+		StatisticsUtil.renderData(
+			scopeGroupId, dossiersStatistics, fieldDatasShemas,
+			filterKey, startMonth, startYear, period, currentMonth, currentYear, level, 
+			domainDeepLevel, locale);
+	
+	JSONArray sortedJsonArray = StatisticsUtil.sortByCodes(jsonArray, StringUtil.split(domainCodes));
+	
+	//System.out.println(sortedJsonArray.toString());
+	
+	//org.json.JSONArray array = new org.json.JSONArray(sortedJsonArray.toString());
+	//String xml = XML.toString(array, "data");
+	//System.out.println(xml);
+	
+%>
+<c:choose>
+	<c:when test="<%=portletDisplayDDMTemplateId > 0 %>">
+		<%
+			Map<String, Object> contextObjects = new HashMap<String, Object>();
+
+			contextObjects.put("jsonData", sortedJsonArray.toString());
+			contextObjects.put("periodMap", StatisticsUtil.getPeriodMap(startMonth, startYear, period));
+			//contextObjects.put("xmlData", xml);
+		%>
+		<%= PortletDisplayTemplateUtil.renderDDMTemplate(pageContext, portletDisplayDDMTemplateId, dossiersStatistics, contextObjects) %>
+	</c:when>
+	<c:otherwise>
+	</c:otherwise>
+</c:choose>
+

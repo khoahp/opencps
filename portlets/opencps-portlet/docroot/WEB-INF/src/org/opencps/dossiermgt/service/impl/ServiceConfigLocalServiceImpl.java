@@ -146,6 +146,16 @@ public class ServiceConfigLocalServiceImpl extends
 
 		return serviceConfigPersistence.countAll();
 	}
+	
+	/**
+	 * @param groupId
+	 * @param level
+	 * @return
+	 * @throws SystemException
+	 */
+	public int countByLevel(long groupId, int level) throws SystemException {
+		return serviceConfigPersistence.countByG_SL(groupId, level);
+	}
 
 	/**
 	 * @param dossierTemplateId

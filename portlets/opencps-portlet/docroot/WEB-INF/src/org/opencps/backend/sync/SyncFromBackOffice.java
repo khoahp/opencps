@@ -36,6 +36,7 @@ import org.opencps.jms.SyncServiceContext;
 import org.opencps.notificationmgt.message.SendNotificationMessage;
 import org.opencps.processmgt.model.WorkflowOutput;
 import org.opencps.processmgt.service.WorkflowOutputLocalServiceUtil;
+import org.opencps.processmgt.util.OutDateStatus;
 import org.opencps.util.MessageBusKeys;
 import org.opencps.util.PortletConstants;
 import org.opencps.util.PortletPropsValues;
@@ -114,7 +115,6 @@ public class SyncFromBackOffice implements MessageListener {
 					WorkflowOutputLocalServiceUtil.getByProcessWFPostback(
 						toBackOffice.getProcessWorkflowId(), true);
 				
-				_log.info("=====workflowOutputs.size():" + workflowOutputs.size());
 				
 				// Lat co trang thai dossier file
 				DossierFileLocalServiceUtil.updateDossierFileResultSyncStatus(
@@ -184,8 +184,13 @@ public class SyncFromBackOffice implements MessageListener {
 				    toBackOffice.getProcessWorkflowId(), true);
 
 				SendToCallbackMsg toCallBack = new SendToCallbackMsg();
+				
+				HolidayCheckUtils holidayCheckUtils = new HolidayCheckUtils();
 
-				int dayDelay = HolidayCheckUtils.getDayDelay(toBackOffice.getProcessOrderId(), toBackOffice.getProcessWorkflowId());
+				OutDateStatus outDate = holidayCheckUtils.getOutDateStatus(toBackOffice.getProcessOrderId(), toBackOffice.getProcessWorkflowId());
+				
+				long delayTimes = 0;
+				delayTimes = outDate.getTimeOutDate();
 				int daysDoing = 0;
 				
 				toCallBack.setProcessOrderId(toBackOffice.getProcessOrderId());
@@ -200,7 +205,7 @@ public class SyncFromBackOffice implements MessageListener {
 				toCallBack.setActionNote(toBackOffice.getMessageInfo());
 				toCallBack.setActionUserId(actorBean.getActorId());
 				toCallBack.setDaysDoing(daysDoing);
-				toCallBack.setDaysDelay(dayDelay);
+				toCallBack.setDaysDelay(delayTimes);
 				toCallBack.setSyncStatus(statusUpdate ? "ok" : "error");
 				toCallBack.setLogId(dossierLog.getDossierLogId());
 				
@@ -222,11 +227,6 @@ public class SyncFromBackOffice implements MessageListener {
 				_log.error(e);
 			}
 
-/*			
-			if (toBackOffice.getSyncStatus() == 2) {
-				sendEmailCustomer(toBackOffice.getDossierId());
-			}
-*/
 		}
 
 	}

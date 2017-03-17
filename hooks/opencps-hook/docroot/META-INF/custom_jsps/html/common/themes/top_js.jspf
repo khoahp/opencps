@@ -14,6 +14,7 @@
  */
 --%>
 
+<%@page import="java.util.Date"%>
 <script type="text/javascript">
 	// <![CDATA[
 		var Liferay = {
@@ -458,13 +459,16 @@ for (String analyticsType : analyticsTypes) {
 <%
 }
 %>
-
+<%
+	 final Date timeStamps = new Date();
+%>
 <script type="text/javascript" src="<%= themeDisplay.getCDNHost() %>/html/extensions/datamgt_services.js"></script>
 <script type="text/javascript" src="<%= themeDisplay.getCDNHost() %>/html/extensions/datepicker.js"></script>
 <script type="text/javascript" src="<%= themeDisplay.getCDNHost() %>/html/extensions/jquery.min.js"></script>
 <script type="text/javascript" src="<%= themeDisplay.getCDNHost() %>/html/extensions/moment-with-locales.min.js"></script>
 <script type="text/javascript" src="<%= themeDisplay.getCDNHost() %>/html/extensions/bootstrap-datetimepicker.min.js"></script>
-<script type="text/javascript" src="<%= themeDisplay.getCDNHost() %>/html/extensions/plotly-latest.min.js"></script>
+<%-- <script type="text/javascript" src="<%= themeDisplay.getCDNHost() %>/html/extensions/plotly-latest.min.js"></script> --%>
+<script type="text/javascript" src="<%= themeDisplay.getCDNHost() %>/html/extensions/Chart.bundle.min.js"></script>
 <script type="text/javascript" src='<%= PortalUtil.getStaticResourceURL(request, themeDisplay.getCDNHost() + "/html/extensions/opencps-tree-view.js", extensionLastModified) %>'></script>
 <script type="text/javascript" src='<%= PortalUtil.getStaticResourceURL(request, themeDisplay.getCDNHost() + "/html/extensions/bootstrap-multiselect.js", extensionLastModified) %>'></script>
 <!-- bootstrap -->
@@ -476,7 +480,7 @@ for (String analyticsType : analyticsTypes) {
 <script type="text/javascript" src="<%= themeDisplay.getCDNHost() %>/html/extensions/handlebars-v4.0.5.js"></script>
 
 <!-- KY SO FPT -->
-<%-- <script type="text/javascript" src="<%= themeDisplay.getCDNHost() %>/html/extensions/PDFSigning.min.js"></script> --%>
+<script type="text/javascript" src="<%= themeDisplay.getCDNHost() %>/html/extensions/PDFSigning.min.js?v="<%= timeStamps.toString() %>></script>
 
 
 <!-- alpaca -->

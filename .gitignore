@@ -308,4 +308,21 @@ portlets/opencps-portlet/docroot/WEB-INF/src/org/opencps/statisticsmgt/service/p
 portlets/opencps-portlet/docroot/WEB-INF/src/org/opencps/statisticsmgt/model/impl/DossiersStatisticsBaseImpl.java 
 portlets/opencps-portlet/docroot/WEB-INF/lib/opencps-portlet-service.jar
 portlets/opencps-portlet/docroot/WEB-INF/src/org/opencps/statisticsmgt/service/base/
+portlets/opencps-portlet/docroot/WEB-INF/src/org/opencps/statisticsmgt/model/impl/
 
+hooks/.DS_Store
+portlets/opencps-portlet/.DS_Store
+portlets/opencps-portlet/docroot/.DS_Store
+portlets/opencps-portlet/docroot/WEB-INF/.DS_Store
+portlets/opencps-portlet/docroot/WEB-INF/src/.DS_Store
+portlets/opencps-portlet/docroot/WEB-INF/src/org/.DS_Store
+portlets/opencps-portlet/docroot/WEB-INF/util-taglib/.DS_Store
+
+portlets/opencps-portlet/docroot/WEB-INF/src/org/opencps/notificationmgt/model/impl/*
+portlets/opencps-portlet/docroot/WEB-INF/src/org/opencps/notificationmgt/service/base/*
+portlets/opencps-portlet/docroot/WEB-INF/src/org/opencps/notificationmgt/service/persistence/NotificationConfigPersistenceImpl.java
+portlets/opencps-portlet/docroot/WEB-INF/lib/opencps-portlet-taglib.jar
+
+portlets/opencps-portlet/docroot/WEB-INF/src/org/opencps/notificationmgt/service/persistence/NotificationEventConfigPersistenceImpl.java
+portlets/opencps-portlet/docroot/WEB-INF/src/org/opencps/notificationmgt/service/persistence/NotificationRedirectConfigPersistenceImpl.java
+portlets/opencps-portlet/docroot/WEB-INF/src/org/opencps/notificationmgt/service/persistence/NotificationStatusConfigPersistenceImpl.java

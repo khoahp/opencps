@@ -19,13 +19,11 @@
 
 <%@ include file="/init.jsp" %>
 
-<%@page import="org.opencps.util.ActionKeys"%>
+
 <%@page import="javax.portlet.PortletURL"%>
 <%@page import="com.liferay.portal.service.permission.PortletPermissionUtil"%>
 <%@page import="java.util.ArrayList"%>
 <%@page import="java.util.List"%>
-<%@page import="org.opencps.util.WebKeys"%>
-<%@page import="org.opencps.servicemgt.model.ServiceInfo"%>
 <%@page import="com.liferay.portal.kernel.language.LanguageUtil"%>
 <%@page import="com.liferay.portal.kernel.util.Constants"%>
 <%@page import="org.opencps.servicemgt.model.TemplateFile"%>
@@ -40,21 +38,15 @@
 <%@page import="com.liferay.portal.model.User"%>
 <%@page import="java.util.List"%>
 <%@page import="javax.portlet.PortletPreferences"%>
-<%@page import="org.opencps.processmgt.permissions.ProcessPermission"%>
-<%@page import="com.liferay.portal.kernel.dao.search.SearchEntry"%>
-<%@page import="org.opencps.processmgt.service.ProcessStepLocalServiceUtil"%>
-<%@page import="org.opencps.processmgt.search.StepSearchTerms"%>
-<%@page import="org.opencps.processmgt.search.StepSearch"%>
-<%@page import="org.opencps.processmgt.model.ServiceProcess"%>
-<%@page import="org.opencps.processmgt.model.ProcessStep"%>
+<%@page import="org.opencps.util.WebKeys"%>
+<%@page import="org.opencps.util.ActionKeys"%>
+<%@page import="org.opencps.notificationmgt.utils.PortletKeys"%>
 <%
 	PortletPreferences preferences = renderRequest.getPreferences();
 	
-	portletResource = ParamUtil.getString(request, "portletResource");
+	long rootGroupId = GetterUtil.getLong(preferences.getValue(PortletKeys.PREFER__ROOTGROUPID__,StringPool.BLANK),0);
 	
-	if (Validator.isNotNull(portletResource)) {
-		preferences = PortletPreferencesFactoryUtil.getPortletSetup(request, portletResource);
-	}
+	boolean isPermisson = false;
 	 
 %>
 

@@ -14,6 +14,14 @@ public class OutDateStatus {
 	public void setDaysOutdate(long daysOutdate) {
 		this._daysOutdate = daysOutdate;
 	}
+	public long getTimeOutDate() {
+		return _timeOutDate;
+	}
+	public void setTimeOutDate(long _timeOutDate) {
+		this._timeOutDate = _timeOutDate;
+	}
 	private boolean _isOutDate;
 	private long _daysOutdate;
+	private long _timeOutDate;
+	
 }

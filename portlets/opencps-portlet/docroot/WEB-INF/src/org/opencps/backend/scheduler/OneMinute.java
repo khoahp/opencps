@@ -61,7 +61,7 @@ public class OneMinute implements MessageListener {
 	public void receive(Message message)
 		throws MessageListenerException {
 
-		_log.info("RUNNING _ONE_MINUTELY $$$$$");
+		_log.info("RUNNING _ONE_MINUTELY XXXXXXXXXXXXXXXX****");
 
 		List<ProcessWorkflow> processWorkflows = new ArrayList<ProcessWorkflow>();
 
@@ -74,6 +74,8 @@ public class OneMinute implements MessageListener {
 		try {
 			processWorkflows =
 				ProcessWorkflowLocalServiceUtil.getProcessWorkflowByEvent(SchedulerKeys.ONE_MIUTELY);
+			
+			_log.info("DSDSALDJSAKD SAKLD " + processWorkflows.size());
 
 			for (ProcessWorkflow processWorkflow : processWorkflows) {
 

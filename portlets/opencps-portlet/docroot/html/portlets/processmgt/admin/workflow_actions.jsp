@@ -32,21 +32,20 @@
 <liferay-portlet:renderURL var="editActionURL" windowState="<%= LiferayWindowState.NORMAL.toString() %>">
 	<portlet:param name="mvcPath" value='<%= templatePath + "edit_action.jsp" %>'/>
 	<portlet:param name="redirectURL" value="<%= currentURL %>"/>
+	<portlet:param name="backURL" value='<%=currentURL + "#_15_WAR_opencpsportlet_tab=_15_WAR_opencpsportlet_action" %>'/>
 	<portlet:param name="serviceProcessId" value="<%= Validator.isNotNull(serviceProcess) ? Long.toString(serviceProcess.getServiceProcessId()) : StringPool.BLANK %>"/>
 	<portlet:param name="processWorkflowId" value="<%= Validator.isNotNull(workflow) ? Long.toString(workflow.getProcessWorkflowId()) : StringPool.BLANK %>"/>
 </liferay-portlet:renderURL>
 			
- <%-- <liferay-ui:icon-menu> --%>
-	<c:if test="<%= ProcessPermission.contains(permissionChecker, scopeGroupId, ActionKeys.ADD_PROCESS) %>">
-		<liferay-ui:icon cssClass="edit" image="edit" url="<%= editActionURL %>" />
- 	</c:if>
+<c:if test="<%= ProcessPermission.contains(permissionChecker, scopeGroupId, ActionKeys.ADD_PROCESS) %>">
+	<liferay-ui:icon cssClass="search-container-action fa edit" image="edit" url="<%= editActionURL %>" />
+</c:if>
 
- 	<c:if test="<%= ProcessPermission.contains(permissionChecker, scopeGroupId, ActionKeys.DELETE) %>">
- 		<portlet:actionURL var="deleteActionURL" name="deleteAction" >
-			<portlet:param name="processWorkflowId" value="<%=String.valueOf(workflow.getProcessWorkflowId()) %>"/>
-			<portlet:param name="redirectURL" value="<%=currentURL %>"/>
-			<portlet:param name="returnURL" value="<%=currentURL %>"/>
-		</portlet:actionURL> 
-		<liferay-ui:icon-delete cssClass="delete" image="delete" confirmation="are-you-sure-delete-entry" message="delete" url="<%= deleteActionURL.toString() %>" />
- 	</c:if>
-<%-- </liferay-ui:icon-menu>  --%>
+<c:if test="<%= ProcessPermission.contains(permissionChecker, scopeGroupId, ActionKeys.DELETE) %>">
+	<portlet:actionURL var="deleteActionURL" name="deleteAction" >
+		<portlet:param name="processWorkflowId" value="<%=String.valueOf(workflow.getProcessWorkflowId()) %>"/>
+		<portlet:param name="redirectURL" value="<%=currentURL %>"/>
+		<portlet:param name="returnURL" value="<%=currentURL %>"/>
+	</portlet:actionURL> 
+	<liferay-ui:icon-delete cssClass="search-container-action fa delete" image="delete" confirmation="are-you-sure-delete-entry" message="delete" url="<%= deleteActionURL.toString() %>" />
+</c:if>

@@ -1,4 +1,5 @@
 
+<%@page import="org.opencps.util.WebKeys"%>
 <%@page import="java.text.DecimalFormat"%>
 <%
 /**
@@ -21,7 +22,6 @@
 
 <%@page import="javax.portlet.PortletPreferences"%>
 <%@page import="org.opencps.util.PortletConstants"%>
-<%@page import="org.opencps.util.WebKeys"%>
 
 <%@ include file="/init.jsp" %>
 

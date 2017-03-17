@@ -198,10 +198,12 @@
 #_10_WAR_opencpsportlet_serviceInfosSearchContainerSearchContainer table td:nth-child(1) {
 	width: 1%;
 }
-#_10_WAR_opencpsportlet_serviceInfosSearchContainerSearchContainer table tr .last {
-    min-width: 350px;
-}
 
+#_16_WAR_opencpsportlet_processOrderBeansSearchContainerSearchContainer table td:nth-child(1) .span12 {
+	/* padding-left: 0;
+	font-size: 12px; */
+	padding-left: 25px;
+}
 #_16_WAR_opencpsportlet_processOrderBeansSearchContainerSearchContainer table td:nth-child(2) {
 	width: 40%;
 }

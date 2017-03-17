@@ -44,4 +44,8 @@
 		<reference entity="ProcessOrder" package-path="org.opencps.processmgt.dao" />
 		<reference entity="ServiceConfig" package-path="org.opencps.dossiermgt.dao" />
 	</entity>
+	<exceptions>
+		<exception>DossierStatus</exception>
+		<exception>NoMessageContent</exception>
+	</exceptions>
 </service-builder>

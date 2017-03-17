@@ -37,6 +37,8 @@ public class WebKeys implements com.liferay.portal.kernel.util.WebKeys {
 
 	public static final String PAYMENT_MGT_PORTLET = "20_WAR_opencpsportlet";
 	
+	public static final String NOTIFICATION_MGT_PORTLET = "28_WAR_opencpsportlet";
+	
 	public static final String PAYMENT_MANAGER_PORTLET = "22_WAR_opencpsportlet";
 
 	public static final String PROCESS_ORDER_PORTLET = "16_WAR_opencpsportlet";
@@ -262,6 +264,7 @@ public class WebKeys implements com.liferay.portal.kernel.util.WebKeys {
 	public static final String BACK_URL= "backURL";
 	public static final String RETURN_URL= "returnURL";
 	public static final String REDIRECT_URL= "redirectURL";
+	public static final String CURRENT_URL= "currentURL";
 	
 	public static final String READ_ONLY = "readOnly";
 	

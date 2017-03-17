@@ -120,14 +120,15 @@
 							</aui:col>
 						</c:if>
 						
-						<aui:col width="<%=tabs1.equals(DataMgtUtil.TOP_TABS_DICTITEM) ? 50 : 100 %>" cssClass="search-input input-keyword">
-							<liferay-ui:input-search 
-								id="keywords1" 
-								name="keywords" 
-								title='<%= LanguageUtil.get(locale, "keywords") %>'
-								placeholder='<%= LanguageUtil.get(locale, "name") %>' 
-							/>
-							
+						<aui:col width="<%=tabs1.equals(DataMgtUtil.TOP_TABS_DICTITEM) ? 50 : 100 %>" >
+							<div class="search-input input-keyword">
+								<liferay-ui:input-search 
+									id="keywords1" 
+									name="keywords" 
+									title='<%= LanguageUtil.get(locale, "keywords") %>'
+									placeholder='<%= LanguageUtil.get(locale, "name") %>' 
+								/>
+							</div>
 						</aui:col>
 					</aui:row>
 				</div>

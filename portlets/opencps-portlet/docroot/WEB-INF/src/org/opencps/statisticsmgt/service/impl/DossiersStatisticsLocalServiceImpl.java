@@ -24,7 +24,12 @@ import org.opencps.statisticsmgt.service.base.DossiersStatisticsLocalServiceBase
 import com.liferay.counter.service.CounterLocalServiceUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
+import com.liferay.portal.kernel.util.StringPool;
 
 /**
  * The implementation of the dossiers statistics local service. <p> All custom
@@ -209,6 +214,26 @@ public class DossiersStatisticsLocalServiceImpl
 	}
 
 	/**
+	 * @param groupId
+	 * @param govAgencyCode
+	 * @param domainCode
+	 * @param month
+	 * @param year
+	 * @param source
+	 * @return
+	 * @throws SystemException
+	 * @throws NoSuchDossiersStatisticsException
+	 */
+	public DossiersStatistics getDossiersStatisticsByG_GC_DC_M_Y_S(
+		long groupId, String govAgencyCode, String domainCode, int month,
+		int year, String source)
+		throws SystemException, NoSuchDossiersStatisticsException {
+
+		return dossiersStatisticsPersistence.findByG_GC_DC_M_Y_S(
+			groupId, govAgencyCode, domainCode, month, year, source);
+	}
+
+	/**
 	 * @param govAgencyCode
 	 * @param domainCode
 	 * @param year
@@ -321,18 +346,15 @@ public class DossiersStatisticsLocalServiceImpl
 	 * @param govCode
 	 * @param domainCode
 	 * @param level
-	 * @param notNullGov
-	 * @param notNullDomain
 	 * @return
 	 */
 	public List<DossiersStatistics> getStatsByGovAndDomain(
 		long groupId, int startMonth, int startYear, int period,
-		String govCode, String domainCode, int level, boolean notNullGov,
-		boolean notNullDomain) {
+		String govCodes, String domainCodes, int level, int domainDeepLevel) {
 
 		return dossiersStatisticsFinder.getStatsByGovAndDomain(
-			groupId, startMonth, startYear, period, govCode, domainCode, level,
-			notNullGov, notNullDomain);
+			groupId, startMonth, startYear, period, govCodes, domainCodes,
+			level, domainDeepLevel);
 	}
 
 	/**
@@ -353,4 +375,226 @@ public class DossiersStatisticsLocalServiceImpl
 			groupId, startMonth, startYear, period, govCode, domainCode, level);
 	}
 
+	/**
+	 * @param groupId
+	 * @param govCode
+	 * @param domainCode
+	 * @param remainingNumber
+	 * @param receivedNumber
+	 * @param ontimeNumber
+	 * @param overtimeNumber
+	 * @param processingNumber
+	 * @param delayingNumber
+	 * @param month
+	 * @param year
+	 * @param source
+	 * @return
+	 * @throws SystemException
+	 */
+	public JSONObject updateStatistic(
+		long groupId, String govCode, String domainCode, int remainingNumber,
+		int receivedNumber, int ontimeNumber, int overtimeNumber,
+		int processingNumber, int delayingNumber, int month, int year,
+		String source) {
+
+		JSONObject msg = JSONFactoryUtil.createJSONObject();
+		try {
+
+			DossiersStatistics dossiersStatistics = null;
+			DossiersStatistics dossiersStatisticsGroupByGov = null;
+			DossiersStatistics dossiersStatisticsGroupByDomain = null;
+			DossiersStatistics dossiersStatisticsGroupAll = null;
+
+			DossiersStatistics[] referenceDossiersStatistics =
+				new DossiersStatistics[3];
+
+			int remainingNumberDelta = 0;
+			int receivedNumberDelta = 0;
+			int ontimeNumberDelta = 0;
+			int overtimeNumberDelta = 0;
+			int processingNumberDelta = 0;
+			int delayingNumberDelta = 0;
+
+			Date now = new Date();
+
+			try {
+				dossiersStatistics =
+					dossiersStatisticsLocalService.getDossiersStatisticsByG_GC_DC_M_Y_S(
+						0, govCode, domainCode, month, year, source);
+			}
+			catch (NoSuchDossiersStatisticsException e) {
+				_log.info("########################## No found stats -----> add new staft: " +
+					govCode + " | " + domainCode);
+			}
+			catch (SystemException e) {
+				_log.info("########################## System exception -----> return error");
+				msg.put("message", "error");
+				return msg;
+			}
+
+			try {
+
+				dossiersStatisticsGroupByGov =
+					dossiersStatisticsLocalService.getDossiersStatisticsByG_GC_DC_M_Y_S(
+						0, govCode, StringPool.BLANK, month, year, source);
+
+			}
+			catch (NoSuchDossiersStatisticsException e) {
+				_log.info("########################## No found stats -----> add new staft: " +
+								govCode + " | " + "Blank Domain");
+			}
+			catch (SystemException e) {
+				_log.info("########################## System exception -----> return error");
+				msg.put("message", "error");
+				return msg;
+			}
+
+			try {
+
+				dossiersStatisticsGroupByDomain =
+					dossiersStatisticsLocalService.getDossiersStatisticsByG_GC_DC_M_Y_S(
+						0, StringPool.BLANK, domainCode, month, year, source);
+
+			}
+			catch (NoSuchDossiersStatisticsException e) {
+				_log.info("########################## No found stats -----> add new staft: " +
+								"Blank Gov" + " | " + domainCode);
+				
+			}
+			catch (SystemException e) {
+				_log.info("########################## System exception -----> return error");
+				msg.put("message", "error");
+				return msg;
+			}
+
+			try {
+
+				dossiersStatisticsGroupAll =
+					dossiersStatisticsLocalService.getDossiersStatisticsByG_GC_DC_M_Y_S(
+						0, StringPool.BLANK, StringPool.BLANK, month, year,
+						source);
+			}
+			catch (NoSuchDossiersStatisticsException e) {
+				_log.info("########################## No found stats -----> add new staft: Blank Gov | Blank Domain");
+			}
+			catch (SystemException e) {
+				_log.info("########################## System exception -----> return error");
+				msg.put("message", "error");
+				return msg;
+			}
+
+			referenceDossiersStatistics[0] = dossiersStatisticsGroupByGov;
+			referenceDossiersStatistics[1] = dossiersStatisticsGroupByDomain;
+			referenceDossiersStatistics[2] = dossiersStatisticsGroupAll;
+
+			if (dossiersStatistics == null) {
+
+				long dossierStatisticId =
+					counterLocalService.increment(DossiersStatistics.class.getName());
+				dossiersStatistics =
+					dossiersStatisticsPersistence.create(dossierStatisticId);
+
+				// TODO get AdministrationLeve from GovagencyLevel
+				dossiersStatistics.setAdministrationLevel(-1);
+				dossiersStatistics.setCompanyId(0);
+				dossiersStatistics.setCreateDate(now);
+				dossiersStatistics.setDomainCode(domainCode);
+				dossiersStatistics.setGovAgencyCode(govCode);
+				dossiersStatistics.setGroupId(groupId);
+				dossiersStatistics.setModifiedDate(now);
+				dossiersStatistics.setMonth(month);
+				dossiersStatistics.setSource(source);
+				dossiersStatistics.setUserId(0);
+				dossiersStatistics.setYear(year);
+
+				remainingNumberDelta = remainingNumber;
+				receivedNumberDelta = receivedNumber;
+				ontimeNumberDelta = ontimeNumber;
+				overtimeNumberDelta = overtimeNumber;
+				processingNumberDelta = processingNumber;
+				delayingNumberDelta = delayingNumber;
+			}
+			else {
+				remainingNumberDelta =
+					remainingNumber - dossiersStatistics.getRemainingNumber();
+				receivedNumberDelta =
+					receivedNumber - dossiersStatistics.getReceivedNumber();
+				ontimeNumberDelta =
+					ontimeNumber - dossiersStatistics.getOntimeNumber();
+				overtimeNumberDelta =
+					overtimeNumber - dossiersStatistics.getOvertimeNumber();
+				processingNumberDelta =
+					processingNumber - dossiersStatistics.getProcessingNumber();
+				delayingNumberDelta =
+					delayingNumber - dossiersStatistics.getDelayingNumber();
+			}
+
+			dossiersStatistics.setModifiedDate(now);
+			dossiersStatistics.setDelayingNumber(delayingNumber);
+			dossiersStatistics.setOntimeNumber(ontimeNumber);
+			dossiersStatistics.setOvertimeNumber(overtimeNumber);
+			dossiersStatistics.setProcessingNumber(processingNumber);
+			dossiersStatistics.setReceivedNumber(receivedNumber);
+			dossiersStatistics.setRemainingNumber(remainingNumber);
+
+			dossiersStatistics =
+				dossiersStatisticsPersistence.update(dossiersStatistics);
+
+			for (int i = 0; i < 3; i++) {
+				DossiersStatistics referenceDossiersStatistic =
+					referenceDossiersStatistics[i];
+				if (referenceDossiersStatistic == null) {
+					long referenceDossiersStatisticId =
+						counterLocalService.increment(DossiersStatistics.class.getName());
+					referenceDossiersStatistic =
+						dossiersStatisticsPersistence.create(referenceDossiersStatisticId);
+
+					referenceDossiersStatistic.setAdministrationLevel(0);
+					referenceDossiersStatistic.setCompanyId(0);
+					referenceDossiersStatistic.setCreateDate(now);
+					if (i == 0) {
+						referenceDossiersStatistic.setGovAgencyCode(govCode);
+					}
+					else if (i == 1) {
+						referenceDossiersStatistic.setDomainCode(domainCode);
+					}
+
+					referenceDossiersStatistic.setGroupId(groupId);
+					referenceDossiersStatistic.setModifiedDate(now);
+					referenceDossiersStatistic.setMonth(month);
+					referenceDossiersStatistic.setSource(source);
+					referenceDossiersStatistic.setUserId(0);
+					referenceDossiersStatistic.setYear(year);
+				}
+
+				referenceDossiersStatistic.setModifiedDate(now);
+				referenceDossiersStatistic.setDelayingNumber(referenceDossiersStatistic.getDelayingNumber() +
+					delayingNumberDelta);
+				referenceDossiersStatistic.setOntimeNumber(referenceDossiersStatistic.getOntimeNumber() +
+					ontimeNumberDelta);
+				referenceDossiersStatistic.setOvertimeNumber(referenceDossiersStatistic.getOvertimeNumber() +
+					overtimeNumberDelta);
+				referenceDossiersStatistic.setProcessingNumber(referenceDossiersStatistic.getProcessingNumber() +
+					processingNumberDelta);
+				referenceDossiersStatistic.setReceivedNumber(referenceDossiersStatistic.getReceivedNumber() +
+					receivedNumberDelta);
+				referenceDossiersStatistic.setRemainingNumber(referenceDossiersStatistic.getRemainingNumber() +
+					remainingNumberDelta);
+
+				referenceDossiersStatistic =
+					dossiersStatisticsPersistence.update(referenceDossiersStatistic);
+			}
+
+			msg.put("message", "success");
+		}
+		catch (Exception e) {
+			msg.put("message", "error");
+			_log.error(e);
+		}
+
+		return msg;
+	}
+
+	private Log _log =
+		LogFactoryUtil.getLog(DossiersStatisticsLocalServiceImpl.class.getName());
 }

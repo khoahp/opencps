@@ -45,7 +45,6 @@
 <portlet:actionURL name="searchAction" var="searchUrl"></portlet:actionURL>
 
 <portlet:actionURL name="searchServiceAction" var="serviceUrl"></portlet:actionURL>
-
 <%
 	String keySelect = DossierMgtUtil.TOP_TABS_DOSSIER_MONITORING_SEARCH /*+ "," + DossierMgtUtil.TOP_TABS_DOSSIER_MONITORING_DOSSIER_FILE_LIST */  + "," + DossierMgtUtil.TOP_TABS_DOSSIER_MONITORING_SERVICE;
 	String urlSelect = viewMonitoringSearchURL /*+ "," + dossierFileSearchUrl */ + "," + viewMonitoringServiceURL;
@@ -86,7 +85,7 @@
 					<aui:form action="<%= dossierFileSearchUrl %>" method="post" name="fm">
 						<div class="toolbar_search_input">
 							<aui:row>
-								<aui:col width="65">
+								<aui:col >
 									<label>
 										<liferay-ui:message key="keywords"/>
 									</label>
@@ -114,7 +113,7 @@
 					<aui:form action="<%= serviceUrl %>" method="post" name="fm">
 						<div class="toolbar_search_input">
 							<aui:row>
-								<aui:col width="65">
+								<aui:col >
 									<label>
 										<liferay-ui:message key="keywords"/>
 									</label>

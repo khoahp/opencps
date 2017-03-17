@@ -124,7 +124,7 @@
 
 						row.setClassName("opencps-searchcontainer-row");
 
-						row.addText(String.valueOf(holidayconfig.getHolidayId()),
+						row.addText(String.valueOf(row.getPos() + 1),
 								editURL);
 						row.addText(DateTimeUtil.convertDateToString(
 								holidayconfig.getHoliday(),

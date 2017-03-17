@@ -31,6 +31,8 @@
 <liferay-portlet:renderURL var="editStepURL" windowState="<%= LiferayWindowState.NORMAL.toString() %>">
 	<portlet:param name="mvcPath" value='<%= templatePath + "edit_step.jsp" %>'/>
 	<portlet:param name="redirectURL" value="<%= currentURL %>"/>
+	<portlet:param name="backURL" value='<%=currentURL + "#_15_WAR_opencpsportlet_tab=_15_WAR_opencpsportlet_step" %>'/>
+	<portlet:param name="currentURL" value="<%= currentURL %>"/>
 	<portlet:param name="serviceProcessId" value="<%= Validator.isNotNull(serviceProcess) ? Long.toString(serviceProcess.getServiceProcessId()) : StringPool.BLANK %>"/>
 	<portlet:param name="processStepId" value="<%= Validator.isNotNull(step) ? Long.toString(step.getProcessStepId()) : StringPool.BLANK %>"/>
 </liferay-portlet:renderURL>
@@ -45,6 +47,7 @@
 			<portlet:param name="processStepId" value="<%=String.valueOf(step.getProcessStepId()) %>"/>
 			<portlet:param name="redirectURL" value="<%=currentURL %>"/>
 			<portlet:param name="currentURL" value="<%=currentURL %>"/>
+			<portlet:param name="backURL" value="<%=currentURL %>"/>
 		</portlet:actionURL> 
 		<liferay-ui:icon-delete cssClass="search-container-action fa delete" image="delete" confirmation="are-you-sure-delete-entry" message="delete" url="<%= deleteStepURL.toString() %>" />
  	</c:if>

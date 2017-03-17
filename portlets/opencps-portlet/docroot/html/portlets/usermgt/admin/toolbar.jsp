@@ -128,13 +128,15 @@
 	                            </aui:select>   
 	                        </aui:col>
 	                        
-	                        <aui:col width="50" cssClass="search-input input-keyword">
-	                            <liferay-ui:input-search 
-	                                id="keywords1" 
-	                                name="keywords" 
-	                                title='<%= LanguageUtil.get(locale, "keywords") %>' 
-	                                placeholder='<%= LanguageUtil.get(locale, "keyword") %>' 
-	                            />
+	                        <aui:col width="50">
+	                        	<div class="search-input input-keyword">
+		                            <liferay-ui:input-search 
+		                                id="keywords1" 
+		                                name="keywords" 
+		                                title='<%= LanguageUtil.get(locale, "keywords") %>' 
+		                                placeholder='<%= LanguageUtil.get(locale, "keyword") %>' 
+		                            />
+	                            </div>
 	                        </aui:col>
 	                    </aui:row>
 			     </c:when>

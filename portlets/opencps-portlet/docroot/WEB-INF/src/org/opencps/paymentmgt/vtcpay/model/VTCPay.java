@@ -150,6 +150,32 @@ public class VTCPay {
 
 				paymentConfig =
 					PaymentConfigLocalServiceUtil.getPaymentConfig(paymentFile.getPaymentConfig());
+				
+				StringBuffer merchantSignBuffer = new StringBuffer();
+				merchantSignBuffer.append(vtcPay.getAmount());
+
+				merchantSignBuffer.append("|").append(vtcPay.getMessage());
+
+				merchantSignBuffer.append("|").append(vtcPay.getPaymentType());
+
+				merchantSignBuffer.append("|").append(vtcPay.getReference_number());
+
+				merchantSignBuffer.append("|").append(vtcPay.getStatus());
+
+				merchantSignBuffer.append("|").append(vtcPay.getTrans_ref_no());
+
+				merchantSignBuffer.append("|").append(vtcPay.getWebsite_id());
+
+				merchantSignBuffer.append("|").append(
+					Validator.isNotNull(paymentConfig)
+						? paymentConfig.getKeypaySecureKey() : StringPool.BLANK);
+
+				String merchantSign = StringPool.BLANK;
+				merchantSign = merchantSignBuffer.toString();
+
+				merchantSign = VTCPay.sha256(merchantSign);
+				
+				return merchantSign;
 			}
 
 		}
@@ -158,31 +184,7 @@ public class VTCPay {
 			_log.error(e1);
 		}
 
-		StringBuffer merchantSignBuffer = new StringBuffer();
-		merchantSignBuffer.append(vtcPay.getAmount());
-
-		merchantSignBuffer.append("|").append(vtcPay.getMessage());
-
-		merchantSignBuffer.append("|").append(vtcPay.getPaymentType());
-
-		merchantSignBuffer.append("|").append(vtcPay.getReference_number());
-
-		merchantSignBuffer.append("|").append(vtcPay.getStatus());
-
-		merchantSignBuffer.append("|").append(vtcPay.getTrans_ref_no());
-
-		merchantSignBuffer.append("|").append(vtcPay.getWebsite_id());
-
-		merchantSignBuffer.append("|").append(
-			Validator.isNotNull(paymentConfig)
-				? paymentConfig.getKeypaySecureKey() : StringPool.BLANK);
-
-		String merchantSign = StringPool.BLANK;
-		merchantSign = merchantSignBuffer.toString();
-
-		merchantSign = VTCPay.sha256(merchantSign);
-
-		return merchantSign;
+		return StringPool.BLANK;
 	}
 
 	public static String getSecureHashCodeRequest(VTCPay vtcPay) {

@@ -64,8 +64,15 @@
 .opencps-theme.ux .opencps-form-navigator-container .upload-dossier-file {
 	background: transparent url("../../images/custom/icon_upload.png") no-repeat scroll left center;
 }
-.opencps-theme.ux .opencps-form-navigator-container .view-attachment {
-	background: transparent url("../../images/custom/icon_view_attachment.png") no-repeat scroll left center;
+.opencps-theme.ux .opencps-form-navigator-container .view-attachment, 
+.opencps-theme.ux .opencps-form-navigator-container .view-form {
+	padding-left: 0;
+}
+.opencps-theme.ux .opencps-form-navigator-container .view-attachment:before, 
+.opencps-theme.ux .opencps-form-navigator-container .view-form:before {
+    content: "\f0f6";
+    font-family: FontAwesome;
+    margin-right: 5px;
 }
 .opencps-theme.ux .opencps-form-navigator-container .remove-dossier-file {
 	background: transparent url("../../images/custom/icon_remove_dossierfile.png") no-repeat scroll left center;
@@ -109,7 +116,7 @@
 	font-family: 'Roboto-Bold';
 	margin: 5px 0 0;
 }
-.opencps-theme .opencps-form-navigator-container .form-navigator-content .nav-content-row input, 
+.opencps-theme .opencps-form-navigator-container .form-navigator-content .nav-content-row input:not([type="file"]), 
 .opencps-theme .opencps-form-navigator-container .form-navigator-content .nav-content-row textarea, 
 .opencps-theme .opencps-form-navigator-container .form-navigator-content .nav-content-row select {
 	width: -webkit-calc(100% - 154px);
@@ -117,7 +124,7 @@
 	min-height: 30px;
 	border: 1px solid #ccc;
 	box-shadow: none;
-	max-width: 100%;
+	max-width: 100% !important;
 }
 .opencps-theme .opencps-form-navigator-container .form-navigator-content .nav-content-row .disabled {
 	background-color: transparent;

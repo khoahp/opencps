@@ -1,0 +1,242 @@
+html, body, .dashboard-theme {
+	min-height: 100%;
+}
+body.mBody {
+	font-family: 'Roboto-Regular';
+	overflow-x: hidden;
+	/* background-color: #f1f4f7; */
+	background-color: #efefef;
+}
+body.mBody a, body.mBody a:hover, body.mBody a:focus {
+	color: inherit;
+	text-decoration: none;
+}
+body.mBody ul {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+body.mbody form {
+	margin-bottom: 0;
+}
+
+
+/*----------------------------------------
+				Header
+ ----------------------------------------*/
+#banner {
+	background-color: #33383c;
+}
+
+/*---------- Top bar ----------*/
+.top-bar {
+	font-size: 18px;
+}
+.top-bar span {
+	font-family: 'Roboto-Bold';
+}
+.top-bar li {
+	color: white;
+	text-transform: uppercase;
+	line-height: 50px;
+}
+.top-bar .search-area {
+	position: relative;
+    width: 260px;
+    height: 26px;
+    margin: 12px 35px 0;
+    line-height: normal;
+}
+.top-bar input {
+	border: 0;
+	background-color: #1A1E21;
+	border-radius: 10px;
+	padding: 0 15px;
+	width: 100%;
+	height: 100%;
+	font-size: 12px;
+}
+.top-bar input:focus {
+	outline: none;
+}
+.top-bar input::-webkit-input-placeholder {color: white;}
+.top-bar input:-moz-placeholder {color:white; opacity: 1;}
+.top-bar input::-moz-placeholder {color: white; opacity: 1;}
+.top-bar input:-ms-input-placeholder {color: white;}
+.top-bar .search-area i {
+	position: absolute;
+    right: 10px;
+    top: 0px;
+    cursor: pointer;
+    width: 26px;
+    line-height: 26px;
+    text-align: center;
+    font-size: 16px;
+}
+.top-bar .dashboar-logo i {
+	font-size: 34px;
+	position: absolute;
+	top: 9px;
+	left: -25px;
+}
+
+
+
+/*----------------------------------------
+				Menu
+----------------------------------------*/
+.sidebar-wrapper {}
+
+.sidebar-wrapper .sidebar-toggle {
+	width: 60px;
+	height: 60px;
+	color: white;
+	background-color: white;
+	text-align: center;
+	line-height: 60px;
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+
+.sidebar-wrapper .sidebar-menu {
+	position: absolute;
+	top: 60px;
+	left: 0px;
+	z-index: 100;
+    overflow-x: hidden;
+    width: 60px;
+    height: -webkit-calc(100% - 60px);
+    height: calc(100% - 60px);
+    transition: width 0.5s ease-in-out;
+    background-color: white;
+}
+.sidebar-wrapper .sidebar-menu li {
+	height: 60px;
+	width: 250px;
+	position: relative;
+}
+.sidebar-wrapper .sidebar-menu li a {
+	color: #30a5ff;
+    opacity: 0;
+    transition: visibility 0.5s, opacity 0.3s;
+    display: block;
+    line-height: 60px;
+}
+.sidebar-wrapper .sidebar-menu li:nth-child(1) {
+	background: url("../images/nav-home.png") 0 0 no-repeat;
+}
+.sidebar-wrapper .sidebar-menu li.active:nth-child(1), 
+.sidebar-wrapper .sidebar-menu li:nth-child(1):hover {
+	background: url("../images/nav-home-active.png") 0 0 no-repeat;
+}
+.sidebar-wrapper .sidebar-menu li:nth-child(2) {
+	background: url("../images/nav-duongbo.png") 0 0 no-repeat;
+}
+.sidebar-wrapper .sidebar-menu li.active:nth-child(2), 
+.sidebar-wrapper .sidebar-menu li:nth-child(2):hover {
+	background: url("../images/nav-duongbo-active.png") 0 0 no-repeat;
+}
+.sidebar-wrapper .sidebar-menu li:nth-child(3) {
+	background: url("../images/nav-duongthuy.png") 0 0 no-repeat;
+}
+.sidebar-wrapper .sidebar-menu li.active:nth-child(3), 
+.sidebar-wrapper .sidebar-menu li:nth-child(3):hover {
+	background: url("../images/nav-duongthuy-active.png") 0 0 no-repeat;
+}
+.sidebar-wrapper .sidebar-menu li:nth-child(4) {
+	background: url("../images/nav-hanghai.png") 0 0 no-repeat;
+}
+.sidebar-wrapper .sidebar-menu li.active:nth-child(4), 
+.sidebar-wrapper .sidebar-menu li:nth-child(4):hover {
+	background: url("../images/nav-hanghai-active.png") 0 0 no-repeat;
+}
+.sidebar-wrapper .sidebar-menu li:nth-child(5) {
+	background: url("../images/nav-duongsat.png") 0 0 no-repeat;
+}
+.sidebar-wrapper .sidebar-menu li.active:nth-child(5), 
+.sidebar-wrapper .sidebar-menu li:nth-child(5):hover {
+	background: url("../images/nav-duongsat-active.png") 0 0 no-repeat;
+}
+.sidebar-wrapper .sidebar-menu li:nth-child(6) {
+	background: url("../images/nav-hangkhong.png") 0 0 no-repeat;
+}
+.sidebar-wrapper .sidebar-menu li.active:nth-child(6), 
+.sidebar-wrapper .sidebar-menu li:nth-child(6):hover {
+	background: url("../images/nav-hangkhong-active.png") 0 0 no-repeat;
+}
+.sidebar-wrapper .sidebar-menu li:nth-child(7) {
+	background: url("../images/nav-dangkiem.png") 0 0 no-repeat;
+}
+.sidebar-wrapper .sidebar-menu li.active:nth-child(7), 
+.sidebar-wrapper .sidebar-menu li:nth-child(7):hover {
+	background: url("../images/nav-dangkiem-active.png") 0 0 no-repeat;
+}
+.sidebar-wrapper .sidebar-menu li.active:after {
+	content: "";
+	position: absolute;
+	top: 50%;
+	left: 50px;
+	-webkit-transform: translateY(-50%);
+	transform: translateY(-50%);
+	width: 0;
+	height: 0;
+	border-top: 5px solid transparent;
+	border-right: 10px solid #f1f4f7;
+	border-bottom: 5px solid transparent;
+}
+
+.sidebar-wrapper .sidebar-menu .portlet-topper {
+	display: none;
+}
+
+
+
+/*----------------------------------------
+				Content
+----------------------------------------*/
+#content {
+	position: relative;
+	height: -webkit-calc(100vh - 50px);
+	height: calc(100vh - 50px);
+}
+
+#content > .container-fluid {
+	padding: 10px 10px 15px 70px;
+    transition: padding 0.3s ease-in;
+    transition-delay: 0.2s;
+}
+
+
+
+/*----------------------------------------
+			Override + Other
+----------------------------------------*/
+
+.mBody .portlet-title img {
+	display: none;
+}
+
+.mBody section .portlet-content {
+	padding: 0;
+}
+
+
+
+/*----------------------------------------
+			Portlets
+----------------------------------------*/
+
+.widget-wrapper {
+	padding: 5px 0;
+}
+.plot-container > .svg-container, 
+.plot-container .main-svg {
+	width: 100% !important;
+}
+.infolayer .legend {
+	transform: translate(1096.94px, 100px) !important;
+}
+a[href*="plot"], .modebar {
+  	display: none;
+}

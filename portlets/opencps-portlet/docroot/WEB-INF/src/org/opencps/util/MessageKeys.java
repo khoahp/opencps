@@ -95,4 +95,12 @@ public class MessageKeys {
 	public static final String HOLIDAYCONFIG_UPDATE_SUCESS = "holidayconfig.update.sucess";
 	
 	public static final String SUGGEST_SUCESS = "suggest.sucess";
+	
+	public static final String NOTIFICATION_STATUS_UPDATE_SUCESS = "notificationstatusconfig.update.sucess";
+	public static final String NOTIFICATION_STATUS_ADD_SUCESS = "notificationstatusconfig.add.sucess";
+	public static final String NOTIFICATION_STATUS_SYSTEM_EXCEPTION_OCCURRED = "notificationstatusconfig.system.exception.occurred";
+	
+	public static final String NOTIFICATION_EVENT_UPDATE_SUCESS = "notificationeventconfig.update.sucess";
+	public static final String NOTIFICATION_EVENT_ADD_SUCESS = "notificationeventconfig.add.sucess";
+	public static final String NOTIFICATION_EVENT_SYSTEM_EXCEPTION_OCCURRED = "notificationeventconfig.system.exception.occurred";
 }

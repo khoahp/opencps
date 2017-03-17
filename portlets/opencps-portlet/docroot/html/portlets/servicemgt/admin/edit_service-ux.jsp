@@ -90,6 +90,7 @@
 	title='<%= Validator.isNotNull(serviceInfo) ? "update-service" : "add-service" %>'
 />
 
+
 <portlet:actionURL name="updateService" var="updateServiceURL"/>
 
 <aui:form name="fm" action="<%=updateServiceURL %>" method="post">
@@ -102,7 +103,7 @@
 	
 	<aui:input
 		name="<%= ServiceDisplayTerms.GROUP_ID %>" type="hidden" 
-		value="<%= scopeGroupId%>"
+		value="<%= scopeGroupId %>"
 	/>
 	
 	<aui:input 
@@ -116,7 +117,7 @@
 		value="<%= Validator.isNotNull(serviceInfo) ? serviceInfo.getServiceinfoId() : StringPool.BLANK %>"
 	/>
 	
-	<div class="opencps-bound-wrapper pd20 mg-t-20 default-box-shadow">
+	<div class="opencps-bound-wrapper pd20 mg-t-20">
 		<aui:a href="<%=currentURL.toString() %>" cssClass="uppercase bottom-line font18 bold">
 			<liferay-ui:message key="general-service"/>
 		</aui:a>
@@ -146,19 +147,7 @@
 				>
 				</datamgt:ddr>
 			</aui:col>
-			
-			<%-- <aui:col width="50">
-				<datamgt:ddr 
-					cssClass="input100"
-					depthLevel="1" 
-					dictCollectionCode="SERVICE_DOMAIN"
-					itemNames="<%= ServiceDisplayTerms.SERVICE_DOMAINCODE %>"
-					itemsEmptyOption="true"
-					showLabel="<%=true %>"
-					selectedItems="<%= Validator.isNotNull(serviceInfo) ? serviceInfo.getDomainCode() : StringPool.BLANK %>"
-				>
-				</datamgt:ddr>
-			</aui:col> --%>
+
 			<aui:col width="50">
 				<aui:select name="<%=ServiceDisplayTerms.SERVICE_DOMAINCODE %>" label="<%=ServiceDisplayTerms.SERVICE_DOMAINCODE %>">
 					<aui:option value=""></aui:option>
@@ -207,27 +196,6 @@
 			</aui:col>
 		</aui:row>
 		
-		<%-- <aui:row>
-			<aui:col>
-				<c:choose>
-					<c:when test="<%=Validator.isNotNull(serviceInfo) && Validator.isNull(serviceInfo.getOnlineUrl())%>">
-						<aui:input 
-							cssClass="input100" 
-							name="urlOnline" 
-							type="textarea" 
-							value="<%=servieOnlinePopURL.toString() %>"
-						/>
-					</c:when>
-					<c:otherwise>
-						<aui:input 
-							cssClass="input100" 
-							name="<%= ServiceDisplayTerms.SERVICE_ONLINEURL %>" 
-							type="textarea"
-						/>
-					</c:otherwise>
-				</c:choose>	
-			</aui:col>
-		</aui:row> --%>
 	</div>
 		
 	<div class="opencps-bound-wrapper pd20 mg-t-20 default-box-shadow">

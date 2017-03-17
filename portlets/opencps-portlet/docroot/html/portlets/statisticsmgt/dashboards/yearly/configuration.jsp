@@ -18,6 +18,7 @@
  */
 %>
 
+<%@page import="java.util.ArrayList"%>
 <%@page import="org.opencps.statisticsmgt.model.DossiersStatistics"%>
 <%@page import="com.liferay.portal.kernel.template.TemplateHandlerRegistryUtil"%>
 <%@page import="com.liferay.portal.kernel.util.Constants"%>
@@ -25,6 +26,34 @@
 <%@page import="org.opencps.util.PortletPropsValues"%>
 
 <%@ include file="init.jsp" %>
+
+<%
+	int[] fieldsIndexes = null;
+	if(fieldDatasShemas == null || fieldDatasShemas.isEmpty()){
+		fieldDatasShemas = new ArrayList<FieldDatasShema>();
+		FieldDatasShema fieldDatasShema1 = new FieldDatasShema(LanguageUtil.get(locale, "remaining-number"),"k1","remainingNumber");
+		FieldDatasShema fieldDatasShema2 = new FieldDatasShema(LanguageUtil.get(locale, "received-number"),"k2","receivedNumber");
+		FieldDatasShema fieldDatasShema3 = new FieldDatasShema(LanguageUtil.get(locale, "ontime-number"),"k3","ontimeNumber");
+		FieldDatasShema fieldDatasShema4 = new FieldDatasShema(LanguageUtil.get(locale, "overtime-number"),"k4","overtimeNumber");
+		FieldDatasShema fieldDatasShema5 = new FieldDatasShema(LanguageUtil.get(locale, "processing-number"),"k5","processingNumber");
+		FieldDatasShema fieldDatasShema6 = new FieldDatasShema(LanguageUtil.get(locale, "delaying-number"),"k6","delayingNumber");
+		
+		fieldDatasShemas.add(fieldDatasShema1);
+		fieldDatasShemas.add(fieldDatasShema2);
+		fieldDatasShemas.add(fieldDatasShema3);
+		fieldDatasShemas.add(fieldDatasShema4);
+		fieldDatasShemas.add(fieldDatasShema5);
+		fieldDatasShemas.add(fieldDatasShema6);
+		fieldsIndexes = new int[]{0};
+	}else{
+		
+		fieldsIndexes = new int[fieldDatasShemas.size()];
+		for(int f = 0; f < fieldDatasShemas.size(); f++){
+			fieldsIndexes[f] = f;
+		}
+	}
+	
+%>
 
 <liferay-portlet:actionURL var="configurationActionURL" portletConfiguration="true"/>
 
@@ -95,7 +124,40 @@
 				</aui:col>
 			</aui:fieldset>
 			
-			<aui:fieldset>
+			<aui:fieldset id="dynamicFormula">
+				<div class="formula-note">
+					remainingNumber, receivedNumber, receivedNumber, ontimeNumber, overtimeNumber, processingNumber, delayingNumber
+				</div>
+				<%
+					if(fieldsIndexes != null){
+						for(int f = 0; f < fieldsIndexes.length; f++){
+							int index = fieldsIndexes[f];
+							FieldDatasShema fieldDatasShema = fieldDatasShemas.get(f);
+							%>
+								<div class="lfr-form-row lfr-form-row-inline">
+									<div class="row-fields">
+										<aui:col width="40">
+											<aui:input label="field-label" name='<%= "fieldLabel" + index %>' id='<%= "fieldLabel" + index %>' type="text" value="<%=fieldDatasShema.getFieldLabel() %>"/>
+										</aui:col>
+										
+										<aui:col width="20">
+											<aui:input label="field-key" name='<%= "fieldKey" + index %>'  id='<%= "fieldKey" + index %>' type="text" value="<%=fieldDatasShema.getFieldKey() %>"/>							
+										</aui:col>
+										
+										<aui:col width="40">
+											<aui:input label="field-formula" name='<%= "fieldFormula" + index %>'  id='<%= "fieldFormula" + index %>' type="text" value="<%=fieldDatasShema.getFieldFomula() %>"/>
+										</aui:col>
+									</div>
+								</div>
+							<%
+						}
+					}
+				%>
+				
+				<aui:input name="fieldsIndexes" type="hidden" value="<%= StringUtil.merge(fieldsIndexes) %>" />
+			</aui:fieldset>
+			
+			<%-- <aui:fieldset>
 				<aui:col width="50">
 					<datamgt:ddr
 						cssClass="input100"
@@ -119,14 +181,14 @@
 						optionValueType="code"
 					/>
 				</aui:col>
-			</aui:fieldset>
+			</aui:fieldset> --%>
 		</liferay-ui:panel>
 	</liferay-ui:panel-container>
 
 	<aui:fieldset>
 		<div class="display-template">
 			<%
-				TemplateHandler templateHandler = TemplateHandlerRegistryUtil.getTemplateHandler(DossiersStatistics.class.getName());
+				TemplateHandler templateHandler = TemplateHandlerRegistryUtil.getTemplateHandler(DossiersStatistics.class.getName() + "#GENERAL");
 			%>
 		<liferay-ui:ddm-template-selector
 			classNameId="<%= PortalUtil.getClassNameId(templateHandler.getClassName()) %>"
@@ -140,3 +202,12 @@
 	
 	<aui:button type="submit" name="submit"></aui:button>
 </aui:form>
+<aui:script use="liferay-auto-fields">
+	var autoFields = new Liferay.AutoFields(
+		{
+			contentBox: '#<portlet:namespace/>dynamicFormula',
+			fieldIndexes: '<portlet:namespace />fieldsIndexes',
+			namespace: '<portlet:namespace />'
+		}
+	).render();
+</aui:script>

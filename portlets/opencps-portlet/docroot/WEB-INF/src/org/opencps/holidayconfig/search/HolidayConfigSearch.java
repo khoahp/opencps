@@ -41,7 +41,7 @@ public class HolidayConfigSearch extends SearchContainer<DictItem> {
 	static List<String> headerNames = new ArrayList<String>();
 	static Map<String, String> orderableHeaders = new HashMap<String, String>();
 	static {
-		headerNames.add("id");
+		headerNames.add("row-index");
 		headerNames.add("holiday-date");
 		headerNames.add("description");
 		headerNames.add("create-date");

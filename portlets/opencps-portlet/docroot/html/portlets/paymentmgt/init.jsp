@@ -23,13 +23,11 @@
 
 <%@ include file="/init.jsp" %>
 
-<%@page import="org.opencps.keypay.model.KeyPay"%>
 <%@page import="java.util.Locale"%>
 <%@page import="java.text.NumberFormat"%>
 <%@page import="java.util.HashMap"%>
 <%@page import="org.opencps.paymentmgt.service.PaymentConfigLocalServiceUtil"%>
 <%@page import="org.opencps.paymentmgt.model.PaymentConfig"%>
-<%@page import="org.opencps.keypay.security.HashFunction"%>
 <%@page import="java.util.Map"%>
 <%@page import="org.opencps.paymentmgt.util.PaymentMgtUtil"%>
 <%@page import="org.opencps.paymentmgt.service.PaymentFileLocalServiceUtil"%>

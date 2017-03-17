@@ -64,7 +64,7 @@
 
 <liferay-ui:header
 	backURL="<%= backURL %>"
-	title='back'
+	title='detail-dossier'
 />
 <div class="ocps-history-process-bound-navigator">
 

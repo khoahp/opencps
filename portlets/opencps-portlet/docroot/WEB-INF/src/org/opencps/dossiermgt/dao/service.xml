@@ -194,6 +194,10 @@
 			<finder-column name="serviceInfoId"/>
 			<finder-column name="groupId" />
 		</finder>
+        <finder name="G_SL" return-type="Collection">
+            <finder-column name="groupId"></finder-column>
+            <finder-column name="serviceLevel"></finder-column>
+        </finder>
 
 	</entity>
 	

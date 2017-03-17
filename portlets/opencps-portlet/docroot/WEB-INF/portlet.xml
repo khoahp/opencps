@@ -1127,7 +1127,11 @@
 		</portlet-class>
 		<init-param>
 			<name>view-template</name>
-			<value>/html/portlets/statisticsmgt/admin/view.jsp</value>
+			<value>/html/portlets/statisticsmgt/admin/statistics.jsp</value>
+		</init-param>
+		<init-param>
+			<name>template-path</name>
+			<value>/html/portlets/statisticsmgt/admin/</value>
 		</init-param>
 		<expiration-cache>0</expiration-cache>
 		<supports>
@@ -1234,7 +1238,7 @@
 	
 	<portlet>
 		<portlet-name>35</portlet-name>
-		<display-name>Tree Dashboard</display-name>
+		<display-name>Detail Dashboard</display-name>
 		<portlet-class>
 			org.opencps.statisticsmgt.dashboard.portlet.DashBoardPortlet
 		</portlet-class>
@@ -1271,9 +1275,46 @@
 		</security-role-ref>
 	</portlet>
 	 
+	<portlet>
+		<portlet-name>36</portlet-name>
+		<display-name>Service Dashboard</display-name>
+		<portlet-class>
+			org.opencps.statisticsmgt.dashboard.portlet.ServiceDashboardPortlet
+		</portlet-class>
+		<init-param>
+			<name>view-template</name>
+			<value>
+				/html/portlets/statisticsmgt/dashboards/service/view.jsp
+			</value>
+		</init-param>
+		<expiration-cache>0</expiration-cache>
+		<supports>
+			<mime-type>text/html</mime-type>
+			<portlet-mode>view</portlet-mode>
+		</supports>
+		<resource-bundle>content.Language_36</resource-bundle>
+		<portlet-info>
+			<title>Service Dashboard</title>
+			<short-title>36</short-title>
+			<keywords></keywords>
+		</portlet-info>
+		<security-role-ref>
+			<role-name>administrator</role-name>
+		</security-role-ref>
+		<security-role-ref>
+			<role-name>guest</role-name>
+		</security-role-ref>
+		<security-role-ref>
+			<role-name>power-user</role-name>
+		</security-role-ref>
+		<security-role-ref>
+			<role-name>user</role-name>
+		</security-role-ref>
+	</portlet>
 	<public-render-parameter>
 		<identifier>active</identifier>
 		<qname>active</qname>
 	</public-render-parameter>
+
 
 </portlet-app>

@@ -70,7 +70,7 @@
 				<p id='<portlet:namespace/>p-process'>
 					<aui:a href='<%="#" + renderResponse.getNamespace() + "process_line"%>'>
 						<i class="fa process"></i>
-						<%=LanguageUtil.get(pageContext, "process") %>
+						<%=LanguageUtil.get(pageContext, "process-qt") %>
 					</aui:a>
 				</p>
 				<p id='<portlet:namespace/>p-history'>

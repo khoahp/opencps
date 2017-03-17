@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+
+<html class="$root_css_class" dir="#language ("lang.dir")" lang="$w3c_language_id">
+
+<head>
+	<title>$the_title - $company_name</title>
+	
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	
+	<link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+
+	$theme.include($top_head_include)
+</head>
+
+<body class="$css_class opencps-theme ux mBody page-theme">
+	
+	$theme.include($body_top_include)
+	
+	#if ($is_signed_in && $permissionChecker.isOmniadmin())
+		#dockbar()
+	#end
+
+<div class="fds-theme">
+	<header id="banner" role="banner">
+		<nav id="navigation" class="topbar">
+			<div class="container">
+				<button type="button" class="navbar-toggle nav-top" data-toggle="collapse" data-target="#myTopbar">
+					<i class="fa fa-ellipsis-v"></i>
+				</button>
+				<div class="collapse navbar-collapse" id="myTopbar">
+					<ul class="nav navbar-nav navbar-left">
+						<li><i class="fa fa-phone"></i> (04) 6262 7617</li>
+						<li><i class="glyphicon glyphicon-phone-alt"></i> 1900 0311</li>
+						<li><i class="fa fa-map-marker"></i> Tầng 5 & 8, Tòa nhà VAPA, Số 4, Ngõ 3, Đường Tôn Thất Thuyết, Quận Cầu Giấy, Hà Nội</li>
+					</ul>
+					<ul class="nav navbar-nav navbar-right">
+					    <li><a href="https://www.facebook.com/FOSS-Development-Services-JSC-1591309497859811/?fref=ts"><i class="fa fa-facebook"></i></a></li>
+					    <li><a href="mailto:contact@fds.vn"><i class="fa fa-envelope"></i></a></li>
+					</ul>
+				</div>
+			</div>
+		</nav>
+
+		#if ($has_navigation || $is_signed_in)
+			#parse ("$full_templates_path/navigation_private_page.vm")
+		#end
+	</header>
+	
+	<article id="content">	
+		<div class="container-fluid">		
+			#if ($selectable)
+				$theme.include($content_include)
+			#else
+				$portletDisplay.recycle()
+	
+				$portletDisplay.setTitle($the_title)
+	
+				$theme.wrapPortlet("portlet.vm", $content_include)
+			#end
+		</div>
+	</article>
+	
+	<div class="pre-footer">
+		<div class="container">
+			<div class="row">
+				<div class="col-sm-5 col-xs-12 text-center">
+					<img src="$images_folder/logo-3.png">
+					<p>Công ty cổ phần</p>
+					<p>phát triển nguồn mở và dịch vụ FDS</p>
+				</div>
+				<div class="col-sm-1 hidden-xs"></div>
+				<div class="col-sm-6 col-xs-12">
+					<p><i class="fa fa-map-marker"></i> Tầng 5 & 8, Tòa nhà VAPA, Số 4, Ngõ 3, Đường Tôn Thất Thuyết, Quận Cầu Giấy, Hà Nội</p>
+					<p><i class="fa fa-phone"></i> (04) 6262 7617</p>
+					<p><i class="glyphicon glyphicon-phone-alt"></i> 1900 0311</p>
+					<p><i class="fa fa-envelope"></i> contact@fds.vn</p>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<footer id="footer" class="container-fluid">
+       	<div class="row">
+       		<div class="col-xs-12 text-center">
+       			<p>Bản quyền thuộc về Công ty Cổ phần Phát triển Nguồn mở và Dịch vụ FDS ©2016</p>
+       		</div>
+       	</div>
+	</footer>
+</div>
+
+<script src="$javascript_folder/jquery-2.2.4.min.js"></script>
+<script src="$javascript_folder/bootstrap.min.js"></script>
+<script src="$javascript_folder/owl.carousel.min.js"></script>
+<script src="$javascript_folder/jquery.nicescroll.js"></script>
+<script src="$javascript_folder/slick.min.js"></script>
+
+$theme.include($body_bottom_include)
+
+$theme.include($bottom_include)
+
+</body>
+
+</html>

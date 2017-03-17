@@ -83,7 +83,7 @@ public class ActionHistoryLocalServiceImpl
 	    long userId, long groupId, long companyId, long processOrderId,
 	    long processWorkflowId, Date actionDatetime, String stepName,
 	    String actionName, String actionNote, long actionUserId, int daysDoing,
-	    int daysDelay, String dossierStatus, long logId)
+	    long delayTime, String dossierStatus, long logId)
 	    throws SystemException {
 
 		long actionHistoryId = counterLocalService
@@ -126,7 +126,7 @@ public class ActionHistoryLocalServiceImpl
 			    .setActionUserId(actionUserId);
 		}
 
-		if (daysDelay >= 0) {
+		if (delayTime >= 0) {
 			actionHistory
 			    .setDaysDoing(daysDoing);
 		}
@@ -134,7 +134,7 @@ public class ActionHistoryLocalServiceImpl
 		actionHistory.setLogId(logId);
 
 		actionHistory
-		    .setDaysDelay(daysDelay);
+		    .setDaysDelay(delayTime);
 		return actionHistoryPersistence
 		    .update(actionHistory);
 	}
@@ -150,7 +150,7 @@ public class ActionHistoryLocalServiceImpl
 	public ActionHistory addActionHistory(
 	    long processOrderId, long processWorkflowId, Date actionDatetime,
 	    String stepName, String actionName, String actionNote,
-	    long actionUserId, int daysDoing, int daysDelay,
+	    long actionUserId, int daysDoing, int delayTime,
 	    ServiceContext serviceContext)
 	    throws SystemException {
 
@@ -193,7 +193,7 @@ public class ActionHistoryLocalServiceImpl
 		actionHistory
 		    .setDaysDoing(daysDoing);
 		actionHistory
-		    .setDaysDelay(daysDelay);
+		    .setDaysDelay(delayTime);
 		return actionHistoryPersistence
 		    .update(actionHistory);
 	}

@@ -42,11 +42,14 @@
 	String backURL = ParamUtil.getString(request, "backURL");
 	long paymentConfigId = ParamUtil.getLong(request, PaymentConfigDisplayTerms.PAYMENT_CONFIG_ID, 0L);
 	PaymentConfig c = null;
-	try {
-		c = PaymentConfigLocalServiceUtil.getPaymentConfig(paymentConfigId);
-	}
-	catch (NoSuchPaymentConfigException e) {
-		
+	
+	if(paymentConfigId > 0){
+		try {
+			c = PaymentConfigLocalServiceUtil.getPaymentConfig(paymentConfigId);
+		}
+		catch (NoSuchPaymentConfigException e) {
+			
+		}
 	}
 	List<WorkingUnit> wunits = WorkingUnitLocalServiceUtil.getWorkingUnits(scopeGroupId);
 	List<Organization> orgs = OrganizationLocalServiceUtil.getOrganizations(QueryUtil.ALL_POS,QueryUtil.ALL_POS);

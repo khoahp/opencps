@@ -136,11 +136,11 @@
 					<aui:col width="50">
 						<aui:row>
 							<span class="span4 bold">
-								<liferay-ui:message key="step-name" />
+								<liferay-ui:message key="action-name" />
 							</span>
 							
 							<span class="span8">
-								<%= dossierLog.getStepName() %>
+								<%= LanguageUtil.get(locale, dossierLog.getActionInfo()) %>
 							</span>
 						</aui:row>
 						
@@ -161,14 +161,14 @@
 							
 							<span class="span8">
 								<%
-									int dayDelay = 0;
+									String timeDelay = StringPool.BLANK;
 									ActionHistory actionHis = ProcessUtils.getActionHistoryByLogId(dossierLog.getDossierLogId());
 								
 									if (Validator.isNotNull(actionHis)) {
-										dayDelay = actionHis.getDaysDelay();
+										timeDelay = DateTimeUtil.convertTimemilisecondsToFormat(actionHis.getDaysDelay(), themeDisplay.getLocale()) ;
 									}
 								%>
-								<%= dayDelay %>
+								<%= timeDelay %>
 							</span>
 						</aui:row>
 					</aui:col>
@@ -183,15 +183,6 @@
 							</span>
 						</aui:row>
 					
-						<aui:row>
-							<span class="span4 bold">
-								<liferay-ui:message key="action-name" />
-							</span>
-							
-							<span class="span8">
-								<%= LanguageUtil.get(locale, dossierLog.getActionInfo()) %>
-							</span>
-						</aui:row>
 						
 						<aui:row>
 							<span class="span4 bold">

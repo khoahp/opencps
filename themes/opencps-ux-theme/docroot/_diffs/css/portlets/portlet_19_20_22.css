@@ -210,6 +210,13 @@
 .paymentUploadBTN input {
 	display: none;
 }
+.paymentUploadBTN .help-inline {
+    position: absolute;
+    width: 700px;
+    left: -275px;
+    bottom: -22px;
+    font-size: 11px;
+}
 .paymentUploadBTN .control-group, 
 .paymentUploadBTN label {
 	margin-bottom: 0;
@@ -456,7 +463,8 @@
 }
 .detail-right .info .date {
     margin-left: -130px;
-    position: absolute;
+    width: 95px;
+    float: left;
 }
 .detail-right .info {
     float: right;
@@ -470,7 +478,7 @@
 }
 .detail-right .date div,
 .detail-right .info div {
-    margin-bottom: 30px
+    margin-bottom: 45px
 }
 .detail-right .date div:last-child, 
 .detail-right .info div:last-child {

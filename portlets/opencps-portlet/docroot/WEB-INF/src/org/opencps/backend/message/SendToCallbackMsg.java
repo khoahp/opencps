@@ -195,13 +195,13 @@ public class SendToCallbackMsg {
     }
 
 	
-    public int getDaysDelay() {
+    public long getDaysDelay() {
     
     	return daysDelay;
     }
 
 	
-    public void setDaysDelay(int daysDelay) {
+    public void setDaysDelay(long daysDelay) {
     
     	this.daysDelay = daysDelay;
     }
@@ -231,7 +231,7 @@ public class SendToCallbackMsg {
 	protected String actionNote;
 	protected long actionUserId;
 	protected int daysDoing;
-	protected int daysDelay;
+	protected long daysDelay;
 	protected long logId;
 
 }

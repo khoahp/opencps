@@ -36,6 +36,8 @@
 <%
 	String redirectURL = ParamUtil.getString(request, "redirectURL");
 	
+	String backURL = ParamUtil.getString(request, "backURL");
+
 	ProcessWorkflow workflow = (ProcessWorkflow) request.getAttribute(WebKeys.WORKFLOW_ENTRY);
 	
 	long workflowId = workflow != null ? workflow.getProcessWorkflowId() : 0;
@@ -122,252 +124,265 @@
 	<portlet:param name="mvcPath" value='<%=templatePath + "assign_users.jsp" %>'/>
 </portlet:renderURL>
 
-<aui:form name="actionFm" method="POST" action="<%= updateActionURL %>">
 
-	<aui:model-context bean="<%= workflow %>" model="<%= ProcessWorkflow.class %>" />
+<liferay-ui:header
+	backURL="<%= backURL %>"
+	title='<%= (Validator.isNull(workflow)) ? "add-action" : "update-action" %>'
+/>
+
+<div class="opencps-bound-wrapper sub-screen-corner">
+
+	<aui:form name="actionFm" method="POST" action="<%= updateActionURL %>" cssClass="bg-white">
 	
-	<aui:input name="redirectURL" type="hidden" value="<%= redirectURL %>"/>
-	<aui:input name="returnURL" type="hidden" value="<%= currentURL %>"/>
-	
-	<aui:input name="<%= ServiceDisplayTerms.GROUP_ID %>" type="hidden" 
-		value="<%= scopeGroupId%>"/>
-	<aui:input name="<%= ServiceDisplayTerms.COMPANY_ID %>" type="hidden" 
-		value="<%= company.getCompanyId()%>"/>
+		<aui:model-context bean="<%= workflow %>" model="<%= ProcessWorkflow.class %>" />
 		
-	<aui:input name="serviceProcessId" type="hidden" 
-		value="<%= Validator.isNotNull(serviceProcess) ? serviceProcess.getPrimaryKey() : StringPool.BLANK %>"/>
-	
-	<aui:input name="processWorkflowId" type="hidden" 
-		value="<%= Validator.isNotNull(workflow) ? workflow.getProcessWorkflowId() : StringPool.BLANK %>"/>
-	
-	
-	<aui:row>
-		<aui:col width="50">
-			<aui:input name="actionName"></aui:input>
-		</aui:col>
-		<aui:col width="50">
-			<aui:select name="autoEvent">
-				<aui:option value=""> <liferay-ui:message key="no-event"/></aui:option>
-				<aui:option value="submit"> <liferay-ui:message key="submit"/></aui:option>
-				<aui:option value="onegate"> <liferay-ui:message key="onegate"/></aui:option>
-				<aui:option value="repair"> <liferay-ui:message key="repair"/></aui:option>
-				<aui:option value="change"> <liferay-ui:message key="change"/></aui:option>
-				<aui:option value="minutely"> <liferay-ui:message key="minutely"/></aui:option>
-				<aui:option value="5-minutely"> <liferay-ui:message key="5-minutely"/></aui:option>
-				<aui:option value="hourly"> <liferay-ui:message key="hourly"/></aui:option>
-				<aui:option value="daily"> <liferay-ui:message key="daily"/></aui:option>
-				<aui:option value="weekly"> <liferay-ui:message key="weekly"/></aui:option>
-				<aui:option value="monthly"> <liferay-ui:message key="monthly"/></aui:option>
-			</aui:select>
-		</aui:col>	
-	</aui:row>
-	<aui:row>
-		<aui:col width="50">
-			<aui:input name="preCondition" ></aui:input>
-		</aui:col>
-		<aui:col width="25">
-			<aui:input name="isMultipled"></aui:input>
-		</aui:col>
+		<aui:input name="redirectURL" type="hidden" value="<%= redirectURL %>"/>
+		<aui:input name="returnURL" type="hidden" value="<%= currentURL %>"/>
 		
-		<aui:col width="25">
-				<aui:input name="isFinishStep"></aui:input>
-		</aui:col>
-	</aui:row>
-
-	<aui:row>
-		<aui:col width="50">
-			<aui:select name="preProcessStepId">
-				<aui:option value="<%= 0 %>">
-					<liferay-ui:message key="start-step" />
-				</aui:option>
-				<%
-					for (ProcessStep step : stepAll) {
-				%>
-						<aui:option value="<%= step.getProcessStepId() %>"> <%= step.getStepName() %></aui:option>
-				<%
-					}
-				%>
-			</aui:select>
-		</aui:col>
-		<aui:col width="50">
-			<aui:select name="postProcessStepId">
-				<aui:option value="<%= 0 %>">
-					<liferay-ui:message key="end-step" />
-				</aui:option>
-				<%
-					for (ProcessStep step : stepAll) {
-				%>
-						<aui:option value="<%= step.getProcessStepId() %>"> <%= step.getStepName() %></aui:option>
-				<%
-					}
-				%>
-			</aui:select>	
-		</aui:col>	
-	</aui:row>
-
-	<aui:row>
-		<aui:col width="50">
-			<aui:input name="assignUser" type="checkbox" checked="<%= (workflow != null) ? workflow.getAssignUser() : false %>"></aui:input>
-			<div id='<%=renderResponse.getNamespace() + "actionUserBoundary"%>'>
-			<aui:select name="actionUserId" showEmptyOption="true" label="">
-				
-			</aui:select>
-			</div>
-		</aui:col>
-		<aui:col width="50">
-			<aui:input name="requestPayment" ></aui:input>
+		<aui:input name="<%= ServiceDisplayTerms.GROUP_ID %>" type="hidden" 
+			value="<%= scopeGroupId%>"/>
+		<aui:input name="<%= ServiceDisplayTerms.COMPANY_ID %>" type="hidden" 
+			value="<%= company.getCompanyId()%>"/>
 			
-			<aui:input name="paymentFee" label=""></aui:input>
-		</aui:col>	
-	</aui:row>
-
-	<aui:row>
-		<aui:col width="50">
-			<aui:input name="generateReceptionNo" ></aui:input>
-			
-			<aui:input name="receptionNoPattern" label=""></aui:input>
-		</aui:col>
-		<aui:col width="50">
-			<aui:input name="generateDeadline" ></aui:input>
-			
-			<aui:input name="deadlinePattern" label=""></aui:input>
-		</aui:col>	
-	</aui:row>
-	
-	<aui:row>
-		<aui:col width="50">
-			<aui:input name="actionCode" />			
-		</aui:col>
-	</aui:row>
-	<label class="bold"><liferay-ui:message key="results-values"/></label>
-	
-	<div id="workflow-output">
-		<%
-			for (int i = 0; i < outputIndexs.length; i++) {
-				int outputIndex = outputIndexs[i];
-				
-				WorkflowOutput output = workflowOutputs.get(i);
-		%>
-			<div class="lfr-form-row lfr-form-row-inline">
-				<div class="row-fields">
-					<aui:input name='<%= "workflowOutputId" + outputIndex %>' type="hidden" value="<%= output.getWorkflowOutputId() %>"/>
-					<aui:input name='<%="wfOutputPattern" + outputIndex %>' id='<%="wfOutputPattern" + outputIndex %>' type="text" value="<%=output.getPattern() %>" label="" placeholder="pattern"/>
-					<aui:select id='<%= "dossierPartId" + outputIndex %>' inlineField="<%= true %>" name='<%= "dossierPartId" + outputIndex %>' label="" showEmptyOption="true">
-						<%							
-							for (DossierPart dossier : dossiersResults) {
-						%>
-								<aui:option selected="<%=  Validator.equals(output.getDossierPartId(), dossier.getDossierpartId()) %>" value="<%= dossier.getDossierpartId() %>"><%= dossier.getPartName() %></aui:option>
-						<%
-							}
-						%>
-					</aui:select>
-
-					<aui:input checked="<%= output.getRequired() %>" fieldParam='<%= "required" + outputIndex %>' id='<%= "required" + outputIndex %>' label="required" inlineField="<%= true %>" name='<%= "required" + outputIndex %>' type="checkbox"/>
-					<aui:input checked="<%= output.getEsign() %>" fieldParam='<%= "esign" + outputIndex %>' id='<%= "esign" + outputIndex %>' label="esign" inlineField="<%= true %>" name='<%= "esign" + outputIndex %>' type="checkbox"/>
-					<aui:input checked="<%= output.getPostback() %>" fieldParam='<%= "postback" + outputIndex %>' id='<%= "postback" + outputIndex %>' label="postback" inlineField="<%= true %>" name='<%= "postback" + outputIndex %>' type="checkbox"/>
-				</div>
-			</div>
-			
-		<%
-			}
-		%>
-	
-	</div>
-
-	<aui:script use="liferay-auto-fields">
-		new Liferay.AutoFields(
-			{
-				contentBox: '#workflow-output',
-				fieldIndexes: '<portlet:namespace />outputIndexs',
-				namespace: '<portlet:namespace />'
-			}
-		).render();
+		<aui:input name="serviceProcessId" type="hidden" 
+			value="<%= Validator.isNotNull(serviceProcess) ? serviceProcess.getPrimaryKey() : StringPool.BLANK %>"/>
 		
-		AUI().ready('aui-base','liferay-portlet-url','aui-io', function(A){
-			var postProcessStep = A.one('#<portlet:namespace/>postProcessStepId');
-			var workflowIdReq = '<%=workflowId%>';
-			if(postProcessStep){
-				<portlet:namespace/>getAssignUsers(postProcessStep.val(), workflowIdReq);
-				postProcessStep.on('change', function(){
-					var postProcessStepId = postProcessStep.val();
-					<portlet:namespace/>getAssignUsers(postProcessStepId, workflowIdReq);
-				});
-			}
-		});
+		<aui:input name="processWorkflowId" type="hidden" 
+			value="<%= Validator.isNotNull(workflow) ? workflow.getProcessWorkflowId() : StringPool.BLANK %>"/>
 		
-		Liferay.provide(window, '<portlet:namespace/>getAssignUsers', function(postProcessStepId, workflowIdReq) {
-
-			var A = AUI();
-			var actionUserBoundary = A.one('#<portlet:namespace/>actionUserBoundary');
-			var url = '<%= getAssignUsersURL.toString() %>';
-			if(parseInt(postProcessStepId) > 0){
-				A.io.request(
-					url,
-					{
-						dataType: 'json',
-						data: {
-							'<portlet:namespace/>processStepId': postProcessStepId,
-							'<portlet:namespace/>workflowId': workflowIdReq
-						},
-						on: {
-							success: function(event, id, obj) {
-								var instance = this;
-								var res = instance.get('responseData');
-								actionUserBoundary.empty();
-								actionUserBoundary.append(res);
-							},
-						    error: function(){}
+		
+		<aui:row>
+			<aui:col width="50">
+				<aui:input name="actionName"></aui:input>
+			</aui:col>
+			<aui:col width="50">
+				<aui:select name="autoEvent">
+					<aui:option value=""> <liferay-ui:message key="no-event"/></aui:option>
+					<aui:option value="submit"> <liferay-ui:message key="submit"/></aui:option>
+					<aui:option value="onegate"> <liferay-ui:message key="onegate"/></aui:option>
+					<aui:option value="repair"> <liferay-ui:message key="repair"/></aui:option>
+					<aui:option value="change"> <liferay-ui:message key="change"/></aui:option>
+					<aui:option value="minutely"> <liferay-ui:message key="minutely"/></aui:option>
+					<aui:option value="5-minutely"> <liferay-ui:message key="5-minutely"/></aui:option>
+					<aui:option value="hourly"> <liferay-ui:message key="hourly"/></aui:option>
+					<aui:option value="daily"> <liferay-ui:message key="daily"/></aui:option>
+					<aui:option value="weekly"> <liferay-ui:message key="weekly"/></aui:option>
+					<aui:option value="monthly"> <liferay-ui:message key="monthly"/></aui:option>
+				</aui:select>
+			</aui:col>	
+		</aui:row>
+		<aui:row>
+			<aui:col width="50">
+				<aui:input name="preCondition" ></aui:input>
+			</aui:col>
+			<aui:col width="25">
+				<aui:input name="isMultipled"></aui:input>
+			</aui:col>
+			
+			<aui:col width="25">
+					<aui:input name="isFinishStep"></aui:input>
+			</aui:col>
+		</aui:row>
+	
+		<aui:row>
+			<aui:col width="50">
+				<aui:select name="preProcessStepId">
+					<aui:option value="<%= 0 %>">
+						<liferay-ui:message key="start-step" />
+					</aui:option>
+					<%
+						for (ProcessStep step : stepAll) {
+					%>
+							<aui:option value="<%= step.getProcessStepId() %>"> <%= step.getStepName() %></aui:option>
+					<%
 						}
-					}
-				);
-			}
-			
-		},['aui-base','liferay-portlet-url','aui-io']);
-	</aui:script>
-
-	<aui:button-row>
-		<aui:button type="submit" value="<%= Validator.isNotNull(workflow) ? Constants.ADD : Constants.UPDATE %>"/>
-		<aui:button type="cancel" name="cencel" />
-	</aui:button-row>
+					%>
+				</aui:select>
+			</aui:col>
+			<aui:col width="50">
+				<aui:select name="postProcessStepId">
+					<aui:option value="<%= 0 %>">
+						<liferay-ui:message key="end-step" />
+					</aui:option>
+					<%
+						for (ProcessStep step : stepAll) {
+					%>
+							<aui:option value="<%= step.getProcessStepId() %>"> <%= step.getStepName() %></aui:option>
+					<%
+						}
+					%>
+				</aui:select>	
+			</aui:col>	
+		</aui:row>
 	
-</aui:form>
-
-<portlet:actionURL var="updateRequiedActionNoteURL" name="updateRequiedActionNote" />
-
-<aui:form action="<%=updateRequiedActionNoteURL.toString() %>" method="post" name="updateRequiedActionNoteFm">
-	<liferay-ui:panel-container 
-		id="requiedActionNotePanelContainer" 
-	>
-		<liferay-ui:panel 
-			id="requiedActionNotePanel" 
-			title="update-requied-process-action-note"
-		>
-			<aui:input name="returnURL" type="hidden" value="<%= currentURL %>"/>
-			<aui:input name="processWorkflowId" type="hidden" 
-				value="<%= Validator.isNotNull(workflow) ? workflow.getProcessWorkflowId() : StringPool.BLANK %>"
-			/>
-			
+		<aui:row>
+			<aui:col width="50">
+				<aui:input name="assignUser" type="checkbox" checked="<%= (workflow != null) ? workflow.getAssignUser() : false %>"></aui:input>
+				<div id='<%=renderResponse.getNamespace() + "actionUserBoundary"%>'>
+				<aui:select name="actionUserId" showEmptyOption="true" label="">
+					
+				</aui:select>
+				</div>
+			</aui:col>
+			<aui:col width="50">
+				<aui:input name="requestPayment" ></aui:input>
+				
+				<aui:input name="paymentFee" label=""></aui:input>
+			</aui:col>	
+		</aui:row>
+	
+		<aui:row>
+			<aui:col width="50">
+				<aui:input name="generateReceptionNo" ></aui:input>
+				
+				<aui:input name="receptionNoPattern" label=""></aui:input>
+			</aui:col>
+			<aui:col width="50">
+				<aui:input name="generateDeadline" ></aui:input>
+				
+				<aui:input name="deadlinePattern" label=""></aui:input>
+			</aui:col>	
+		</aui:row>
+		
+		<aui:row>
+			<aui:col width="50">
+				<aui:input name="actionCode" />			
+			</aui:col>
+		</aui:row>
+		<label class="bold"><liferay-ui:message key="results-values"/></label>
+		
+		<div id="workflow-output">
 			<%
-				ExpandoValue requiedActionNote = null;
-				try {
-					requiedActionNote = 
-							ExpandoValueLocalServiceUtil.getValue(
-								themeDisplay.getCompanyId(), 
-								ClassNameLocalServiceUtil.getClassNameId(ProcessStep.class.getName()), 
-								ProcessStep.class.getName(), 
-								"requiedProcessActionNote", 
-								processWorkflowId);
-				} catch (Exception e){
-					//
+				for (int i = 0; i < outputIndexs.length; i++) {
+					int outputIndex = outputIndexs[i];
+					
+					WorkflowOutput output = workflowOutputs.get(i);
+			%>
+				<div class="lfr-form-row lfr-form-row-inline">
+					<div class="row-fields">
+						<aui:input name='<%= "workflowOutputId" + outputIndex %>' type="hidden" value="<%= output.getWorkflowOutputId() %>"/>
+						<aui:input name='<%="wfOutputPattern" + outputIndex %>' id='<%="wfOutputPattern" + outputIndex %>' type="text" value="<%=output.getPattern() %>" label="" placeholder="pattern"/>
+						<aui:select id='<%= "dossierPartId" + outputIndex %>' inlineField="<%= true %>" name='<%= "dossierPartId" + outputIndex %>' label="" showEmptyOption="true">
+							<%							
+								for (DossierPart dossier : dossiersResults) {
+							%>
+									<aui:option selected="<%=  Validator.equals(output.getDossierPartId(), dossier.getDossierpartId()) %>" value="<%= dossier.getDossierpartId() %>"><%= dossier.getPartName() %></aui:option>
+							<%
+								}
+							%>
+						</aui:select>
+	
+						<aui:input checked="<%= output.getRequired() %>" fieldParam='<%= "required" + outputIndex %>' id='<%= "required" + outputIndex %>' label="required" inlineField="<%= true %>" name='<%= "required" + outputIndex %>' type="checkbox"/>
+						<aui:input checked="<%= output.getEsign() %>" fieldParam='<%= "esign" + outputIndex %>' id='<%= "esign" + outputIndex %>' label="esign" inlineField="<%= true %>" name='<%= "esign" + outputIndex %>' type="checkbox"/>
+						<aui:input checked="<%= output.getPostback() %>" fieldParam='<%= "postback" + outputIndex %>' id='<%= "postback" + outputIndex %>' label="postback" inlineField="<%= true %>" name='<%= "postback" + outputIndex %>' type="checkbox"/>
+					</div>
+				</div>
+				
+			<%
 				}
 			%>
+		
+		</div>
+	
+		<aui:script use="liferay-auto-fields">
+			new Liferay.AutoFields(
+				{
+					contentBox: '#workflow-output',
+					fieldIndexes: '<portlet:namespace />outputIndexs',
+					namespace: '<portlet:namespace />'
+				}
+			).render();
 			
-			<aui:input name="requiedActionNote" type="checkbox" 
-				checked="<%=requiedActionNote != null ? requiedActionNote.getBoolean() : false %>"
-			/>
+			AUI().ready('aui-base','liferay-portlet-url','aui-io', function(A){
+				var postProcessStep = A.one('#<portlet:namespace/>postProcessStepId');
+				var workflowIdReq = '<%=workflowId%>';
+				if(postProcessStep){
+					<portlet:namespace/>getAssignUsers(postProcessStep.val(), workflowIdReq);
+					postProcessStep.on('change', function(){
+						var postProcessStepId = postProcessStep.val();
+						<portlet:namespace/>getAssignUsers(postProcessStepId, workflowIdReq);
+					});
+				}
+			});
 			
-			<aui:button type="submit" name="Save" value="save"/>
-		</liferay-ui:panel>
-	</liferay-ui:panel-container>
-</aui:form>
+			Liferay.provide(window, '<portlet:namespace/>getAssignUsers', function(postProcessStepId, workflowIdReq) {
+	
+				var A = AUI();
+				var actionUserBoundary = A.one('#<portlet:namespace/>actionUserBoundary');
+				var url = '<%= getAssignUsersURL.toString() %>';
+				if(parseInt(postProcessStepId) > 0){
+					A.io.request(
+						url,
+						{
+							dataType: 'json',
+							data: {
+								'<portlet:namespace/>processStepId': postProcessStepId,
+								'<portlet:namespace/>workflowId': workflowIdReq
+							},
+							on: {
+								success: function(event, id, obj) {
+									var instance = this;
+									var res = instance.get('responseData');
+									actionUserBoundary.empty();
+									actionUserBoundary.append(res);
+								},
+							    error: function(){}
+							}
+						}
+					);
+				}
+				
+			},['aui-base','liferay-portlet-url','aui-io']);
+		</aui:script>
+		
+		<aui:row cssClass="row-fluid">
+			<aui:button-row>
+				<aui:button type="submit" value="<%= Validator.isNotNull(workflow) ? Constants.ADD : Constants.UPDATE %>"/>
+				<aui:button type="cancel" name="cencel" />
+			</aui:button-row>
+		</aui:row>
+	</aui:form>
+</div>
+
+<div class="opencps-bound-wrapper sub-screen-corner" style="margin-top: 20px;">
+	
+	<portlet:actionURL var="updateRequiedActionNoteURL" name="updateRequiedActionNote" />
+	
+	<aui:form action="<%=updateRequiedActionNoteURL.toString() %>" method="post" name="updateRequiedActionNoteFm">
+		<liferay-ui:panel-container 
+			id="requiedActionNotePanelContainer" 
+		>
+			<liferay-ui:panel 
+				id="requiedActionNotePanel" 
+				title="update-requied-process-action-note"
+			>
+				<aui:input name="returnURL" type="hidden" value="<%= currentURL %>"/>
+				<aui:input name="processWorkflowId" type="hidden" 
+					value="<%= Validator.isNotNull(workflow) ? workflow.getProcessWorkflowId() : StringPool.BLANK %>"
+				/>
+				
+				<%
+					ExpandoValue requiedActionNote = null;
+					try {
+						requiedActionNote = 
+								ExpandoValueLocalServiceUtil.getValue(
+									themeDisplay.getCompanyId(), 
+									ClassNameLocalServiceUtil.getClassNameId(ProcessStep.class.getName()), 
+									ProcessStep.class.getName(), 
+									"requiedProcessActionNote", 
+									processWorkflowId);
+					} catch (Exception e){
+						//
+					}
+				%>
+				
+				<aui:input name="requiedActionNote" type="checkbox" 
+					checked="<%=requiedActionNote != null ? requiedActionNote.getBoolean() : false %>"
+				/>
+				
+				<aui:button type="submit" name="Save" value="save"/>
+			</liferay-ui:panel>
+		</liferay-ui:panel-container>
+	</aui:form>
+</div>
 

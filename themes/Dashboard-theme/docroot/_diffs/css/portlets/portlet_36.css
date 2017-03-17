@@ -1,0 +1,47 @@
+.portlet-boundary_36_WAR_opencpsportlet_ {
+	background-color: white;
+	position: relative;
+	margin-bottom: 20px;
+}
+.portlet-boundary_36_WAR_opencpsportlet_:after {
+	content: "";
+	position: absolute;
+	left: 0;
+	height: 1px;
+    width: 100%;
+    background-color: #30a5ff;
+    bottom: -10px;
+}
+.portlet-boundary_36_WAR_opencpsportlet_ .dashboard-wrapper {
+	line-height: 35px;
+}
+.portlet-boundary_36_WAR_opencpsportlet_ .service-config-label {
+	text-transform: uppercase;
+	color: white;
+	background-color: #30a5ff;
+	padding: 0 12px;
+	position: relative;
+	max-width: 190px;
+	margin-right: 75px;
+}
+.portlet-boundary_36_WAR_opencpsportlet_ .service-config-label:after {
+	content: "";
+	position: absolute;
+	top: 0;
+	right: -10px;
+	width: 0;
+	height: 0;
+	border-top: 18px solid transparent;
+	border-left: 10px solid #30a5ff;
+	border-bottom: 17px solid transparent;
+}
+.portlet-boundary_36_WAR_opencpsportlet_ .total-count {
+	font: 24px 'Roboto-Bold';
+	margin: 0 0 0 15px;
+}
+.portlet-boundary_36_WAR_opencpsportlet_ .service-config-count {
+	display: -webkit-flex;
+	display: flex;
+	-webkit-align-items: center;
+	align-items: center;
+}

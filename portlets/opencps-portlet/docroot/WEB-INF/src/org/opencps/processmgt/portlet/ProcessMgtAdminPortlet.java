@@ -425,7 +425,7 @@ public class ProcessMgtAdminPortlet extends MVCPortlet {
 		String dossierSubStatus =
 					    ParamUtil.getString(actionRequest, "dossierSubStatus");
 
-		int daysDuration = ParamUtil.getInteger(actionRequest, "daysDuration");
+		String daysDuration = ParamUtil.getString(actionRequest, "daysDuration");
 		int processStepNo = ParamUtil.getInteger(actionRequest, "processStepNo");
 
 		long referenceDossierPartId =

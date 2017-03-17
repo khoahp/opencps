@@ -37,6 +37,8 @@
 
 <%
 	String redirectURL = ParamUtil.getString(request, "redirectURL");
+
+	String backURL = ParamUtil.getString(request, "backURL");
 	
 	ProcessStep step = (ProcessStep) request.getAttribute(WebKeys.PROCESS_STEP_ENTRY);
 	
@@ -170,203 +172,213 @@
 	}
 %>
 
+<liferay-ui:header
+	backURL="<%= backURL %>"
+	title='<%= (Validator.isNull(step)) ? "add-step" : "update-step" %>'
+/>
+
 <portlet:actionURL name="updateProcessStep" var="updateProcessStepURL" windowState="<%= LiferayWindowState.EXCLUSIVE.toString()%>"/>
 
-<aui:form name="processStepFm" method="POST" action="<%= updateProcessStepURL %>">
-
-	<aui:model-context bean="<%= step %>" model="<%= ProcessStep.class %>" />
+<div class="opencps-bound-wrapper sub-screen-corner">
+	<aui:form name="processStepFm" method="POST" action="<%= updateProcessStepURL %>" cssClass="bg-white">
 	
-	<aui:input name="redirectURL" type="hidden" value="<%= redirectURL %>"/>
-	<aui:input name="returnURL" type="hidden" value="<%= currentURL %>"/>
-	
-	<aui:input name="<%= ServiceDisplayTerms.GROUP_ID %>" type="hidden" 
-		value="<%= scopeGroupId%>"/>
-	<aui:input name="<%= ServiceDisplayTerms.COMPANY_ID %>" type="hidden" 
-		value="<%= company.getCompanyId()%>"/>
+		<aui:model-context bean="<%= step %>" model="<%= ProcessStep.class %>" />
 		
-	<aui:input name="serviceProcessId" type="hidden" 
-		value="<%= Validator.isNotNull(serviceProcess) ? serviceProcess.getPrimaryKey() : StringPool.BLANK %>"/>
-	
-	<aui:input name="processStepId" type="hidden" 
-		value="<%= Validator.isNotNull(step) ? step.getProcessStepId() : StringPool.BLANK %>"/>
-
-	<aui:row>
-		<aui:col width="50">
-			<liferay-ui:message key="step-name"/>
-			<aui:input name="stepName" inlineLabel="false" label="" inlineField="false"></aui:input>
-		</aui:col>
-		<aui:col width="50">
-			<liferay-ui:message key="sequence-no"/>
-			<aui:input name="sequenceNo" inlineLabel="false" label=""></aui:input>
-		</aui:col>
-	</aui:row>
-	<aui:row>
-		<aui:col width="50">
-			
-			<datamgt:ddr 
-				depthLevel="1" 
-				dictCollectionCode="DOSSIER_STATUS" 
-				showLabel="<%=true%>"
-				emptyOptionLabels="dossier-status"
-				itemsEmptyOption="true"
-				itemNames="dossierStatus"
-				selectedItems="<%=dictStatusCode%>"
-				optionValueType="code"
-			/>
-			
-		</aui:col>
+		<aui:input name="redirectURL" type="hidden" value="<%= redirectURL %>"/>
+		<aui:input name="returnURL" type="hidden" value="<%= currentURL %>"/>
 		
-		<aui:col width="50">
+		<aui:input name="<%= ServiceDisplayTerms.GROUP_ID %>" type="hidden" 
+			value="<%= scopeGroupId%>"/>
+		<aui:input name="<%= ServiceDisplayTerms.COMPANY_ID %>" type="hidden" 
+			value="<%= company.getCompanyId()%>"/>
 			
-			<datamgt:ddr 
-				depthLevel="1" 
-				dictCollectionCode="DOSSIER_SUB_STATUS" 
-				showLabel="<%=true%>"
-				emptyOptionLabels="dossier-sub-status"
-				itemsEmptyOption="true"
-				itemNames="dossierSubStatus"
-				selectedItems="<%=dictSubStatusCode%>"
-				optionValueType="code"
-			/>
+		<aui:input name="serviceProcessId" type="hidden" 
+			value="<%= Validator.isNotNull(serviceProcess) ? serviceProcess.getPrimaryKey() : StringPool.BLANK %>"/>
+		
+		<aui:input name="processStepId" type="hidden" 
+			value="<%= Validator.isNotNull(step) ? step.getProcessStepId() : StringPool.BLANK %>"/>
+	
+		<aui:row>
+			<aui:col width="50">
+				<label><liferay-ui:message key="step-name"/></label>
+				<aui:input name="stepName" inlineLabel="false" label="" inlineField="false"></aui:input>
+			</aui:col>
+			<aui:col width="50">
+				<label><liferay-ui:message key="sequence-no"/></label>
+				<aui:input name="sequenceNo" inlineLabel="false" label=""></aui:input>
+			</aui:col>
+		</aui:row>
+		<aui:row>
+			<aui:col width="50">
+				
+				<datamgt:ddr 
+					depthLevel="1" 
+					dictCollectionCode="DOSSIER_STATUS" 
+					showLabel="<%=true%>"
+					emptyOptionLabels="dossier-status"
+					itemsEmptyOption="true"
+					itemNames="dossierStatus"
+					selectedItems="<%=dictStatusCode%>"
+					optionValueType="code"
+				/>
+				
+			</aui:col>
 			
-		</aui:col>
-
-	</aui:row>
-	
-	<aui:row>
-		<aui:col width="50">
-			<aui:input name="processStepNo" inlineField="false"/>		
-		</aui:col>
-		<aui:col width="50">
-			<aui:input name="daysDuration" inlineField="false"/>		
-		</aui:col>
-	</aui:row>
-	
-	<aui:row>
-		<aui:col width="50">
-			<aui:select name="referenceDossierPartId" showEmptyOption="true">
-				<%
-					for (DossierPart dossier : dossiers) {
-				%>
-					<aui:option value="<%= dossier.getDossierpartId() %>">
-						<%= dossier.getPartName() %>
-					</aui:option>
-				<%
-					}
-				%>
-			</aui:select>
-		</aui:col>
-		<aui:col width="50">
-			&nbsp;
-		</aui:col>
-	</aui:row>
-	
-	<label class="bold"><liferay-ui:message key="dossier-part"/></label>
-
-	<div id="dossier-part">
-		<%
-			for (int i = 0; i < dossierIndexs.length; i++) {
+			<aui:col width="50">
 				
-				int dossierIndex = dossierIndexs[i];
+				<datamgt:ddr 
+					depthLevel="1" 
+					dictCollectionCode="DOSSIER_SUB_STATUS" 
+					showLabel="<%=true%>"
+					emptyOptionLabels="dossier-sub-status"
+					itemsEmptyOption="true"
+					itemNames="dossierSubStatus"
+					selectedItems="<%=dictSubStatusCode%>"
+					optionValueType="code"
+				/>
 				
-				ProcessStepDossierPart stepDossier = dossierSel.get(i);
-
-		%>
-			<div class="lfr-form-row lfr-form-row-inline">
-				<div class="row-fields">
-					<aui:select id='<%= "dossierPart" + dossierIndex %>' inlineField="<%= true %>" label="" name='<%= "dossierPart" + dossierIndex %>' showEmptyOption="true">
-						<%
-							for (DossierPart dossier : dossiersResults) {
-						%>
-							<aui:option selected="<%=  Validator.equals(stepDossier.getDossierPartId(), dossier.getDossierpartId())  %>" value="<%= dossier.getDossierpartId() %>">
-								<%= dossier.getPartName() %>
-							</aui:option>
-						<%
-							}
-						%>
-					</aui:select>
-					<aui:input checked="<%= stepDossier.getReadOnly() %>" 
-					fieldParam='<%= "readOnly" + dossierIndex %>' 
-					id='<%= "readOnly" + dossierIndex %>' 
-					label="read-only" inlineField="<%= true %>" 
-					name='<%= "partReadOnly" + dossierIndex %>' 
-					type="checkbox"/>
+			</aui:col>
+	
+		</aui:row>
+		
+		<aui:row>
+			<aui:col width="50">
+				<aui:input name="processStepNo" inlineField="false"/>		
+			</aui:col>
+			<aui:col width="50">
+				<aui:input name="daysDuration" inlineField="false"/>		
+			</aui:col>
+		</aui:row>
+		
+		<aui:row>
+			<aui:col width="50">
+				<aui:select name="referenceDossierPartId" showEmptyOption="true">
+					<%
+						for (DossierPart dossier : dossiers) {
+					%>
+						<aui:option value="<%= dossier.getDossierpartId() %>">
+							<%= dossier.getPartName() %>
+						</aui:option>
+					<%
+						}
+					%>
+				</aui:select>
+			</aui:col>
+			<aui:col width="50">
+				&nbsp;
+			</aui:col>
+		</aui:row>
+		
+		<label class="bold"><liferay-ui:message key="dossier-part"/></label>
+	
+		<div id="dossier-part">
+			<%
+				for (int i = 0; i < dossierIndexs.length; i++) {
+					
+					int dossierIndex = dossierIndexs[i];
+					
+					ProcessStepDossierPart stepDossier = dossierSel.get(i);
+	
+			%>
+				<div class="lfr-form-row lfr-form-row-inline">
+					<div class="row-fields">
+						<aui:select id='<%= "dossierPart" + dossierIndex %>' inlineField="<%= true %>" label="" name='<%= "dossierPart" + dossierIndex %>' showEmptyOption="true">
+							<%
+								for (DossierPart dossier : dossiersResults) {
+							%>
+								<aui:option selected="<%=  Validator.equals(stepDossier.getDossierPartId(), dossier.getDossierpartId())  %>" value="<%= dossier.getDossierpartId() %>">
+									<%= dossier.getPartName() %>
+								</aui:option>
+							<%
+								}
+							%>
+						</aui:select>
+						<aui:input checked="<%= stepDossier.getReadOnly() %>" 
+						fieldParam='<%= "readOnly" + dossierIndex %>' 
+						id='<%= "readOnly" + dossierIndex %>' 
+						label="read-only" inlineField="<%= true %>" 
+						name='<%= "partReadOnly" + dossierIndex %>' 
+						type="checkbox"/>
+					</div>
 				</div>
-			</div>
+			
+			<%
+				}
+			%>
+		</div>
 		
-		<%
-			}
-		%>
-	</div>
+		<label class="bold"><liferay-ui:message key="result-action"/></label>
+		
+		<div id="step-allowance">
+		
+			<%
+				for (int i = 0; i < stepAllowanceIndexs.length; i++) {
+					int stepAllowanceIndex = stepAllowanceIndexs[i];
+					
+					StepAllowance stepAlo = stepAllowances.get(i);
+			%>
+		
+				<div class="lfr-form-row lfr-form-row-inline">
+					<div class="row-fields">
+						<aui:input name='<%= "stepAllowanceId" + stepAllowanceIndex %>' type="hidden" value="<%= stepAlo.getStepAllowanceId() %>"/>
+						<aui:select id='<%= "roleId" + stepAllowanceIndex %>' inlineField="<%= true %>" name='<%= "roleId" + stepAllowanceIndex %>' label="" showEmptyOption="true">
+							<%
+								List<Role> roles = ProcessUtils.getRoles(renderRequest);
+								
+								for (Role role : roles) {
+							%>
+									<aui:option selected="<%= stepAllowances.get(i).getRoleId() == role.getRoleId() %>" value="<%= role.getPrimaryKey() %>"><%= role.getName() %></aui:option>
+							<%
+								}
+							%>
+						</aui:select>
 	
-	<label class="bold"><liferay-ui:message key="result-action"/></label>
-	
-	<div id="step-allowance">
-	
-		<%
-			for (int i = 0; i < stepAllowanceIndexs.length; i++) {
-				int stepAllowanceIndex = stepAllowanceIndexs[i];
-				
-				StepAllowance stepAlo = stepAllowances.get(i);
-		%>
-	
-			<div class="lfr-form-row lfr-form-row-inline">
-				<div class="row-fields">
-					<aui:input name='<%= "stepAllowanceId" + stepAllowanceIndex %>' type="hidden" value="<%= stepAlo.getStepAllowanceId() %>"/>
-					<aui:select id='<%= "roleId" + stepAllowanceIndex %>' inlineField="<%= true %>" name='<%= "roleId" + stepAllowanceIndex %>' label="" showEmptyOption="true">
-						<%
-							List<Role> roles = ProcessUtils.getRoles(renderRequest);
-							
-							for (Role role : roles) {
-						%>
-								<aui:option selected="<%= stepAllowances.get(i).getRoleId() == role.getRoleId() %>" value="<%= role.getPrimaryKey() %>"><%= role.getName() %></aui:option>
-						<%
-							}
-						%>
-					</aui:select>
-
-					<aui:input checked="<%= stepAllowances.get(i).getReadOnly() %>" fieldParam='<%= "readOnly" + stepAllowanceIndex %>' id='<%= "readOnly" + stepAllowanceIndex %>' label="read-only" inlineField="<%= true %>" name='<%= "readOnly" + stepAllowanceIndex %>' type="checkbox"/>
+						<aui:input checked="<%= stepAllowances.get(i).getReadOnly() %>" fieldParam='<%= "readOnly" + stepAllowanceIndex %>' id='<%= "readOnly" + stepAllowanceIndex %>' label="read-only" inlineField="<%= true %>" name='<%= "readOnly" + stepAllowanceIndex %>' type="checkbox"/>
+					</div>
 				</div>
-			</div>
-		
-		<%
-			}
-		%>
-	</div>
-		
-	<aui:script use="liferay-auto-fields">
-		new Liferay.AutoFields(
-			{
-				contentBox: '#step-allowance',
-				fieldIndexes: '<portlet:namespace />stepAllowanceIndexs',
-				namespace: '<portlet:namespace />'
-			}
-		).render();
-	</aui:script>
-
+			
+			<%
+				}
+			%>
+		</div>
+			
+		<aui:script use="liferay-auto-fields">
+			new Liferay.AutoFields(
+				{
+					contentBox: '#step-allowance',
+					fieldIndexes: '<portlet:namespace />stepAllowanceIndexs',
+					namespace: '<portlet:namespace />'
+				}
+			).render();
+		</aui:script>
 	
-	<aui:script use="liferay-auto-fields">
-		new Liferay.AutoFields(
-			{
-				contentBox: '#dossier-part',
-				fieldIndexes: '<portlet:namespace />dossierIndexs',
-				namespace: '<portlet:namespace />'
-			}
-		).render();
-	</aui:script>
-
-	<aui:row>
-		<aui:col width="100">
-			<aui:input name="externalAppUrl" cssClass="input100"/>
-		</aui:col>
-	</aui:row>
-
-	<aui:button-row>
-		<aui:button name="save" type="submit" value="<%= Validator.isNotNull(step) ? Constants.ADD : Constants.UPDATE %>"/>
-		<aui:button type="cancel" name="cancel" />
-	</aui:button-row>
+		
+		<aui:script use="liferay-auto-fields">
+			new Liferay.AutoFields(
+				{
+					contentBox: '#dossier-part',
+					fieldIndexes: '<portlet:namespace />dossierIndexs',
+					namespace: '<portlet:namespace />'
+				}
+			).render();
+		</aui:script>
 	
-</aui:form>
+		<aui:row>
+			<aui:col width="100">
+				<aui:input name="externalAppUrl" cssClass="input100"/>
+			</aui:col>
+		</aui:row>
+		
+		<aui:row cssClass="row-fluid">
+			<aui:button-row >
+				<aui:button name="save" type="submit" value="<%= Validator.isNotNull(step) ? Constants.ADD : Constants.UPDATE %>"/>
+				<aui:button type="cancel" name="cancel" />
+			</aui:button-row>
+		</aui:row>
+		
+	</aui:form>
+</div>
+
 
 <aui:script use="aui-base,aui-io-request">
 

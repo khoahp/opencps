@@ -27,6 +27,7 @@ import org.opencps.holidayconfig.model.HolidayConfigExtend;
 import org.opencps.holidayconfig.service.HolidayConfigExtendLocalServiceUtil;
 import org.opencps.holidayconfig.service.HolidayConfigLocalServiceUtil;
 import org.opencps.util.DateTimeUtil;
+import org.opencps.util.DateTimeUtil.DateTimeBean;
 
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.log.Log;
@@ -47,91 +48,10 @@ public class HolidayUtils {
 	private int minutesGoing = 0;
 	private Calendar baseCalendar = Calendar.getInstance();
 	private List<HolidayConfig> holidayConfigList1 = null;
-	
 
-	/**
-	 * Check estimateDate
-	 * 
-	 * @param baseDate
-	 * @param pattern
-	 * @return Date has been check holiday
-	 */
-	public static Date getEndDate(Date baseDate, String pattern) {
+	public static Calendar getEndDate(Date baseDate, String pattern) {
 
-		/* format pattern = "3 -10:30", pattern = "3 +10:30" */
-
-		Date estimateDate = null;
-
-		try {
-
-			if (baseDate == null) {
-				baseDate = new Date();
-			}
-
-			Calendar baseDateCal = Calendar.getInstance();
-			baseDateCal.setTime(baseDate);
-
-			int bookingDays = 0;
-			int bookingHour = 0;
-			int bookingMinutes = 0;
-
-			String[] splitPattern = StringUtil.split(pattern, StringPool.SPACE);
-
-			if (splitPattern.length == 2) {
-
-				bookingDays = GetterUtil.getInteger(splitPattern[0], 0);
-
-				String[] splitHour = StringUtil.split(splitPattern[1], StringPool.COLON);
-
-				if (splitHour.length == 2) {
-					bookingHour = GetterUtil.getInteger(splitHour[0]);
-					bookingMinutes = GetterUtil.getInteger(splitHour[1]);
-				}
-			}
-
-			int saturdayIsHoliday = 0;
-			int sundayIsHoliday = 0;
-
-			/* Kiem tra xem flag sunday,saturday co duoc tinh la ngay nghi khong */
-			List<HolidayConfigExtend> holidayConfigExtendList =
-				HolidayConfigExtendLocalServiceUtil.getHolidayConfigExtends(
-					QueryUtil.ALL_POS, QueryUtil.ALL_POS);
-
-			for (HolidayConfigExtend holidayConfigExtend : holidayConfigExtendList) {
-
-				if (holidayConfigExtend.getKey().equals(SATURDAY)) {
-					saturdayIsHoliday = holidayConfigExtend.getStatus();
-				}
-
-				if (holidayConfigExtend.getKey().equals(SUNDAY)) {
-					sundayIsHoliday = holidayConfigExtend.getStatus();
-				}
-			}
-
-			for (int i = 0; i < bookingDays; i++) {
-
-				baseDateCal.add(Calendar.DATE, 1);
-
-				baseDateCal =
-					checkDay(baseDateCal, baseDate, null, saturdayIsHoliday, sundayIsHoliday);
-
-			}
-
-			baseDateCal.add(Calendar.HOUR, bookingHour);
-			baseDateCal.add(Calendar.MINUTE, bookingMinutes);
-
-			estimateDate = baseDateCal.getTime();
-
-		}
-		catch (Exception e) {
-			_log.error(e);
-		}
-
-		return estimateDate;
-
-	}
-
-	public static Calendar getEndDate(Date baseDate, int daysDuration) {
+		/* format pattern = "3 10:30" */
 
 		if (baseDate == null) {
 			baseDate = new Date();
@@ -145,13 +65,16 @@ public class HolidayUtils {
 			int saturdayIsHoliday = 0;
 			int sundayIsHoliday = 0;
 
+			DateTimeUtil dateTimeUtil = new DateTimeUtil();
+			DateTimeBean dateTimeBean = dateTimeUtil
+					.getDateTimeFromPattern(pattern);
+
 			/* Kiem tra xem flag sunday,saturday co duoc tinh la ngay nghi khong */
 
-			List<HolidayConfigExtend> holidayConfigExtendList =
-				new ArrayList<HolidayConfigExtend>();
-			holidayConfigExtendList =
-				HolidayConfigExtendLocalServiceUtil.getHolidayConfigExtends(
-					QueryUtil.ALL_POS, QueryUtil.ALL_POS);
+			List<HolidayConfigExtend> holidayConfigExtendList = new ArrayList<HolidayConfigExtend>();
+			holidayConfigExtendList = HolidayConfigExtendLocalServiceUtil
+					.getHolidayConfigExtends(QueryUtil.ALL_POS,
+							QueryUtil.ALL_POS);
 
 			if (holidayConfigExtendList.size() > 0) {
 
@@ -167,16 +90,17 @@ public class HolidayUtils {
 				}
 			}
 
-			for (int i = 0; i < daysDuration; i++) {
+			for (int i = 0; i < dateTimeBean.getDays(); i++) {
 
 				baseDateCal.add(Calendar.DATE, 1);
 
-				baseDateCal =
-					checkDay(baseDateCal, baseDate, null, saturdayIsHoliday, sundayIsHoliday);
+				baseDateCal = checkDay(baseDateCal, baseDate, null,
+						saturdayIsHoliday, sundayIsHoliday);
 
 			}
-		}
-		catch (Exception e) {
+			baseDateCal.add(Calendar.HOUR, dateTimeBean.getHours());
+			baseDateCal.add(Calendar.MINUTE, dateTimeBean.getMinutes());
+		} catch (Exception e) {
 			_log.error(e);
 		}
 

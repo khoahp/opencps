@@ -90,7 +90,7 @@ public class NotificationsListener implements MessageListener {
 
 			for (SendNotificationMessage item : notifications) {
 
-				String sendType = item.getType(); 
+				String sendType = item.getType().toUpperCase(); 
 
 				event = item.getNotificationEventName();
 

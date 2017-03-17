@@ -131,8 +131,11 @@ public class JMSMessageUtil {
 				JMSHornetqContextFactory.getInstance(
 					companyId, code, remote, channelName, queueName, lookup,
 					mom);
-			context.createConsumer();
-			context.start();
+			
+			if (context != null) {
+				context.createConsumer();
+				context.start();
+			}
 
 		}
 		catch (Exception e) {

@@ -23,6 +23,7 @@
         <column name="govAgencyCode" type="String"></column>
         <column name="domainCode" type="String"></column>
         <column name="administrationLevel" type="int"></column>
+        <column name="source" type="String"></column>
         <order by="asc">
             <order-column name="month" order-by="asc"></order-column>
         </order>
@@ -70,9 +71,17 @@
             <finder-column name="month"></finder-column>
             <finder-column name="year"></finder-column>
         </finder>
+        <finder name="G_GC_DC_M_Y_S" return-type="DossiersStatistics">
+            <finder-column name="groupId"></finder-column>
+            <finder-column name="govAgencyCode"></finder-column>
+            <finder-column name="domainCode"></finder-column>
+            <finder-column name="month"></finder-column>
+            <finder-column name="year"></finder-column>
+            <finder-column name="source"></finder-column>
+        </finder>
     </entity>
     <entity name="GovagencyLevel" local-service="true" table="opencps_govagencylevel">
-        <column name="govagencylevel" type="long" primary="true"></column>
+        <column name="govagencyId" type="long" primary="true"></column>
         <!-- Audit fields -->
 
 		<column name="companyId" type="long" />
@@ -83,5 +92,9 @@
 		
         <column name="govAgencyCode" type="String"></column>
         <column name="administrationLevel" type="int"></column>
+        <finder name="G_GC" return-type="GovagencyLevel">
+            <finder-column name="groupId"></finder-column>
+            <finder-column name="govAgencyCode"></finder-column>
+        </finder>
     </entity>
 </service-builder>

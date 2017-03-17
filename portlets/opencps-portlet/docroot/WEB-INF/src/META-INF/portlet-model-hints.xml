@@ -291,7 +291,7 @@
 		<field name="actionNote" type="String" />
 		<field name="actionUserId" type="long" />
 		<field name="daysDoing" type="int" />
-		<field name="daysDelay" type="int" />
+		<field name="daysDelay" type="long" />
 		<field name="oId" type="String" />
 		<field name="logId" type="long" />
 	</model>
@@ -331,7 +331,7 @@
 		<field name="sequenceNo" type="int" />
 		<field name="dossierStatus" type="String" />
 		<field name="dossierSubStatus" type="String" />
-		<field name="daysDuration" type="int" />
+		<field name="daysDuration" type="String" />
 		<field name="referenceDossierPartId" type="long" />
 		<field name="externalAppUrl" type="String" />
 		<field name="processStepNo" type="int" />
@@ -841,9 +841,12 @@
 		<field name="govAgencyCode" type="String" />
 		<field name="domainCode" type="String" />
 		<field name="administrationLevel" type="int" />
+		<field name="source" type="String">
+			<hint name="max-length">1000</hint>
+		</field>
 	</model>
 	<model name="org.opencps.statisticsmgt.model.GovagencyLevel">
-		<field name="govagencylevel" type="long" />
+		<field name="govagencyId" type="long" />
 		<field name="companyId" type="long" />
 		<field name="groupId" type="long" />
 		<field name="userId" type="long" />
@@ -851,5 +854,43 @@
 		<field name="modifiedDate" type="Date" />
 		<field name="govAgencyCode" type="String" />
 		<field name="administrationLevel" type="int" />
+	</model>
+	<model name="org.opencps.notificationmgt.model.NotificationEventConfig">
+		<field name="notiEventConfigId" type="long" />
+		<field name="companyId" type="long" />
+		<field name="groupId" type="long" />
+		<field name="userId" type="long" />
+		<field name="createDate" type="Date" />
+		<field name="modifiedDate" type="Date" />
+		<field name="notiStatusConfigId" type="long" />
+		<field name="eventName" type="String" />
+		<field name="description" type="String" />
+		<field name="pattern" type="String" />
+		<field name="active" type="boolean" />
+	</model>
+	<model name="org.opencps.notificationmgt.model.NotificationRedirectConfig">
+		<field name="notiRedirectConfigId" type="long" />
+		<field name="companyId" type="long" />
+		<field name="groupId" type="long" />
+		<field name="userId" type="long" />
+		<field name="createDate" type="Date" />
+		<field name="modifiedDate" type="Date" />
+		<field name="notiEventConfigId" type="long" />
+		<field name="dictItemId" type="long" />
+		<field name="userGroupName" type="String" />
+		<field name="plId" type="long" />
+		<field name="jspRedirect" type="String" />
+		<field name="active" type="boolean" />
+	</model>
+	<model name="org.opencps.notificationmgt.model.NotificationStatusConfig">
+		<field name="notiStatusConfigId" type="long" />
+		<field name="companyId" type="long" />
+		<field name="groupId" type="long" />
+		<field name="userId" type="long" />
+		<field name="createDate" type="Date" />
+		<field name="modifiedDate" type="Date" />
+		<field name="dossierCurrentStatus" type="String" />
+		<field name="dossierNextStatus" type="String" />
+		<field name="isSendNotification" type="boolean" />
 	</model>
 </model-hints>

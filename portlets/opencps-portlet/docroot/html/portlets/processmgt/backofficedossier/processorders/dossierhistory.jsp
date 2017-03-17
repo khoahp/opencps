@@ -166,14 +166,14 @@
 							
 							<span class="span8">
 								<%
-									int dayDelay = 0;
+									String timeDelay = StringPool.BLANK;
 									ActionHistory actionHis = ProcessUtils.getActionHistoryByLogId(dossierLog.getDossierLogId());
 								
 									if (Validator.isNotNull(actionHis)) {
-										dayDelay = actionHis.getDaysDelay();
+										timeDelay = DateTimeUtil.convertTimemilisecondsToFormat(actionHis.getDaysDelay(), themeDisplay.getLocale());
 									}
 								%>
-								<%= dayDelay %>
+								<%= timeDelay %>
 							</span>
 						</aui:row>
 					</aui:col>

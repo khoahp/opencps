@@ -46,7 +46,7 @@
 
 <aui:model-context bean="<%=serviceConfig%>" model="<%=ServiceConfig.class%>" />
 <aui:row>
-	<aui:col width="50">
+	<aui:col width="100">
 		<aui:select name="<%=ServiceConfigDisplayTerms.SERVICE_CONFIG_SERVICEINFOID %>" 
 			required="true" showEmptyOption="true" cssClass="input100">
 			<%

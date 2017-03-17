@@ -146,6 +146,34 @@
 #_13_WAR_opencpsportlet_dossierFilesSearchContainerSearchContainer table th:nth-child(4) {
 	width: 30%;
 }
+/*- Chon tu ho so cu -*/
+.dialog-iframe-root-node #_13_WAR_opencpsportlet_dossiersSearchContainer table td:not(:first-child):not(:last-child) {
+	min-width: 240px;
+	max-width: 300px;
+}
+.dialog-iframe-root-node #_13_WAR_opencpsportlet_dossiersSearchContainer table td:last-child {
+	min-width: 1px;
+}
+.dialog-iframe-root-node #_13_WAR_opencpsportlet_dossiersSearchContainer table td a.btn {
+	padding: 5px 12px;
+    background-color: #0f97ff;
+    color: white;
+    border-radius: 5px;
+    margin-bottom: 5px;
+    display: block;
+    text-align: center;
+}
+.dialog-iframe-root-node #_13_WAR_opencpsportlet_dossiersSearchContainer table td a.btn i:before {
+	margin-right: 5px;
+}
+/*- Chon thu muc -*/
+.dialog-iframe-root-node #_16_WAR_opencpsportlet_dossierFilesSearchContainerSearchContainer td:last-child {
+	width: 1%;
+}
+.dialog-iframe-root-node #_16_WAR_opencpsportlet_dossierFilesSearchContainerSearchContainer input[type="button"] {
+	padding: 5px 15px;
+	border-radius: 20px;
+}
 
 
 
@@ -225,73 +253,21 @@
 }
 
 
-/* 
-.dialog-iframe-root-node .portlet-boundary_13_WAR_opencpsportlet_ .portlet-body .custom-toolbar .form-search .control-group, 
-.dialog-iframe-root-node .portlet-boundary_16_WAR_opencpsportlet_ .portlet-body .custom-toolbar .form-search .control-group {
-	margin-bottom: 0;
-}
-.dialog-iframe-root-node .portlet-boundary_13_WAR_opencpsportlet_ .portlet-body .searchcontainer-content table th, 
-.dialog-iframe-root-node .portlet-boundary_16_WAR_opencpsportlet_ .portlet-body .searchcontainer-content table th {
-	background-color: #0191c6;
-	color: white;
-}
-.dialog-iframe-root-node .portlet-boundary_13_WAR_opencpsportlet_ .portlet-body .searchcontainer-content table td:not(:first-child):not(:nth-child(2)) {
-	min-width: 230px;
-	width: 31%;
-}
 
-.dialog-iframe-root-node .portlet-boundary_13_WAR_opencpsportlet_ .lfr-pagination-config {
-	line-height: normal;
+/*--- Select button Admin ---*/
+.dialog-iframe-root-node #_9_WAR_opencpsportlet_templateFilesSearchContainerSearchContainer .selector-button {
+	padding: 5px 15px;
+	margin-top: 0;
+	font-size: 14px;
+	border-radius: 20px;
 }
-.dialog-iframe-root-node .portlet-boundary_13_WAR_opencpsportlet_ #_13_WAR_opencpsportlet_dossiersSearchContainer table {
-	margin-top: 15px;
+.dialog-iframe-root-node #_9_WAR_opencpsportlet_templateFilesSearchContainer + div .taglib-page-iterator .lfr-pagination-buttons, 
+.dialog-iframe-root-node #_9_WAR_opencpsportlet_templateFilesSearchContainer + div .taglib-page-iterator .lfr-pagination-buttons > li {
+	width: auto;
 }
-.dialog-iframe-root-node .portlet-boundary_13_WAR_opencpsportlet_ #_13_WAR_opencpsportlet_dossiersSearchContainer table .row-fluid {
-	margin: 0;
-}
-.dialog-iframe-root-node .portlet-boundary_13_WAR_opencpsportlet_ #_13_WAR_opencpsportlet_dossiersSearchContainer table [class*="span"] {
-	padding: 0;
-}
-.dialog-iframe-root-node .portlet-boundary_13_WAR_opencpsportlet_ #_13_WAR_opencpsportlet_dossiersSearchContainer table td {
-	border: 0;
-	border-bottom: 1px solid #ccc;
-	position: relative;
-}
-.dialog-iframe-root-node .portlet-boundary_13_WAR_opencpsportlet_ #_13_WAR_opencpsportlet_dossiersSearchContainer table td:after {
-	content: "";
-	position: absolute;
-	width: 1px;
-	background-color: #ccc;
-	height: 70%;
-	top: 15%;
-	right: 0;
-}
-.dialog-iframe-root-node .portlet-boundary_13_WAR_opencpsportlet_ #_13_WAR_opencpsportlet_dossiersSearchContainer table td:last-child:after {
-	width: 0;
-}
-.dialog-iframe-root-node .portlet-boundary_13_WAR_opencpsportlet_ .portlet-body > div table .row-fluid:last-child {
-	text-align: left;
-}
-.dialog-iframe-root-node .portlet-boundary_13_WAR_opencpsportlet_ #_13_WAR_opencpsportlet_dossiersSearchContainer table tr:last-child td {
-	border-bottom: 0;
-} 
-.dialog-iframe-root-node .portlet-boundary_13_WAR_opencpsportlet_ #_13_WAR_opencpsportlet_dossiersSearchContainer table td:not(:first-child):not(:last-child) {
-	min-width: 240px;
-	max-width: 300px;
-}
-.dialog-iframe-root-node .portlet-boundary_13_WAR_opencpsportlet_ #_13_WAR_opencpsportlet_dossiersSearchContainer table td:last-child {
-	min-width: 1px;
-}
-.dialog-iframe-root-node .portlet-boundary_13_WAR_opencpsportlet_ #_13_WAR_opencpsportlet_dossiersSearchContainer table td .opens-new-window-accessible {
+.dialog-iframe-root-node #_9_WAR_opencpsportlet_templateFilesSearchContainer + div .lfr-pagination-buttons +.lfr-pagination-config {
 	display: none;
 }
-.dialog-iframe-root-node .portlet-boundary_13_WAR_opencpsportlet_ #_13_WAR_opencpsportlet_dossiersSearchContainer table td a.btn {
-	padding: 5px 12px;
-    background-color: #0f97ff;
-    color: white;
-    border-radius: 5px;
-    margin-bottom: 5px;
-    display: block;
-    text-align: center;
+.dialog-iframe-root-node #_9_WAR_opencpsportlet_templateFilesSearchContainer + div .taglib-page-iterator .lfr-pagination-buttons > li a {
+	width: 100%;
 }
-*/

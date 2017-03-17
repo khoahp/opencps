@@ -692,4 +692,10 @@ public class ProcessOrderLocalServiceImpl extends
 				dossierSubStatus, processOrderStage, fromDate, toDate,
 				domainCode, start, end, orderByComparator);
 	}
+	
+	public ProcessOrder findBy_Dossier(long dossierId)
+			throws NoSuchProcessOrderException, SystemException {
+
+		return processOrderPersistence.findBy_Dossier(dossierId);
+	}
 }

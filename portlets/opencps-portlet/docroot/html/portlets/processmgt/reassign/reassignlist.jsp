@@ -115,8 +115,10 @@
 			} catch(Exception e) {}
 			
 			if(Validator.isNotNull(processStep)) {
-				outDateStatus = HolidayCheckUtils
-						.checkActionDateOverStatus((processOrder.getActionDatetime()), new Date(), processStep.getDaysDuration());
+				HolidayCheckUtils holidayCheckUtils = new HolidayCheckUtils();
+				
+				outDateStatus = holidayCheckUtils
+						.checkActionDateOver((processOrder.getActionDatetime()), new Date(), processStep.getDaysDuration());
 			}
 			
 			/* if(Validator.isNotNull(employee)) {

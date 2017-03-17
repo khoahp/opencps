@@ -23,9 +23,9 @@
 <%@page import="java.util.List"%>
 <%@page import="com.liferay.portal.kernel.portlet.LiferayWindowState"%>
 <%@page import="java.util.ArrayList"%>
-<%@page import="org.opencps.holidayconfig.util.HolidayUtils"%>
 <%@page import="org.opencps.dossiermgt.service.DossierLocalServiceUtil"%>
 <%@page import="org.opencps.dossiermgt.model.Dossier"%>
+<%@page import="org.opencps.holidayconfig.util.HolidayCheckUtils"%>
 <%@page import="org.opencps.processmgt.util.ProcessOrderUtils"%>
 <%@page import="javax.portlet.PortletMode"%>
 <%@page import="org.opencps.processmgt.NoSuchWorkflowOutputException"%>
@@ -107,7 +107,7 @@
 	Date estimateDate = null;
 	
 	if(workflow != null && workflow.getGenerateDeadline() && Validator.isNotNull(receiveDate) && Validator.isNotNull(deadlinePattern)){
-		estimateDate = HolidayUtils.getEndDate(receiveDate, deadlinePattern);
+		estimateDate = HolidayCheckUtils.getEndDate(receiveDate, deadlinePattern);
 	}
 	
 	PortletUtil.SplitDate spd = null;

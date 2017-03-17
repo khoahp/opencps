@@ -142,19 +142,19 @@
 			%>
 			<liferay-util:buffer var="name">
 				<div class="row-fluid">
-					<div class="span3 bold">
+					<div class="span4 bold">
 						<liferay-ui:message key="govAgency-Name"/>
 					</div>
-					<div class="span9"><%=serviceConfig.getGovAgencyName()%></div>
+					<div class="span8"><%=serviceConfig.getGovAgencyName()%></div>
 				</div>
 				
 				<div class="row-fluid">
 					
-					<div class="span3 bold">
-						<liferay-ui:message key="govAgency-Name"/>
+					<div class="span4 bold">
+						<liferay-ui:message key="product-name"/>
 					</div>
 					
-					<div class="span9"><%=dossierTemplate.getTemplateName() %></div>
+					<div class="span8"><%=dossierTemplate.getTemplateName() %></div>
 				</div>
 				
 			</liferay-util:buffer>	

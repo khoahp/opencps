@@ -50,6 +50,7 @@ public class ActionKeys
 	public static final String MANAGE_PAYMENT_CONFIG = "MANAGE_PAYMENT_CONFIG";
 	
 	public static final String ADD_HOLIDAY = "ADD_HOLIDAY";
+	public static final String EDIT_NOTIFICATION_CONFIG = "EDIT_NOTIFICATION_CONFIG";
 	
 
 }

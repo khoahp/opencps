@@ -257,7 +257,7 @@
 		
 		<!-- govAgenci -->
 		<aui:row>
-			<aui:col width="50">
+			<aui:col width="100">
 				<datamgt:ddr
 					cssClass="input100"
 					depthLevel="1" 
@@ -270,7 +270,7 @@
 		</aui:row>
 		
 		<aui:row>
-			<aui:col width="50">
+			<aui:col width="100">
 				<aui:select name="<%=ServiceConfigDisplayTerms.SERVICE_CONFIG_SERVICELEVEL %>" required="true"
 					showEmptyOption="true" cssClass="input100"
 				>
@@ -294,7 +294,7 @@
 		</aui:row>
 		
 		<aui:row>
-			<aui:col width="50">
+			<aui:col width="100">
 				<aui:select name="<%=ServiceConfigDisplayTerms.SERVICE_CONFIG_DOSSIERTEMPLATEID %>" cssClass="input100">
 							<c:choose>
 							   <c:when test="<%=! tabs1.equals(DossierMgtUtil.TOP_TABS_SERVICE_CONFIG) && dossierTemplateId != 0 %>">

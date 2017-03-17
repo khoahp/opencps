@@ -71,6 +71,9 @@ public class PortletPropsValues {
 	public static final String DATAMGT_MASTERDATA_DOSSIER_STATUS = GetterUtil
 			.getString(PortletProps
 					.get(PortletPropsKeys.DATAMGT_MASTERDATA_DOSSIER_STATUS));
+	public static final String DATAMGT_MASTERDATA_USER_GROUP_NOTIFY = GetterUtil
+			.getString(PortletProps
+					.get(PortletPropsKeys.DATAMGT_MASTERDATA_USER_GROUP_NOTIFY));
 
 	// validate file
 
@@ -309,5 +312,8 @@ public class PortletPropsValues {
 			.getInteger(PortletProps
 					.get(PortletPropsKeys.HOLIDAYCONFIG_DESCRIPTION_LENGTH),
 					255);
+	
+	public static final String DM_USER_GROUP_NOTIFY = PortletProps
+			.get(PortletPropsKeys.DM_USER_GROUP_NOTIFY);
 
 }

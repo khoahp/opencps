@@ -31,8 +31,6 @@
 
 <%@ include file="../init.jsp"%>
 
-<%-- <liferay-util:include page='<%=templatePath + "edit_dossier.jsp" %>' servletContext="<%=application %>" /> --%>
-
 <%
 	List<DossierTemplate> dossierTemplates =
 		new ArrayList<DossierTemplate>();

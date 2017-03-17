@@ -1,3 +1,4 @@
+
 package org.opencps.statisticsmgt.dashboard.portlet;
 
 import javax.portlet.ActionRequest;
@@ -7,27 +8,30 @@ import javax.portlet.PortletPreferences;
 
 import com.liferay.portal.kernel.portlet.DefaultConfigurationAction;
 import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portlet.PortletPreferencesFactoryUtil;
 
 /**
  * @author trungnt
- *
  */
-public class YearlyDashBoardConfigurationImpl extends
-		DefaultConfigurationAction {
+public class YearlyDashBoardConfigurationImpl
+	extends DefaultConfigurationAction {
 
 	@Override
-	public void processAction(PortletConfig portletConfig,
-			ActionRequest actionRequest, ActionResponse actionResponse)
-			throws Exception {
-		// TODO Auto-generated method stub
-		String portletResource = ParamUtil.getString(actionRequest,
-				"portletResource");
+	public void processAction(
+		PortletConfig portletConfig, ActionRequest actionRequest,
+		ActionResponse actionResponse)
+		throws Exception {
 
-		PortletPreferences preferences = PortletPreferencesFactoryUtil
-				.getPortletSetup(actionRequest, portletResource);
-		String displayStyle = ParamUtil
-				.getString(actionRequest, "displayStyle");
+		// TODO Auto-generated method stub
+		String portletResource =
+			ParamUtil.getString(actionRequest, "portletResource");
+
+		PortletPreferences preferences =
+			PortletPreferencesFactoryUtil.getPortletSetup(
+				actionRequest, portletResource);
+		String displayStyle =
+			ParamUtil.getString(actionRequest, "displayStyle");
 
 		String chartTitle = ParamUtil.getString(actionRequest, "chartTitle");
 
@@ -44,6 +48,40 @@ public class YearlyDashBoardConfigurationImpl extends
 		int startYear = ParamUtil.getInteger(actionRequest, "startYear");
 
 		int period = ParamUtil.getInteger(actionRequest, "period");
+
+		int[] fieldsIndexes =
+			StringUtil.split(
+				ParamUtil.getString(actionRequest, "fieldsIndexes"), 0);
+
+		if (fieldsIndexes != null && fieldsIndexes.length > 0) {
+
+			String[] fieldLabels = new String[fieldsIndexes.length];
+			String[] fieldKeys = new String[fieldsIndexes.length];
+			String[] fieldFormulas = new String[fieldsIndexes.length];
+			for (int f = 0; f < fieldsIndexes.length; f++) {
+
+				String fieldLabel =
+					ParamUtil.getString(actionRequest, "fieldLabel" +
+						fieldsIndexes[f]);
+				String fieldKey =
+					ParamUtil.getString(actionRequest, "fieldKey" +
+						fieldsIndexes[f]);
+				String fieldFormula =
+					ParamUtil.getString(actionRequest, "fieldFormula" +
+						fieldsIndexes[f]);
+
+				fieldLabels[f] = fieldLabel;
+				fieldKeys[f] = fieldKey;
+				fieldFormulas[f] = fieldFormula;
+
+				System.out.println(fieldLabel + "-----" + fieldKey + "-----" +
+					fieldFormula);
+			}
+
+			preferences.setValues("fieldLabels", fieldLabels);
+			preferences.setValues("fieldKeys", fieldKeys);
+			preferences.setValues("fieldFormulas", fieldFormulas);
+		}
 
 		preferences.setValue("chartTitle", chartTitle);
 

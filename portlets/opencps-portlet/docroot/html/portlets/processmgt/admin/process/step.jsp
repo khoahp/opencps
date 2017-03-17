@@ -48,12 +48,14 @@
 
 <liferay-portlet:renderURL var="editStepURL" windowState="<%= LiferayWindowState.POP_UP.toString() %>">
 	<portlet:param name="mvcPath" value='<%= templatePath + "edit_step.jsp" %>'/>
+	<portlet:param name="backURL" value='<%=currentURL + "#_15_WAR_opencpsportlet_tab=_15_WAR_opencpsportlet_step" %>'/>
 	<portlet:param name="serviceProcessId" value="<%= Validator.isNotNull(serviceProcess) ? Long.toString(serviceProcess.getServiceProcessId()) : StringPool.BLANK %>"/>
 	<portlet:param name="processStepId" value="<%= Validator.isNotNull(processStep) ? Long.toString(processStep.getProcessStepId()) : StringPool.BLANK %>"/>
 </liferay-portlet:renderURL>
 
 <liferay-portlet:renderURL var="editStepInlineURL" windowState="<%= LiferayWindowState.NORMAL.toString() %>">
 	<portlet:param name="mvcPath" value='<%= templatePath + "edit_step.jsp" %>'/>
+	<portlet:param name="backURL" value='<%=currentURL + "#_15_WAR_opencpsportlet_tab=_15_WAR_opencpsportlet_step" %>'/>
 	<portlet:param name="redirectURL" value="<%= currentURL %>"/>
 	<portlet:param name="serviceProcessId" value="<%= Validator.isNotNull(serviceProcess) ? Long.toString(serviceProcess.getServiceProcessId()) : StringPool.BLANK %>"/>
 	<portlet:param name="processStepId" value="<%= Validator.isNotNull(processStep) ? Long.toString(processStep.getProcessStepId()) : StringPool.BLANK %>"/>
@@ -63,53 +65,93 @@
 	<aui:button name="addStep" href="<%= editStepInlineURL.toString() %>" value="add-step-inline" ></aui:button>
 </aui:button-row>
 
-<liferay-ui:search-container searchContainer="<%= new StepSearch(renderRequest, totalCount, iteratorURL) %>">
-		
-	<liferay-ui:search-container-results>
-		<%
-		
-			StepSearchTerms searchTerms = (StepSearchTerms) searchContainer.getSearchTerms();
 
-			total =  totalCount;
-
-			results = ProcessStepLocalServiceUtil.getStepByProcess(serviceProcessId,
-				searchContainer.getStart(), searchContainer.getEnd());
+<div class="opencps-searchcontainer-wrapper default-box-shadow radius8">
+	<liferay-ui:search-container searchContainer="<%= new StepSearch(renderRequest, totalCount, iteratorURL) %>">
 			
-			pageContext.setAttribute("results", results);
-			pageContext.setAttribute("total", total);
-		%>
-		
-	</liferay-ui:search-container-results>
-
-	<liferay-ui:search-container-row 
-		className="org.opencps.processmgt.model.ProcessStep" 
-		modelVar="step" 
-		keyProperty="processStepId"
-	>
-		<%
-			// no column
-			row.addText(String.valueOf(row.getPos() + 1));
-		
-			// step no
-			row.addText(step.getStepName());
+		<liferay-ui:search-container-results>
+			<%
 			
-			// step name
-			row.addText(PortletUtil.getDossierStatusLabel(step.getDossierStatus(), locale));
-			
-			// step duration
-			row.addText(Integer.toString(step.getDaysDuration()));
-
-			if(isPermission) {
-				//action column
-				row.addJSP("center", SearchEntry.DEFAULT_VALIGN, templatePath + "step_actions.jsp", config.getServletContext(), request, response);
-			}
-		%>	
+				StepSearchTerms searchTerms = (StepSearchTerms) searchContainer.getSearchTerms();
 	
-	</liferay-ui:search-container-row>	
+				total =  totalCount;
+	
+				results = ProcessStepLocalServiceUtil.getStepByProcess(serviceProcessId,
+					searchContainer.getStart(), searchContainer.getEnd());
+				
+				pageContext.setAttribute("results", results);
+				pageContext.setAttribute("total", total);
+			%>
+			
+		</liferay-ui:search-container-results>
+	
+		<liferay-ui:search-container-row 
+			className="org.opencps.processmgt.model.ProcessStep" 
+			modelVar="step" 
+			keyProperty="processStepId"
+		>
+		
+			<liferay-util:buffer var="rowIndex">
+				<div class="row-fluid min-width10">
+					<div class="span12">
+						<%=row.getPos() + 1 %>
+					</div>
+				</div>
+			</liferay-util:buffer>
+			
+			<liferay-util:buffer var="stepInfo">
+				<div class="row-fluid">
+					<div class="span6">
+						<div class="row-fluid">
+							<div class="span4 bold">
+								<liferay-ui:message key="step-name"/>
+							</div>
+							<div class="span8">
+								<%= step.getStepName() %>
+							</div>
+						</div>
+						<div class="row-fluid">
+							<div class="span4 bold">
+								<liferay-ui:message key="step-status"/>
+							</div>
+							<div class="span8">
+								<%= PortletUtil.getDossierStatusLabel(step.getDossierStatus(), locale) %>
+							</div>
+						</div>
+					</div>
+					
+					<div class="span6">
+						<div class="row-fluid">
+							<div class="span4 bold">
+								<liferay-ui:message key="step-duration"/>
+							</div>
+							<div class="span8">
+								<%= step.getDaysDuration() %>
+							</div>
+						</div>
+					</div>
+				</div>
+			</liferay-util:buffer>
+			
+			<%
+				row.addText(rowIndex);
+				
+				row.addText(stepInfo);
+				
+				if(isPermission) {
+					//action column
+					row.addJSP("center", SearchEntry.DEFAULT_VALIGN, templatePath + "step_actions.jsp", config.getServletContext(), request, response);
+				}
+			%>	
+			
+		
+		</liferay-ui:search-container-row>	
+	
+		<liferay-ui:search-iterator paginate="false"/>
+	
+	</liferay-ui:search-container>
+</div>
 
-	<liferay-ui:search-iterator paginate="false"/>
-
-</liferay-ui:search-container>
 
 <%!
 	private int ITEM_PERPAGE = 100;

@@ -1,0 +1,75 @@
+@charset "utf-8";
+
+/*---------- Font-face -----------*/
+@font-face {
+	font-family: 'Roboto-Regular';
+	src: url('../fonts/Roboto-Regular.ttf');
+	font-weight: normal;
+	font-style: normal;
+}
+@font-face {
+	font-family: 'Roboto-Medium';
+	src: url('../fonts/Roboto-Medium.ttf');
+	font-weight: normal;
+	font-style: normal;
+}
+@font-face {
+	font-family: 'Roboto-Bold';
+	src: url('../fonts/Roboto-Bold.ttf');
+	font-weight: normal;
+	font-style: normal;
+}
+@font-face {
+	font-family: 'Roboto-Black';
+	src: url('../fonts/Roboto-Black.ttf');
+	font-weight: normal;
+	font-style: normal;
+}
+@font-face {
+	font-family: 'Roboto-Light';
+	src: url('../fonts/Roboto-Light.ttf');
+	font-weight: normal;
+	font-style: normal;
+}
+@font-face {
+	font-family: 'Glyphicons Halflings';
+	src: url('../fonts/glyphicons-halflings-regular.eot');
+	src: url('../fonts/glyphicons-halflings-regular.eot?#iefix') format('embedded-opentype'), url('../fonts/glyphicons-halflings-regular.woff2') format('woff2'), url('../fonts/glyphicons-halflings-regular.woff') format('woff'), url('../fonts/glyphicons-halflings-regular.ttf') format('truetype'), url('../fonts/glyphicons-halflings-regular.svg#glyphicons_halflingsregular') format('svg');
+}
+
+
+
+@import url(font-awesome.min.css);
+
+@import url(portlets/portlet_33.css);
+@import url(portlets/portlet_36.css);
+
+@import url(style.css);
+@import url(responsive.css);
+
+.dashboard-theme{
+	section {
+	    background-color: #fff;
+	    border-radius: 3px;
+	    box-shadow: 4px 5px 6px #ccc;
+	    margin: 10px 0;
+	    padding: 5px;
+	}
+	
+	h1.portlet-title {
+	    color: #888;
+	    font-size: 18px;
+	    margin: 10px 0;
+	}
+	
+	.portlet-title-text {
+	    border-bottom: 1px solid #ddd;
+	    padding-bottom: 5px;
+	    text-transform: uppercase;
+	}
+	
+	.span1, .span2, .span3, .span4, .span5, .span6, .span7, .span8 , .span9, .span10, .span11, .span12{
+		padding-left: 8px !important;
+    	padding-right: 8px !important;
+	}
+}

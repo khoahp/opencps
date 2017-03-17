@@ -16,6 +16,7 @@
 	 * along with this program. If not, see <http://www.gnu.org/licenses/>.
 	 */
 %>
+
 <%@page import="org.opencps.usermgt.permissions.WorkingUnitPermission"%>
 <%@page import="org.opencps.util.ActionKeys"%>
 <%@page import="com.liferay.portal.kernel.log.Log"%>
@@ -27,8 +28,7 @@
 <%@ include file="../init.jsp"%>
 
 <%
-	ResultRow row =
-		(ResultRow) request.getAttribute(WebKeys.SEARCH_CONTAINER_RESULT_ROW);
+	ResultRow row = (ResultRow) request.getAttribute(WebKeys.SEARCH_CONTAINER_RESULT_ROW);
 	WorkingUnit workingUnit = (WorkingUnit)row.getObject();
 	String redirectURL = currentURL;
 %>

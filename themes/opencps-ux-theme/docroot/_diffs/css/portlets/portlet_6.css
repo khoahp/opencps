@@ -109,13 +109,17 @@
 .opencps-theme.ux .opencps-form-navigator-container .button-holder {
 	text-align: center;
 }
-.opencps-theme.ux .opencps-form-navigator-container .button-holder button {
+.opencps-theme.ux .opencps-form-navigator-container .button-holder button, 
+.opencps-theme.ux .button-holder button[typr="submit"], 
+.opencps-theme.ux button[type="submit"] {
 	padding: 5px 20px;
 	border-radius: 20px;
 }
 .opencps-theme.ux .button-holder .btn-cancel, 
 #_13_WAR_opencpsportlet_cancel, 
-#_13_WAR_opencpsportlet_btnCancel {
+#_13_WAR_opencpsportlet_btnCancel, 
+#_16_WAR_opencpsportlet_cancel, 
+.opencps-theme.ux .button-holder button[typr="reset"] {
 	background-color: #f9f9f9;
 	border: 1px solid #ccc;
 	color: #666;
@@ -124,11 +128,13 @@
 	width: 100%;
 	height: 30px;
 } 
-.opencps-theme.ux .opencps-form-navigator-container .button-holder .btn-cancel:before {
+.opencps-theme.ux .opencps-form-navigator-container .button-holder .btn-cancel:before, 
+.opencps-theme.ux .button-holder button[typr="reset"]:before {
 	content: "\f0e2";
 	font-family: FontAwesome;
 }
-.opencps-theme.ux .opencps-form-navigator-container .button-holder .btn-primary:before {
+.opencps-theme.ux .opencps-form-navigator-container .button-holder .btn-primary:before, 
+.opencps-theme.ux .button-holder button[typr="submit"]:before {
 	content: "\f0c7";
 	font-family: FontAwesome;
 }

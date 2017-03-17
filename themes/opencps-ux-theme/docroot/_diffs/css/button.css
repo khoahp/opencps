@@ -1,11 +1,23 @@
 .opencps-theme.ux .btn, 
 .opencps-theme input[type="button"], 
-.dialog-iframe-root-node .btn {
+.dialog-iframe-root-node .btn, 
+.dialog-iframe-root-node input[type="button"] {
 	background: #0090ff;
 	border: none;
 	color: #fff;
 	text-shadow: none;
 	font-family: 'Roboto-Medium';
+	margin-bottom: 0;
+}
+
+.dialog-iframe-root-node input[type="button"], .btn.btn-plus {
+	padding: 5px 15px;
+	border-radius: 20px;
+}
+.btn.btn-plus:before {
+	content: "\f067";
+	font-family: FontAwesome;
+	margin-right: 5px;
 }
 
 /* 

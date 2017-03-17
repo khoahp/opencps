@@ -69,20 +69,21 @@
 </portlet:renderURL>
 
 <c:if test="<%=JobPosPermission.contains(permissionChecker, scopeGroupId, ActionKeys.ADD_JOBPOS	) %>">
-	<aui:button 
-		name="add-jobpos"
-		value="add-jobpos"
-		onClick="<%=
-			\"javascript:\" +  \"openDialog('\" + 
-			updateJobPosURL + \"','\" + 
-			renderResponse.getNamespace() + \"editJobPos\" + \"','\" +
-			UnicodeLanguageUtil.get(pageContext, \"update-jobpos\") +
-			\"');\"  
-		%>"
-		
-	/>
+	<aui:button-row>
+		<aui:button 
+			name="add-jobpos"
+			value="add-jobpos"
+			onClick="<%=
+				\"javascript:\" +  \"openDialog('\" + 
+				updateJobPosURL + \"','\" + 
+				renderResponse.getNamespace() + \"editJobPos\" + \"','\" +
+				UnicodeLanguageUtil.get(pageContext, \"update-jobpos\") +
+				\"');\"  
+			%>"
+		/>
+	</aui:button-row>
 </c:if>
-<div class="opencps-searchcontainer-wrapper-width-header mg-t-20">
+<div class="opencps-searchcontainer-wrapper default-box-shadow radius8">
 	<liferay-ui:search-container searchContainer="<%= new JobPosSearch(renderRequest ,totalCount, iteratorURL) %>" headerNames="<%=headers %>">
 		
 		<liferay-ui:search-container-results>
@@ -94,19 +95,52 @@
 			modelVar="jobPosSearch" 
 			keyProperty="jobPosId"
 		>
-			<%
-				String leaderName = PortletUtil.getLeaderLabel(jobPosSearch.getLeader(), locale);
-				row.setClassName("opencps-searchcontainer-row");
-			    row.addText(String.valueOf(row.getPos() + 1));
-				row.addText(jobPosSearch.getTitle());
-				row.addText(leaderName);
-			%>
+			<liferay-util:buffer var="rowIndex">
+				<div class="row-fluid min-width10">
+						<%=row.getPos() + 1 %>
+				</div>
+			</liferay-util:buffer>
 			
-			<liferay-ui:search-container-column-jsp 
-				path='<%=templatePath + "jobpos_action.jsp" %>' 
-				name="action"
-				cssClass="width80"
-			/>
+			<liferay-util:buffer var="jobsInfo">
+				<div class="row-fluid">
+					<div class="span12">
+						<div class="row-fluid">
+							<div class="span4 bold">
+								<liferay-ui:message key="job-title"/>
+							</div>
+							<div class="span8">
+								<%= jobPosSearch.getTitle() %>
+							</div>
+						</div>
+					</div>
+				</div>
+				
+				<div class="row-fluid">
+					<div class="span12">
+						<div class="row-fluid">
+							<div class="span4 bold">
+								<liferay-ui:message key="job-leader"/>
+							</div>
+							<div class="span8">
+								<%
+									String leaderName = PortletUtil.getLeaderLabel(jobPosSearch.getLeader(), locale);
+								%>
+								
+								<%= leaderName %>
+							</div>
+						</div>
+					</div>
+				</div>
+			</liferay-util:buffer>
+			
+			<%
+				row.addText(rowIndex);
+				
+				row.addText(jobsInfo);
+			
+				//action column
+				row.addJSP("center", SearchEntry.DEFAULT_VALIGN, templatePath + "jobpos_action.jsp", config.getServletContext(), request, response);
+			%>	
 		</liferay-ui:search-container-row>
 		<liferay-ui:search-iterator paginate="false"/>
 	</liferay-ui:search-container>

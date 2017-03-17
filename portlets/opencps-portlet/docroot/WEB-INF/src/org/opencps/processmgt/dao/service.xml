@@ -40,6 +40,11 @@
 			<finder-column name="groupId" />
 			<finder-column name="dossierTemplateId" />
 		</finder>
+		
+		<finder return-type="ServiceProcess" name="G_P">
+			<finder-column name="groupId" />
+			<finder-column name="processNo" />
+		</finder>
 
 
 	</entity>
@@ -66,7 +71,7 @@
 		<column name="sequenceNo" type="int" />
 		<column name="dossierStatus" type="String" />
 		<column name="dossierSubStatus" type="String" />
-		<column name="daysDuration" type="int" />
+		<column name="daysDuration" type="String" />
 		<column name="referenceDossierPartId" type="long" />
 		<column name="externalAppUrl" type="String" />
 		<column name="processStepNo" type="int" />
@@ -297,6 +302,10 @@
 		<finder return-type="Collection" name="actionUserId">
 			<finder-column name="actionUserId" />
 		</finder>
+		
+		<finder name="_Dossier" return-type="ProcessOrder">
+            <finder-column name="dossierId"></finder-column>
+        </finder>
 	</entity>
 
 	<entity name="ActionHistory" local-service="true" remote-service="true"
@@ -324,7 +333,7 @@
 		<column name="actionNote" type="String"/>
 		<column name="actionUserId" type="long"/>
 		<column name="daysDoing" type="int"/>
-		<column name="daysDelay" type="int"/>
+		<column name="daysDelay" type="long"/>
         <column name="oId" type="String"/>
         <column name="logId" type="long"/>
 

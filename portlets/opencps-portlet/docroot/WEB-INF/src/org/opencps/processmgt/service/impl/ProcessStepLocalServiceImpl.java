@@ -155,7 +155,7 @@ public class ProcessStepLocalServiceImpl
 	 */
 	public ProcessStep addStep(
 	    long serviceProcessId, String stepName,
-	    int stepNo, String dossierStatus, String dossierSubStatus, int daysDuration,
+	    int stepNo, String dossierStatus, String dossierSubStatus, String daysDuration,
 	    long referenceDossierPartId, String externalAppUrl, int processStepNo, ServiceContext context)
 	    throws PortalException, SystemException {
 		
@@ -213,7 +213,7 @@ public class ProcessStepLocalServiceImpl
 	
 	public ProcessStep updateStep(
 	    long processStepId, long serviceProcessId, String stepName,
-	    int stepNo, String dossierStatus, String dossierSubStatus, int daysDuration,
+	    int stepNo, String dossierStatus, String dossierSubStatus, String daysDuration,
 	    long referenceDossierPartId, String externalAppUrl, int processStepNo, ServiceContext context)
 	    throws PortalException, SystemException {
 

@@ -91,7 +91,7 @@
 		
 		<c:if test="<%=ServiceConfigPermission.contains(permissionChecker, scopeGroupId, ActionKeys.ADD_SERVICE_CONFIG) %>">
 				<%-- <div id="<portlet:namespace/>toolbarResponse"></div> --%>
-				<aui:button href="<%= editServiceConfigURL.toString() %>" value="add-service-config"/>
+				<aui:button href="<%= editServiceConfigURL.toString() %>" value="add-service-config" cssClass="btn-plus"/>
 		</c:if>
 	</c:when>
 	<c:otherwise>
@@ -103,7 +103,7 @@
 		
 		<c:if test="<%=ServiceConfigPermission.contains(permissionChecker, scopeGroupId, ActionKeys.ADD_SERVICE_CONFIG) %>">
 				<%-- <div id="<portlet:namespace/>toolbarResponse"></div> --%>
-				<aui:button href="<%= editServiceConfigURL.toString() %>" value="add-service-config"/>
+				<aui:button href="<%= editServiceConfigURL.toString() %>" value="add-service-config" cssClass="btn-plus"/>
 		</c:if>
 	</c:otherwise>
 </c:choose>

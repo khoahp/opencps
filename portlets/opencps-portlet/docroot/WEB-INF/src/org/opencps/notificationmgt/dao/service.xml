@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE service-builder PUBLIC "-//Liferay//DTD Service Builder 6.2.0//EN" "http://www.liferay.com/dtd/liferay-service-builder_6_2_0.dtd">
+<service-builder package-path="org.opencps.notificationmgt" auto-namespace-tables="false">
+	<author>nhanhoang</author>
+	<namespace>notificationmgt</namespace>
+
+	<entity name="NotificationStatusConfig" local-service="true" remote-service="false"
+		table="opencps_config_notification_status">
+
+		<!-- PK fields -->
+
+		<column name="notiStatusConfigId" type="long" primary="true" />
+
+		<!-- Audit fields -->
+
+		<column name="companyId" type="long" />
+		<column name="groupId" type="long" />
+		<column name="userId" type="long" />
+		<column name="createDate" type="Date" />
+		<column name="modifiedDate" type="Date" />
+
+		<!-- Other fields -->
+
+		<column name="dossierCurrentStatus" type="String" />
+		<column name="dossierNextStatus" type="String" />
+		<column name="isSendNotification" type="boolean"></column>
+		
+		<!-- Finder methods -->
+		<finder return-type="NotificationStatusConfig" name="C_N_S" >
+			<finder-column name="dossierCurrentStatus" />
+			<finder-column name="dossierNextStatus" />
+			<finder-column name="isSendNotification" />
+		</finder>
+		
+		<finder return-type="Collection" name="C_S" >
+			<finder-column name="dossierCurrentStatus" />
+			<finder-column name="isSendNotification" />
+		</finder>
+		
+		<finder return-type="Collection" name="N_S" >
+			<finder-column name="dossierNextStatus" />
+			<finder-column name="isSendNotification" />
+		</finder>
+		
+		<finder return-type="NotificationStatusConfig" name="DossierNextStatus" >
+			<finder-column name="dossierNextStatus" />
+			<finder-column name="isSendNotification" />
+		</finder>
+		
+		<finder return-type="NotificationStatusConfig" name="DS_" >
+			<finder-column name="dossierNextStatus" />
+		</finder>			
+	</entity>
+	
+		<entity name="NotificationEventConfig" local-service="true" remote-service="false"
+		table="opencps_config_notification_event">
+
+		<!-- PK fields -->
+
+		<column name="notiEventConfigId" type="long" primary="true" />
+
+		<!-- Audit fields -->
+
+		<column name="companyId" type="long" />
+		<column name="groupId" type="long" />
+		<column name="userId" type="long" />
+		<column name="createDate" type="Date" />
+		<column name="modifiedDate" type="Date" />
+
+		<!-- Other fields -->
+
+		<column name="notiStatusConfigId" type="long" />
+		<column name="eventName" type="String"></column>
+		<column name="description" type="String"></column>
+		<column name="pattern" type="String"></column>
+		<column name="active" type="boolean"></column>
+		
+		<!-- Finder methods -->
+		<finder return-type="Collection" name="N_A" >
+			<finder-column name="notiStatusConfigId" />
+			<finder-column name="active" />
+		</finder>
+		
+		<!-- Finder methods -->
+		<finder return-type="Collection" name="NotiStatusConfigId" >
+			<finder-column name="notiStatusConfigId" />
+		</finder>	
+	</entity>
+	
+	<entity name="NotificationRedirectConfig" local-service="true" remote-service="false"
+		table="opencps_config_notification_redirect">
+
+		<!-- PK fields -->
+
+		<column name="notiRedirectConfigId" type="long" primary="true" />
+
+		<!-- Audit fields -->
+
+		<column name="companyId" type="long" />
+		<column name="groupId" type="long" />
+		<column name="userId" type="long" />
+		<column name="createDate" type="Date" />
+		<column name="modifiedDate" type="Date" />
+
+		<!-- Other fields -->
+		<column name="notiEventConfigId" type="long" />
+		<column name="dictItemId" type="long" />
+		<column name="userGroupName" type="String" />
+		<column name="plId" type="long" />
+		<column name="jspRedirect" type="String" />
+		<column name="active" type="boolean" />
+		
+		
+		<!-- Finder methods -->
+		
+		<finder return-type="Collection" name="N_A" >
+			<finder-column name="notiEventConfigId" />
+			<finder-column name="active" />
+		</finder>
+		
+		<finder return-type="NotificationRedirectConfig" name="N_A_S" >
+			<finder-column name="notiEventConfigId" />
+			<finder-column name="active" />
+		</finder>
+	</entity>
+
+</service-builder>

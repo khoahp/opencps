@@ -43,7 +43,7 @@
 }
 #_16_WAR_opencpsportlet_dossier_content .opencps.dossiermgt.dossier-part-control, 
 #_18_WAR_opencpsportlet_dossierfile .opencps.dossiermgt.dossier-part-control {
-	width: 240px;
+	width: 285px;
 }
 /* Tab 3 */
 #_16_WAR_opencpsportlet_process .ocps-dossier-process {
@@ -69,6 +69,72 @@
     border-radius: 20px;
     padding: 5px 20px;
 }
+#_16_WAR_opencpsportlet_process .opencps.dossiermgt.dossier-part-control {
+	width: 330px;
+}
+/* Phan cong xu ly */
+.assign-task-container:empty {
+	display: none;
+}
+.assign-task-container {
+	margin-top: 25px;
+	border: 1px solid #e1e1e1;
+	background-color: #f5f5f5;
+	padding: 20px;
+}
+.opencps-theme.ux .assign-task-container .span12 {
+	margin: 0;
+}
+.assign-task-container .control-group {
+	overflow: hidden;
+	margin-bottom: 15px;
+}
+.assign-task-container .control-label {
+	width: 120px;
+	float: left;
+	margin: 0;
+	vertical-align: top;
+	font-family: 'Roboto-Bold';
+}
+.opencps-theme.ux .assign-task-container input:not([type="button"]), 
+.opencps-theme.ux .assign-task-container select, 
+.opencps-theme.ux .assign-task-container textarea, 
+.opencps-theme.ux .assign-task-container .signature-file-list {
+	width: -webkit-calc(100% - 130px);
+	width: calc(100% - 130px);
+	float: right;
+	min-height: 30px;
+	margin-bottom: 0;
+	overflow: auto;
+	background-color: white;
+}
+.opencps-theme.ux .assign-task-container .lfr-input-date {
+	width: -webkit-calc(100% - 230px);
+	width: calc(100% - 230px);
+	float: left;
+	margin-left: 10px;
+}
+.opencps-theme.ux .assign-task-container .lfr-input-time {
+	width: 100px;
+	float: left;
+	margin-left: -1px;
+}
+.opencps-theme.ux .assign-task-container [class*="lfr-input"] input {
+	width: 100%;
+}
+.assign-task-container .file-name:before {
+	content: "\f0f6";
+	font-family: FontAwesome;
+	margin-left: 5px;
+}
+.assign-task-container .button-holder {
+	padding-top: 15px;
+	margin: 0;
+}
+.assign-task-container .button-holder button {
+	float: left;
+	margin-right: 10px;
+}
 /* Tab 4 */
 .opencps-theme.ux .opencps-form-navigator-container .ocps-title-detail {
 	padding: 0 30px;
@@ -79,7 +145,7 @@
 	width: 100px;
 	margin-right: 10px;
 	vertical-align: top;
-	font-family: 'Roboto-Bold'
+	font-family: 'Roboto-Bold';
 }
 .portlet-boundary_16_WAR_opencpsportlet_ .ocps-title-detail p {
 	display: inline-block;
@@ -113,4 +179,123 @@
 .opencps-theme.ux .opencps-form-navigator-container .bound-search-container-history > div:nth-last-of-type(2) {
 	border-bottom: 0;
 	overflow: hidden;
+}
+
+
+
+/*----- Others -----*/
+#_16_WAR_opencpsportlet_multiAssignToUserBtn {
+	margin: 15px 25px -15px;
+	border-radius: 20px;
+	padding: 5px 20px;
+}
+
+
+
+/*----- Affix -----*/
+.opencps-theme.ux .opencps-searchcontainer-wrapper[class*="affix"] {
+	padding: 25px 0;
+}
+.opencps-theme.ux [class*="affix"] .changeDefErr {
+    border: 0;
+    background-color: #0af;
+    color: white;
+    border-radius: 0;
+}
+.opencps-theme.ux [class*="affix"] p {
+    line-height: 40px;
+    margin-bottom: 0;
+}
+.opencps-theme.ux [class*="affix"] p a {
+    font-family: 'Roboto-Bold';
+    padding: 0 30px;
+    display: block;
+}
+.separate-line {
+	height: 7px;
+    margin-bottom: 30px;
+    background: #efefef;
+}
+.process-order-detail-container h4 {
+	margin-bottom: 30px;
+}
+.process-order-detail-container .fa-pencil-square {
+    color: #09c;
+    font-size: 20px;
+    margin-right: 5px;
+}
+/*- Tab 2 -*/
+.process-order-detail-container #_16_WAR_opencpsportlet_dossier_info table td:first-child {
+    padding: 10px 0px 10px 30px
+}
+/*- Tab 3 -*/
+.process-order-detail-container .process-workflow-info td {
+	vertical-align: top;
+	padding-bottom: 10px;
+}
+.process-order-detail-container .process-workflow-info td:first-child, 
+.process-order-detail-container .process-workflow-info td:nth-child(3) {
+	font-family: 'Roboto-Bold';
+}
+.process-order-detail-container .process-workflow-info td:nth-child(2) {
+	padding-right: 15px;
+}
+.opencps-theme.ux .process-order-detail-container .part-file-ctr {
+    background-color: transparent;
+    color: #0090ff!important;
+    font-weight: normal;
+    padding-left: 22px;
+    text-shadow: none;
+    white-space: nowrap;
+    font-size: 14px;
+}
+.opencps-theme.ux .process-order-detail-container .remove-dossier-file {
+    background: transparent url("../../images/custom/icon_remove_dossierfile.png") no-repeat scroll left center;
+    color: #555!important;
+    font-family: "Roboto-Medium";
+    margin-left: 10px;
+    opacity: .3;
+    padding-left: 15px;
+    white-space: nowrap;
+}
+.opencps-theme.ux .process-order-detail-container .remove-dossier-file:after {
+    content: "Xóa file";
+}
+.opencps-theme.ux .process-order-detail-container .remove-dossier-file-has-file {
+	opacity: 1;
+}
+.opencps-theme.ux .process-order-detail-container .upload-dossier-file {
+    background: transparent url("../../images/custom/icon_upload.png") no-repeat scroll left center;
+}
+.opencps-theme .process-order-detail-container .dossier-version-counter {
+    width: 16px;
+    height: 16px;
+    border: 0;
+    background-color: #1597fb;
+}
+.opencps-theme .process-order-detail-container .dossier-version-counter a {
+    line-height: 16px;
+}
+/*- Tab 4 -*/
+.process-order-detail-container #_16_WAR_opencpsportlet_history .ocps-title-detail {
+	padding: 0 30px;
+    border-bottom: 1px solid #ccc;
+}
+.process-order-detail-container #_16_WAR_opencpsportlet_history .bound-search-container-history {
+    padding: 15px 30px 0;
+}
+.opencps-theme.ux .opencps-searchcontainer-wrapper .process-order-detail-container .span12 {
+    padding-left: 0;
+}
+.process-order-detail-container .bound-search-container-history > div {
+    border-bottom: 1px solid #e1e1e1;
+    margin-bottom: 10px;
+}
+.process-order-detail-container .bound-search-container-history > .lfr-search-container, 
+.process-order-detail-container .bound-search-container-history > div:nth-last-of-type(2) {
+	border-bottom: 0;
+	overflow: hidden;
+}
+.opencps-theme.ux .process-order-detail-container .bound-search-container-history > .lfr-search-container > div {
+	margin: 0;
 }

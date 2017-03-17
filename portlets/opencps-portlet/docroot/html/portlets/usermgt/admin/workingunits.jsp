@@ -170,7 +170,6 @@
 			    row.addText(rowIndex);
 				row.addText(workingunitInfo);
 	
-				//row.addJSP("center", SearchEntry.DEFAULT_VALIGN,  templatePath + "workingunit_action.jsp", config.getServletContext(), request, response);
 			%>
 			
 			<liferay-ui:search-container-column-jsp 

@@ -69,19 +69,26 @@ public class MsgInBackOffice implements MessageListener {
 			// WebKeys.JMS_QUEUE_OPENCPS.toLowerCase(),
 			// WebKeys.JMS_QUEUE_OPENCPS.toLowerCase(), "local", "jmscore");
 
-			JMSHornetqContext context =
-				JMSMessageUtil.createHornetqConsumer(
-					companyId, StringPool.BLANK, true,
-					WebKeys.JMS_QUEUE_OPENCPS.toLowerCase(),
-					WebKeys.JMS_QUEUE_OPENCPS.toLowerCase(), "local", "hornetq");
+			JMSHornetqContext context = null;
+			
+			context = JMSMessageUtil
+					.createHornetqConsumer(companyId, StringPool.BLANK, true,
+							WebKeys.JMS_QUEUE_OPENCPS.toLowerCase(),
+							WebKeys.JMS_QUEUE_OPENCPS.toLowerCase(), "local",
+							"hornetq");
 			try {
 
 				int count = 1;
 
 				while (count <= 50) {
 
-					javax.jms.Message jsmMessage =
-						context.getMessageConsumer().receive(1000);
+					javax.jms.Message jsmMessage = null;
+					
+					try {
+						jsmMessage = context.getMessageConsumer().receive(1000);
+					} catch (Exception e) {
+
+					}
 					if (jsmMessage != null) {
 						JMSMessageBodyUtil.receiveMessage(context, jsmMessage);
 					}
@@ -94,7 +101,9 @@ public class MsgInBackOffice implements MessageListener {
 			}
 			finally {
 				try {
-					context.destroy();
+					if (context != null) {
+						context.destroy();
+					}
 				}
 				catch (Exception e) {
 					_log.error(e);

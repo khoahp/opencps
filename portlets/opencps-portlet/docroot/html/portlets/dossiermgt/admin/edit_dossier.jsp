@@ -109,10 +109,13 @@
 	</div> --%>
 </liferay-util:buffer>
 
+<div class="opencps-bound-wrapper pd20 default-box-shadow">
+
 <aui:form 
 	name="fm" 
 	method="post" 
 	action="<%=updateDossierURL.toString() %>"
+	cssClass="bg-white"
 >
 	<div class="opencps-form-navigator-container">
 		<liferay-ui:form-navigator 
@@ -127,3 +130,5 @@
 		</liferay-ui:form-navigator>
 	</div>
 </aui:form>
+
+</div>

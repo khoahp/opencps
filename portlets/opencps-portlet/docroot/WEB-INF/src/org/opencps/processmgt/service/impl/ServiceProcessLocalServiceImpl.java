@@ -197,6 +197,10 @@ public class ServiceProcessLocalServiceImpl
 	public int countByG_T(long groupId ,long dossierTemplateId) throws SystemException {
 		return serviceProcessPersistence.countByG_T(groupId, dossierTemplateId);
 	}
-	
+
+	public ServiceProcess getServiceProcess(long groupId, String processNo)
+			throws SystemException, NoSuchServiceProcessException {
+		return serviceProcessPersistence.findByG_P(groupId, processNo);
+	}
 	
 }

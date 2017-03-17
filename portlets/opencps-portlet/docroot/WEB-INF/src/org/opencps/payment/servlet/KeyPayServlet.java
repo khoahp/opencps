@@ -24,7 +24,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.opencps.keypay.model.KeyPay;
+import org.opencps.paymentmgt.keypay.model.KeyPay;
 import org.opencps.paymentmgt.util.PaymentMgtUtil;
 
 import com.liferay.portal.kernel.log.Log;
@@ -62,7 +62,7 @@ public class KeyPayServlet extends HttpServlet {
 		throws ServletException, IOException {
 
 		_log.info("=====doPost():" + request);
-
+		
 		KeyPay keyPay = new KeyPay(request);
 		
 		PaymentMgtUtil.runKeyPayGateData(request, response, keyPay);

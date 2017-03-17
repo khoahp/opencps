@@ -45,9 +45,9 @@
 <%@ include file="../init.jsp"%>
 
 <div class="home-search-sologan">
-	<h2> </h2>
+	<h2><liferay-ui:message key="beautiful-life"/></h2>
 	
-	<p><liferay-ui:message key="slogan-key-lv"/></p>
+	<p><liferay-ui:message key="slogan-key"/></p>
 </div>
 
 <div class = "home-search">
@@ -60,7 +60,7 @@
 	iteratorURL.setParameter("mvcPath", templatePath + "dossiermonitoringsearch.jsp");	
 %>
 
-<c:if test="<%= false %>">
+<%-- <c:if test="<%= false %>">
 	<aui:row>
 		<aui:col width="50">
 			<liferay-ui:search-container searchContainer="<%= new DossierNewProcessingSearch(renderRequest, SearchContainer.DEFAULT_DELTA, iteratorURL) %>">
@@ -152,7 +152,7 @@
 		</aui:col>
 	</aui:row>
 
-</c:if>
+</c:if> --%>
 <%!
 	private Log _log = LogFactoryUtil.getLog("html.portlets.dossiermgt.monitoring.search.jsp");
 %>

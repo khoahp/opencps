@@ -136,7 +136,7 @@
 	</tr>
 	<tr>
 		<td >
-			<liferay-ui:message key="modified-date"/>
+			<liferay-ui:message key="modified-date-dossier"/>
 		</td>
 		<td >
 			<%= ProcessOrderUtils.getDossierDate(dossier.getDossierId(), 4, "dd/MM/yyyy hh:mm") %>

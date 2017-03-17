@@ -78,8 +78,9 @@ public class MsgInFrontOffice implements MessageListener {
 			 * "jmscore");
 			 */
 
-			JMSHornetqContext context =
-				JMSMessageUtil.createHornetqConsumer(
+			JMSHornetqContext context = null;
+			
+			context = JMSMessageUtil.createHornetqConsumer(
 					companyId, StringPool.BLANK, true,
 					WebKeys.JMS_QUEUE_OPENCPS_FRONTOFFICE.toLowerCase(),
 					WebKeys.JMS_QUEUE_OPENCPS_FRONTOFFICE.toLowerCase(),
@@ -91,9 +92,13 @@ public class MsgInFrontOffice implements MessageListener {
 				int count = 1;
 
 				while (count <= receiveNumber) {
+					javax.jms.Message jsmMessage = null;
+					
+					try {
+						jsmMessage = context.getMessageConsumer().receive(1000);
+					} catch (Exception e) {
 
-					javax.jms.Message jsmMessage =
-						context.getMessageConsumer().receive(1000);
+					}
 
 					if (jsmMessage != null) {
 						JMSMessageBodyUtil.receiveMessage(context, jsmMessage);
@@ -109,7 +114,9 @@ public class MsgInFrontOffice implements MessageListener {
 			}
 			finally {
 				try {
-					context.destroy();
+					if (context != null) {
+						context.destroy();
+					}
 
 				}
 				catch (JMSException e) {
