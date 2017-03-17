@@ -21,6 +21,7 @@ import java.net.URL;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -31,6 +32,7 @@ import org.opencps.api.service.ApiServiceLocalServiceUtil;
 import org.opencps.api.service.base.ApiServiceServiceBaseImpl;
 import org.opencps.api.util.APIServiceConstants;
 import org.opencps.api.util.APIUtils;
+import org.opencps.backend.message.PaymentFileObj;
 import org.opencps.backend.message.SendToEngineMsg;
 import org.opencps.backend.message.UserActionMsg;
 import org.opencps.dossiermgt.NoSuchDossierException;
@@ -42,6 +44,8 @@ import org.opencps.dossiermgt.model.DossierFile;
 import org.opencps.dossiermgt.model.DossierPart;
 import org.opencps.dossiermgt.model.ServiceConfig;
 import org.opencps.dossiermgt.service.DossierLocalServiceUtil;
+import org.opencps.paymentmgt.model.PaymentFile;
+import org.opencps.paymentmgt.service.PaymentFileLocalServiceUtil;
 import org.opencps.processmgt.NoSuchProcessOrderException;
 import org.opencps.processmgt.NoSuchProcessWorkflowException;
 import org.opencps.processmgt.model.ProcessOrder;
@@ -51,8 +55,8 @@ import org.opencps.util.DLFolderUtil;
 import org.opencps.util.DateTimeUtil;
 import org.opencps.util.PortletConstants;
 import org.opencps.util.PortletUtil;
-import org.opencps.util.WebKeys;
 import org.opencps.util.PortletUtil.SplitDate;
+import org.opencps.util.WebKeys;
 
 import com.liferay.portal.NoSuchUserException;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
@@ -114,7 +118,7 @@ public class ApiServiceServiceImpl extends ApiServiceServiceBaseImpl {
 			APIServiceConstants.IN, serviceContext);
 	}
 	
-	@JSONWebService(value = "dossier", method = "POST")
+	@JSONWebService(value = "adddossier", method = "POST")
 	public JSONObject addDossier(String event, String dossierInfo) 
 		throws SystemException, PortalException {
 		
@@ -122,6 +126,8 @@ public class ApiServiceServiceImpl extends ApiServiceServiceBaseImpl {
 		
 		ServiceContext serviceContext = getServiceContext();
 		
+		_log.info("::DOSSIER_INFO:: " + dossierInfo);
+
 		long userId = 0;
 		
 		try {
@@ -199,11 +205,21 @@ public class ApiServiceServiceImpl extends ApiServiceServiceBaseImpl {
 				}
 			}
 			
+			
+			_log.info("::INFO:: " + serviceNo);
+			
 			ServiceInfo serviceInfo = serviceInfoPersistence.fetchByC_SN(
 				serviceContext.getCompanyId(), serviceNo);
 			
+			_log.info("::INFO:: " + serviceNo + serviceInfo.getServiceinfoId());
+
 			ServiceConfig serviceConfig = serviceConfigPersistence.findByG_S_G(
 				serviceContext.getScopeGroupId(), serviceInfo.getServiceinfoId(), govAgencyCode);
+			
+			//Get dossier status 
+			ProcessWorkflow processWorkflow = APIUtils.getProcessWorkflowByEvent(serviceConfig.getServiceProcessId(), event, 0);
+			
+			String nextStepStatus = APIUtils.getPostDossierStatus(processWorkflow);
 			
 			DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			
@@ -215,7 +231,7 @@ public class ApiServiceServiceImpl extends ApiServiceServiceBaseImpl {
 			String serviceDomainIndex = serviceConfig.getServiceDomainIndex();
 			long govAgencyOrganizationId = serviceConfig.getGovAgencyOrganizationId();
 			String govAgencyName = serviceConfig.getGovAgencyName();
-			int serviceMode = 1; //TODO: hard fix for remote dossier
+			int serviceMode = 1; 
 			String serviceAdministrationIndex = serviceConfig.getServiceAdministrationIndex();
 			String subjectId = StringPool.BLANK;
 			
@@ -347,6 +363,8 @@ public class ApiServiceServiceImpl extends ApiServiceServiceBaseImpl {
 			Message message = new Message();
 			
 			actionMsg.setAction(WebKeys.ACTION_SUBMIT_VALUE);
+			
+			actionMsg.setEvent(WebKeys.ACTION_ONEGATE_VALUE);
 
 			actionMsg.setDossierId(dossier.getDossierId());
 
@@ -374,6 +392,8 @@ public class ApiServiceServiceImpl extends ApiServiceServiceBaseImpl {
 			
 			resultObj.put("statusCode", "Success");
 			resultObj.put("oid", dossier.getOid());
+			resultObj.put("currentStatus", nextStepStatus);
+			
 		} catch (Exception e) {
 			_log.error(e);
 			
@@ -388,6 +408,7 @@ public class ApiServiceServiceImpl extends ApiServiceServiceBaseImpl {
 		
 		return resultObj;
 	}
+	
 	
 	@JSONWebService(value = "dossiers", method = "GET")
 	public JSONObject searchDossierByUserAssignProcessOrder(String username)
@@ -831,7 +852,7 @@ public class ApiServiceServiceImpl extends ApiServiceServiceBaseImpl {
 			input.put("actioncode", actioncode);
 			input.put("actionnote", actionnote);
 			input.put("username", username);
-			
+
 			// insert log received
 			ApiServiceLocalServiceUtil.addLog(userId, APIServiceConstants.CODE_05, 
 				serviceContext.getRemoteAddr(), oid, 
@@ -941,6 +962,228 @@ public class ApiServiceServiceImpl extends ApiServiceServiceBaseImpl {
 		
 		return resultObj;
 	}
+	
+	/**
+	 * @param oid
+	 * @param actioncode
+	 * @param actionnote
+	 * @param username
+	 * @param currentStatus
+	 * @return
+	 */
+	@JSONWebService(value = "changeStep", method = "POST")
+	public JSONObject changeStep(String oid, String actioncode,
+			String actionnote, String username, String currentstatus) {
+
+		JSONObject resultObj = JSONFactoryUtil.createJSONObject();
+
+		ServiceContext serviceContext = getServiceContext();
+
+		long userId = 0;
+
+		try {
+			userId = getUserId();
+
+			JSONObject input = JSONFactoryUtil.createJSONObject();
+			input.put("oid", oid);
+			input.put("actioncode", actioncode);
+			input.put("actionnote", actionnote);
+			input.put("username", username);
+			input.put("currentstatus", currentstatus);
+
+			// insert log received
+			ApiServiceLocalServiceUtil.addLog(userId,
+					APIServiceConstants.CODE_05,
+					serviceContext.getRemoteAddr(), oid, input.toString(),
+					APIServiceConstants.IN, serviceContext);
+
+			Dossier dossier = dossierPersistence.findByOID(oid);
+
+			ProcessOrder processOrder = processOrderPersistence.findByD_F(
+					dossier.getDossierId(), 0);
+
+			User user = userLocalService.getUserByScreenName(
+					dossier.getCompanyId(), username);
+
+			ProcessWorkflow processWorkflow = APIUtils.getProcessWorkflow(oid,
+					currentstatus, actioncode);
+			
+			String nextStatus = APIUtils.getPostDossierStatus(processWorkflow);
+
+			Message message = new Message();
+
+			SendToEngineMsg sendToEngineMsg = new SendToEngineMsg();
+
+			sendToEngineMsg.setCompanyId(dossier.getCompanyId());
+			sendToEngineMsg.setGroupId(dossier.getGroupId());
+			sendToEngineMsg.setActionNote(actionnote);
+			sendToEngineMsg.setAssignToUserId(0);
+			sendToEngineMsg.setActionUserId(user.getUserId());
+			sendToEngineMsg.setDossierId(dossier.getDossierId());
+			sendToEngineMsg.setFileGroupId(0);
+			sendToEngineMsg.setPaymentValue(GetterUtil.getDouble(0));
+			sendToEngineMsg.setProcessOrderId(processOrder.getProcessOrderId());
+
+			sendToEngineMsg.setReceptionNo(Validator.isNotNull(dossier
+					.getReceptionNo()) ? dossier.getReceptionNo()
+					: StringPool.BLANK);
+			sendToEngineMsg.setSignature(0);
+			sendToEngineMsg.setDossierStatus(dossier.getDossierStatus());
+			
+			if (Validator.isNotNull(processWorkflow)) {
+				if (Validator.isNotNull(processWorkflow.getAutoEvent())) {
+					sendToEngineMsg.setEvent(processWorkflow.getAutoEvent());
+				} else {
+					sendToEngineMsg.setProcessWorkflowId(processWorkflow
+							.getProcessWorkflowId());
+				}
+			}
+			
+			message.put("msgToEngine", sendToEngineMsg);
+
+			MessageBusUtil.sendMessage("opencps/backoffice/engine/destination",
+					message);
+
+			resultObj.put("statusCode", "Success");
+			resultObj.put("currentStatus", nextStatus);
+
+		} catch (Exception e) {
+			_log.error(e);
+
+			resultObj = JSONFactoryUtil.createJSONObject();
+			resultObj.put("statusCode", "Error");
+
+			if (e instanceof NoSuchDossierException) {
+				resultObj.put("message", "DossierNotFound");
+			} else if (e instanceof NoSuchProcessOrderException) {
+				resultObj.put("message", "ProcessOrderNotFound");
+			} else if (e instanceof NoSuchProcessWorkflowException) {
+				resultObj.put("message", "ActionCodeNotFound");
+			} else {
+				resultObj.put("message", e.getClass().getName());
+			}
+		}
+
+		ApiServiceLocalServiceUtil.addLog(userId, APIServiceConstants.CODE_05,
+				serviceContext.getRemoteAddr(), oid, resultObj.toString(),
+				APIServiceConstants.OUT, serviceContext);
+
+		return resultObj;
+	}
+
+	@JSONWebService(value = "addpayment", method = "POST")
+	public JSONObject addPaymentFile(String oid, String actioncode,
+			String actionnote, String username, String currentstatus, String paymentfile) {
+
+		JSONObject resultObj = JSONFactoryUtil.createJSONObject();
+
+		ServiceContext serviceContext = getServiceContext();
+
+		long userId = 0;
+
+		try {
+			userId = getUserId();
+
+			JSONObject input = JSONFactoryUtil.createJSONObject();
+			
+			JSONObject paymentfileObj = JSONFactoryUtil.createJSONObject(paymentfile);
+			
+			input.put("oid", oid);
+			input.put("actioncode", actioncode);
+			input.put("actionnote", actionnote);
+			input.put("username", username);
+			input.put("currentstatus", currentstatus);
+			input.put("paymentfile", paymentfile);
+			
+			PaymentFileObj paymentObj = new PaymentFileObj();
+			
+			paymentObj.setTotalPayment(GetterUtil.getInteger(paymentfileObj.getString("totalPayment")));
+			paymentObj.setPaymentMethods(paymentfileObj.getString("paymentMethods"));
+			paymentObj.setPaymentName(paymentfileObj.getString("paymentMessages"));
+			paymentObj.setPaymentMessages(paymentfileObj.getString("paymentName"));
+			
+
+			// insert log received
+			ApiServiceLocalServiceUtil.addLog(userId,
+					APIServiceConstants.CODE_05,
+					serviceContext.getRemoteAddr(), oid, input.toString(),
+					APIServiceConstants.IN, serviceContext);
+
+			Dossier dossier = dossierPersistence.findByOID(oid);
+
+			ProcessOrder processOrder = processOrderPersistence.findByD_F(
+					dossier.getDossierId(), 0);
+
+			User user = userLocalService.getUserByScreenName(
+					dossier.getCompanyId(), username);
+
+			ProcessWorkflow processWorkflow = APIUtils.getProcessWorkflow(oid,
+					currentstatus, actioncode);
+			
+			String nextStatus = APIUtils.getPostDossierStatus(processWorkflow);
+
+			Message message = new Message();
+
+			SendToEngineMsg sendToEngineMsg = new SendToEngineMsg();
+
+			sendToEngineMsg.setCompanyId(dossier.getCompanyId());
+			sendToEngineMsg.setGroupId(dossier.getGroupId());
+			sendToEngineMsg.setActionNote(actionnote);
+			sendToEngineMsg.setAssignToUserId(0);
+			sendToEngineMsg.setActionUserId(user.getUserId());
+			sendToEngineMsg.setDossierId(dossier.getDossierId());
+			sendToEngineMsg.setFileGroupId(0);
+			sendToEngineMsg.setPaymentValue(GetterUtil.getDouble(0));
+			sendToEngineMsg.setProcessOrderId(processOrder.getProcessOrderId());
+			sendToEngineMsg.setPaymentFileObj(paymentObj);
+
+			sendToEngineMsg.setReceptionNo(Validator.isNotNull(dossier
+					.getReceptionNo()) ? dossier.getReceptionNo()
+					: StringPool.BLANK);
+			sendToEngineMsg.setSignature(0);
+			sendToEngineMsg.setDossierStatus(dossier.getDossierStatus());
+			
+			if (Validator.isNotNull(processWorkflow)) {
+				if (Validator.isNotNull(processWorkflow.getAutoEvent())) {
+					sendToEngineMsg.setEvent(processWorkflow.getAutoEvent());
+				} else {
+					sendToEngineMsg.setProcessWorkflowId(processWorkflow
+							.getProcessWorkflowId());
+				}
+			}
+			
+			message.put("msgToEngine", sendToEngineMsg);
+
+			MessageBusUtil.sendMessage("opencps/backoffice/engine/destination",
+					message);
+
+			resultObj.put("statusCode", "Success");
+			resultObj.put("currentStatus", nextStatus);
+
+		} catch (Exception e) {
+			_log.error(e);
+
+			resultObj = JSONFactoryUtil.createJSONObject();
+			resultObj.put("statusCode", "Error");
+
+			if (e instanceof NoSuchDossierException) {
+				resultObj.put("message", "DossierNotFound");
+			} else if (e instanceof NoSuchProcessOrderException) {
+				resultObj.put("message", "ProcessOrderNotFound");
+			} else if (e instanceof NoSuchProcessWorkflowException) {
+				resultObj.put("message", "ActionCodeNotFound");
+			} else {
+				resultObj.put("message", e.getClass().getName());
+			}
+		}
+
+		ApiServiceLocalServiceUtil.addLog(userId, APIServiceConstants.CODE_05,
+				serviceContext.getRemoteAddr(), oid, resultObj.toString(),
+				APIServiceConstants.OUT, serviceContext);
+
+		return resultObj;
+	}
+
 
 	@JSONWebService(value = "dossiers", method = "GET")
 	public JSONObject searchDossierByDS_RD_SN_U(String dossierstatus,
@@ -1134,6 +1377,9 @@ public class ApiServiceServiceImpl extends ApiServiceServiceBaseImpl {
 	private JSONObject getDossierForList(Dossier dossier) throws SystemException {
 		JSONObject dossierObj = null;
 		
+		JSONArray paymentFiles = getPaymentFileObj(dossier.getDossierId());
+		
+		
 		if(dossier != null) {
 			ServiceInfo serviceInfo = serviceInfoPersistence.fetchByPrimaryKey(dossier.getServiceInfoId());
 			
@@ -1151,6 +1397,7 @@ public class ApiServiceServiceImpl extends ApiServiceServiceBaseImpl {
 				dossierObj.put("dossierStatus", dossier.getDossierStatus());
 				dossierObj.put("delayStatus", dossier.getDelayStatus());
 				dossierObj.put("serviceMode", dossier.getServiceMode());
+				dossierObj.put("paymentFiles", paymentFiles);
 				
 				if (dossier.getSubmitDatetime() != null) {
 					dossierObj.put("submitDatetime",
@@ -1172,6 +1419,74 @@ public class ApiServiceServiceImpl extends ApiServiceServiceBaseImpl {
 		return dossierObj;
 	}
 	
+	/**
+	 * @param dossierId
+	 * @return
+	 */
+	private JSONArray getPaymentFileObj(long dossierId) {
+		List<PaymentFile> paymentFiles = new ArrayList<PaymentFile>();
+
+		JSONObject paymentFileObj = null;
+
+		JSONArray resultArr = JSONFactoryUtil.createJSONArray();
+
+		try {
+			paymentFiles = PaymentFileLocalServiceUtil
+					.getPaymentFileByD_(dossierId);
+
+			_log.info("INFO:::: PaymentFileSize = " + paymentFiles.size());
+
+			SimpleDateFormat sdf = new SimpleDateFormat(
+					DateTimeUtil._VN_DATE_TIME_FORMAT);
+
+			for (PaymentFile paymentFile : paymentFiles) {
+				paymentFileObj = JSONFactoryUtil.createJSONObject();
+
+				paymentFileObj.put("oid", paymentFile.getOid());
+
+				paymentFileObj.put("createDate",
+						sdf.format(paymentFile.getCreateDate()));
+				paymentFileObj.put("paymentName", paymentFile.getPaymentName());
+				paymentFileObj.put("requestNote", paymentFile.getRequestNote());
+				paymentFileObj.put("paymentOptions",
+						paymentFile.getPaymentOptions());
+				paymentFileObj.put("paymentStatus",
+						paymentFile.getPaymentStatus());
+				paymentFileObj.put("paymentMethod",
+						paymentFile.getPaymentMethod());
+				paymentFileObj.put("approveNote", paymentFile.getApproveNote());
+				paymentFileObj.put("invoiceNo", paymentFile.getInvoiceNo());
+
+				if (Validator.isNotNull(paymentFile.getRequestDatetime())) {
+					paymentFileObj.put("requestDatetime",
+							sdf.format(paymentFile.getRequestDatetime()));
+				}
+
+				if (Validator.isNotNull(paymentFile.getConfirmDatetime())) {
+					paymentFileObj.put("confirmDatetime",
+							sdf.format(paymentFile.getConfirmDatetime()));
+				}
+
+				if (Validator.isNotNull(paymentFile.getConfirmFileEntryId())) {
+					paymentFileObj.put("confirmFileEntryId",
+							sdf.format(paymentFile.getConfirmFileEntryId()));
+				}
+
+				if (Validator.isNotNull(paymentFile.getApproveDatetime())) {
+					paymentFileObj.put("approveDatetime",
+							sdf.format(paymentFile.getApproveDatetime()));
+				}
+
+				resultArr.put(paymentFileObj);
+			}
+
+		} catch (Exception e) {
+			_log.error(e);
+		}
+
+		return resultArr;
+	}
+
 	private ServiceContext getServiceContext() {
 		
 		ServiceContext serviceContext = ServiceContextThreadLocal.getServiceContext();
@@ -1288,6 +1603,57 @@ public class ApiServiceServiceImpl extends ApiServiceServiceBaseImpl {
 	
 	@JSONWebService(value = "updatereceptionno", method = "POST")
 	public JSONObject updateDossierReceptionNo(String oid, String receptionno) {
+		
+		JSONObject resultObj = JSONFactoryUtil.createJSONObject();
+		
+		ServiceContext serviceContext = getServiceContext();
+		
+		long userId = 0;
+		
+		try {
+			userId = getUserId();
+			
+			JSONObject input = JSONFactoryUtil.createJSONObject();
+			
+			input.put("oid", oid);
+			input.put("recptionNo", receptionno);
+
+			ApiServiceLocalServiceUtil.addLog(userId,
+				APIServiceConstants.CODE_08, serviceContext.getRemoteAddr(), oid, 
+				input.toString(), APIServiceConstants.IN,
+				serviceContext);
+
+			
+			Dossier dossier = dossierPersistence.findByOID(oid);
+			
+			dossier.setReceptionNo(receptionno);
+			
+			dossierPersistence.update(dossier);
+			
+			resultObj.put("statusCode", "Success");
+			resultObj.put("oid", oid);
+
+		} catch (Exception e) {
+			_log.error(e);
+			
+			resultObj = JSONFactoryUtil.createJSONObject();
+			
+			resultObj.put("statusCode", "Error");
+			
+			if(e instanceof NoSuchDossierException) {
+				resultObj.put("message", "DossierNotFound");
+			} 
+		}
+		
+		ApiServiceLocalServiceUtil.addLog(userId, APIServiceConstants.CODE_08, 
+			serviceContext.getRemoteAddr(), oid, resultObj.toString(), 
+			APIServiceConstants.OUT, serviceContext);
+		
+		return resultObj;
+	}
+	
+	@JSONWebService(value = "changereceptionno", method = "POST")
+	public JSONObject updateReceptionNo(String oid, String receptionno) {
 		
 		JSONObject resultObj = JSONFactoryUtil.createJSONObject();
 		

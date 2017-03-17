@@ -231,55 +231,105 @@ public class DossierLogLocalServiceImpl extends DossierLogLocalServiceBaseImpl {
 	 * java.lang.String, java.util.Date, int, java.lang.String)
 	 */
 	public DossierLog addDossierLog(
-	    long userId, long groupId, long companyId, long dossierId,
-	    long fileGroupId, String status, String actionInfo, String messageInfo,
-	    Date updateDatetime, int level, int syncStatus, int actor,
-	    long actorId, String actorName, String className, long processOrderId,
-	    long processWorkflowId, boolean syncFile)
-	    throws PortalException, SystemException {
+		    long userId, long groupId, long companyId, long dossierId,
+		    long fileGroupId, String status, String actionInfo, String messageInfo,
+		    Date updateDatetime, int level, int syncStatus, int actor,
+		    long actorId, String actorName, String className, long processOrderId,
+		    long processWorkflowId, boolean syncFile)
+		    throws PortalException, SystemException {
 
-		long dossierLogId =
-			counterLocalService.increment(DossierLog.class.getName());
-		DossierLog dossierLog = dossierLogPersistence.create(dossierLogId);
-		ProcessStep processStep = BackendUtils.getProcessStepByDossierId(dossierId);
+			long dossierLogId =
+				counterLocalService.increment(DossierLog.class.getName());
+			DossierLog dossierLog = dossierLogPersistence.create(dossierLogId);
+			ProcessStep processStep = BackendUtils.getProcessStepByDossierId(dossierId);
 
-		dossierLog.setGroupId(groupId);
-		dossierLog.setCompanyId(companyId);
+			dossierLog.setGroupId(groupId);
+			dossierLog.setCompanyId(companyId);
 
-		Date now = new Date();
+			Date now = new Date();
 
-		dossierLog.setUserId(userId);
+			dossierLog.setUserId(userId);
 
-		dossierLog.setCreateDate(now);
+			dossierLog.setCreateDate(now);
 
-		dossierLog.setModifiedDate(now);
-		dossierLog.setOId(PortalUUIDUtil.generate());
-		dossierLog.setDossierId(dossierId);
-		dossierLog.setFileGroupId(fileGroupId);
-		if (Validator.isNotNull(status)) {
-			dossierLog.setDossierStatus(status);
+			dossierLog.setModifiedDate(now);
+			dossierLog.setOId(PortalUUIDUtil.generate());
+			dossierLog.setDossierId(dossierId);
+			dossierLog.setFileGroupId(fileGroupId);
+			if (Validator.isNotNull(status)) {
+				dossierLog.setDossierStatus(status);
+			}
+			dossierLog.setActionInfo(actionInfo);
+			dossierLog.setMessageInfo(messageInfo);
+			dossierLog.setUpdateDatetime(updateDatetime);
+			dossierLog.setLevel(level);
+			dossierLog.setActor(actor);
+			dossierLog.setActorId(actorId);
+			dossierLog.setActorName(actorName);
+			dossierLog.setClassName(className);
+			dossierLog.setSyncStatus(syncStatus);
+			dossierLog.setStepId(processStep.getProcessStepId());
+			dossierLog.setStepName(processStep.getStepName());
+			dossierLog.setProcessOrderId(processOrderId);
+			dossierLog.setProcessWorkflowId(processWorkflowId);
+			
+			if (syncFile) {
+				dossierFileLogLocalService.updateFileLog(dossierId, dossierLogId, actor);
+			}
+			
+			return dossierLogPersistence.update(dossierLog);
+
 		}
-		dossierLog.setActionInfo(actionInfo);
-		dossierLog.setMessageInfo(messageInfo);
-		dossierLog.setUpdateDatetime(updateDatetime);
-		dossierLog.setLevel(level);
-		dossierLog.setActor(actor);
-		dossierLog.setActorId(actorId);
-		dossierLog.setActorName(actorName);
-		dossierLog.setClassName(className);
-		dossierLog.setSyncStatus(syncStatus);
-		dossierLog.setStepId(processStep.getProcessStepId());
-		dossierLog.setStepName(processStep.getStepName());
-		dossierLog.setProcessOrderId(processOrderId);
-		dossierLog.setProcessWorkflowId(processWorkflowId);
-		
-		if (syncFile) {
-			dossierFileLogLocalService.updateFileLog(dossierId, dossierLogId, actor);
-		}
-		
-		return dossierLogPersistence.update(dossierLog);
+	public DossierLog addDossierLog(
+		    long userId, long groupId, long companyId, long dossierId,
+		    long fileGroupId, String status, String actionInfo, String messageInfo,
+		    Date updateDatetime, int level, int syncStatus, int actor,
+		    long actorId, String actorName, String className, long processOrderId,
+		    long processWorkflowId, boolean syncFile, long curStepId, String curStepName)
+		    throws PortalException, SystemException {
 
-	}
+			long dossierLogId =
+				counterLocalService.increment(DossierLog.class.getName());
+			DossierLog dossierLog = dossierLogPersistence.create(dossierLogId);
+			ProcessStep processStep = BackendUtils.getProcessStepByDossierId(dossierId);
+
+			dossierLog.setGroupId(groupId);
+			dossierLog.setCompanyId(companyId);
+
+			Date now = new Date();
+
+			dossierLog.setUserId(userId);
+
+			dossierLog.setCreateDate(now);
+
+			dossierLog.setModifiedDate(now);
+			dossierLog.setOId(PortalUUIDUtil.generate());
+			dossierLog.setDossierId(dossierId);
+			dossierLog.setFileGroupId(fileGroupId);
+			if (Validator.isNotNull(status)) {
+				dossierLog.setDossierStatus(status);
+			}
+			dossierLog.setActionInfo(actionInfo);
+			dossierLog.setMessageInfo(messageInfo);
+			dossierLog.setUpdateDatetime(updateDatetime);
+			dossierLog.setLevel(level);
+			dossierLog.setActor(actor);
+			dossierLog.setActorId(actorId);
+			dossierLog.setActorName(actorName);
+			dossierLog.setClassName(className);
+			dossierLog.setSyncStatus(syncStatus);
+			dossierLog.setStepId(curStepId);
+			dossierLog.setStepName(curStepName);
+			dossierLog.setProcessOrderId(processOrderId);
+			dossierLog.setProcessWorkflowId(processWorkflowId);
+			
+			if (syncFile) {
+				dossierFileLogLocalService.updateFileLog(dossierId, dossierLogId, actor);
+			}
+			
+			return dossierLogPersistence.update(dossierLog);
+
+		}
 
 	public DossierLog addDossierLog(
 		long userId, long groupId, long companyId, long dossierId,

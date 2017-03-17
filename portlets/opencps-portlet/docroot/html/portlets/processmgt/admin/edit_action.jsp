@@ -159,6 +159,7 @@
 				<aui:select name="autoEvent">
 					<aui:option value=""> <liferay-ui:message key="no-event"/></aui:option>
 					<aui:option value="submit"> <liferay-ui:message key="submit"/></aui:option>
+					<aui:option value="outstanding"> <liferay-ui:message key="outstanding"/></aui:option>
 					<aui:option value="onegate"> <liferay-ui:message key="onegate"/></aui:option>
 					<aui:option value="repair"> <liferay-ui:message key="repair"/></aui:option>
 					<aui:option value="change"> <liferay-ui:message key="change"/></aui:option>

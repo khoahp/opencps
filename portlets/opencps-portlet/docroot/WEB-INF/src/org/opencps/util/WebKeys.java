@@ -154,6 +154,8 @@ public class WebKeys implements com.liferay.portal.kernel.util.WebKeys {
 
 	public static final String ACTION_SUBMIT_VALUE = "submit";
 
+	public static final String ACTION_ONEGATE_VALUE = "onegate";
+
 	public static final String ACTION_RESUBMIT_VALUE = "resubmit";
 
 	public static final String ACTION_CHANGE_VALUE = "change";

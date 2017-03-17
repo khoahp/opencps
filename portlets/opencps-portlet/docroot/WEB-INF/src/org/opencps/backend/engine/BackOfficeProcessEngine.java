@@ -229,7 +229,7 @@ public class BackOfficeProcessEngine implements MessageListener {
 
 			if (Validator.isNotNull(processWorkflow)) {
 
-				_log.info("=====processWorkflow:" + processWorkflow);
+				//_log.info("=====processWorkflow:" + processWorkflow);
 				actionName = processWorkflow.getActionName();
 
 				processStepId = processWorkflow.getPostProcessStepId();
@@ -237,15 +237,21 @@ public class BackOfficeProcessEngine implements MessageListener {
 				long changeStepId = processWorkflow.getPostProcessStepId();
 
 				ProcessStep changeStep = ProcessUtils.getPostProcessStep(changeStepId);
+				
+				curStepId = processWorkflow.getPreProcessStepId();
 
 				ProcessStep currStep = new ProcessStepImpl();
 
 				if (curStepId != 0) {
-					currStep = ProcessUtils.getPostProcessStep(curStepId);
+					currStep = ProcessUtils.getProcessStep(curStepId);
 					stepName = currStep.getStepName();
 				}
-				_log.info("=====changeStep.getProcessStepId():" + changeStep.getProcessStepId());
-				_log.info("=====currStep.getProcessStepId():" + currStep.getProcessStepId());
+				
+				toBackOffice.setCurStepId(curStepId);
+				toBackOffice.setCurStepName(stepName);
+				
+				//_log.info("=====changeStep.getProcessStepId():" + changeStep.getProcessStepId());
+				//_log.info("=====currStep.getProcessStepId():" + currStep.getProcessStepId());
 
 				// Add noti's events
 
@@ -420,37 +426,76 @@ public class BackOfficeProcessEngine implements MessageListener {
 
 				// Update Paying
 				if (processWorkflow.getRequestPayment()) {
+					
+					int totalPayment = 0;
+					List<String> paymentMessages = new ArrayList<String>();
+					
+					if (Validator.isNotNull(toEngineMsg.getPaymentFileObj())) {
+						
+						_log.info(":::: ADD PAYMENT E-Par " );
+						_log.info(":::: ADD PAYMENT E-Par PayMent " + toEngineMsg.getPaymentFileObj().getTotalPayment());
 
-					int totalPayment =
-						PaymentRequestGenerator.getTotalPayment(
-							processWorkflow.getPaymentFee(), dossier.getDossierId());
+						
+						totalPayment = toEngineMsg.getPaymentFileObj().getTotalPayment();
 
-					List<String> paymentMethods =
-						PaymentRequestGenerator.getPaymentMethod(processWorkflow.getPaymentFee());
+							String paymentOptions = toEngineMsg.getPaymentFileObj().getPaymentMethods();
 
-					String paymentOptions = StringUtil.merge(paymentMethods);
 
-					List<String> paymentMessages =
-						PaymentRequestGenerator.getMessagePayment(processWorkflow.getPaymentFee());
+							String paymentName = toEngineMsg.getPaymentFileObj().getPaymentName();
 
-					String paymentName =
-						(paymentMessages.size() != 0) ? paymentMessages.get(0) : StringPool.BLANK;
+							paymentFile =
+								PaymentFileLocalServiceUtil.addPaymentFile(
+									toEngineMsg.getDossierId(), toEngineMsg.getFileGroupId(), ownerUserId,
+									ownerOrganizationId, govAgencyOrganizationId, paymentName, new Date(),
+									(double) totalPayment, paymentName, StringPool.BLANK, paymentOptions);
 
-					paymentFile =
-						PaymentFileLocalServiceUtil.addPaymentFile(
-							toEngineMsg.getDossierId(), toEngineMsg.getFileGroupId(), ownerUserId,
-							ownerOrganizationId, govAgencyOrganizationId, paymentName, new Date(),
-							(double) totalPayment, paymentName, StringPool.BLANK, paymentOptions);
+							if (paymentOptions.contains(PaymentRequestGenerator.PAY_METHOD_KEYPAY)) {
 
-					if (paymentMethods.contains(PaymentRequestGenerator.PAY_METHOD_KEYPAY)) {
+								paymentFile =
+										PaymentUrlGenerator.generatorPayURL(
+										processWorkflow.getGroupId(), govAgencyOrganizationId,
+										paymentFile.getPaymentFileId(), processWorkflow.getPaymentFee(),
+										toEngineMsg.getDossierId());
 
-						paymentFile =
-								PaymentUrlGenerator.generatorPayURL(
-								processWorkflow.getGroupId(), govAgencyOrganizationId,
-								paymentFile.getPaymentFileId(), processWorkflow.getPaymentFee(),
-								toEngineMsg.getDossierId());
+							}
+						
+					} else {
+						
+						_log.info(":::: ADD PAYMENT " );
 
+						totalPayment =
+								PaymentRequestGenerator.getTotalPayment(
+									processWorkflow.getPaymentFee(), dossier.getDossierId());
+						
+						_log.info(":::: ADD PAYMENT PaymentValue" + totalPayment );
+
+							List<String> paymentMethods =
+								PaymentRequestGenerator.getPaymentMethod(processWorkflow.getPaymentFee());
+
+							String paymentOptions = StringUtil.merge(paymentMethods);
+
+							paymentMessages =
+								PaymentRequestGenerator.getMessagePayment(processWorkflow.getPaymentFee());
+
+							String paymentName =
+								(paymentMessages.size() != 0) ? paymentMessages.get(0) : StringPool.BLANK;
+
+							paymentFile =
+								PaymentFileLocalServiceUtil.addPaymentFile(
+									toEngineMsg.getDossierId(), toEngineMsg.getFileGroupId(), ownerUserId,
+									ownerOrganizationId, govAgencyOrganizationId, paymentName, new Date(),
+									(double) totalPayment, paymentName, StringPool.BLANK, paymentOptions);
+
+							if (paymentMethods.contains(PaymentRequestGenerator.PAY_METHOD_KEYPAY)) {
+								paymentFile =
+										PaymentUrlGenerator.generatorPayURL(
+										processWorkflow.getGroupId(), govAgencyOrganizationId,
+										paymentFile.getPaymentFileId(), processWorkflow.getPaymentFee(),
+										toEngineMsg.getDossierId());
+							}
+						
 					}
+					
 
 					citizenEvents.add(NotificationEventKeys.USERS_AND_ENTERPRISE.EVENT5);
 
@@ -462,8 +507,6 @@ public class BackOfficeProcessEngine implements MessageListener {
 					Locale vnLocale = new Locale("vi", "VN");
 
 					NumberFormat vnFormat = NumberFormat.getCurrencyInstance(vnLocale);
-
-					// setPayment message in pattern in message Info
 
 					StringBuffer sb = new StringBuffer();
 

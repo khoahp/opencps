@@ -1,3 +1,26 @@
+<%@page import="java.text.SimpleDateFormat"%>
+<%
+/**
+ * OpenCPS is the open source Core Public Services software
+ * Copyright (C) 2016-present OpenCPS community
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+%>
+
+<%@ include file="../init.jsp"%>
+
+<%@page import="org.opencps.dossiermgt.util.DossierMgtUtil"%>
 <%@page import="org.opencps.util.PortletConstants"%>
 <%@page import="com.liferay.portal.kernel.dao.orm.QueryUtil"%>
 <%@page import="org.opencps.dossiermgt.search.DossierDisplayTerms"%>
@@ -21,157 +44,194 @@
 <%@page import="com.liferay.portal.kernel.log.LogFactoryUtil"%>
 <%@page import="com.liferay.portal.kernel.log.Log"%>
 <%@ taglib prefix="opencps-ui" uri="/WEB-INF/tld/opencps-ui.tld"%>
-<%
-/**
- * OpenCPS is the open source Core Public Services software
- * Copyright (C) 2016-present OpenCPS community
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- * You should have received a copy of the GNU Affero General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- */
-%>
-<%@ include file="../init.jsp"%>
+
 <%
 	long dossierId = ParamUtil.getLong(request, DossierDisplayTerms.DOSSIER_ID);
-	Dossier dossier = null;
+	Dossier dossier = DossierMgtUtil.getDossierByDossierId(dossierId);
 	ServiceInfo serviceInfo = null;
 	PortletURL iteratorURL = renderResponse.createRenderURL();
 	iteratorURL.setParameter("mvcPath", templatePath + "dossiermonitoringresult.jsp");
 	
-	try {
-		dossier = DossierLocalServiceUtil.getDossier(dossierId);	
-		serviceInfo = ServiceInfoLocalServiceUtil.getServiceInfo(dossier.getServiceInfoId());
+	if(Validator.isNotNull(dossier)) {
+		try {
+			serviceInfo = ServiceInfoLocalServiceUtil.getServiceInfo(dossier.getServiceInfoId());
+		}
+		catch (Exception ex) {
+			
+		}
 	}
-	catch (NoSuchDossierException nsde) {
-		
-	}
-	catch (Exception ex) {
-		
-	}
-	_log.debug("----DOSSIER ID----" + dossierId);
+	
 	Format dateFormatDate = FastDateFormatFactoryUtil.getDate(locale, timeZone);
-%>
-<style>
-.opencps-theme .home_bg #column-1 .portlet-body{
-	margin-top: 0px !important;
-}
-</style>
-<%
+	
+	SimpleDateFormat sdf = new SimpleDateFormat("dd/mm/yyyy | hh:MM:ss");
+
 	String keywordSearch = ParamUtil.getString(request, "keywords", StringPool.BLANK);
 %>
 
-<c:if test="<%= !StringPool.BLANK.equals(keywordSearch) %>">
 <portlet:renderURL var="backURL">
-	<portlet:param name="mvcPath"
+	<portlet:param name="mvcPath" 
 		value="/html/portlets/dossiermgt/monitoring/dossiermonitoringdossierlist.jsp" />	
-	<portlet:param name="keywords"
-		value="<%= keywordSearch %>" />	
+	<portlet:param name="keywords" value="<%= keywordSearch %>" />	
 </portlet:renderURL>
-<liferay-ui:header
-	backURL="<%= backURL.toString() %>"
-	title="dossier-list"
-	backLabel="back"
-/>
-</c:if>
-<c:if test="<%= StringPool.BLANK.equals(keywordSearch) %>">
-<portlet:renderURL var="backURL">
-	<portlet:param name="mvcPath"
-		value="/html/portlets/dossiermgt/monitoring/dossiermonitoringsearch.jsp" />	
-	<portlet:param name="keywords"
-		value="<%= keywordSearch %>" />	
-</portlet:renderURL>
-<liferay-ui:header
-	backURL="<%= backURL.toString() %>"
-	title="dossier-list"
-	backLabel="back"
-/>
-</c:if>
+
+<liferay-ui:header backURL="<%= backURL.toString() %>" title="dossier-list" 
+	backLabel="back" />
+
 <div class="head">
-	<h3 class="headh3"><liferay-ui:message key="ket-qua-tra-cuu-ho-so"/> <%= Validator.isNotNull(dossier)?dossier.getReceptionNo():StringPool.BLANK %></h3>
+	<h3 class="headh3"><liferay-ui:message key="ket-qua-tra-cuu-ho-so"/> 
+		<%= Validator.isNotNull(dossier)?dossier.getReceptionNo():StringPool.BLANK %>
+	</h3>
 	<div class = "page-search">
 		<liferay-util:include page="/html/portlets/dossiermgt/monitoring/toolbar.jsp" servletContext="<%=application %>" />
 	</div>
 </div>
 
-<div class="detail-left">
-	<%
-		if (dossier != null) {
-	%>
-	 <h4 class="matiepnhan"><liferay-ui:message key="reception-no"/> - <%= Validator.isNotNull(dossier.getReceptionNo()) ? dossier.getReceptionNo() : LanguageUtil.get(pageContext, "monitoring-chua-co") %></h4>
-     
-     <h4 class="thutuc"><liferay-ui:message key="service-name"/></h4>
-     
-     <p>- <%= Validator.isNotNull(serviceInfo)? serviceInfo.getServiceName() : LanguageUtil.get(pageContext, "monitoring-chua-co") %>
-	 </p>
-       
-     <h4 class="coquanthuchien"><liferay-ui:message key="administration-name"/></h4>
-            
-     <p>- <%= Validator.isNotNull(dossier)? dossier.getGovAgencyName() : LanguageUtil.get(pageContext, "monitoring-chua-co") %>
-	 </p>
-     
-     <h4 class="chuhoso"><liferay-ui:message key="subject-name"/></h4>
-     
-     <p>- <%= Validator.isNotNull(dossier.getSubjectName()) ? dossier.getSubjectName() : LanguageUtil.get(pageContext, "monitoring-chua-co") %></p>
-    
-     <h4 class="diachi"><liferay-ui:message key="address"/></h4>
-     
-     <p>- <%= Validator.isNotNull(dossier.getAddress())? dossier.getAddress(): LanguageUtil.get(pageContext, "monitoring-chua-co") %></p>
-    
-     <h4 class="ngaytiepnhan"><liferay-ui:message key="receive-datetime"/></h4>
-        
-     <p>- <%= (Validator.isNotNull(dossier.getReceiveDatetime())) ? dateFormatDate.format(dossier.getReceiveDatetime()) : LanguageUtil.get(pageContext, "monitoring-chua-co") %></p>
-        
-     <h4 class="ngayhentra"><liferay-ui:message key="estimate-datetime"/></h4>
-       
-     <p>- <%= (Validator.isNotNull(dossier.getEstimateDatetime())) ? dateFormatDate.format(dossier.getEstimateDatetime()) : LanguageUtil.get(pageContext, "monitoring-chua-co") %></p>
-        
-      <h4 class="ngayhoanthanh"><liferay-ui:message key="finish-datetime"/></h4>
-        
-      <p>- <%= (Validator.isNotNull(dossier.getFinishDatetime())) ? dateFormatDate.format(dossier.getFinishDatetime()) : LanguageUtil.get(pageContext, "monitoring-chua-co") %></p>
+<c:choose>
+	<c:when test="<%= Validator.isNotNull(dossier) %>">
+	<div class="detail-left">
+		<h4 class="matiepnhan">
+			<liferay-ui:message key="reception-no" />
+			-
+			<%=Validator.isNotNull(dossier.getReceptionNo()) ? dossier
+						.getReceptionNo() : LanguageUtil.get(pageContext,
+						"monitoring-chua-co")%>
+		</h4>
 
-	<%
-		}
-	%>
-</div>
-<div class="detail-right">
-                <h4><liferay-ui:message key="qua-trinh-xu-ly-ho-so"/></h4>
-                <%
-                	int[] logFitter = {0, PortletConstants.DOSSIER_FILE_SYNC_STATUS_REQUIREDSYNC, PortletConstants.DOSSIER_FILE_SYNC_STATUS_SYNCSUCCESS};
-	                List<DossierLog> dossierLogs = null;
-	    			try {
-	    				dossierLogs = DossierLogLocalServiceUtil.getDossierLogByDossierId(dossierId, logFitter);
-	    			} catch(Exception e){
-	    				_log.error(e);
-	    			}
-                %>
-               
-                <div class="info">
-                	<%
-                		for(DossierLog dossierLog: dossierLogs){
-                			if(!dossierLog.getDossierStatus().equalsIgnoreCase("system") && !dossierLog.getDossierStatus().equalsIgnoreCase("error")){
-                	%>
-                	 <div class="date">
-                        <p><%= (Validator.isNotNull(dossierLog.getUpdateDatetime())) ? dateFormatDate.format(dossierLog.getUpdateDatetime()) : StringPool.BLANK %></p>
-                        <p><%= Validator.isNotNull(dossierLog.getDossierStatus())? LanguageUtil.get(pageContext, dossierLog.getDossierStatus()+"-cus"):StringPool.BLANK %><font style="color: #fff;">-</font></p>
-                    </div>
-                    <div>
-                        <p><span><liferay-ui:message key="doi-tuong"/>:</span> <%= Validator.isNotNull(dossierLog.getActor())? LanguageUtil.get(pageContext, dossierLog.getActor()+"-cus"):StringPool.BLANK %></p>
-                        <p><span><liferay-ui:message key="ghi-chu"/>:</span> <%= dossierLog.getActionInfo() %></p>
-                    </div>
-                    <%}} %>
-                    
-                </div>
+		<h4 class="thutuc">
+			<liferay-ui:message key="service-name" />
+		</h4>
 
-</div>
+		<p>
+			-
+			<%=Validator.isNotNull(serviceInfo) ? serviceInfo
+						.getServiceName() : LanguageUtil.get(pageContext,
+						"monitoring-chua-co")%>
+		</p>
+
+		<h4 class="coquanthuchien">
+			<liferay-ui:message key="administration-name" />
+		</h4>
+
+		<p>
+			-
+			<%=Validator.isNotNull(dossier) ? dossier
+						.getGovAgencyName() : LanguageUtil.get(pageContext,
+						"monitoring-chua-co")%>
+		</p>
+
+		<h4 class="chuhoso">
+			<liferay-ui:message key="subject-name" />
+		</h4>
+
+		<p>
+			-
+			<%=Validator.isNotNull(dossier.getSubjectName()) ? dossier
+						.getSubjectName() : LanguageUtil.get(pageContext,
+						"monitoring-chua-co")%></p>
+
+		<h4 class="diachi">
+			<liferay-ui:message key="address" />
+		</h4>
+
+		<p>
+			-
+			<%=Validator.isNotNull(dossier.getAddress()) ? dossier
+						.getAddress() : LanguageUtil.get(pageContext,
+						"monitoring-chua-co")%></p>
+
+		<h4 class="ngaytiepnhan">
+			<liferay-ui:message key="receive-datetime" />
+		</h4>
+
+		<p>
+			-
+			<%=(Validator.isNotNull(dossier.getReceiveDatetime())) ? dateFormatDate
+						.format(dossier.getReceiveDatetime()) : LanguageUtil
+						.get(pageContext, "monitoring-chua-co")%></p>
+
+		<h4 class="ngayhentra">
+			<liferay-ui:message key="estimate-datetime" />
+		</h4>
+
+		<p>
+			-
+			<%=(Validator.isNotNull(dossier.getEstimateDatetime())) ? dateFormatDate
+						.format(dossier.getEstimateDatetime()) : LanguageUtil
+						.get(pageContext, "monitoring-chua-co")%></p>
+
+		<h4 class="ngayhoanthanh">
+			<liferay-ui:message key="finish-datetime" />
+		</h4>
+
+		<p>
+			-
+			<%=(Validator.isNotNull(dossier.getFinishDatetime())) ? dateFormatDate
+						.format(dossier.getFinishDatetime()) : LanguageUtil
+						.get(pageContext, "monitoring-chua-co")%>
+		</p>
+
+	</div>
+
+	<div class="detail-right">
+		<h4>
+			<liferay-ui:message key="qua-trinh-xu-ly-ho-so" />
+		</h4>
+		<%
+			int[] logFitter = { 0,
+						PortletConstants.DOSSIER_FILE_SYNC_STATUS_REQUIREDSYNC,
+						PortletConstants.DOSSIER_FILE_SYNC_STATUS_SYNCSUCCESS };
+				List<DossierLog> dossierLogs = null;
+				try {
+// 					dossierLogs = DossierLogLocalServiceUtil
+// 							.getDossierLogByDossierId(dossierId, logFitter);
+					
+					dossierLogs = DossierLogLocalServiceUtil.findDossierLog(1, dossierId, QueryUtil.ALL_POS, QueryUtil.ALL_POS);
+				} catch (Exception e) {
+					_log.error(e);
+				}
+		%>
+
+		<div class="info">
+			<%
+				for (DossierLog dossierLog : dossierLogs) {
+						if (!dossierLog.getDossierStatus().equalsIgnoreCase(
+								"system")
+								&& !dossierLog.getDossierStatus().equalsIgnoreCase(
+										"error")) {
+			%>
+			<div class="date">
+				<p>
+					<%= (Validator.isNotNull(dossierLog.getUpdateDatetime())) ? sdf.format(dossierLog.getUpdateDatetime()) : StringPool.BLANK %>
+				</p>
+				<p>
+					<%= Validator.isNotNull(dossierLog.getDossierStatus())? LanguageUtil.get(pageContext, dossierLog.getDossierStatus()+"-cus"):StringPool.BLANK %>
+				</p>
+			</div>
+			<div>
+				<p>
+					<span><liferay-ui:message key="doi-tuong" />:</span>
+					<%= Validator.isNotNull(dossierLog.getActor())? LanguageUtil.get(pageContext, dossierLog.getActor()+"-cus"):StringPool.BLANK %>
+				</p>
+				<p>
+					<span><liferay-ui:message key="ghi-chu" />:</span>
+					<liferay-ui:message key="<%= dossierLog.getActionInfo() %>" />
+				</p>
+			</div>
+			
+			<%			}
+				} 
+			%>
+
+		</div>
+
+	</div>
+	</c:when>
+	<c:otherwise>
+		<div class="error-msg">
+			<liferay-ui:message key="no-dossier-found" />
+		</div>
+	</c:otherwise>
+</c:choose>
 
 <%!
 	private Log _log = LogFactoryUtil.getLog("html.portlets.dossiermgt.monitoring.result.jsp");

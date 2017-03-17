@@ -59,10 +59,10 @@
 	margin-right: 5px;
 }
 .opencps-theme.ux .opencps-form-navigator-container .declaration-online {
-	background: transparent url("../../images/custom/icon_dynamic_form.png") no-repeat scroll left center;
+	background: transparent url("../images/custom/icon_dynamic_form.png") no-repeat scroll left center;
 }
 .opencps-theme.ux .opencps-form-navigator-container .upload-dossier-file {
-	background: transparent url("../../images/custom/icon_upload.png") no-repeat scroll left center;
+	background: transparent url("../images/custom/icon_upload.png") no-repeat scroll left center;
 }
 .opencps-theme.ux .opencps-form-navigator-container .view-attachment, 
 .opencps-theme.ux .opencps-form-navigator-container .view-form {
@@ -75,7 +75,7 @@
     margin-right: 5px;
 }
 .opencps-theme.ux .opencps-form-navigator-container .remove-dossier-file {
-	background: transparent url("../../images/custom/icon_remove_dossierfile.png") no-repeat scroll left center;
+	background: transparent url("../images/custom/icon_remove_dossierfile.png") no-repeat scroll left center;
 	color: #555 !important;
     font-family: "Roboto-Medium";
     margin-left: 10px;
@@ -285,26 +285,26 @@ div[class*="img-"] {
 	transition: all 1s ease;
 }
 .img-BGTVT-CDT{
-	background: url("../../images/custom/img-BGTVT-CÄ�TNÄ�1-2.png") center center no-repeat;
+	background: url("../images/custom/img-BGTVT-CÄ�TNÄ�1-2.png") center center no-repeat;
 	background-size: cover;
 }
 .img-BGTVT-CDT:hover {
-	background: url("../../images/custom/img-BGTVT-CÄ�TNÄ�1-1.png") center center no-repeat;
+	background: url("../images/custom/img-BGTVT-CÄ�TNÄ�1-1.png") center center no-repeat;
 	background-size: cover;
 }
 .img-LV-DS{
-	background: url("../../images/custom/img-BGTVT-CDS-2.png") center center no-repeat;
+	background: url("../images/custom/img-BGTVT-CDS-2.png") center center no-repeat;
 	background-size: cover;
 }
 .img-LV-DS:hover {
-	background: url("../../images/custom/img-BGTVT-CDS-1.png") center center no-repeat;
+	background: url("../images/custom/img-BGTVT-CDS-1.png") center center no-repeat;
 	background-size: cover;
 }
 .img-LVTT-DK{
-	background: url("../../images/custom/img-BGTVT-CDK-2.png") center center no-repeat;
+	background: url("../images/custom/img-BGTVT-CDK-2.png") center center no-repeat;
 	background-size: cover;
 }
 .img-LVTT-DK:hover {
-	background: url("../../images/custom/img-BGTVT-CDK-1.png") center center no-repeat;
+	background: url("../images/custom/img-BGTVT-CDK-1.png") center center no-repeat;
 	background-size: cover;
 }

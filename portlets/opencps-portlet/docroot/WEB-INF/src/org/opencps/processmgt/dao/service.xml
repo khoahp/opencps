@@ -212,6 +212,12 @@
         <finder name="ActionCode" return-type="ProcessWorkflow">
             <finder-column name="actionCode"></finder-column>
         </finder>
+        
+        <finder name="A_C_PreS" return-type="ProcessWorkflow">
+            <finder-column name="actionCode"/>
+            <finder-column name="preProcessStepId"/>
+        </finder>
+        
         <finder name="S_PreP_AN" return-type="ProcessWorkflow">
             <finder-column name="serviceProcessId"></finder-column>
             <finder-column name="preProcessStepId"></finder-column>

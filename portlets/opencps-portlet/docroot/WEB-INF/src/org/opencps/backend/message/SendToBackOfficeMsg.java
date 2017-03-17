@@ -622,6 +622,22 @@ public class SendToBackOfficeMsg {
     	this.listNotifications = listNotifications;
     }
 
+	public long getCurStepId() {
+		return curStepId;
+	}
+
+	public void setCurStepId(long curStepId) {
+		this.curStepId = curStepId;
+	}
+
+	public String getCurStepName() {
+		return curStepName;
+	}
+
+	public void setCurStepName(String curStepName) {
+		this.curStepName = curStepName;
+	}
+
 	protected String requestCommand;
 	protected long processOrderId;
 	protected long dossierId;
@@ -657,6 +673,8 @@ public class SendToBackOfficeMsg {
 	protected Date resubmitDate;
 	protected Date createProcessOrderDate;
 	protected Date createRecptionDate;
+	protected long curStepId;
+	protected String curStepName;
 	
 	protected String stepName;
 	
