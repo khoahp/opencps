@@ -24,8 +24,7 @@ public class UnitTest {
 	@Test
 	public void test() {
 	 
-		assertEquals(5, 5);
-	}
+}
 	 
 	
 }

@@ -149,5 +149,6 @@ public class PortletPropsKeys {
 	public static final String HOLIDAYCONFIG_DESCRIPTION_LENGTH = "opencps.holidayconfig.description.lengths";
 	
 	public static final String DM_USER_GROUP_NOTIFY = "opencps.datamgt.masterdata.notification.user.group";
+	public static final String DM_POSTAL_GATE = "opencps.datamgt.masterdata.postalgate";
 	
 }

@@ -890,4 +890,75 @@
 		<field name="dossierNextStatus" type="String" />
 		<field name="isSendNotification" type="boolean" />
 	</model>
+	<model name="org.opencps.postal.model.PostalConfig">
+		<field name="postalConfigId" type="long" />
+		<field name="companyId" type="long" />
+		<field name="groupId" type="long" />
+		<field name="userId" type="long" />
+		<field name="createDate" type="Date" />
+		<field name="modifiedDate" type="Date" />
+		<field name="govAgencyOrganizationId" type="long" />
+		<field name="postalDomain" type="String" />
+		<field name="postalCustomerCode" type="String" />
+		<field name="postalTokenCode" type="String" />
+		<field name="postalGateType" type="String" />
+		<field name="status" type="boolean" />
+	</model>
+	<model name="org.opencps.postal.model.PostalOrder">
+		<field name="postalOrderId" type="long" />
+		<field name="companyId" type="long" />
+		<field name="groupId" type="long" />
+		<field name="userId" type="long" />
+		<field name="createDate" type="Date" />
+		<field name="modifiedDate" type="Date" />
+		<field name="dossierId" type="long" />
+		<field name="transactionCode" type="String" />
+		<field name="postalOrderContent" type="String" />
+		<field name="postalOrderStatus" type="String" />
+		<field name="postalConfigId" type="long" />
+	</model>
+	<model name="org.opencps.postal.model.PostalOrderLog">
+		<field name="postalOrderLogId" type="long" />
+		<field name="companyId" type="long" />
+		<field name="groupId" type="long" />
+		<field name="userId" type="long" />
+		<field name="createDate" type="Date" />
+		<field name="modifiedDate" type="Date" />
+		<field name="postalOrderId" type="long" />
+		<field name="postalOrderContent" type="String" />
+		<field name="postalOrderStatus" type="String" />
+	</model>
+	<model name="org.opencps.postal.model.PostOfficeMapping">
+		<field name="postOfficeMappingId" type="long" />
+		<field name="companyId" type="long" />
+		<field name="groupId" type="long" />
+		<field name="userId" type="long" />
+		<field name="createDate" type="Date" />
+		<field name="modifiedDate" type="Date" />
+		<field name="postOfficeCode" type="String" />
+		<field name="postOfficeName" type="String" />
+		<field name="opencpsCityCode" type="String" />
+	</model>
+	<model name="org.opencps.postal.model.VnPostal">
+		<field name="vnPostalId" type="long" />
+		<field name="posIdThuGom" type="int" />
+		<field name="soDonHang" type="String" />
+		<field name="maKhachHang" type="String" />
+		<field name="diaChiNguoiGui" type="String" />
+		<field name="tenNguoiGui" type="String" />
+		<field name="emailNguoiGui" type="String" />
+		<field name="dienThoaiNguoiGui" type="String" />
+		<field name="noiDungHang" type="String" />
+		<field name="soTienCOD" type="double" />
+		<field name="ghiChu" type="String" />
+		<field name="ngayNhap" type="String" />
+		<field name="posIdNhanTin" type="int" />
+		<field name="tenNguoiNhan" type="String" />
+		<field name="diaChiNguoiNhan" type="String" />
+		<field name="dienThoaiNguoiNhan" type="String" />
+		<field name="maBuuGui" type="String" />
+		<field name="donHangNoiHuyen" type="boolean" />
+		<field name="maTinhNhan" type="int" />
+		<field name="emailNguoiNhan" type="String" />
+	</model>
 </model-hints>

@@ -1,5 +1,3 @@
-<%@page import="org.opencps.util.PortletPropsValues"%>
-<%@page import="org.opencps.util.DataMgtUtils"%>
 <%@page import="org.opencps.datamgt.model.DictItem"%>
 <%@page import="org.opencps.datamgt.service.DictCollectionLocalServiceUtil"%>
 <%@page import="org.opencps.datamgt.model.impl.DictCollectionImpl"%>
@@ -40,11 +38,11 @@
 <%@page import="com.liferay.portlet.PortletURLFactoryUtil"%>
 <%@ include file="../../init.jsp"%>
 
-<portlet:actionURL var="updateNofificationConfigURL" name="updateNofificationConfig" />
+<portlet:actionURL var="updateNofificationStatusConfigURL" name="updateNotificationStatusConfig" />
 
 <%
 	long notificationConfigId = ParamUtil.getLong(request,NotificationStatusConfigDisplayTerms.NOTICE_CONFIG_ID,0);
-	String backURL = ParamUtil.getString(request, WebKeys.BACK_URL);
+	String backURL = ParamUtil.getString(request, WebKeys.BACK_URL,StringPool.BLANK);
 
 	NotificationStatusConfig notificationConfig = new NotificationStatusConfigImpl();
 
@@ -58,40 +56,38 @@
 	}
 	
 	
-	
-	
 	DataMgtUtils dataMgtUtils = new DataMgtUtils();
 	
-	List<DictItem> dictItems = dataMgtUtils.getDictItemList(themeDisplay.getScopeGroupId(), PortletPropsValues.DM_USER_GROUP_NOTIFY);
+	List<DictItem> dictItems = dataMgtUtils.getDictItemList(themeDisplay.getScopeGroupId(), PortletPropsValues.DATAMGT_MASTERDATA_DOSSIER_STATUS);
 %>
 
-<liferay-ui:header backURL="<%=backURL%>"
-	title='<%=(notificationConfig == null) ? "add-notification-config"
+<liferay-ui:header
+	title='<%=Validator.isNull(notificationConfig) ? "add-notification-config"
 					: "update-notification-config"%>' />
 
 
 <div class=" opencps-bound-wrapper pd20 default-box-shadow"">
 	<div class="edit-form">
 
-		<liferay-ui:error key="<%= MessageKeys.HOLIDAYCONFIG_SYSTEM_EXCEPTION_OCCURRED%>" 
-		message="<%=MessageKeys.HOLIDAYCONFIG_SYSTEM_EXCEPTION_OCCURRED %>" />
+		<liferay-ui:error key="<%= MessageKeys.NOTIFICATION_STATUS_SYSTEM_EXCEPTION_OCCURRED%>" 
+		message="<%=MessageKeys.NOTIFICATION_STATUS_SYSTEM_EXCEPTION_OCCURRED %>" />
 		
-		<liferay-ui:success key="<%= MessageKeys.HOLIDAYCONFIG_ADD_SUCESS%>" 
-		message="<%= MessageKeys.HOLIDAYCONFIG_ADD_SUCESS%>"/>
+		<liferay-ui:success key="<%= MessageKeys.NOTIFICATION_STATUS_ADD_SUCESS%>" 
+		message="<%= MessageKeys.NOTIFICATION_STATUS_ADD_SUCESS%>"/>
 		
-		<liferay-ui:success key="<%= MessageKeys.HOLIDAYCONFIG_UPDATE_SUCESS%>" 
-		message="<%= MessageKeys.HOLIDAYCONFIG_UPDATE_SUCESS%>"/>
+		<liferay-ui:success key="<%= MessageKeys.NOTIFICATION_STATUS_UPDATE_SUCESS%>" 
+		message="<%= MessageKeys.NOTIFICATION_STATUS_UPDATE_SUCESS%>"/>
 
-		<aui:form action="<%=updateNofificationConfigURL.toString()%>"
+		<aui:form action="<%=updateNofificationStatusConfigURL.toString()%>"
 			method="post" name="fm">
 
 			<aui:model-context bean="<%=notificationConfig%>"
 				model="<%=NotificationStatusConfig.class%>" />
 			<aui:input name="<%=NotificationStatusConfigDisplayTerms.NOTICE_CONFIG_ID%>"
 				type="hidden" />
-			<aui:input name="<%=WebKeys.REDIRECT_URL%>" type="hidden"
+			<aui:input name="<%=WebKeys.BACK_URL%>" type="hidden"
 				value="<%=backURL%>" />
-			<aui:input name="<%=WebKeys.RETURN_URL%>" type="hidden"
+			<aui:input name="<%=WebKeys.CURRENT_URL%>" type="hidden"
 				value="<%=currentURL%>" />
 			<aui:fieldset>
 
@@ -101,23 +97,24 @@
 					<% for (DictItem dictItem: dictItems){ %>
 					
 					<aui:option label="<%= dictItem.getItemName(themeDisplay.getLocale()) %>" 
-								selected="<%= dictItem.getItemCode().equals(notificationConfig.getDossierNextStatus())%>" 
+								selected="<%=Validator.isNotNull(notificationConfig)? dictItem.getItemCode().equals(notificationConfig.getDossierNextStatus()):false%>" 
 								value="<%= dictItem.getItemCode() %>" />
 					<%} %>
 				</aui:select>
 				
-				<aui:input name=""></aui:input>
-
-
+				<aui:input name="<%=NotificationStatusConfigDisplayTerms.IS_SEND_NOTIFICATION%>" 
+							type="checkbox" 
+							label="inuse" 
+							value="<%=Validator.isNotNull(notificationConfig) ?notificationConfig.getIsSendNotification():false %>"></aui:input>
+				
 			</aui:fieldset>
 
 			<aui:fieldset>
-				<aui:button type="submit" name="submit" value="submit" />
-				<aui:button type="reset" value="clear" />
+				<aui:button type="submit" name="submit" icon="icon-save" />
 			</aui:fieldset>
 		</aui:form>
 	</div>
 </div>
 
 <%!private Log _log = LogFactoryUtil
-			.getLog("html.portlets.holidayconfig.admin.holidayconfig_edit.jsp");%>
+			.getLog("html.portlets.notificationmgt.backoffice.notification_status_config_edit");%>

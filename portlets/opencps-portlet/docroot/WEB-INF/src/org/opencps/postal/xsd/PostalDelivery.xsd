@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:element name="PostalDelivery">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="DeliveryID" type="xs:string"></xs:element>
+				<xs:element name="ItemCode" type="xs:string"></xs:element>
+				<xs:element name="CustomerCode" type="xs:string"></xs:element>
+				<xs:element name="AcceptancePOSCode" type="xs:string"></xs:element>
+				<xs:element name="ToPOSCode" type="xs:string"></xs:element>
+				<xs:element name="SendingTime" type="xs:string"></xs:element>
+				<xs:element name="DeliveryTime" type="xs:string"></xs:element>
+				<xs:element name="DeliveryTimes" type="xs:string"></xs:element>
+				<xs:element name="ReceiverName" type="xs:string"></xs:element>
+				<xs:element name="InputTime" type="xs:string"></xs:element>
+				<xs:element name="CreateTime" type="xs:string"></xs:element>
+				<xs:element name="LastUpdateTime" type="xs:string"></xs:element>
+				<xs:element name="IsDeliverable" type="xs:string"></xs:element>
+				<xs:element name="IsReturn" type="xs:string"></xs:element>
+				<xs:element name="DeliveryNote" type="xs:string"></xs:element>
+				<xs:element name="CauseCode" type="xs:string"></xs:element>
+				<xs:element name="CauseName" type="xs:string"></xs:element>
+				<xs:element name="SolutionCode" type="xs:string"></xs:element>
+				<xs:element name="SolutionName" type="xs:string"></xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

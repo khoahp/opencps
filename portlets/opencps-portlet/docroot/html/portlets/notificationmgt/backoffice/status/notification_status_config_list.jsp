@@ -1,4 +1,3 @@
-
 <%@page import="com.liferay.portal.kernel.dao.search.SearchEntry"%>
 <%@page import="org.opencps.notificationmgt.search.NotificationStatusConfigDisplayTerms"%>
 <%@page import="org.opencps.notificationmgt.service.NotificationStatusConfigLocalServiceUtil"%>
@@ -35,7 +34,7 @@
 <%
 	PortletURL iteratorURL = renderResponse.createRenderURL();
 	iteratorURL.setParameter("mvcPath", templatePath
-	+ "notification_config_list.jsp");
+	+ "backoffice/status/notification_status_config_list.jsp");
 	
 %>
 <div
@@ -48,20 +47,21 @@
 		<liferay-ui:search-container-results>
 			<%
 				List<NotificationStatusConfig> notificationStatusConfigs = NotificationStatusConfigLocalServiceUtil
-										.getNotificationStatusConfigs(searchContainer.getStart(),
-												searchContainer.getEnd());
+											.getNotificationStatusConfigs(searchContainer.getStart(),
+													searchContainer.getEnd());
+		
 
-								int totalSize = NotificationStatusConfigLocalServiceUtil
-										.getNotificationStatusConfigsCount();
+				int totalSize = NotificationStatusConfigLocalServiceUtil
+						.getNotificationStatusConfigsCount();
 
-								pageContext.setAttribute("results", notificationStatusConfigs);
-								pageContext.setAttribute("total", totalSize);
+				pageContext.setAttribute("results", notificationStatusConfigs);
+				pageContext.setAttribute("total", totalSize);
 			%>
 
 		</liferay-ui:search-container-results>
 		<liferay-ui:search-container-row
 			className="org.opencps.notificationmgt.model.NotificationStatusConfig"
-			modelVar="notificationStatusConfig" keyProperty="notificationStatusConfigId">
+			modelVar="notificationStatusConfig" keyProperty="notiStatusConfigId">
 			<%
 				PortletURL editURL = renderResponse.createRenderURL();
 						editURL.setParameter("mvcPath",
@@ -72,9 +72,10 @@
 
 						row.setClassName("opencps-searchcontainer-row");
 
-						row.addText(String.valueOf(notificationStatusConfig.getNotiStatusConfigId()),
+						row.addText(String.valueOf(row.getPos() +1),
 								editURL);
-						row.addText(notificationStatusConfig.getDossierNextStatus(), editURL);
+						row.addText(DataMgtUtils.getDictItemName(themeDisplay.getScopeGroupId(),PortletPropsValues.DATAMGT_MASTERDATA_DOSSIER_STATUS
+								, notificationStatusConfig.getDossierNextStatus(), locale), editURL);
 						
 						row.addText(DateTimeUtil.convertDateToString(
 								notificationStatusConfig.getCreateDate(),
@@ -89,13 +90,13 @@
 										.get(pageContext, "active") : LanguageUtil
 										.get(pageContext, "inactive")), editURL);
 
-						if (isPermisson) {
+						
 							row.addJSP(
 									"center",
 									SearchEntry.DEFAULT_VALIGN,
 									templatePath+"backoffice/status/notification_status_config_actions.jsp",
 									config.getServletContext(), request, response);
-						}
+						
 			%>
 
 		</liferay-ui:search-container-row>
@@ -105,4 +106,4 @@
 </div>
 
 <%!private static Log _log = LogFactoryUtil
-			.getLog("html.portlets.notificationmgt.backoffice.notification_config_list.jsp");%>
+			.getLog("html.portlets.notificationmgt.backofficestatus..notification_status_config_list");%>
