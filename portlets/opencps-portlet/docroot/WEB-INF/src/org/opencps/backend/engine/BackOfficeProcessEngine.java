@@ -433,29 +433,35 @@ public class BackOfficeProcessEngine implements MessageListener {
 					if (Validator.isNotNull(toEngineMsg.getPaymentFileObj())) {
 						
 						_log.info(":::: ADD PAYMENT E-Par " );
-						_log.info(":::: ADD PAYMENT E-Par PayMent " + toEngineMsg.getPaymentFileObj().getTotalPayment());
+						_log.info(":::: ADD PAYMENT E-Par Payment " + toEngineMsg.getPaymentFileObj().getTotalPayment());
 
-						
-						totalPayment = toEngineMsg.getPaymentFileObj().getTotalPayment();
+						totalPayment = toEngineMsg.getPaymentFileObj()
+								.getTotalPayment();
 
-							String paymentOptions = toEngineMsg.getPaymentFileObj().getPaymentMethods();
+						String paymentOptions = toEngineMsg.getPaymentFileObj()
+								.getPaymentOption();
 
+						String paymentName = toEngineMsg.getPaymentFileObj()
+								.getPaymentName();
 
-							String paymentName = toEngineMsg.getPaymentFileObj().getPaymentName();
+						paymentFile = PaymentFileLocalServiceUtil
+								.addPaymentFile(toEngineMsg.getDossierId(),
+										toEngineMsg.getFileGroupId(),
+										ownerUserId, ownerOrganizationId,
+										govAgencyOrganizationId, paymentName,
+										new Date(), (double) totalPayment,
+										paymentName, StringPool.BLANK,
+										paymentOptions);
 
-							paymentFile =
-								PaymentFileLocalServiceUtil.addPaymentFile(
-									toEngineMsg.getDossierId(), toEngineMsg.getFileGroupId(), ownerUserId,
-									ownerOrganizationId, govAgencyOrganizationId, paymentName, new Date(),
-									(double) totalPayment, paymentName, StringPool.BLANK, paymentOptions);
+						if (paymentOptions
+								.contains(PaymentRequestGenerator.PAY_METHOD_KEYPAY)) {
 
-							if (paymentOptions.contains(PaymentRequestGenerator.PAY_METHOD_KEYPAY)) {
-
-								paymentFile =
-										PaymentUrlGenerator.generatorPayURL(
-										processWorkflow.getGroupId(), govAgencyOrganizationId,
-										paymentFile.getPaymentFileId(), processWorkflow.getPaymentFee(),
-										toEngineMsg.getDossierId());
+							paymentFile = PaymentUrlGenerator.generatorPayURL(
+									processWorkflow.getGroupId(),
+									govAgencyOrganizationId,
+									paymentFile.getPaymentFileId(),
+									processWorkflow.getPaymentFee(),
+									toEngineMsg.getDossierId());
 
 							}
 						

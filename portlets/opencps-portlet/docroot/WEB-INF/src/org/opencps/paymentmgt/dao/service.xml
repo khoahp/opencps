@@ -141,5 +141,8 @@
 		<column name="paymentGateId" type="long" primary="true"></column>
 		<column name="paymentGateName" type="String"></column>
 	</entity>
-
+	
+	<exceptions>
+		<exception>InvalidPaymentAmount</exception>
+	</exceptions>
 </service-builder>

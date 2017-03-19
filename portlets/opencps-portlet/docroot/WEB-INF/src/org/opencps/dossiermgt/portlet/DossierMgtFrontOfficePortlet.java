@@ -2254,6 +2254,8 @@ public class DossierMgtFrontOfficePortlet extends MVCPortlet {
 		// DossierDisplayTerms.DISTRICT_ID);
 		// long wardId = ParamUtil.getLong(actionRequest,
 		// DossierDisplayTerms.WARD_ID);
+		
+		int paymentOpt = ParamUtil.getInteger(actionRequest, "paymentOpt");
 
 		String cityCode = ParamUtil.getString(actionRequest,
 				DossierDisplayTerms.CITY_CODE);
@@ -2417,7 +2419,7 @@ public class DossierMgtFrontOfficePortlet extends MVCPortlet {
 
 				// Add DossierLog (for Update dossier)
 
-				DossierLogLocalServiceUtil.addDossierLog(
+			DossierLogLocalServiceUtil.addDossierLog(
 						serviceContext.getUserId(),
 						serviceContext.getScopeGroupId(),
 						serviceContext.getCompanyId(), dossierId, 0,
@@ -2430,6 +2432,10 @@ public class DossierMgtFrontOfficePortlet extends MVCPortlet {
 								+ ".updateDossier()", 0, 0, false);
 
 			}
+			
+			dossier.setPaymentOpt(paymentOpt);
+			
+			DossierLocalServiceUtil.updateDossier(dossier);
 
 			SessionMessages.add(actionRequest,
 					MessageKeys.DOSSIER_UPDATE_SUCCESS);
@@ -2694,8 +2700,6 @@ public class DossierMgtFrontOfficePortlet extends MVCPortlet {
 		long dossierId = ParamUtil.getLong(actionRequest,
 				DossierDisplayTerms.DOSSIER_ID);
 
-		String note = ParamUtil.getString(actionRequest,
-				DossierDisplayTerms.NOTE);
 
 		long fileGroupId = ParamUtil.getLong(actionRequest,
 				DossierFileDisplayTerms.DOSSIER_FILE_DATE);
@@ -2745,6 +2749,7 @@ public class DossierMgtFrontOfficePortlet extends MVCPortlet {
 				actionMsg.setDossierOId(dossier.getOid());
 
 				actionMsg.setDossierStatus(dossierStatus);
+				
 
 				isSend = false;
 
@@ -2773,6 +2778,10 @@ public class DossierMgtFrontOfficePortlet extends MVCPortlet {
 				actionMsg.setCompanyId(dossier.getCompanyId());
 
 				actionMsg.setDossierStatus(dossierStatus);
+				
+				if (dossier.getPaymentOpt() == 2) {
+					actionMsg.setEvent("outstanding");
+				}
 
 				message.put("msgToEngine", actionMsg);
 
