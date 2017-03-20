@@ -1,4 +1,6 @@
 
+<%@page import="com.liferay.portlet.PortletURLFactoryUtil"%>
+<%@page import="com.liferay.portal.theme.ThemeDisplay"%>
 <%
 /**
  * OpenCPS is the open source Core Public Services software
@@ -22,7 +24,6 @@
 
 <%
 	List<DictItem> serviceAdministrations = DictItemLocalServiceUtil.findDictItemsByG_DC_S(scopeGroupId, ServiceUtil.SERVICE_ADMINISTRATION);
-	List<DictItem> serviceDomains = DictItemLocalServiceUtil.findDictItemsByG_DC_S(scopeGroupId, ServiceUtil.SERVICE_DOMAIN);
 %>
 
 <liferay-portlet:renderURL varImpl="filter" portletName="<%= ServiceUtil.SERVICE_PUBLIC_PORTLET_NAME %>">
@@ -40,7 +41,7 @@
 			<ul>
 				<%
 					for (DictItem di : serviceAdministrations) {
-						filter.setParameter(ServiceDisplayTerms.SERVICE_ADMINISTRATION, Long.toString(di.getDictItemId()));
+						filter.setParameter(ServiceDisplayTerms.SERVICE_ADMINISTRATION, String.valueOf(di.getDictItemId()));
 					
 						String css = "odd";
 						
@@ -62,24 +63,11 @@
 		<div id="<portlet:namespace/>linhvuc" class="tab-pane fade">
 			<ul>
 				<%
-					for (DictItem di : serviceDomains) {
-						filter.setParameter(ServiceDisplayTerms.SERVICE_DOMAINCODE, Long.toString(di.getDictItemId()));
-					
-						String css = "odd";
-						
-						if(serviceAdministrations.indexOf(di) % 2 == 0){
-							css = "even";
-						}
+				DictCollection serviceDomainCollection = DictCollectionLocalServiceUtil.getDictCollection(scopeGroupId, ServiceUtil.SERVICE_DOMAIN);
 				%>
-				<li class="<%=css%>">
-						<i class="fa fa-chevron-circle-right" aria-hidden="true"></i>
-						<a href="<%= filter.toString() %>">
-							<%= di.getItemName(locale) %> 
-						</a>
-					</li>
-				<%
-					}
-				%>
+				
+				<%= buildTreeServiceDomainToBullet(serviceDomainCollection.getDictCollectionId(), 0, 0, 0, 
+						themeDisplay, filter) %>
 			</ul>
 		</div>
 		<div id="<portlet:namespace/>mucdo" class="tab-pane fade">
@@ -107,3 +95,52 @@
 		</div>
 	</div>
 </div>
+
+<%!
+private String buildTreeServiceDomainToBullet(long dictCollectionId, long seldId,
+		long parentId, int indent, ThemeDisplay themeDisplay, PortletURL viewURL) {
+
+	StringBuilder sb = new StringBuilder();
+
+	try {
+		List<DictItem> items = DictItemLocalServiceUtil
+			.getDictItemsInUseByDictCollectionIdAndParentItemId(dictCollectionId, parentId);
+
+		for (DictItem item : items) {
+			long id = item.getDictItemId();
+
+			String itemName = HtmlUtil.escape(item.getItemName(themeDisplay.getLocale()));
+
+			String cssClass = "";
+
+			if (seldId == id) {
+				cssClass += " active";
+			}
+			
+			viewURL.setParameter(ServiceDisplayTerms.SERVICE_DOMAINCODE, String.valueOf(id));
+
+			sb.append("<li class=\"" + cssClass + "\">");
+			sb.append("<a href=\"" + viewURL.toString() + "\">");
+			sb.append(itemName);
+			sb.append("</a>");
+			
+			String sbTmp = buildTreeServiceDomainToBullet(dictCollectionId, seldId, id,
+					indent + 1, themeDisplay, viewURL);
+
+			if(Validator.isNotNull(sbTmp)) {
+				sb.append("<ul class=\"ul-" + indent + "\">");
+				sb.append(sbTmp);
+				sb.append("</ul>");
+			}
+			
+			sb.append("</li>");
+		}
+	} catch (Exception e) {
+		_log.error(e);
+	}
+
+	return sb.toString();
+}
+
+private static Log _log = LogFactoryUtil.getLog("html_portlets_servicemgt_menu_display_administration_domain_jsp");
+%>

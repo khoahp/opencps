@@ -228,8 +228,9 @@ $(document).ready(function(){
 				</liferay-util:buffer>
 				
 				<liferay-util:buffer var="boundcol4">
+					<aui:button href="<%= viewURL.toString() %>" cssClass="des-sub-button radius20" value="service-description"></aui:button>
 					
-					<aui:button href="<%= renderToSubmitOnline.toString() %>" cssClass="des-sub-button radius20" value="service-description"></aui:button>
+					<aui:button href="<%= renderToSubmitOnline.toString() %>" cssClass="des-sub-button radius20" value="online-url-button"></aui:button>
 					
 				</liferay-util:buffer>
 			<%
