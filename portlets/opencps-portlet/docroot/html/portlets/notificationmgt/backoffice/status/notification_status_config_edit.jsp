@@ -55,7 +55,6 @@
 		}
 	}
 	
-	
 	DataMgtUtils dataMgtUtils = new DataMgtUtils();
 	
 	List<DictItem> dictItems = dataMgtUtils.getDictItemList(themeDisplay.getScopeGroupId(), PortletPropsValues.DATAMGT_MASTERDATA_DOSSIER_STATUS);

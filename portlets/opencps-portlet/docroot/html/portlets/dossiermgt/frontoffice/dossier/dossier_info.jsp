@@ -321,6 +321,16 @@
 	</aui:col>
 </aui:row>
 
+<aui:row cssClass="nav-content-row">
+	<aui:col width="100">
+		<aui:select name="paymentOpt">
+			<aui:option value="0"><liferay-ui:message key="payment-opt"/></aui:option>
+			<aui:option value="1"><liferay-ui:message key="payment-now"/></aui:option>
+			<aui:option value="2"><liferay-ui:message key="payment-late"/></aui:option>
+		</aui:select>	
+	</aui:col>
+</aui:row>
+
 <aui:script>
 	AUI().ready('aui-base','aui-form-validator', function(A){
 		var rules = {

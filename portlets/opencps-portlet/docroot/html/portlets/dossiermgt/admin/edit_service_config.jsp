@@ -202,8 +202,7 @@
 	<portlet:param name="backURL" value="<%=backURL %>"/>
 </portlet:actionURL>
 
-<div class="opencps-bound-wrapper pd20 default-box-shadow">
-	
+<div class="opencps-bound-wrapper">
 	
 	<aui:form 
 		action="<%=updateServiceConfigURL.toString() %>"

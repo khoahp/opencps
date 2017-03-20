@@ -44,6 +44,8 @@ import org.opencps.dossiermgt.model.DossierFile;
 import org.opencps.dossiermgt.model.DossierPart;
 import org.opencps.dossiermgt.model.ServiceConfig;
 import org.opencps.dossiermgt.service.DossierLocalServiceUtil;
+import org.opencps.paymentmgt.InvalidPaymentAmountException;
+import org.opencps.paymentmgt.NoSuchPaymentFileException;
 import org.opencps.paymentmgt.model.PaymentFile;
 import org.opencps.paymentmgt.service.PaymentFileLocalServiceUtil;
 import org.opencps.processmgt.NoSuchProcessOrderException;
@@ -1096,16 +1098,39 @@ public class ApiServiceServiceImpl extends ApiServiceServiceBaseImpl {
 			input.put("paymentfile", paymentfile);
 			
 			PaymentFileObj paymentObj = new PaymentFileObj();
+
+			paymentObj.setTotalPayment(GetterUtil.getInteger(paymentfileObj
+					.getString("totalPayment")));
 			
-			paymentObj.setTotalPayment(GetterUtil.getInteger(paymentfileObj.getString("totalPayment")));
-			paymentObj.setPaymentMethods(paymentfileObj.getString("paymentMethods"));
-			paymentObj.setPaymentName(paymentfileObj.getString("paymentMessages"));
-			paymentObj.setPaymentMessages(paymentfileObj.getString("paymentName"));
+			if (Validator.isNull(paymentfileObj.getString("paymentOption"))) {
+				paymentObj.setPaymentOption("bank,cash,keypay");
+			} else {
+				paymentObj.setPaymentOption(paymentfileObj
+						.getString("paymentOption"));
+			}
+
+			if (Validator.isNull(paymentfileObj.getString("paymentMessages"))) {
+				paymentObj.setPaymentMessages("yeu-cau-thanh-toan");
+
+			} else {
+				paymentObj.setPaymentMessages(paymentfileObj
+						.getString("paymentMessages"));
+
+			}
+
+			if (Validator.isNull(paymentfileObj.getString("paymentName"))) {
+				paymentObj.setPaymentName("yeu-cau-thanh-toan");
+
+			} else {
+				paymentObj.setPaymentName(paymentfileObj
+						.getString("paymentName"));
+
+			}
 			
 
 			// insert log received
 			ApiServiceLocalServiceUtil.addLog(userId,
-					APIServiceConstants.CODE_05,
+					APIServiceConstants.CODE_09,
 					serviceContext.getRemoteAddr(), oid, input.toString(),
 					APIServiceConstants.IN, serviceContext);
 
@@ -1177,7 +1202,138 @@ public class ApiServiceServiceImpl extends ApiServiceServiceBaseImpl {
 			}
 		}
 
-		ApiServiceLocalServiceUtil.addLog(userId, APIServiceConstants.CODE_05,
+		ApiServiceLocalServiceUtil.addLog(userId, APIServiceConstants.CODE_10,
+				serviceContext.getRemoteAddr(), oid, resultObj.toString(),
+				APIServiceConstants.OUT, serviceContext);
+
+		return resultObj;
+	}
+
+	@JSONWebService(value = "updatePaymentStatus", method = "POST")
+	public JSONObject updatePaymentStatus(String oid, String actioncode,
+			String actionnote, String username, String currentstatus, String paymentfilestatus) {
+
+		JSONObject resultObj = JSONFactoryUtil.createJSONObject();
+
+		ServiceContext serviceContext = getServiceContext();
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
+		
+		long userId = 0;
+
+		try {
+			userId = getUserId();
+
+			JSONObject input = JSONFactoryUtil.createJSONObject();
+			
+			JSONObject paymentfileObj = JSONFactoryUtil.createJSONObject(paymentfilestatus);
+			
+			input.put("oid", oid);
+			input.put("actioncode", actioncode);
+			input.put("actionnote", actionnote);
+			input.put("username", username);
+			input.put("currentstatus", currentstatus);
+			input.put("paymentfilestatus", paymentfilestatus);
+			
+			PaymentFileObj paymentObj = new PaymentFileObj();
+			
+			paymentObj.setTotalPayment(GetterUtil.getInteger(paymentfileObj.getString("totalPayment")));
+			paymentObj.setPaymentMethods(GetterUtil.getInteger(paymentfileObj.getString("paymentMethods")));
+			paymentObj.setPaymentMessages(paymentfileObj.getString("paymentMessages"));
+			if (Validator.isNull(paymentfileObj.getString("paymentDate"))) {
+				paymentObj.setPaymentDate((new Date()));
+			} else {
+				paymentObj.setPaymentDate(sdf.parse(paymentfileObj.getString("paymentDate")));
+			}
+			paymentObj.setPaymentOid((paymentfileObj.getString("paymentOid")));
+			
+			PaymentFile paymentFile = PaymentFileLocalServiceUtil.getPaymentFileByOID(paymentObj.getPaymentOid());
+			
+			paymentFile.setApproveNote(paymentObj.getPaymentMessages());
+			paymentFile.setApproveDatetime(paymentObj.getPaymentDate());
+			paymentFile.setPaymentMethod(paymentObj.getPaymentMethods());
+			paymentFile.setAmount(GetterUtil.getDouble(paymentObj.getTotalPayment()));
+			
+			if (paymentObj.getTotalPayment() >= paymentFile.getAmount()) {
+				paymentFile.setPaymentStatus(2);
+				
+				PaymentFileLocalServiceUtil.updatePaymentFile(paymentFile);
+				
+			} else {
+				throw new InvalidPaymentAmountException();
+			}
+			
+			// insert log received
+			ApiServiceLocalServiceUtil.addLog(userId,
+					APIServiceConstants.CODE_10,
+					serviceContext.getRemoteAddr(), oid, input.toString(),
+					APIServiceConstants.IN, serviceContext);
+
+			Dossier dossier = dossierPersistence.findByOID(oid);
+
+			ProcessOrder processOrder = processOrderPersistence.findByD_F(
+					dossier.getDossierId(), 0);
+
+			User user = userLocalService.getUserByScreenName(
+					dossier.getCompanyId(), username);
+
+			ProcessWorkflow processWorkflow = APIUtils.getProcessWorkflow(oid,
+					currentstatus, actioncode);
+			
+			String nextStatus = APIUtils.getPostDossierStatus(processWorkflow);
+
+			Message message = new Message();
+
+			SendToEngineMsg sendToEngineMsg = new SendToEngineMsg();
+
+			sendToEngineMsg.setCompanyId(dossier.getCompanyId());
+			sendToEngineMsg.setGroupId(dossier.getGroupId());
+			sendToEngineMsg.setActionNote(actionnote);
+			sendToEngineMsg.setAssignToUserId(0);
+			sendToEngineMsg.setActionUserId(user.getUserId());
+			sendToEngineMsg.setDossierId(dossier.getDossierId());
+			sendToEngineMsg.setFileGroupId(0);
+			sendToEngineMsg.setPaymentValue(GetterUtil.getDouble(0));
+			sendToEngineMsg.setProcessOrderId(processOrder.getProcessOrderId());
+			sendToEngineMsg.setPaymentFileObj(paymentObj);
+
+			sendToEngineMsg.setReceptionNo(Validator.isNotNull(dossier
+					.getReceptionNo()) ? dossier.getReceptionNo()
+					: StringPool.BLANK);
+			sendToEngineMsg.setSignature(0);
+			sendToEngineMsg.setDossierStatus(dossier.getDossierStatus());
+			
+			if (Validator.isNotNull(processWorkflow)) {
+				if (Validator.isNotNull(processWorkflow.getAutoEvent())) {
+					sendToEngineMsg.setEvent(processWorkflow.getAutoEvent());
+				} else {
+					sendToEngineMsg.setProcessWorkflowId(processWorkflow
+							.getProcessWorkflowId());
+				}
+			}
+			
+			message.put("msgToEngine", sendToEngineMsg);
+
+			MessageBusUtil.sendMessage("opencps/backoffice/engine/destination",
+					message);
+
+			resultObj.put("statusCode", "Success");
+			resultObj.put("currentStatus", nextStatus);
+
+		} catch (Exception e) {
+			_log.error(e);
+
+			resultObj = JSONFactoryUtil.createJSONObject();
+			resultObj.put("statusCode", "Error");
+
+			if (e instanceof NoSuchPaymentFileException) {
+				resultObj.put("message", "NoSuchPaymentFileFund");
+			} else if (e instanceof InvalidPaymentAmountException) {
+				resultObj.put("message", "InvalidPaymentAmountException");
+			}
+		}
+
+		ApiServiceLocalServiceUtil.addLog(userId, APIServiceConstants.CODE_10,
 				serviceContext.getRemoteAddr(), oid, resultObj.toString(),
 				APIServiceConstants.OUT, serviceContext);
 
@@ -1456,6 +1612,7 @@ public class ApiServiceServiceImpl extends ApiServiceServiceBaseImpl {
 						paymentFile.getPaymentMethod());
 				paymentFileObj.put("approveNote", paymentFile.getApproveNote());
 				paymentFileObj.put("invoiceNo", paymentFile.getInvoiceNo());
+				paymentFileObj.put("totalPayment", paymentFile.getAmount());
 
 				if (Validator.isNotNull(paymentFile.getRequestDatetime())) {
 					paymentFileObj.put("requestDatetime",

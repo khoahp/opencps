@@ -107,11 +107,8 @@ public class SyncFromFrontOffice implements MessageListener {
 					
 					engineMsg.setFileGroupId(userActionMgs.getFileGroupId());
 					
-					if (Validator.isNotNull(userActionMgs.getEvent())
-							&& Validator.equals(userActionMgs.getEvent(),
-									WebKeys.ACTION_ONEGATE_VALUE)) {
-						engineMsg.setEvent(WebKeys.ACTION_ONEGATE_VALUE);
-
+					if (Validator.isNotNull(userActionMgs.getEvent())) {
+						engineMsg.setEvent(userActionMgs.getEvent());
 					} else {
 						engineMsg.setEvent(WebKeys.ACTION_SUBMIT_VALUE);
 
