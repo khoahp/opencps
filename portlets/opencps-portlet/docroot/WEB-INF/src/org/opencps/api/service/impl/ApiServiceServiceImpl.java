@@ -1612,6 +1612,7 @@ public class ApiServiceServiceImpl extends ApiServiceServiceBaseImpl {
 						paymentFile.getPaymentMethod());
 				paymentFileObj.put("approveNote", paymentFile.getApproveNote());
 				paymentFileObj.put("invoiceNo", paymentFile.getInvoiceNo());
+				paymentFileObj.put("totalPayment", paymentFile.getAmount());
 
 				if (Validator.isNotNull(paymentFile.getRequestDatetime())) {
 					paymentFileObj.put("requestDatetime",

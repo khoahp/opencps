@@ -228,7 +228,7 @@
 						String cssClass = "fa " + LogUtils.getCSSClassLog(dossierLog.getDossierStatus()) + " fa-lg";
 					%>
 				<p style=" border: 1px solid #f0ebeb; border-radius: 5px; padding: 3px; background-color: rgba(236, 247, 255, 0.74); margin-top: 5px;">
-					<i class="<%= cssClass %>"></i> <%= Validator.isNotNull(dossierLog.getDossierStatus())? LanguageUtil.get(pageContext, dossierLog.getDossierStatus()+"-cus"):StringPool.BLANK %>
+					<i class="<%= cssClass %>" style="font-size: 85%; margin: 0px 5px;"></i> <%= Validator.isNotNull(dossierLog.getDossierStatus())? LanguageUtil.get(pageContext, dossierLog.getDossierStatus()+"-cus"):StringPool.BLANK %>
 				</p>
 			</div>
 			<div>

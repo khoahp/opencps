@@ -48,7 +48,7 @@
 
 			<portlet:renderURL var="addNotificationConfigURL">
 				<portlet:param name="mvcPath"
-					value="/html/portlets/notificationmgt/backoffice/notification_status_config_edit.jsp" />
+					value="/html/portlets/notificationmgt/backoffice/status/notification_status_config_edit.jsp" />
 				<portlet:param name="backURL" value="<%=currentURL.toString()%>" />
 			</portlet:renderURL>
 

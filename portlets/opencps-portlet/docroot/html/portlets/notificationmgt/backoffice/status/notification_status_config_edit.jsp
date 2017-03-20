@@ -57,9 +57,6 @@
 		}
 	}
 	
-	
-	
-	
 	DataMgtUtils dataMgtUtils = new DataMgtUtils();
 	
 	List<DictItem> dictItems = dataMgtUtils.getDictItemList(themeDisplay.getScopeGroupId(), PortletPropsValues.DM_USER_GROUP_NOTIFY);
