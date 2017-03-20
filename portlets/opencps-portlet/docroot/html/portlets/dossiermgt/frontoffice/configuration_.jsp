@@ -143,6 +143,10 @@
 							<aui:option selected="<%= dossierListDisplayStyle.equals(\"treemenu_left\") %>" value="treemenu_left">
 								<liferay-ui:message key="treemenu-left"/>
 							</aui:option>
+							
+							<aui:option selected="<%= dossierListDisplayStyle.equals(\"treemenu_left_table\") %>" value="treemenu_left_table">
+								<liferay-ui:message key="treemenu-left-table"/>
+							</aui:option>
 						</aui:select>
 					</aui:fieldset>
 					
@@ -270,6 +274,10 @@
 						<aui:select name="dossierDisplayStyle" id="dossierDisplayStyle">		
 							<aui:option selected="<%= dossierDisplayStyle.equals(\"default\") %>" value="default">
 								<liferay-ui:message key="default"/>
+							</aui:option>
+							
+							<aui:option selected="<%= dossierDisplayStyle.equals(\"style1\") %>" value="style1">
+								<liferay-ui:message key="style1"/>
 							</aui:option>
 						</aui:select>
 					</aui:fieldset>

@@ -75,6 +75,12 @@
 	String[][] categorySections = {
 		dossierSections
 	};
+	
+	String dossierDisplayTabPath = templatePath + "dossier/";
+	
+	if(Validator.isNotNull(dossierDisplayStyle) && !dossierDisplayStyle.equalsIgnoreCase("default")) {
+		dossierDisplayTabPath = templatePath + "dossier/" + dossierDisplayStyle + "/";
+	}
 
 	boolean isEditDossier =
 		ParamUtil.getBoolean(request, "isEditDossier");
@@ -417,7 +423,7 @@
 					categorySections="<%= categorySections %>"
 					htmlBottom="<%= htmlBottom %>" 
 					htmlTop="<%= htmlTop %>"
-					jspPath='<%=templatePath + "dossier/" %>' 
+					jspPath='<%=dossierDisplayTabPath %>' 
 					showButtons="<%=false %>"
 				/>
 			</div>
