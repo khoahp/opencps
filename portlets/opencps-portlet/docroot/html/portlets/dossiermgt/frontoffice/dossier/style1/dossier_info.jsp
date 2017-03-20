@@ -1,4 +1,7 @@
 
+<%@page import="com.liferay.portal.kernel.util.HtmlUtil"%>
+<%@page import="org.opencps.datamgt.model.DictItem"%>
+<%@page import="org.opencps.util.PortletUtil"%>
 <%
 /**
  * OpenCPS is the open source Core Public Services software
@@ -53,9 +56,20 @@
 	
 	ServiceInfo serviceInfo = (ServiceInfo) request.getAttribute(WebKeys.SERVICE_INFO_ENTRY);
 	
+	String serviceName = StringPool.DASH;
+	if(serviceInfo != null) {
+		serviceName = serviceInfo.getServiceName();
+	}
+	
 	String itemSelected = GetterUtil.getString(request.getAttribute(WebKeys.DICT_ITEM_SELECTED), StringPool.BLANK);
 	
 	String cmd = ParamUtil.getString(request, Constants.CMD);
+	
+	boolean isEditDossier = ParamUtil.getBoolean(request, "isEditDossier");
+	
+	DictItem adminAction = PortletUtil.getDictItem(PortletPropsValues.DATAMGT_MASTERDATA_GOVERNMENT_AGENCY, 
+			serviceConfig.getGovAgencyCode(), 
+			scopeGroupId);
 %>
 
 <aui:model-context bean="<%=dossier%>" model="<%=Dossier.class%>" />
@@ -128,198 +142,213 @@
 	message="<%=DuplicateFolderNameException.class.getName() %>"
 />
 
-<aui:row cssClass="header-title custom-title">
-	<aui:col width="100">
-		<liferay-ui:message key="dossier_info"/>
-	</aui:col>
-</aui:row>
-
-	<aui:row>
-			<aui:col width="50">
-				<aui:row>
-					<aui:col width="30" cssClass="bold">
-						<liferay-ui:message key="dossier-no"/>
-					</aui:col>
-					<aui:col width="70">
-						<%=Validator.isNotNull(dossier) ? dossier.getDossierId() : StringPool.DASH %>
-					</aui:col>
-				</aui:row>
-			</aui:col>
-			<aui:col width="50">
-				<aui:row>
-					<aui:col width="30" cssClass="bold">
-						<liferay-ui:message key="dossier-reception-no"/>
-					</aui:col>
-					<aui:col width="70">
-						<%=Validator.isNotNull(dossier) ? dossier.getReceptionNo() : StringPool.DASH %>
-					</aui:col>
-				</aui:row>
-			</aui:col>
+<div class="ocps-dossier-process">
+	<aui:row cssClass="header-title custom-title">
+		<aui:col width="100">
+			<c:choose>
+				<c:when test="<%= (dossier == null) || (dossier != null && dossier.getDossierStatus().equalsIgnoreCase(PortletConstants.DOSSIER_STATUS_NEW) ) %>">
+					<liferay-ui:message key="add-dossier"/>
+				</c:when>
+				
+				<c:when test="<%= isEditDossier %>">
+					<liferay-ui:message key="update-dossier"/>
+				</c:when>
+				
+				<c:otherwise>
+					<liferay-ui:message key="dossier"/>
+				</c:otherwise>
+			</c:choose>
+		</aui:col>
 	</aui:row>
 	
-<aui:row cssClass="nav-content-row hidden">
-	<aui:col width="100">
-		<aui:input 
-			name="<%=DossierDisplayTerms.SERVICE_NAME %>"
-			cssClass=""
-			disabled="<%=true %>"
-			type="textarea"
-			value="<%=serviceInfo != null ? serviceInfo.getServiceName() : StringPool.BLANK %>"
-		/>	
-	</aui:col>
-</aui:row>
-
-<aui:row cssClass="nav-content-row hidden">
-	<aui:col width="100">
-		<aui:input 
-			name="<%=DossierDisplayTerms.SERVICE_NO %>" 
-			cssClass="" 
-			disabled="<%=true %>"
-			type="text"
-			value="<%=serviceInfo != null ? serviceInfo.getServiceNo() : StringPool.BLANK %>"
-		/>	
-	</aui:col>
-</aui:row>
-
-
-<aui:row cssClass="nav-content-row hidden">
-	<aui:col width="100">
-		<aui:input 
-			name="<%=DossierDisplayTerms.GOVAGENCY_NAME%>"
-			cssClass="" 
-			disabled="<%=true %>"
-			value="<%=serviceConfig != null ? serviceConfig.getGovAgencyName() : StringPool.BLANK %>"
-		/>	
-	</aui:col>
-</aui:row>
-
-<aui:row cssClass="nav-content-row hidden">
-	<aui:col width="100">
-		<aui:input 
-			name="<%=DossierDisplayTerms.GOVAGENCY_CODE %>" 
-			cssClass=""
-			disabled="<%=true %>"
-			value="<%=serviceConfig != null ? serviceConfig.getGovAgencyCode() : StringPool.BLANK %>"
-		/>	
-	</aui:col>
-</aui:row>
-
-<aui:row cssClass="nav-content-row">
-	<aui:col width="100">
-		<aui:input 
-			name="<%=DossierDisplayTerms.SUBJECT_NAME %>" 
-			cssClass=""
-			type="text"
-			value="<%=citizen != null ? citizen.getFullName() : business != null ? business.getName() : StringPool.BLANK %>"
-		>
-			<aui:validator name="required"/>
-			
-			<aui:validator name="maxLength">
-				<%= PortletPropsValues.DOSSIERMGT_DOSSIER_SUBJECT_NAME_LENGTH %>
-			</aui:validator>
-		</aui:input>	
-	</aui:col>
-</aui:row>
-
-<aui:row cssClass="nav-content-row">
-	<aui:col width="100">
+	<div class="dossier-info-header">
+		<div class="row-fluid">
+			<label class="span3"><liferay-ui:message key="service-name"/>:</label>
+			<p class="span9"><%=HtmlUtil.escape(serviceName) %></p>
+		</div>
+		
+		<div class="row-fluid">
+			<label class="span3"><liferay-ui:message key="service-administration-action"/>:</label>
+			<p class="span9"><%=Validator.isNotNull(adminAction) ? adminAction.getItemName(locale,true) : StringPool.BLANK %></p>
+		</div>
+		
+		<div class="row-fluid">
+			<label class="span3"><liferay-ui:message key="dossier-no"/>:</label>
+			<p class="span3"><%=dossier != null ? dossier.getDossierId() : StringPool.DASH %></p>
+			<label class="span3"><liferay-ui:message key="dossier-reception-no"/>:</label>
+			<p class="span3"><%=dossier != null && Validator.isNotNull(dossier.getReceptionNo()) ? dossier.getReceptionNo() : StringPool.DASH %></p>
+		</div>
+		
+		<div class="row-fluid">
+			<label class="span3"><liferay-ui:message key="dossier-status"/>:</label>
+			<p class="span9"><span class="red"><%=dossier != null ? PortletUtil.getDossierStatusLabel(dossier.getDossierStatus(), locale) : "" %></span></p>
+		</div>
+	</div>
+		
+	<aui:row cssClass="nav-content-row hidden">
+		<aui:col width="100">
 			<aui:input 
-				name="<%=DossierDisplayTerms.SUBJECT_ID %>" 
+				name="<%=DossierDisplayTerms.SERVICE_NAME %>"
+				cssClass=""
+				disabled="<%=true %>"
+				type="textarea"
+				value="<%=serviceInfo != null ? serviceInfo.getServiceName() : StringPool.BLANK %>"
+			/>	
+		</aui:col>
+	</aui:row>
+	
+	<aui:row cssClass="nav-content-row hidden">
+		<aui:col width="100">
+			<aui:input 
+				name="<%=DossierDisplayTerms.SERVICE_NO %>" 
 				cssClass="" 
+				disabled="<%=true %>"
 				type="text"
-				value="<%=citizen != null ? citizen.getPersonalId() : business != null ? business.getIdNumber() : StringPool.BLANK %>"
+				value="<%=serviceInfo != null ? serviceInfo.getServiceNo() : StringPool.BLANK %>"
+			/>	
+		</aui:col>
+	</aui:row>
+	
+	
+	<aui:row cssClass="nav-content-row hidden">
+		<aui:col width="100">
+			<aui:input 
+				name="<%=DossierDisplayTerms.GOVAGENCY_NAME%>"
+				cssClass="" 
+				disabled="<%=true %>"
+				value="<%=serviceConfig != null ? serviceConfig.getGovAgencyName() : StringPool.BLANK %>"
+			/>	
+		</aui:col>
+	</aui:row>
+	
+	<aui:row cssClass="nav-content-row hidden">
+		<aui:col width="100">
+			<aui:input 
+				name="<%=DossierDisplayTerms.GOVAGENCY_CODE %>" 
+				cssClass=""
+				disabled="<%=true %>"
+				value="<%=serviceConfig != null ? serviceConfig.getGovAgencyCode() : StringPool.BLANK %>"
+			/>	
+		</aui:col>
+	</aui:row>
+	
+	<aui:row cssClass="nav-content-row">
+		<aui:col width="100">
+			<aui:input 
+				name="<%=DossierDisplayTerms.SUBJECT_NAME %>" 
+				cssClass=""
+				type="text"
+				value="<%=citizen != null ? citizen.getFullName() : business != null ? business.getName() : StringPool.BLANK %>"
 			>
-				<aui:validator name="required>"/>
+				<aui:validator name="required"/>
+				
 				<aui:validator name="maxLength">
-					<%= PortletPropsValues.DOSSIERMGT_DOSSIER_SUBJECT_ID_LENGTH %>
+					<%= PortletPropsValues.DOSSIERMGT_DOSSIER_SUBJECT_NAME_LENGTH %>
 				</aui:validator>
 			</aui:input>	
 		</aui:col>
 	</aui:row>
-
-<aui:row cssClass="nav-content-row">
-	<aui:col width="100">
-		<p class=address-hint><liferay-ui:message key="address-hint"/></p>
-		<aui:input 
-			name="<%=DossierDisplayTerms.ADDRESS %>" 
-			cssClass="" 
-			type="text"
-			value="<%=citizen != null ? citizen.getAddress() : business != null ? business.getAddress() : StringPool.BLANK %>"
-		>
-			<aui:validator name="required"/>
-			<aui:validator name="maxLength">
-				<%= PortletPropsValues.DOSSIERMGT_DOSSIER_ADDRESS_LENGTH %>
-			</aui:validator>
-		</aui:input>	
-	</aui:col>
-</aui:row>
-
-<aui:row cssClass="nav-content-row hidden-option">
-	<datamgt:ddr 
-		depthLevel="3" 
-		dictCollectionCode="<%=PortletPropsValues.DATAMGT_MASTERDATA_ADMINISTRATIVE_REGION %>"
-		itemNames='<%=StringUtil.merge(new String[]{DossierDisplayTerms.CITY_CODE,DossierDisplayTerms.DISTRICT_CODE,DossierDisplayTerms.WARD_CODE}) %>'
-		itemsEmptyOption="true,true,true"
-		showLabel="true"
-		selectedItems="<%=itemSelected %>"
-		displayStyle="vertical"
-		optionValueType="code"
-	/>
-</aui:row>
-
-<aui:row cssClass="nav-content-row">
-	<aui:col width="100">
-		<aui:input name="<%=DossierDisplayTerms.CONTACT_NAME %>" 
-			cssClass="" 
-			type="text"
-			value="<%=citizen != null ? citizen.getFullName() : business != null ? business.getName() : StringPool.BLANK %>"
-		>
-			<aui:validator name="required"/>
-			<aui:validator name="maxLength">
-				<%= PortletPropsValues.DOSSIERMGT_DOSSIER_CONTACT_NAME_LENGTH %>
-			</aui:validator>
-		</aui:input>	
-	</aui:col>
-</aui:row>
-
-<aui:row cssClass="nav-content-row">
-	<aui:col width="100">
-		<aui:input 
-			name="<%=DossierDisplayTerms.CONTACT_TEL_NO %>" 
-			type="text"
-			value="<%=citizen != null && Validator.isNotNull(citizen.getTelNo()) ? citizen.getTelNo() : business != null && Validator.isNotNull(business.getTelNo())? business.getTelNo() : StringPool.BLANK %>"
-		>
-			<aui:validator name="maxLength">
-				<%= PortletPropsValues.DOSSIERMGT_DOSSIER_CONTACT_TEL_NO_LENGTH %>
-			</aui:validator>
-		</aui:input>	
-	</aui:col>
-</aui:row>
-
-<aui:row cssClass="nav-content-row">
-	<aui:col width="100">
-		<aui:input 
-			name="<%=DossierDisplayTerms.CONTACT_EMAIL %>" 
-			type="text"
-			value="<%=citizen != null && Validator.isNotNull(citizen.getEmail()) ? citizen.getEmail() : business != null && Validator.isNotNull(business.getEmail())? business.getEmail() : StringPool.BLANK %>"
-		>
-			<aui:validator name="email"/>
-			<aui:validator name="maxLength">
-				<%= PortletPropsValues.DOSSIERMGT_DOSSIER_CONTACT_EMAIL_LENGTH %>
-			</aui:validator>
-		</aui:input>	
-	</aui:col>
-</aui:row>
-
-<aui:row cssClass="nav-content-row">
-	<aui:col width="100">
-		<aui:input name="<%=DossierDisplayTerms.NOTE %>" type="textarea">
-			<aui:validator name="maxLength">
-				<%= PortletPropsValues.DOSSIERMGT_DOSSIER_NOTE_LENGTH %>
-			</aui:validator>
-		</aui:input>	
-	</aui:col>
-</aui:row>
+	
+	<aui:row cssClass="nav-content-row">
+		<aui:col width="100">
+				<aui:input 
+					name="<%=DossierDisplayTerms.SUBJECT_ID %>" 
+					cssClass="" 
+					type="text"
+					value="<%=citizen != null ? citizen.getPersonalId() : business != null ? business.getIdNumber() : StringPool.BLANK %>"
+				>
+					<aui:validator name="required>"/>
+					<aui:validator name="maxLength">
+						<%= PortletPropsValues.DOSSIERMGT_DOSSIER_SUBJECT_ID_LENGTH %>
+					</aui:validator>
+				</aui:input>	
+			</aui:col>
+		</aui:row>
+	
+	<aui:row cssClass="nav-content-row">
+		<aui:col width="100">
+			<p class=address-hint><liferay-ui:message key="address-hint"/></p>
+			<aui:input 
+				name="<%=DossierDisplayTerms.ADDRESS %>" 
+				cssClass="" 
+				type="text"
+				value="<%=citizen != null ? citizen.getAddress() : business != null ? business.getAddress() : StringPool.BLANK %>"
+			>
+				<aui:validator name="required"/>
+				<aui:validator name="maxLength">
+					<%= PortletPropsValues.DOSSIERMGT_DOSSIER_ADDRESS_LENGTH %>
+				</aui:validator>
+			</aui:input>	
+		</aui:col>
+	</aui:row>
+	
+	<aui:row cssClass="nav-content-row hidden-option">
+		<datamgt:ddr 
+			depthLevel="3" 
+			dictCollectionCode="<%=PortletPropsValues.DATAMGT_MASTERDATA_ADMINISTRATIVE_REGION %>"
+			itemNames='<%=StringUtil.merge(new String[]{DossierDisplayTerms.CITY_CODE,DossierDisplayTerms.DISTRICT_CODE,DossierDisplayTerms.WARD_CODE}) %>'
+			itemsEmptyOption="true,true,true"
+			showLabel="true"
+			selectedItems="<%=itemSelected %>"
+			displayStyle="vertical"
+			optionValueType="code"
+		/>
+	</aui:row>
+	
+	<aui:row cssClass="nav-content-row">
+		<aui:col width="100">
+			<aui:input name="<%=DossierDisplayTerms.CONTACT_NAME %>" 
+				cssClass="" 
+				type="text"
+				value="<%=citizen != null ? citizen.getFullName() : business != null ? business.getName() : StringPool.BLANK %>"
+			>
+				<aui:validator name="required"/>
+				<aui:validator name="maxLength">
+					<%= PortletPropsValues.DOSSIERMGT_DOSSIER_CONTACT_NAME_LENGTH %>
+				</aui:validator>
+			</aui:input>	
+		</aui:col>
+	</aui:row>
+	
+	<aui:row cssClass="nav-content-row">
+		<aui:col width="100">
+			<aui:input 
+				name="<%=DossierDisplayTerms.CONTACT_TEL_NO %>" 
+				type="text"
+				value="<%=citizen != null && Validator.isNotNull(citizen.getTelNo()) ? citizen.getTelNo() : business != null && Validator.isNotNull(business.getTelNo())? business.getTelNo() : StringPool.BLANK %>"
+			>
+				<aui:validator name="maxLength">
+					<%= PortletPropsValues.DOSSIERMGT_DOSSIER_CONTACT_TEL_NO_LENGTH %>
+				</aui:validator>
+			</aui:input>	
+		</aui:col>
+	</aui:row>
+	
+	<aui:row cssClass="nav-content-row">
+		<aui:col width="100">
+			<aui:input 
+				name="<%=DossierDisplayTerms.CONTACT_EMAIL %>" 
+				type="text"
+				value="<%=citizen != null && Validator.isNotNull(citizen.getEmail()) ? citizen.getEmail() : business != null && Validator.isNotNull(business.getEmail())? business.getEmail() : StringPool.BLANK %>"
+			>
+				<aui:validator name="email"/>
+				<aui:validator name="maxLength">
+					<%= PortletPropsValues.DOSSIERMGT_DOSSIER_CONTACT_EMAIL_LENGTH %>
+				</aui:validator>
+			</aui:input>	
+		</aui:col>
+	</aui:row>
+	
+	<aui:row cssClass="nav-content-row">
+		<aui:col width="100">
+			<aui:input name="<%=DossierDisplayTerms.NOTE %>" type="textarea">
+				<aui:validator name="maxLength">
+					<%= PortletPropsValues.DOSSIERMGT_DOSSIER_NOTE_LENGTH %>
+				</aui:validator>
+			</aui:input>	
+		</aui:col>
+	</aui:row>
+</div>
 
 <aui:script>
 	AUI().ready('aui-base','aui-form-validator', function(A){

@@ -66,11 +66,21 @@
 	String cmd =
 		ParamUtil.getString(request, Constants.CMD, Constants.UPDATE);
 
-	String[] dossierSections = dossier != null ? new String[] {
-		"dossier_part", "result", "history", "dossier_info"
-	} : new String[] {
-		"dossier_info"
-	};
+	String[] dossierSections = null;
+	
+	if(dossier == null){
+		dossierSections = new String[] {
+			"dossier_info"
+		};
+	} else if(dossier != null && dossier.getDossierStatus() != PortletConstants.DOSSIER_STATUS_NEW) {
+		dossierSections = new String[] {
+			"dossier_part", "result", "history", "dossier_info"
+		};
+	} else if(dossier != null && dossier.getDossierStatus() == PortletConstants.DOSSIER_STATUS_NEW){
+		dossierSections = new String[] {
+			"dossier_part", "dossier_info"
+		};
+	}
 
 	String[][] categorySections = {
 		dossierSections

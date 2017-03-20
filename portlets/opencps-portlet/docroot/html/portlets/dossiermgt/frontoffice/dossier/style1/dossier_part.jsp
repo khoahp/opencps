@@ -105,29 +105,31 @@
 				</c:when>
 				
 				<c:otherwise>
-					<liferay-ui:message key="dossier-info"/>
+					<liferay-ui:message key="dossier"/>
 				</c:otherwise>
 			</c:choose>
 		</aui:col>
 	</aui:row>
 	
-	<div class="row-fluid">
-		<label class="span3"><liferay-ui:message key="service-name"/>:</label>
-		<p class="span9"><%=HtmlUtil.escape(serviceInfo.getServiceName()) %></p>
-	</div>
-	<div class="row-fluid">
-		<label class="span3"><liferay-ui:message key="service-administration-action"/>:</label>
-		<p class="span9"><%=Validator.isNotNull(adminAction) ? adminAction.getItemName(locale,true) : StringPool.BLANK %></p>
-	</div>
-	<div class="row-fluid">
-		<label class="span3"><liferay-ui:message key="dossier-no"/>:</label>
-		<p class="span3"><%=Validator.isNotNull(dossier.getDossierId()) ? dossier.getDossierId() : StringPool.DASH %></p>
+	<div class="dossier-info-header">
+		<div class="row-fluid">
+			<label class="span3"><liferay-ui:message key="service-name"/>:</label>
+			<p class="span9"><%=HtmlUtil.escape(serviceInfo.getServiceName()) %></p>
+		</div>
+		<div class="row-fluid">
+			<label class="span3"><liferay-ui:message key="service-administration-action"/>:</label>
+			<p class="span9"><%=Validator.isNotNull(adminAction) ? adminAction.getItemName(locale,true) : StringPool.BLANK %></p>
+		</div>
+		<div class="row-fluid">
+			<label class="span3"><liferay-ui:message key="dossier-no"/>:</label>
+		<p class="span3"><%=dossier != null ? dossier.getDossierId() : StringPool.DASH %></p>
 		<label class="span3"><liferay-ui:message key="dossier-reception-no"/>:</label>
-		<p class="span3"><%=Validator.isNotNull(dossier.getReceptionNo()) ? dossier.getReceptionNo() : StringPool.DASH %></p>
-	</div>
-	<div class="row-fluid">
-		<label class="span3"><liferay-ui:message key="dossier-status"/>:</label>
-		<p class="span9"><span class="red"><%=PortletUtil.getDossierStatusLabel(dossier.getDossierStatus(), locale) %></span></p>
+		<p class="span3"><%=dossier != null && Validator.isNotNull(dossier.getReceptionNo()) ? dossier.getReceptionNo() : StringPool.DASH %></p>
+		</div>
+		<div class="row-fluid">
+			<label class="span3"><liferay-ui:message key="dossier-status"/>:</label>
+			<p class="span9"><span class="red"><%=dossier != null ? PortletUtil.getDossierStatusLabel(dossier.getDossierStatus(), locale) : "" %></span></p>
+		</div>
 	</div>
 	
 	<h4><liferay-ui:message key="dossier_part"/></h4>
@@ -135,10 +137,10 @@
 	<table class="table table-bordered fit-width">
 		<thead>
 			<tr>
-				<th><liferay-ui:message key="stt"/></th>
-				<th><liferay-ui:message key="ten-thanh-phan"/></th>
-				<th><liferay-ui:message key="tai-bieu-mau"/></th>
-				<th><liferay-ui:message key="thao-tac"/></th>
+				<th><div class="text-center"><liferay-ui:message key="stt"/></div></th>
+				<th><div class="text-center"><liferay-ui:message key="ten-thanh-phan"/></div></th>
+				<th><div class="text-center"><liferay-ui:message key="tai-bieu-mau"/></div></th>
+				<th><div class="text-center"><liferay-ui:message key="thao-tac"/></div></th>
 			</tr>
 		</thead>
 	
@@ -208,7 +210,7 @@
 							urlDownload = DossierMgtUtil.getURLDownloadTemplateFile(themeDisplay, dossierPart.getTemplateFileNo());
 							
 							%>
-								<tr class='<%="opencps dossiermgt dossier-part-row r-" + index + StringPool.SPACE + "dpid-" + String.valueOf(dossierPart.getDossierpartId())%>'>
+								<tr class='<%="opencps dossiermgt dossier-part-row r-" + index + StringPool.SPACE + "dpid-" + String.valueOf(dossierPart.getDossierpartId()) + " partType-" + partType%>'>
 									<td>
 										<%=doubleFomart.format(dossierPart.getSibling()) %>
 									</td>
