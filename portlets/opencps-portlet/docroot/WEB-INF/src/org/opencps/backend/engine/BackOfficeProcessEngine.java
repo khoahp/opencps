@@ -306,6 +306,11 @@ public class BackOfficeProcessEngine implements MessageListener {
 					citizenEvents.add(NotificationEventKeys.USERS_AND_ENTERPRISE.EVENT6);
 
 				}
+				
+				
+				// Add event 
+				
+				
 
 				String changeStatus = StringPool.BLANK;
 
