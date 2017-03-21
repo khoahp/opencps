@@ -140,9 +140,9 @@
 		
 		<aui:col width="70">
 			<c:if test="<%=serviceInfo != null %>">
-				<a href="<%= detailServiceURL.toString() %>">
+				
 					<span><%=serviceInfo.getServiceName() %></span>
-				</a>
+				
 			</c:if>
 		</aui:col>
 	</aui:row>
