@@ -2255,8 +2255,6 @@ public class DossierMgtFrontOfficePortlet extends MVCPortlet {
 		// long wardId = ParamUtil.getLong(actionRequest,
 		// DossierDisplayTerms.WARD_ID);
 		
-		int paymentOpt = ParamUtil.getInteger(actionRequest, "paymentOpt");
-
 		String cityCode = ParamUtil.getString(actionRequest,
 				DossierDisplayTerms.CITY_CODE);
 		String districtCode = ParamUtil.getString(actionRequest,
@@ -2433,10 +2431,6 @@ public class DossierMgtFrontOfficePortlet extends MVCPortlet {
 
 			}
 			
-			dossier.setPaymentOpt(paymentOpt);
-			
-			DossierLocalServiceUtil.updateDossier(dossier);
-
 			SessionMessages.add(actionRequest,
 					MessageKeys.DOSSIER_UPDATE_SUCCESS);
 
@@ -2778,11 +2772,7 @@ public class DossierMgtFrontOfficePortlet extends MVCPortlet {
 				actionMsg.setCompanyId(dossier.getCompanyId());
 
 				actionMsg.setDossierStatus(dossierStatus);
-				
-				if (dossier.getPaymentOpt() == 2) {
-					actionMsg.setEvent("outstanding");
-				}
-
+		
 				message.put("msgToEngine", actionMsg);
 
 				break;

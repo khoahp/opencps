@@ -252,7 +252,6 @@
         <column name="keypayRedirectUrl" type="String"/>
         <column name="delayStatus" type="int"></column>
         <column name="folderId" type="long"></column>
-        <column name="paymentOpt" type="int"></column>
         <order by="desc">
             <order-column name="modifiedDate" order-by="desc"></order-column>
         </order>
