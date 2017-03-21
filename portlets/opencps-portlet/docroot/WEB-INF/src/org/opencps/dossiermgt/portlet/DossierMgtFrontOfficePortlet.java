@@ -2254,7 +2254,7 @@ public class DossierMgtFrontOfficePortlet extends MVCPortlet {
 		// DossierDisplayTerms.DISTRICT_ID);
 		// long wardId = ParamUtil.getLong(actionRequest,
 		// DossierDisplayTerms.WARD_ID);
-
+		
 		String cityCode = ParamUtil.getString(actionRequest,
 				DossierDisplayTerms.CITY_CODE);
 		String districtCode = ParamUtil.getString(actionRequest,
@@ -2395,8 +2395,8 @@ public class DossierMgtFrontOfficePortlet extends MVCPortlet {
 						serviceContext.getScopeGroupId(),
 						serviceContext.getCompanyId(), dossier.getDossierId(),
 						0, PortletConstants.DOSSIER_STATUS_NEW,
-						PortletConstants.DOSSIER_STATUS_NEW,
-						PortletConstants.DOSSIER_STATUS_NEW, new Date(), 0, 0,
+						"create-dossier",
+						"create-dossier", new Date(), 0, 0,
 						actor.getActor(), actor.getActorId(),
 						actor.getActorName(),
 						DossierMgtFrontOfficePortlet.class.getName()
@@ -2417,20 +2417,20 @@ public class DossierMgtFrontOfficePortlet extends MVCPortlet {
 
 				// Add DossierLog (for Update dossier)
 
-				DossierLogLocalServiceUtil.addDossierLog(
+			DossierLogLocalServiceUtil.addDossierLog(
 						serviceContext.getUserId(),
 						serviceContext.getScopeGroupId(),
 						serviceContext.getCompanyId(), dossierId, 0,
 						PortletConstants.DOSSIER_STATUS_UPDATE,
-						PortletConstants.DOSSIER_STATUS_UPDATE,
-						PortletConstants.DOSSIER_STATUS_UPDATE, new Date(), 0,
+						"update-dossier",
+						"update-dossier", new Date(), 0,
 						0, actor.getActor(), actor.getActorId(),
 						actor.getActorName(),
 						DossierMgtFrontOfficePortlet.class.getName()
 								+ ".updateDossier()", 0, 0, false);
 
 			}
-
+			
 			SessionMessages.add(actionRequest,
 					MessageKeys.DOSSIER_UPDATE_SUCCESS);
 
@@ -2694,8 +2694,6 @@ public class DossierMgtFrontOfficePortlet extends MVCPortlet {
 		long dossierId = ParamUtil.getLong(actionRequest,
 				DossierDisplayTerms.DOSSIER_ID);
 
-		String note = ParamUtil.getString(actionRequest,
-				DossierDisplayTerms.NOTE);
 
 		long fileGroupId = ParamUtil.getLong(actionRequest,
 				DossierFileDisplayTerms.DOSSIER_FILE_DATE);
@@ -2745,6 +2743,7 @@ public class DossierMgtFrontOfficePortlet extends MVCPortlet {
 				actionMsg.setDossierOId(dossier.getOid());
 
 				actionMsg.setDossierStatus(dossierStatus);
+				
 
 				isSend = false;
 
@@ -2773,7 +2772,7 @@ public class DossierMgtFrontOfficePortlet extends MVCPortlet {
 				actionMsg.setCompanyId(dossier.getCompanyId());
 
 				actionMsg.setDossierStatus(dossierStatus);
-
+		
 				message.put("msgToEngine", actionMsg);
 
 				break;

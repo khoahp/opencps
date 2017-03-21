@@ -934,10 +934,6 @@
 			WHERE
 				1
 			AND
-				opencps_dossier.receptionNo IS NOT NULL
-			AND 
-				opencps_dossier.receptionNo <> ''
-			AND
 				opencps_serviceprocess.processNo = ?
 			AND
 				opencps_processstep.processStepNo = ?

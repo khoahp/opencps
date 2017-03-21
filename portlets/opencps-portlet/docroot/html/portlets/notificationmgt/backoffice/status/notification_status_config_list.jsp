@@ -35,7 +35,7 @@
 <%
 	PortletURL iteratorURL = renderResponse.createRenderURL();
 	iteratorURL.setParameter("mvcPath", templatePath
-	+ "notification_config_list.jsp");
+	+ "backoffice/status/notification_config_list.jsp");
 	
 %>
 <div

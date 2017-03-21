@@ -1,6 +1,3 @@
-
-
-
 <%@page import="org.opencps.util.LayoutView"%>
 <%@page import="org.opencps.util.LayoutLister"%>
 <%@page import="org.opencps.util.PortletPropsValues"%>

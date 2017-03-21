@@ -130,25 +130,10 @@ $(document).ready(function(){
 
 						</aui:col>
 						<aui:col width="30" cssClass="search-col">
-							<%-- <datamgt:ddr 
-								depthLevel="1" 
-								dictCollectionCode="SERVICE_DOMAIN"
-								itemNames="<%= ServiceDisplayTerms.SERVICE_DOMAINCODE %>"
-								itemsEmptyOption="true"	
-								selectedItems="<%= domainCode %>"
-								emptyOptionLabels="<%=ServiceDisplayTerms.SERVICE_DOMAINCODE %>"
-								cssClass="search-input select-box"
-								showLabel="false"
-							>
-							</datamgt:ddr> --%>
-							
 							<aui:input name="<%=ServiceDisplayTerms.SERVICE_DOMAINCODE %>" type="hidden" value="<%=domainCode %>"></aui:input>
 							<input type="text" id="comboboxTree" class="opencps-combotree" readonly="readonly" />
 						</aui:col>
 						<aui:col width="30" cssClass="search-col">
-							<%-- <label>
-								<liferay-ui:message key="keywords"/>
-							</label> --%>
 							<liferay-ui:input-search 
 								cssClass="search-input input-keyword"
 								id="keywords1"
@@ -210,6 +195,29 @@ $(document).ready(function(){
 					<div class="row-fluid">
 						<div class="span12">
 							<a href="<%=viewURL.toString() %>"><%=service.getServiceName() %></a>
+						</div>
+						
+						<div class="span12">
+						<%
+							List<TemplateFile> templates = new ArrayList<TemplateFile>();
+							
+							String iconType = StringPool.BLANK;
+							
+						
+							if (Validator.isNotNull(service)) {
+								templates = TemplateFileLocalServiceUtil.getServiceTemplateFiles(service.getServiceinfoId());
+							}
+						%>
+						<ul class="ls-file-download">
+							<%
+								for (TemplateFile tf : templates) {
+							%>
+								<li> <i class="icon-file"></i> <a href="<%= ServiceUtil.getDLFileURL(tf.getFileEntryId()) %>"> <%= tf.getFileName() %> </a></li>
+							<%		
+								}
+							%>
+						</ul>
+
 						</div>
 					</div>
 				</liferay-util:buffer>

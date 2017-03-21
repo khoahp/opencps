@@ -13,7 +13,6 @@
  * details.
  */
 --%>
-
 <%@ include file="/html/portlet/login/init.jsp" %>
 
 <liferay-util:buffer var="navigation">

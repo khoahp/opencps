@@ -29,6 +29,7 @@ import javax.portlet.PortletURL;
 import org.opencps.dossiermgt.model.Dossier;
 import org.opencps.dossiermgt.search.DossierDisplayTerms;
 import org.opencps.dossiermgt.service.DossierLocalServiceUtil;
+import org.opencps.dossiermgt.util.DossierMgtUtil;
 
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
@@ -53,18 +54,15 @@ public class DossierMornitoringPortlet extends MVCPortlet {
 
 	    String dossierpage = prefs.getValue(
 	        "dossierpage", "/");	
-	    String dossierfilepage = prefs.getValue(
-		        "dossierfilepage", "/");	
-		System.out.println("DossierMornitoringPortlet.searchAction()"+dossierpage.length() + "***" + dossierfilepage);
+	    //	    String dossierfilepage = prefs.getValue(
+	    //		        "dossierfilepage", "/");	
+		//System.out.println("DossierMornitoringPortlet.searchAction()"+dossierpage.length() + "***" + dossierfilepage);
 		
 		String receptionNo = ParamUtil.getString(request, "keywords", StringPool.BLANK);
 		Dossier ds = null;
-		try {
-			ds = DossierLocalServiceUtil.getDossierByReceptionNo(receptionNo);
-		}
-		catch (SystemException ex) {
-			
-		}
+		
+		ds = DossierMgtUtil.searchDossier(receptionNo);
+		
 		ThemeDisplay themeDisplay = (ThemeDisplay) request.getAttribute(WebKeys.THEME_DISPLAY);
 		String portletName = (String)request.getAttribute(WebKeys.PORTLET_ID);
 
@@ -73,6 +71,7 @@ public class DossierMornitoringPortlet extends MVCPortlet {
 		redirectURL = PortletURLFactoryUtil.create(PortalUtil.getHttpServletRequest(request),
 			portletName,
 			themeDisplay.getLayout().getPlid(), PortletRequest.RENDER_PHASE); 
+		
 		if(dossierpage.length() > 1){
 			
 			long plid = 0L;
@@ -97,14 +96,15 @@ public class DossierMornitoringPortlet extends MVCPortlet {
 			redirectURL.setParameter(DossierDisplayTerms.DOSSIER_ID, String.valueOf(ds.getDossierId()));
 			response.sendRedirect(redirectURL.toString());
 		} else {
-			
-		}
-		
-		if (ds != null) {
 			redirectURL.setParameter("jspPage", templatePath + "dossiermonitoringresult.jsp");
-			redirectURL.setParameter(DossierDisplayTerms.DOSSIER_ID, String.valueOf(ds.getDossierId()));
 			response.sendRedirect(redirectURL.toString());
 		}
+		
+//		if (ds != null) {
+//			redirectURL.setParameter("jspPage", templatePath + "dossiermonitoringresult.jsp");
+//			redirectURL.setParameter(DossierDisplayTerms.DOSSIER_ID, String.valueOf(ds.getDossierId()));
+//			response.sendRedirect(redirectURL.toString());
+//		}
 		
 //		else if (Validator.isNotNull(receptionNo) && !"".equals(receptionNo)) {		
 //			redirectURL.setParameter("jspPage", templatePath + "dossiermonitoringdossierlist.jsp");
