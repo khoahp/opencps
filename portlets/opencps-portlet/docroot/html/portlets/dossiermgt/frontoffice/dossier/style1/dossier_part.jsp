@@ -227,7 +227,7 @@
 									<td>
 										<span class="opencps dossiermgt dossier-part-control">
 											<liferay-util:include 
-												page="/html/common/portlet/dossier_actions.jsp" 
+												page="/html/common/portlet/dossier_actions_style1.jsp" 
 												servletContext="<%=application %>"
 											>
 												
@@ -303,7 +303,7 @@
 											<td>
 												<span class="opencps dossiermgt dossier-part-control">
 													<liferay-util:include 
-														page="/html/common/portlet/dossier_actions.jsp" 
+														page="/html/common/portlet/dossier_actions_style1.jsp" 
 														servletContext="<%=application %>"
 													>
 														<portlet:param 
@@ -403,7 +403,7 @@
 											for(FileGroup fileGroup : fileGroups){
 												%>
 												<liferay-util:include 
-													page="/html/common/portlet/dossier_individual_part.jsp" 
+													page="/html/common/portlet/dossier_individual_part_style1.jsp" 
 													servletContext="<%=pageContext.getServletContext() %>"
 												>
 													<portlet:param 

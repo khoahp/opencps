@@ -1,4 +1,6 @@
 
+<%@page import="com.liferay.portal.kernel.portlet.LiferayPortletMode"%>
+<%@page import="javax.portlet.PortletRequest"%>
 <%@page import="com.liferay.portlet.PortletURLFactoryUtil"%>
 <%@page import="com.liferay.portal.theme.ThemeDisplay"%>
 <%
@@ -24,6 +26,13 @@
 
 <%
 	List<DictItem> serviceAdministrations = DictItemLocalServiceUtil.findDictItemsByG_DC_S(scopeGroupId, ServiceUtil.SERVICE_ADMINISTRATION);
+
+	HttpServletRequest originRequest = PortalUtil.getOriginalServletRequest(request);
+	String serviceMgtDirectoryPortletName = StringPool.UNDERLINE + WebKeys.SERVICE_MGT_DIRECTORY + StringPool.UNDERLINE;
+
+	String administrationCode = GetterUtil.getString(originRequest.getParameter(serviceMgtDirectoryPortletName + ServiceDisplayTerms.SERVICE_ADMINISTRATION));
+	String domainCode = GetterUtil.getString(originRequest.getParameter(serviceMgtDirectoryPortletName + ServiceDisplayTerms.SERVICE_DOMAINCODE));
+	int serviceLevel = GetterUtil.getInteger(originRequest.getParameter(serviceMgtDirectoryPortletName + ServiceDisplayTerms.SERVICE_LEVEL));
 %>
 
 <liferay-portlet:renderURL varImpl="filter" portletName="<%= ServiceUtil.SERVICE_PUBLIC_PORTLET_NAME %>">
@@ -41,12 +50,19 @@
 			<ul>
 				<%
 					for (DictItem di : serviceAdministrations) {
+						PortletURL filterURL = PortletURLFactoryUtil.create(request, ServiceUtil.SERVICE_PUBLIC_PORTLET_NAME, plid, PortletRequest.RENDER_PHASE);
+						filterURL.setWindowState(LiferayWindowState.NORMAL);
+						filterURL.setPortletMode(LiferayPortletMode.VIEW);
 						filter.setParameter(ServiceDisplayTerms.SERVICE_ADMINISTRATION, String.valueOf(di.getDictItemId()));
-					
+						
 						String css = "odd";
 						
 						if(serviceAdministrations.indexOf(di) % 2 == 0){
 							css = "even";
+						}
+						
+						if(di.getDictItemId() == GetterUtil.getLong(administrationCode)) {
+							css += " active";
 						}
 				%>
 				<li class="<%=css%>">
@@ -66,20 +82,27 @@
 				DictCollection serviceDomainCollection = DictCollectionLocalServiceUtil.getDictCollection(scopeGroupId, ServiceUtil.SERVICE_DOMAIN);
 				%>
 				
-				<%= buildTreeServiceDomainToBullet(serviceDomainCollection.getDictCollectionId(), 0, 0, 0, 
-						themeDisplay, filter) %>
+				<%= buildTreeServiceDomainToBullet(serviceDomainCollection.getDictCollectionId(), GetterUtil.getLong(domainCode), 0, 0, 
+						themeDisplay, request) %>
 			</ul>
 		</div>
 		<div id="<portlet:namespace/>mucdo" class="tab-pane fade">
 			<ul>
 				<%
 					for (int i = 2; i < 5; i++) {
-						filter.setParameter("mucDo", String.valueOf(i));
+						PortletURL filterURL = PortletURLFactoryUtil.create(request, ServiceUtil.SERVICE_PUBLIC_PORTLET_NAME, plid, PortletRequest.RENDER_PHASE);
+						filterURL.setWindowState(LiferayWindowState.NORMAL);
+						filterURL.setPortletMode(LiferayPortletMode.VIEW);
+						filter.setParameter("serviceLevel", String.valueOf(i));
 					
 						String css = "odd";
 						
 						if(i % 2 == 0){
 							css = "even";
+						}
+						
+						if(i == serviceLevel) {
+							css += " active";
 						}
 				%>
 				<li class="<%=css%>">
@@ -98,7 +121,7 @@
 
 <%!
 private String buildTreeServiceDomainToBullet(long dictCollectionId, long seldId,
-		long parentId, int indent, ThemeDisplay themeDisplay, PortletURL viewURL) {
+		long parentId, int indent, ThemeDisplay themeDisplay, HttpServletRequest request) {
 
 	StringBuilder sb = new StringBuilder();
 
@@ -117,15 +140,18 @@ private String buildTreeServiceDomainToBullet(long dictCollectionId, long seldId
 				cssClass += " active";
 			}
 			
-			viewURL.setParameter(ServiceDisplayTerms.SERVICE_DOMAINCODE, String.valueOf(id));
+			PortletURL filterURL = PortletURLFactoryUtil.create(request, ServiceUtil.SERVICE_PUBLIC_PORTLET_NAME, themeDisplay.getPlid(), PortletRequest.RENDER_PHASE);
+			filterURL.setWindowState(LiferayWindowState.NORMAL);
+			filterURL.setPortletMode(LiferayPortletMode.VIEW);
+			filterURL.setParameter(ServiceDisplayTerms.SERVICE_DOMAINCODE, String.valueOf(id));
 
 			sb.append("<li class=\"" + cssClass + "\">");
-			sb.append("<a href=\"" + viewURL.toString() + "\">");
+			sb.append("<a href=\"" + filterURL.toString() + "\">");
 			sb.append(itemName);
 			sb.append("</a>");
 			
 			String sbTmp = buildTreeServiceDomainToBullet(dictCollectionId, seldId, id,
-					indent + 1, themeDisplay, viewURL);
+					indent + 1, themeDisplay, request);
 
 			if(Validator.isNotNull(sbTmp)) {
 				sb.append("<ul class=\"ul-" + indent + "\">");
