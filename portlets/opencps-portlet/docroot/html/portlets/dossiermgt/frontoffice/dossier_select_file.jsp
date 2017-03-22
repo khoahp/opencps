@@ -109,7 +109,7 @@
 	searchURL.setParameter("redirectURL", redirectURL);
 	searchURL.setParameter("modalDialogId", modalDialogId);
 	
-	boolean isSameTemplate = ParamUtil.getBoolean(request, "isSameTemplate", true);
+	boolean isSameTemplate = ParamUtil.getBoolean(request, "isSameTemplate", false);
 					
 	String templateFileNo = StringPool.BLANK;
 	templateFileNo = ParamUtil.getString(request, DossierDisplayTerms.TEMPLATE_FILE_NO);
@@ -135,12 +135,12 @@
 	
 	
 	List<String> headerNames = new ArrayList<String>();
-	headerNames.add("");
-	headerNames.add("#");
-	headerNames.add("template-info");
-	headerNames.add("template");
+	headerNames.add("stt");
+	headerNames.add("dossier-file-no");
+	headerNames.add("dossier-file-date");
+	headerNames.add("dossier-file-name");
 	headerNames.add("dossier");
-	//headerNames.add("select");
+	headerNames.add("action");
 	
 	String headers = StringUtil.merge(headerNames);
 %>
@@ -308,93 +308,49 @@
 					</liferay-util:buffer>
 
 					<liferay-util:buffer var="boundCol1">
-						<div class="row-fluid">
-							<div class="span6 bold-label">
-								<liferay-ui:message key="template-file-no"/>
-							</div>
-
-							<div class="span6">
-								<a href="<%=templateFileURL %>" target="_blank">
-									<%=Validator.isNotNull(templateFileNo) ? templateFileNo : StringPool.DASH %>
-								</a>
-							</div>
-
-						</div>
-						
-						<div class="row-fluid">
-							<div class="span6 bold-label">
-								<liferay-ui:message key="dossier-file-no"/>
-							</div>
-							<div class="span6"><%=Validator.isNotNull(dossierFile.getDossierFileNo()) ? dossierFile.getDossierFileNo() : StringPool.DASH %></div>
-						</div>
-						
-						<div class="row-fluid">
-							<div class="span6 bold-label">
-								<liferay-ui:message key="dossier-file-createdate"/>
-							</div>
-							<div class="span6">
-							
-								<%=Validator.isNotNull(dossierFile.getModifiedDate()) ? 
-										DateTimeUtil.convertDateToString(dossierFile.getModifiedDate() , DateTimeUtil._VN_DATE_TIME_FORMAT): StringPool.DASH %>
-							
-							</div>
-						</div>
+						<%=Validator.isNotNull(dossierFile.getDossierFileNo()) ? dossierFile.getDossierFileNo() : StringPool.DASH %>
 					</liferay-util:buffer>
 					
 					<liferay-util:buffer var="boundCol2">
-						<div class="row-fluid">
-							<div class="span4 bold-label">
-								<liferay-ui:message key="dossier-file-date"/>
-							</div>
-							<div class="span8"><%=Validator.isNotNull(dossierFile.getDossierFileDate()) ? 
-									DateTimeUtil.convertDateToString(dossierFile.getDossierFileDate(), DateTimeUtil._VN_DATE_FORMAT) :
-										StringPool.DASH %>
-							</div>
-						</div>
-						<div class="row-fluid">
-							<div class="span4 bold-label">
-								<liferay-ui:message key="dossier-file-name"/>
-							</div>
-							<div class="span8">
-								<a href="<%=dossierFileURL %>" target="_blank">
-									<%=Validator.isNotNull(dossierFile.getDisplayName()) ? dossierFile.getDisplayName() : StringPool.DASH %>
-								</a>
-							</div>
-						</div>
-						
+						<% if(Validator.isNotNull(dossierFile.getDossierFileDate())) {%>
+							<%= DateTimeUtil.convertDateToString(dossierFile.getDossierFileDate(), DateTimeUtil._VN_DATE_FORMAT) %>
+						<%} else if (Validator.isNotNull(dossierFile.getModifiedDate())) {%>
+							<%= DateTimeUtil.convertDateToString(dossierFile.getModifiedDate(), DateTimeUtil._VN_DATE_FORMAT) %>
+						<% } else %>
+							<%= StringPool.DASH %>
+						<% } %>
+					</liferay-util:buffer>
+					
+					<liferay-util:buffer var="boundCol3">
+						<a href="<%=dossierFileURL %>" target="_blank">
+							<%=Validator.isNotNull(dossierFile.getDisplayName()) ? dossierFile.getDisplayName() : StringPool.DASH %>
+						</a>
 					</liferay-util:buffer>
 					
 					
-					<liferay-util:buffer var="boundCol3">
-						<div class="row-fluid">
-							<div class="span6 bold-label">
-								<liferay-ui:message key="reception-no"/>
-							</div>
-							<div class="span6"><%=Validator.isNotNull(dossier) ? dossier.getReceptionNo() : StringPool.DASH %></div>
-						</div>
+					<liferay-util:buffer var="boundCol4">
+						<%=Validator.isNotNull(dossier) ? dossier.getReceptionNo() : StringPool.DASH %>
+					</liferay-util:buffer>
+					
+					<liferay-util:buffer var="boundCol5">
+						<% String jsButton = "javascript:" + renderResponse.getNamespace() + "selectDossierFile(" + dossierFile.getDossierFileId() +")"; %>
 						
-						<div class="row-fluid">
-							<div class="span6 bold-label">
-								<liferay-ui:message key="dossier-no"/>
-							</div>
-							<div class="span6">
-								<a href="<%=viewDossierUrlNomal %>" target="_blank">
-									<%=(dossierFile.getDossierId() > 0) ? String.valueOf(dossierFile.getDossierId()) : StringPool.DASH %>
-								</a>
-							</div>
-						</div>
+						<a href="javascript:void(0)" onclick="<%= jsButton %>" class="dsf-select-btn">
+							<i></i> <liferay-ui:message key="select" />
+						</a>
+						
+						<a href="<%=dossierFileURL %>" class="dsf-view-btn" target="_blank">
+							<i></i> <liferay-ui:message key="view" />
+						</a>
 					</liferay-util:buffer>
 					
 					<%
-						row.addText(rowTicker);
-						// no column
-						row.addText(String.valueOf(row.getPos() + 1 + searchContainer.getStart()));
+						row.addText(String.valueOf((searchContainer.getCur() - 1) * searchContainer.getDelta() + index + 1));
 						row.addText(boundCol1);
 						row.addText(boundCol2);
 						row.addText(boundCol3);
-						
-					//	row.addButton(LanguageUtil.get(locale, "select"), "javascript:" + renderResponse.getNamespace() + "selectDossierFile(" + dossierFile.getDossierFileId() +")");
-						
+						row.addText(boundCol4);
+						row.addText(boundCol5);
 					%>	
 				</liferay-ui:search-container-row> 
 			
