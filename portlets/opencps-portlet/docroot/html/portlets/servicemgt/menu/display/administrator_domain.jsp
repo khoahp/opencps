@@ -30,19 +30,37 @@
 	HttpServletRequest originRequest = PortalUtil.getOriginalServletRequest(request);
 	String serviceMgtDirectoryPortletName = StringPool.UNDERLINE + WebKeys.SERVICE_MGT_DIRECTORY + StringPool.UNDERLINE;
 
-	String administrationCode = GetterUtil.getString(originRequest.getParameter(serviceMgtDirectoryPortletName + ServiceDisplayTerms.SERVICE_ADMINISTRATION));
-	String domainCode = GetterUtil.getString(originRequest.getParameter(serviceMgtDirectoryPortletName + ServiceDisplayTerms.SERVICE_DOMAINCODE));
+	long administrationCode = GetterUtil.getLong(originRequest.getParameter(serviceMgtDirectoryPortletName + ServiceDisplayTerms.SERVICE_ADMINISTRATION));
+	long domainCode = GetterUtil.getLong(originRequest.getParameter(serviceMgtDirectoryPortletName + ServiceDisplayTerms.SERVICE_DOMAINCODE));
 	int serviceLevel = GetterUtil.getInteger(originRequest.getParameter(serviceMgtDirectoryPortletName + ServiceDisplayTerms.SERVICE_LEVEL));
+	
+	String administrationCodeTab = "active";
+	String domainCodeTab = StringPool.BLANK;
+	String serviceLevelTab = StringPool.BLANK;
+	
+	if(domainCode > 0) {
+		administrationCodeTab = StringPool.BLANK;
+		domainCodeTab = "active";
+		serviceLevelTab = StringPool.BLANK;
+	} else if(serviceLevel > 0) {
+		administrationCodeTab = StringPool.BLANK;
+		domainCodeTab = StringPool.BLANK;
+		serviceLevelTab = "active";
+	} else {
+		administrationCodeTab = "active";
+		domainCodeTab = StringPool.BLANK;
+		serviceLevelTab = StringPool.BLANK;
+	}
 %>
 
 <div class="service-menu side-nav">
 	<ul class="nav nav-tabs">
-		<li class="active"><a data-toggle="tab" href="#<portlet:namespace/>cqql"><liferay-ui:message key="co-quan-quan-ly" /></a></li>
-		<li><a data-toggle="tab" href="#<portlet:namespace/>linhvuc"><liferay-ui:message key="linh-vuc" /></a></li>
-		<li><a data-toggle="tab" href="#<portlet:namespace/>mucdo"><liferay-ui:message key="muc-do" /></a></li>
+		<li class="<%= administrationCodeTab %>"><a data-toggle="tab" href="#<portlet:namespace/>cqql"><liferay-ui:message key="co-quan-quan-ly" /></a></li>
+		<li class="<%= domainCodeTab %>"><a data-toggle="tab" href="#<portlet:namespace/>linhvuc"><liferay-ui:message key="linh-vuc" /></a></li>
+		<li class="<%= serviceLevelTab %>"><a data-toggle="tab" href="#<portlet:namespace/>mucdo"><liferay-ui:message key="muc-do" /></a></li>
 	</ul>
 	<div class="tab-content">
-		<div id="<portlet:namespace/>cqql" class="tab-pane fade in active">
+		<div id="<portlet:namespace/>cqql" class="tab-pane fade in <%= administrationCodeTab %>">
 			<ul>
 				<%
 					for (DictItem di : serviceAdministrations) {
@@ -57,7 +75,7 @@
 							css = "even";
 						}
 						
-						if(di.getDictItemId() == GetterUtil.getLong(administrationCode)) {
+						if(di.getDictItemId() == administrationCode) {
 							css += " active";
 						}
 				%>
@@ -72,17 +90,17 @@
 				%>
 			</ul>
 		</div>
-		<div id="<portlet:namespace/>linhvuc" class="tab-pane fade">
+		<div id="<portlet:namespace/>linhvuc" class="tab-pane fade <%= domainCodeTab %>">
 			<ul>
 				<%
 				DictCollection serviceDomainCollection = DictCollectionLocalServiceUtil.getDictCollection(scopeGroupId, ServiceUtil.SERVICE_DOMAIN);
 				%>
 				
-				<%= buildTreeServiceDomainToBullet(serviceDomainCollection.getDictCollectionId(), GetterUtil.getLong(domainCode), 0, 0, 
+				<%= buildTreeServiceDomainToBullet(serviceDomainCollection.getDictCollectionId(), domainCode, 0, 0, 
 						themeDisplay, request) %>
 			</ul>
 		</div>
-		<div id="<portlet:namespace/>mucdo" class="tab-pane fade">
+		<div id="<portlet:namespace/>mucdo" class="tab-pane fade <%= serviceLevelTab %>">
 			<ul>
 				<%
 					for (int i = 2; i < 5; i++) {
