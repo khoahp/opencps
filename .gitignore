@@ -327,9 +327,7 @@ portlets/opencps-portlet/docroot/WEB-INF/src/org/opencps/notificationmgt/service
 portlets/opencps-portlet/docroot/WEB-INF/src/org/opencps/notificationmgt/service/persistence/NotificationRedirectConfigPersistenceImpl.java
 portlets/opencps-portlet/docroot/WEB-INF/src/org/opencps/notificationmgt/service/persistence/NotificationStatusConfigPersistenceImpl.java
 
-<<<<<<< HEAD
 
-=======
 portlets/opencps-portlet/docroot/WEB-INF/src/org/opencps/postal/service/persistence/PostalOrderPersistenceImpl.java
 portlets/opencps-portlet/docroot/WEB-INF/src/org/opencps/postal/service/persistence/VnPostalPersistenceImpl.java
 portlets/opencps-portlet/docroot/WEB-INF/src/org/opencps/postal/service/base/*
@@ -340,4 +338,3 @@ portlets/opencps-portlet/docroot/WEB-INF/src/org/opencps/postal/service/persiste
 
 portlets/opencps-portlet/docroot/WEB-INF/lib/opencps-portlet-service.jar
 portlets/opencps-portlet/docroot/WEB-INF/lib/opencps-portlet-taglib.jar
->>>>>>> refs/remotes/origin/rc-1.8-issues-fix
