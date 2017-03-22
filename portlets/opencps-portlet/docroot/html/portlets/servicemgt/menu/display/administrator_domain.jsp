@@ -33,6 +33,10 @@
 	String administrationCode = GetterUtil.getString(originRequest.getParameter(serviceMgtDirectoryPortletName + ServiceDisplayTerms.SERVICE_ADMINISTRATION));
 	String domainCode = GetterUtil.getString(originRequest.getParameter(serviceMgtDirectoryPortletName + ServiceDisplayTerms.SERVICE_DOMAINCODE));
 	int serviceLevel = GetterUtil.getInteger(originRequest.getParameter(serviceMgtDirectoryPortletName + ServiceDisplayTerms.SERVICE_LEVEL));
+	
+	System.out.println("===administrationCode===" + originRequest.getParameter(serviceMgtDirectoryPortletName + ServiceDisplayTerms.SERVICE_ADMINISTRATION));
+	System.out.println("===domainCode===" + originRequest.getParameter(serviceMgtDirectoryPortletName + ServiceDisplayTerms.SERVICE_DOMAINCODE));
+	System.out.println("===serviceLevel===" + originRequest.getParameter(serviceMgtDirectoryPortletName + ServiceDisplayTerms.SERVICE_LEVEL));
 %>
 
 <div class="service-menu side-nav">
