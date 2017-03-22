@@ -368,8 +368,8 @@
 		<aui:input name="<%=DossierFileDisplayTerms.GROUP_NAME %>" type="hidden" value="<%=groupName %>"/>
 		<aui:input name="receiveHiddenDossierFile" type="hidden" />
 		<aui:row>
-			<aui:button  name="btnAccept" value="agree" cssClass="btn-primary"/>
-			<aui:button name="btnCancel" value="cancel"/>
+			<aui:button name="btnAccept" value="agree" cssClass="dsf-btn-ok btn btn-primary"/>
+			<aui:button name="btnCancel" value="cancel" cssClass="dsf-btn-cancel btn"/>
 		</aui:row>
 	</div>
 
