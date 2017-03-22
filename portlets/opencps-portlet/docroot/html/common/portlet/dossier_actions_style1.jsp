@@ -28,6 +28,10 @@
 <%@page import="org.opencps.util.WebKeys"%>
 <%@page import="org.opencps.dossiermgt.model.DossierFile"%>
 
+<%
+/* dossier_action for style1 of editDossier display style */
+%>
+
 <%@ include file="/init.jsp"%>
 
 <%

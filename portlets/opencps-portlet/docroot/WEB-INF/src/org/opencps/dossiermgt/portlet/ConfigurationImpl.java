@@ -131,7 +131,7 @@ public class ConfigurationImpl implements ConfigurationAction {
 
 		String maxUploadFileSizeUnit = ParamUtil.getString(actionRequest,
 				"maxUploadFileSizeUnit");
-
+		
 		preferences.setValue("dossierDisplayStyle", dossierDisplayStyle);
 		preferences.setValue("dossierTabFocus", dossierTabFocus);
 		preferences
@@ -194,6 +194,12 @@ public class ConfigurationImpl implements ConfigurationAction {
 		String[] dossierStatusCodes = ParamUtil.getParameterValues(
 				actionRequest, "dossierStatusCodes");
 		
+		String templatesToDisplay = ParamUtil.getString(actionRequest,
+				"templatesToDisplay");
+		
+		long redirectAddDossierPlid = ParamUtil.getInteger(actionRequest,
+				"redirectAddDossierPlid", 0);
+		
 		preferences.setValue("showServiceDomainTree",
 				String.valueOf(showServiceDomainTree));
 		preferences
@@ -216,6 +222,10 @@ public class ConfigurationImpl implements ConfigurationAction {
 		
 		preferences.setValue("reportTypes",
 				String.valueOf(StringUtil.merge(reportTypes)));
+		
+		preferences.setValue("templatesToDisplay", templatesToDisplay);
+		
+		preferences.setValue("redirectAddDossierPlid", String.valueOf(redirectAddDossierPlid));
 
 	}
 

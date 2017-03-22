@@ -87,6 +87,10 @@
 	List<DictItem> dictItems = PortletUtil.getDictItemInUseByCode(themeDisplay.getScopeGroupId(), 
 			PortletPropsValues.DATAMGT_MASTERDATA_SERVICE_DOMAIN, 
 			PortletConstants.TREE_VIEW_DEFAULT_ITEM_CODE);
+	
+	String templatesToDisplay_cfg = preferences.getValue("templatesToDisplay", "default");
+	
+	long redirectAddDossierPlid = GetterUtil.getLong(preferences.getValue("redirectAddDossierPlid", null));
 %>
 
 
@@ -149,6 +153,14 @@
 							</aui:option>
 						</aui:select>
 					</aui:fieldset>
+					
+					<aui:select name="templatesToDisplay" id="templatesToDisplay">
+			
+						<aui:option selected="<%= templatesToDisplay_cfg.equals(\"default\") %>" value="default">default</aui:option>
+						
+						<aui:option selected="<%= templatesToDisplay_cfg.equals(\"20_80\") %>" value="20_80">20_80</aui:option>
+					
+					</aui:select>
 					
 					<aui:fieldset>
 						<aui:input 
@@ -251,6 +263,28 @@
 						<%
 							}
 						%>
+					</aui:select>
+					
+					<aui:select name="redirectAddDossierPlid" id="redirectAddDossierPlid" showEmptyOption="<%= true %>">
+						<optgroup label='----<liferay-ui:message key="private"/>----'>
+							<%
+								for (Layout layoutTemp : privateLayouts) {
+							%>
+								<aui:option value="<%= layoutTemp.getPlid() %>" selected="<%=layoutTemp.getPlid() == redirectAddDossierPlid %>"><%= layoutTemp.getName(locale) %></aui:option>
+							<%
+								}
+							%>
+						</optgroup>
+						
+						<optgroup label='----<liferay-ui:message key="public"/>----'>
+							<%
+								for (Layout layoutTemp : publicLayouts) {
+							%>
+								<aui:option value="<%= layoutTemp.getPlid() %>" selected="<%=layoutTemp.getPlid() == redirectAddDossierPlid %>"><%= layoutTemp.getName(locale) %></aui:option>
+							<%
+								}
+							%>
+						</optgroup>
 					</aui:select>
 				</liferay-ui:panel>
 			</liferay-ui:panel-container>

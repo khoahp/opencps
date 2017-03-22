@@ -29,6 +29,8 @@
 <%@page import="org.opencps.dossiermgt.util.DossierMgtUtil"%>
 <%@page import="org.opencps.util.PortletUtil"%>
 
+/* dossier_action for style1 of editDossier display style */
+
 <%@ include file="/init.jsp"%>
 
 <%
