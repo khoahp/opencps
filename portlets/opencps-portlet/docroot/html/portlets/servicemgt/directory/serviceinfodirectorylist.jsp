@@ -201,7 +201,7 @@ $(document).ready(function(){
 						<div class="span12">
 							<a href="<%=viewURL.toString() %>"><%=service.getServiceName() %></a>
 						</div>
-						
+						<br>
 						<div class="span12">
 						<%
 							List<TemplateFile> templates = new ArrayList<TemplateFile>();
@@ -217,7 +217,7 @@ $(document).ready(function(){
 							<%
 								for (TemplateFile tf : templates) {
 							%>
-								<li> <i class="icon-file"></i> <a href="<%= ServiceUtil.getDLFileURL(tf.getFileEntryId()) %>"> <%= tf.getFileName() %> </a></li>
+								<li> <i class="<%=ServiceUtil.getFileTypeCSSClass(tf.getFileEntryId())%>"></i> <a href="<%= ServiceUtil.getDLFileURL(tf.getFileEntryId()) %>"> <%= tf.getFileName() %> </a></li>
 							<%		
 								}
 							%>
