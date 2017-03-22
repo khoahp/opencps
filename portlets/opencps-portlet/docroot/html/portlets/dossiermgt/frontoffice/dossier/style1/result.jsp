@@ -67,9 +67,8 @@
 					<liferay-ui:message key="add-dossier"/>
 				</c:when>
 				
-				<c:when test="<%= dossier != null && (
-						dossier.getDossierStatus().equalsIgnoreCase(PortletConstants.DOSSIER_STATUS_PROCESSING)
-						|| dossier.getDossierStatus().equalsIgnoreCase(PortletConstants.DOSSIER_STATUS_SYSTEM) %>">
+				<c:when test="<%= (dossier != null) && (dossier.getDossierStatus().equalsIgnoreCase(PortletConstants.DOSSIER_STATUS_PROCESSING)
+						|| dossier.getDossierStatus().equalsIgnoreCase(PortletConstants.DOSSIER_STATUS_SYSTEM)) %>">
 					<liferay-ui:message key="dossier"/>
 				</c:when>
 				

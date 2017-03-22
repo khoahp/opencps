@@ -316,7 +316,7 @@
 							<%= DateTimeUtil.convertDateToString(dossierFile.getDossierFileDate(), DateTimeUtil._VN_DATE_FORMAT) %>
 						<%} else if (Validator.isNotNull(dossierFile.getModifiedDate())) {%>
 							<%= DateTimeUtil.convertDateToString(dossierFile.getModifiedDate(), DateTimeUtil._VN_DATE_FORMAT) %>
-						<% } else %>
+						<% } else { %>
 							<%= StringPool.DASH %>
 						<% } %>
 					</liferay-util:buffer>
