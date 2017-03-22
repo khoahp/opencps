@@ -201,7 +201,7 @@ $(document).ready(function(){
 						<div class="span12">
 							<a href="<%=viewURL.toString() %>"><%=service.getServiceName() %></a>
 						</div>
-						<br>
+						
 						<div class="span12">
 						<%
 							List<TemplateFile> templates = new ArrayList<TemplateFile>();
