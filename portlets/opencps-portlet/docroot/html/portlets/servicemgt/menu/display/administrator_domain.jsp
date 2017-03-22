@@ -35,10 +35,6 @@
 	int serviceLevel = GetterUtil.getInteger(originRequest.getParameter(serviceMgtDirectoryPortletName + ServiceDisplayTerms.SERVICE_LEVEL));
 %>
 
-<liferay-portlet:renderURL varImpl="filter" portletName="<%= ServiceUtil.SERVICE_PUBLIC_PORTLET_NAME %>">
-	
-</liferay-portlet:renderURL>
-
 <div class="service-menu side-nav">
 	<ul class="nav nav-tabs">
 		<li class="active"><a data-toggle="tab" href="#<portlet:namespace/>cqql"><liferay-ui:message key="co-quan-quan-ly" /></a></li>
@@ -53,7 +49,7 @@
 						PortletURL filterURL = PortletURLFactoryUtil.create(request, ServiceUtil.SERVICE_PUBLIC_PORTLET_NAME, plid, PortletRequest.RENDER_PHASE);
 						filterURL.setWindowState(LiferayWindowState.NORMAL);
 						filterURL.setPortletMode(LiferayPortletMode.VIEW);
-						filter.setParameter(ServiceDisplayTerms.SERVICE_ADMINISTRATION, String.valueOf(di.getDictItemId()));
+						filterURL.setParameter(ServiceDisplayTerms.SERVICE_ADMINISTRATION, String.valueOf(di.getDictItemId()));
 						
 						String css = "odd";
 						
@@ -67,7 +63,7 @@
 				%>
 				<li class="<%=css%>">
 						<i class="fa fa-chevron-circle-right" aria-hidden="true"></i>
-						<a href="<%= filter.toString() %>">
+						<a href="<%= filterURL.toString() %>">
 							<%= di.getItemName(locale) %> 
 						</a>
 					</li>
@@ -93,7 +89,7 @@
 						PortletURL filterURL = PortletURLFactoryUtil.create(request, ServiceUtil.SERVICE_PUBLIC_PORTLET_NAME, plid, PortletRequest.RENDER_PHASE);
 						filterURL.setWindowState(LiferayWindowState.NORMAL);
 						filterURL.setPortletMode(LiferayPortletMode.VIEW);
-						filter.setParameter("serviceLevel", String.valueOf(i));
+						filterURL.setParameter("serviceLevel", String.valueOf(i));
 					
 						String css = "odd";
 						
@@ -107,7 +103,7 @@
 				%>
 				<li class="<%=css%>">
 						<i class="fa fa-chevron-circle-right" aria-hidden="true"></i>
-						<a href="<%= filter.toString() %>">
+						<a href="<%= filterURL.toString() %>">
 							<liferay-ui:message key="muc-do" /> <%= i %>
 						</a>
 					</li>
