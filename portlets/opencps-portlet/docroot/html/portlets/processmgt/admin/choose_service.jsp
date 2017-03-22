@@ -29,12 +29,6 @@
 	String backURL = ParamUtil.getString(request, "backURL");
 %>
 
-<%-- <liferay-ui:header
-	backURL="<%= backURL %>"
-	title="choose-serviceinfos"
-	backLabel="back"
-/>
- --%>
 <portlet:actionURL name="chooseServiceInfoFromProcess" var="chooseServiceInfoFromProcessURL" >
 	<portlet:param name="backURL" value="<%= backURL %>"/>
 	<portlet:param name="serviceProcessId" value="<%=String.valueOf(serviceProcessId) %>"/>
