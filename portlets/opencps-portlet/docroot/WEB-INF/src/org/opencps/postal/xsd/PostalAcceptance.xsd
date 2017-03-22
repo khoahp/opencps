@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:element name="PostalAcceptance">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="ItemCode" type="xs:string"></xs:element>
+				<xs:element name="DataCode" type="xs:string"></xs:element>
+				<xs:element name="CodAmount" type="xs:string"></xs:element>
+				<xs:element name="AcceptancePoscode" type="xs:string"></xs:element>
+				<xs:element name="DestinationPoscode" type="xs:string"></xs:element>
+				<xs:element name="SendingTime" type="xs:string"></xs:element>
+				<xs:element name="SenderFullname" type="xs:string"></xs:element>
+				<xs:element name="SenderAddress" type="xs:string"></xs:element>
+				<xs:element name="SenderTel" type="xs:string"></xs:element>
+				<xs:element name="ReceiverFullname" type="xs:string"></xs:element>
+				<xs:element name="ReceiverAddress" type="xs:string"></xs:element>
+				<xs:element name="ReceiverTel" type="xs:string"></xs:element>
+				<xs:element name="ValueAddedServiceList" type="xs:string"></xs:element>
+				<xs:element name="MainFreight" type="xs:string"></xs:element>
+				<xs:element name="VasFreight" type="xs:string"></xs:element>
+				<xs:element name="CodFreight" type="xs:string"></xs:element>
+				<xs:element name="CustomerCode" type="xs:string"></xs:element>
+				<xs:element name="Weight" type="xs:string"></xs:element>
+				<xs:element name="WeightConvert" type="xs:string"></xs:element>
+				<xs:element name="Width" type="xs:string"></xs:element>
+				<xs:element name="Length" type="xs:string"></xs:element>
+				<xs:element name="Height" type="xs:string"></xs:element>
+				<xs:element name="Opt" type="xs:string"></xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

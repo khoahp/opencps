@@ -46,15 +46,26 @@
 		url="<%=editNotificationConfigURL.toString()%>" />
 </c:if>
 
+
+<portlet:renderURL var="viewNotiEventConfigURL">
+	<portlet:param name="mvcPath"
+		value='<%=templatePath +"backoffice/event/notification_event_config_list.jsp"%>'/>
+	<portlet:param name="<%=NotificationStatusConfigDisplayTerms.NOTICE_CONFIG_ID%>"
+		value="<%=String.valueOf(notificationStatusConfig.getNotiStatusConfigId())%>" />
+	<portlet:param name="backURL" value="<%=currentURL%>" />
+</portlet:renderURL>
+<liferay-ui:icon image="edit"
+	cssClass="search-container-action fa view" message="view"
+	url="<%=viewNotiEventConfigURL.toString()%>" />
+
+
 <c:if test="<%=notificationStatusConfig.getIsSendNotification() == true%>">
-	<portlet:actionURL var="deactiveNotificationConfigURL" name="updateNotificationConfig">
+	<portlet:actionURL var="deactiveNotificationConfigURL" name="changeNotificationStatusConfig">
 	
 		<portlet:param name="<%=NotificationStatusConfigDisplayTerms.NOTICE_CONFIG_ID%>"
 			value="<%=String.valueOf(notificationStatusConfig.getNotiStatusConfigId())%>" />
-			
-		<portlet:param name="redirectURL" value="<%=currentURL%>" />
 		<portlet:param name="<%=NotificationStatusConfigDisplayTerms.IS_SEND_NOTIFICATION%>"
-			value="<%=String.valueOf(notificationStatusConfig.getIsSendNotification())%>" />
+			value="false" />
 			
 	</portlet:actionURL>
 
@@ -66,14 +77,13 @@
 </c:if>
 
 <c:if test="<%=notificationStatusConfig.getIsSendNotification() == false%>">
-	<portlet:actionURL var="activeNotificationConfigURL" name="updateNotificationConfig">
+	<portlet:actionURL var="activeNotificationConfigURL" name="changeNotificationStatusConfig">
 	
 		<portlet:param name="<%=NotificationStatusConfigDisplayTerms.NOTICE_CONFIG_ID%>"
 			value="<%=String.valueOf(notificationStatusConfig.getNotiStatusConfigId())%>" />
 			
-		<portlet:param name="redirectURL" value="<%=currentURL%>" />
 		<portlet:param name="<%=NotificationStatusConfigDisplayTerms.IS_SEND_NOTIFICATION%>"
-			value="<%=String.valueOf(notificationStatusConfig.getIsSendNotification())%>" />
+			value="true" />
 	</portlet:actionURL>
 	<liferay-ui:icon
 		image="active"

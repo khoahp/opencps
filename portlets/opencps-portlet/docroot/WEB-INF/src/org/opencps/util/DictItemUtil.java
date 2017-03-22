@@ -17,9 +17,13 @@
 
 package org.opencps.util;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
+import org.opencps.datamgt.model.DictCollection;
 import org.opencps.datamgt.model.DictItem;
+import org.opencps.datamgt.service.DictCollectionLocalServiceUtil;
 import org.opencps.datamgt.service.DictItemLocalServiceUtil;
 
 import com.liferay.portal.kernel.log.Log;
@@ -136,6 +140,28 @@ public class DictItemUtil {
 		}
 
 		return name;
+	}
+	
+	public List<DictItem> getListDictItemBy(long groupId,String collectionCode){
+		
+		try {
+
+			DictCollection dictCollection = null;
+			dictCollection = DictCollectionLocalServiceUtil.getDictCollection(
+					groupId, collectionCode);
+			
+			if(Validator.isNotNull(dictCollection)){
+				
+				List<DictItem> dictItems = DictItemLocalServiceUtil.getDictItemsInUseByDictCollectionId(dictCollection.getDictCollectionId());
+				
+				return dictItems;
+				
+			}
+		} catch (Exception e) {
+
+		}
+		
+		return new ArrayList<DictItem>();
 	}
 
 
