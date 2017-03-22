@@ -100,12 +100,14 @@
 					<liferay-ui:message key="add-dossier"/>
 				</c:when>
 				
-				<c:when test="<%= isEditDossier %>">
-					<liferay-ui:message key="update-dossier"/>
+				<c:when test="<%= dossier != null && (
+						dossier.getDossierStatus().equalsIgnoreCase(PortletConstants.DOSSIER_STATUS_PROCESSING)
+						|| dossier.getDossierStatus().equalsIgnoreCase(PortletConstants.DOSSIER_STATUS_SYSTEM) %>">
+					<liferay-ui:message key="dossier"/>
 				</c:when>
 				
 				<c:otherwise>
-					<liferay-ui:message key="dossier"/>
+					<liferay-ui:message key="update-dossier"/>
 				</c:otherwise>
 			</c:choose>
 		</aui:col>
@@ -221,7 +223,9 @@
 									</td>
 									<td>
 										<c:if test="<%=Validator.isNotNull(urlDownload) %>">
-											<a target="_blank" class="download-dossier-file" href="<%=urlDownload%>"><liferay-ui:message key="download-file-entry" /></a>
+											<a target="_blank" class="download-dossier-file" href="<%=urlDownload%>">
+												<i></i> <liferay-ui:message key="download-file-entry" />
+											</a>
 										</c:if>
 									</td>
 									<td>
@@ -376,7 +380,9 @@
 							</td>
 							<td>
 								<c:if test="<%=Validator.isNotNull(urlDownload) %>">
-									<a target="_blank" class="download-dossier-file" href="<%=urlDownload%>"><liferay-ui:message key="download-file-entry" /></a>
+									<a target="_blank" class="download-dossier-file" href="<%=urlDownload%>">
+										<i></i> <liferay-ui:message key="download-file-entry" />
+									</a>
 								</c:if>
 							</td>
 							<td>
@@ -398,7 +404,6 @@
 								
 								<c:choose>
 									<c:when test="<%=fileGroups != null && !fileGroups.isEmpty() %>">
-	
 										<%
 											for(FileGroup fileGroup : fileGroups){
 												%>

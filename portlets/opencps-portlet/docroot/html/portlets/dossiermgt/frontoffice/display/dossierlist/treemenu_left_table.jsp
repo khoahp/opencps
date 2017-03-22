@@ -276,9 +276,11 @@
 					</liferay-util:buffer>
 					
 					<liferay-util:buffer var="col4">
-						<div class="row-fluid">
-							<div class="span5 col-key"><liferay-ui:message key="create-date"/></div>
-							<div class="span7 col-value">
+						<div class="row-fluid dossier-list-col-date">
+							<div class="col-key">
+								<liferay-ui:message key="create-date"/>:
+							</div>
+							<div class="col-value">
 								<%=
 									Validator.isNotNull(dossier.getCreateDate()) ? 
 									DateTimeUtil.convertDateToString(dossier.getCreateDate(), DateTimeUtil._VN_DATE_TIME_FORMAT) : 
@@ -288,11 +290,11 @@
 						</div>
 						
 						<div class="row-fluid">
-							<div class="span5 col-key">
-								 <liferay-ui:message key="receive-datetime"/>
+							<div class="col-key">
+								 <liferay-ui:message key="receive-datetime"/>:
 							</div>
 							
-							<div class="span7 col-value">
+							<div class="col-value">
 								<%=
 									Validator.isNotNull(dossier.getReceiveDatetime()) ? 
 									DateTimeUtil.convertDateToString(dossier.getReceiveDatetime(), DateTimeUtil._VN_DATE_TIME_FORMAT): 
@@ -302,10 +304,10 @@
 						</div>
 						
 						<div class="row-fluid">
-							<div class="span5 col-key">
-								<liferay-ui:message key="finish-date"/>
+							<div class="col-key">
+								<liferay-ui:message key="finish-date"/>:
 							</div>
-							<div class="span7 col-value">
+							<div class="col-value">
 								<%=
 									Validator.isNotNull(dossier.getFinishDatetime()) ? 
 									DateTimeUtil.convertDateToString(dossier.getFinishDatetime(), DateTimeUtil._VN_DATE_TIME_FORMAT): 
@@ -314,11 +316,11 @@
 							</div>
 						</div>
 						
-						<div class="row-fluid">
-							<div class="span5 col-key">
-								<liferay-ui:message key="note"/>
+						<div class="row-fluid dossier-list-note">
+							<div class="col-key">
+								<liferay-ui:message key="note"/>:
 							</div>
-							<div class="span7 col-value">
+							<div class="col-value">
 								<liferay-ui:message key="<%= noteContent  %>"/>
 							</div>
 						</div>

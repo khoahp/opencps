@@ -67,12 +67,14 @@
 					<liferay-ui:message key="add-dossier"/>
 				</c:when>
 				
-				<c:when test="<%= isEditDossier %>">
-					<liferay-ui:message key="update-dossier"/>
+				<c:when test="<%= dossier != null && (
+						dossier.getDossierStatus().equalsIgnoreCase(PortletConstants.DOSSIER_STATUS_PROCESSING)
+						|| dossier.getDossierStatus().equalsIgnoreCase(PortletConstants.DOSSIER_STATUS_SYSTEM) %>">
+					<liferay-ui:message key="dossier"/>
 				</c:when>
 				
 				<c:otherwise>
-					<liferay-ui:message key="dossier"/>
+					<liferay-ui:message key="update-dossier"/>
 				</c:otherwise>
 			</c:choose>
 		</aui:col>
