@@ -60,7 +60,7 @@
 		<li class="<%= serviceLevelTab %>"><a data-toggle="tab" href="#<portlet:namespace/>mucdo"><liferay-ui:message key="muc-do" /></a></li>
 	</ul>
 	<div class="tab-content">
-		<div id="<portlet:namespace/>cqql" class="tab-pane fade in <%= administrationCodeTab %>">
+		<div id="<portlet:namespace/>cqql" class="tab-pane <%= administrationCodeTab %>">
 			<ul>
 				<%
 					for (DictItem di : serviceAdministrations) {
@@ -90,7 +90,7 @@
 				%>
 			</ul>
 		</div>
-		<div id="<portlet:namespace/>linhvuc" class="tab-pane fade <%= domainCodeTab %>">
+		<div id="<portlet:namespace/>linhvuc" class="tab-pane <%= domainCodeTab %>">
 			<ul>
 				<%
 				DictCollection serviceDomainCollection = DictCollectionLocalServiceUtil.getDictCollection(scopeGroupId, ServiceUtil.SERVICE_DOMAIN);
@@ -100,7 +100,7 @@
 						themeDisplay, request) %>
 			</ul>
 		</div>
-		<div id="<portlet:namespace/>mucdo" class="tab-pane fade <%= serviceLevelTab %>">
+		<div id="<portlet:namespace/>mucdo" class="tab-pane <%= serviceLevelTab %>">
 			<ul>
 				<%
 					for (int i = 2; i < 5; i++) {
