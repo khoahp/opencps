@@ -118,45 +118,6 @@
 					
 					version = DossierFileLocalServiceUtil.countDossierFileByDID_DP(
 							dossierId, dossierPartId);
-					
-					/* List<DossierFile> dossierFiles = DossierFileLocalServiceUtil.getDossierFileByDID_DP(dossierId, dossierPartId);
-					
-					for(DossierFile file : dossierFiles) {
-						if(file.getSyncStatus() == 2) {
-							version++;
-							hasDossierFileSync = true;
-						} 
-						
-						if(file.getRemoved() == 0 && file.getSyncStatus() != 2) {
-							hasDossierFileNoSync = true;
-						}
-					}
-
-					if(version == DossierFileLocalServiceUtil.countDossierFileByDID_DP(
-									dossierId, dossierPartId) && hasDossierFileSync) {
-						
-							version = DossierFileLocalServiceUtil.countDossierFileByDID_DP(
-								dossierId, dossierPartId);
-						
-					} else if(version == 0) {
-						if(hasDossierFileNoSync) {
-							version = 1;
-						} else {
-							version = 0;
-						}
-						
-					} else {
-						if(hasDossierFileNoSync) {
-							version = version + 1;
-						}
-					}
-					 */
-					 
-					/* if(isCBXL){
-						version = DossierFileLocalServiceUtil.countDossierFileByDID_SS_DP(dossierId, dossierPartId, PortletConstants.DOSSIER_FILE_SYNC_STATUS_SYNCSUCCESS);
-					}else{
-						version = DossierFileLocalServiceUtil.countDossierFileByDID_DP(dossierId, dossierPartId);
-					} */
 				}
 				
 			}
@@ -189,10 +150,11 @@
 								group-dossier-part="<%=String.valueOf(groupDossierPartId) %>"
 								group-name="<%=groupName %>"
 								href="javascript:void(0);" 
-								label="declaration-online" 
 								cssClass="label opencps dossiermgt part-file-ctr declaration-online"
 								title="declaration-online"
-							/>
+							>
+								<i></i> <liferay-ui:message key="declaration-online" />
+							</aui:a>
 						</c:if>
 					</c:when>
 					<c:when test="<%= ( isDynamicForm && fileEntryId > 0 ) || isOnlineData > 0  %>">
@@ -206,11 +168,10 @@
 								group-dossier-part="<%=String.valueOf(groupDossierPartId) %>"
 								group-name="<%=groupName %>"
 								href="javascript:void(0);" 
-								label="view-form" 
 								cssClass="label opencps dossiermgt part-file-ctr view-form"
-								title="view-form"
+								title="edit-declaration-online"
 							>
-							<i class="fa fa-search"></i>
+								<i></i> <liferay-ui:message key="edit-declaration-online" />
 							</aui:a>
 						</c:if>
 						<aui:a 
@@ -220,10 +181,11 @@
 							group-dossier-part="<%=String.valueOf(groupDossierPartId) %>"
 							group-name="<%=groupName %>"
 							href="javascript:void(0);" 
-							label="view-content" 
 							cssClass="label opencps dossiermgt part-file-ctr view-attachment"
-							title="view-attachment"
-						/>
+							title="view-declaration-online"
+						>
+							<i></i> <liferay-ui:message key="view-declaration-online" />
+						</aui:a>
 					</c:when>
 					<c:otherwise>
 						<c:choose>
@@ -235,20 +197,11 @@
 									group-dossier-part="<%=String.valueOf(groupDossierPartId) %>"
 									group-name="<%=groupName %>"
 									href="javascript:void(0);" 
-									label="view-content" 
 									cssClass="label opencps dossiermgt part-file-ctr view-attachment"
-									title="view-attachment"
-								/>
-								<!-- comment kyso -->
-								<%-- <c:if test="<%= isExtensionSignature && renderResponse.getNamespace().equals(StringPool.UNDERLINE + WebKeys.DOSSIER_MGT_PORTLET + StringPool.UNDERLINE) %>">
-									<aui:a href="javascript:void(0);" 
-										   label="Sign" 
-										   cssClass="signatureCls"
-										   dossier-file="<%=String.valueOf(dossierFileId) %>"
-									/>
-								</c:if> --%>
-								<%-- <i title="<%= sbMessage.toString() %>" class="fa fa-pencil-square" id = "<portlet:namespace />signInfoMsg" /> --%>
-								<%-- <i title="<%= sbMessage.toString() %>" class="fa fa-certificate" id = "<portlet:namespace />signInfoMsg" /> --%>
+									title="view-content"
+								>
+									<i></i> <liferay-ui:message key="view-content" />
+								</aui:a>
 							</c:when>
 							<c:otherwise>
 								<c:if test="<%=isEditDossier %>">
@@ -261,10 +214,11 @@
 										group-dossier-part="<%=String.valueOf(groupDossierPartId) %>"
 										group-name="<%=groupName %>"
 										href="javascript:void(0);" 
-										label="upload-file" 
 										cssClass="label opencps dossiermgt part-file-ctr upload-dossier-file"
 										title="upload-file"
-									/>
+									>
+										<i></i> <liferay-ui:message key="upload-file" />
+									</aui:a>
 								</c:if>
 							</c:otherwise>
 						</c:choose>
@@ -287,7 +241,7 @@
 								href="javascript:void(0);" 
 								cssClass="view-version"
 							>
-								<%=version %>
+								<i></i> <liferay-ui:message key="view-version" /> <span><%=version %></span>
 							</aui:a>
 						</span>
 					</span>
@@ -304,10 +258,14 @@
 						group-name="<%=groupName %>"
 						href='<%=version == 0 ? StringPool.BLANK : "javascript:void(0);" %>'
 						id="<%=String.valueOf(dossierPartId) %>"
-						title="remove"
+						title="remove-file"
 					>
-						<i class="" aria-hidden="true" ></i>
-						
+						<i></i>
+						<% if(isDynamicForm) { %>
+							<liferay-ui:message key="remove-declaration-online" />
+						<%} else {%>
+							<liferay-ui:message key="remove-file" />
+						<%}%>
 					</aui:a>
 				</c:if>
 			</div>
@@ -315,7 +273,7 @@
 		</c:when>
 		
 		<c:when test="<%=(partType == PortletConstants.DOSSIER_PART_TYPE_OTHER || partType==PortletConstants.DOSSIER_PART_TYPE_MULTIPLE_RESULT) && level == 0 %>">
-			<div class="btn-group-3">
+			<div class="btn-group-1">
 				<c:if test="<%=isEditDossier%>">
 					<aui:a 
 						id="<%=String.valueOf(dossierPartId) %>"
@@ -326,10 +284,11 @@
 						group-dossier-part="<%=String.valueOf(groupDossierPartId) %>"
 						group-name="<%=groupName %>"
 						href="javascript:void(0);" 
-						label="upload-file" 
 						cssClass="label opencps dossiermgt part-file-ctr upload-dossier-file"
 						title="upload-file"
-					/>
+					>
+						<i></i> <liferay-ui:message key="upload-file" />
+					</aui:a>
 				</c:if>
 			</div>
 		</c:when>
@@ -345,18 +304,11 @@
 							group-dossier-part="<%=String.valueOf(groupDossierPartId) %>"
 							group-name="<%=groupName %>"
 							href="javascript:void(0);" 
-							label="view-content" 
 							cssClass="label opencps dossiermgt part-file-ctr view-attachment"
-							title="view-attachment"
-						/>
-						<!-- comment kyso -->
-						<%-- <c:if test="<%= isExtensionSignature && renderResponse.getNamespace().equals(StringPool.UNDERLINE + WebKeys.DOSSIER_MGT_PORTLET + StringPool.UNDERLINE) %>">
-							<aui:a href="javascript:void(0);" 
-								label="Sign" 
-								cssClass="signatureCls" />
-						</c:if> --%>
-						<%-- <i title="<%= sbMessage.toString() %>" class="fa fa-pencil-square" id = "<portlet:namespace />signInfoMsg" /> --%>
-						<%-- <i title="<%= sbMessage.toString() %>" class="fa fa-certificate" id = "<portlet:namespace />signInfoMsg" /> --%>
+							title="view-content"
+						>
+							<i></i> <liferay-ui:message key="view-content" />
+						</aui:a>
 					</c:when>
 					<c:otherwise>
 						<c:if test="<%=isEditDossier %>">
@@ -369,10 +321,11 @@
 								group-dossier-part="<%=String.valueOf(groupDossierPartId) %>"
 								group-name="<%=groupName %>"
 								href="javascript:void(0);" 
-								label="upload-file" 
 								cssClass="label opencps dossiermgt part-file-ctr upload-dossier-file"
 								title="upload-file"
-							/>
+							>
+								<i></i> <liferay-ui:message key="upload-file" />
+							</aui:a>
 						</c:if>
 					</c:otherwise>
 				</c:choose>
@@ -393,7 +346,7 @@
 								href="javascript:void(0);" 
 								cssClass="view-version"
 							>
-								<%=version %>
+								<i></i> <liferay-ui:message key="view-version" /> <span><%=version %></span>
 							</aui:a>
 						</span>
 					</span>
@@ -411,10 +364,9 @@
 						level = "<%=level %>"
 						href='<%=version == 0 ? StringPool.BLANK : "javascript:void(0);" %>'
 						id="<%=String.valueOf(dossierPartId) %>"
-						title="remove"
+						title="remove-file"
 					>
-						<i class="" aria-hidden="true"></i>
-						
+						<i></i> <liferay-ui:message key="remove-file" />
 					</aui:a>
 				</c:if>
 			</div>
@@ -436,8 +388,7 @@
 						cssClass="opencps dossiermgt part-file-ctr remove-individual-group"
 						title="remove-group"
 					>
-						<i class="fa fa-minus-circle" aria-hidden="true"></i>
-						
+						<i class="fa fa-minus-circle"></i> <liferay-ui:message key="remove-group" />
 					</aui:a>
 				</c:if>
 			</div>
@@ -455,21 +406,11 @@
 							group-dossier-part="<%=String.valueOf(groupDossierPartId) %>"
 							group-name="<%=groupName %>"
 							href="javascript:void(0);" 
-							label="view-content" 
 							cssClass="label opencps dossiermgt part-file-ctr view-attachment"
-							title="view-attachment"
-						/>
-						<!-- comment kyso -->
-						<%-- <c:if test="<%= isExtensionSignature &&  renderResponse.getNamespace().equals(StringPool.UNDERLINE + WebKeys.DOSSIER_MGT_PORTLET + StringPool.UNDERLINE) %>">
-							<aui:a 
-								href="javascript:void(0);" 
-								label="Sign" 
-								cssClass="signatureCls"
-							/>
-						</c:if> --%>
-						
-						<%-- <i title="<%= sbMessage.toString() %>" class="fa fa-pencil-square" id = "<portlet:namespace />signInfoMsg" /> --%>
-						<%-- <i title="<%= sbMessage.toString() %>" class="fa fa-certificate" id = "<portlet:namespace />signInfoMsg" /> --%>
+							title="view-content"
+						>
+							<i></i> <liferay-ui:message key="view-content" />
+						</aui:a>
 					</c:when>
 					<c:otherwise>
 						<c:if test="<%=isEditDossier %>">
@@ -482,10 +423,11 @@
 								group-dossier-part="<%=String.valueOf(groupDossierPartId) %>"
 								group-name="<%=groupName %>"
 								href="javascript:void(0);" 
-								label="upload-file" 
 								cssClass="label opencps dossiermgt part-file-ctr upload-dossier-file"
 								title="upload-file"
-							/>
+							>
+								<i></i> <liferay-ui:message key="upload-file" />
+							</aui:a>
 						</c:if>
 					</c:otherwise>
 				</c:choose>
@@ -506,7 +448,7 @@
 								href="javascript:void(0);" 
 								cssClass="view-version"
 							>
-								<%=version %>
+								<i></i> <liferay-ui:message key="view-version" /> <span><%=version %></span>
 							</aui:a>
 						</span>
 					</span>
@@ -524,10 +466,9 @@
 						level = "<%=level %>"
 						href='<%=version == 0 ? StringPool.BLANK : "javascript:void(0);" %>'
 						id="<%=String.valueOf(dossierPartId) %>"
-						title="remove"
+						title="remove-file"
 					>
-						<i class="" aria-hidden="true" ></i>
-						
+						<i></i> <liferay-ui:message key="remove-file" />
 					</aui:a>
 				</c:if>
 			</div>
@@ -547,30 +488,31 @@
 								group-dossier-part="<%=String.valueOf(groupDossierPartId) %>"
 								group-name="<%=groupName %>"
 								href="javascript:void(0);" 
-								label="declaration-online" 
 								cssClass="label opencps dossiermgt part-file-ctr declaration-online"
 								title="declaration-online"
-							/>
+							>
+								<i></i> <liferay-ui:message key="declaration-online" />
+							</aui:a>
 						</c:if>
 					</c:when>
 					<c:when test="<%=isDynamicForm && fileEntryId > 0  %>">
 						<c:if test="<%=!isReadOnly %>">
-						<aui:a 
-							id="<%=String.valueOf(dossierPartId) %>"
-							dossier="<%=String.valueOf(dossierId) %>"
-							dossier-part="<%=String.valueOf(isChildDossierPart ? childDossierPartId : dossierPartId) %>"
-							dossier-file="<%=String.valueOf(dossierFileId) %>"
-							file-group="<%=String.valueOf(fileGroupId) %>"
-							group-dossier-part="<%=String.valueOf(groupDossierPartId) %>"
-							group-name="<%=groupName %>"
-							href="javascript:void(0);" 
-							label="view-form" 
-							cssClass="label opencps dossiermgt part-file-ctr view-form"
-							title="view-form"
-						>
-						<i class="fa fa-search"></i>
-						</aui:a>
+							<aui:a 
+								id="<%=String.valueOf(dossierPartId) %>"
+								dossier="<%=String.valueOf(dossierId) %>"
+								dossier-part="<%=String.valueOf(isChildDossierPart ? childDossierPartId : dossierPartId) %>"
+								dossier-file="<%=String.valueOf(dossierFileId) %>"
+								file-group="<%=String.valueOf(fileGroupId) %>"
+								group-dossier-part="<%=String.valueOf(groupDossierPartId) %>"
+								group-name="<%=groupName %>"
+								href="javascript:void(0);" 
+								cssClass="label opencps dossiermgt part-file-ctr view-form"
+								title="declaration-online"
+							>
+								<i></i> <liferay-ui:message key="declaration-online" />
+							</aui:a>
 						</c:if>
+						
 						<c:if test="<%=!showVersionItemReference %>">
 							<aui:a 
 								id="<%=String.valueOf(dossierPartId) %>"
@@ -579,10 +521,11 @@
 								group-dossier-part="<%=String.valueOf(groupDossierPartId) %>"
 								group-name="<%=groupName %>"
 								href="javascript:void(0);" 
-								label="view-content" 
 								cssClass="label opencps dossiermgt part-file-ctr view-attachment"
-								title="view-attachment"
-							/>
+								title="view-content"
+							>
+								<i></i> <liferay-ui:message key="view-content" />
+							</aui:a>
 						</c:if>
 						
 						<aui:a 
@@ -592,10 +535,11 @@
 							group-dossier-part="<%=String.valueOf(groupDossierPartId) %>"
 							group-name="<%=groupName %>"
 							href="javascript:void(0);" 
-							label="view-content" 
 							cssClass="label opencps dossiermgt part-file-ctr view-attachment"
-							title="view-attachment"
-						/>
+							title="view-declaration-online"
+						>
+							<i></i> <liferay-ui:message key="view-declaration-online" />
+						</aui:a>
 					</c:when>
 					<c:otherwise>
 						<c:choose>
@@ -607,20 +551,11 @@
 									group-dossier-part="<%=String.valueOf(groupDossierPartId) %>"
 									group-name="<%=groupName %>"
 									href="javascript:void(0);" 
-									label="view-content" 
 									cssClass="label opencps dossiermgt part-file-ctr view-attachment"
-									
-									title="view-attachment"
-								/>
-								<!-- comment kyso -->
-								<%-- <c:if test="<%= isExtensionSignature && renderResponse.getNamespace().equals(StringPool.UNDERLINE + WebKeys.DOSSIER_MGT_PORTLET + StringPool.UNDERLINE) %>">
-									<aui:a 	href="javascript:void(0);" 
-											label="Sign" 
-											cssClass="signatureCls"
-									/>
-								</c:if> --%>
-								<%-- <i title="<%= sbMessage.toString() %>" class="fa fa-pencil-square" id = "<portlet:namespace />signInfoMsg" /> --%>
-								<%-- <i title="<%= sbMessage.toString() %>" class="fa fa-certificate" id = "<portlet:namespace />signInfoMsg" /> --%>
+									title="view-content"
+								>
+									<i></i> <liferay-ui:message key="view-content" />
+								</aui:a>
 							</c:when>
 							<c:otherwise>
 								<c:if test="<%=isEditDossier %>">
@@ -633,10 +568,11 @@
 										group-dossier-part="<%=String.valueOf(groupDossierPartId) %>"
 										group-name="<%=groupName %>"
 										href="javascript:void(0);" 
-										label="upload-file" 
 										cssClass="label opencps dossiermgt part-file-ctr upload-dossier-file"
 										title="upload-file"
-									/>
+									>
+										<i></i> <liferay-ui:message key="upload-file" />
+									</aui:a>
 								</c:if>
 							</c:otherwise>
 						</c:choose>
@@ -659,7 +595,7 @@
 								href="javascript:void(0);" 
 								cssClass="view-version"
 							>
-								<%=version %>
+								<i></i> <liferay-ui:message key="view-version" /> <span><%=version %></span>
 							</aui:a>
 						</span>
 					</span>
@@ -675,10 +611,14 @@
 						level = "<%=level %>"
 						href='<%=version == 0 ? StringPool.BLANK : "javascript:void(0);" %>'
 						id="<%=String.valueOf(dossierPartId) %>"
-						title="remove"
+						title="remove-file"
 					>
-						<i class="" aria-hidden="true"  ></i>
-						
+						<i></i>
+						<% if(isDynamicForm) { %>
+							<liferay-ui:message key="remove-declaration-online" />
+						<%} else {%>
+							<liferay-ui:message key="remove-file" />
+						<%}%>
 					</aui:a>
 				</c:if>
 			</div>
