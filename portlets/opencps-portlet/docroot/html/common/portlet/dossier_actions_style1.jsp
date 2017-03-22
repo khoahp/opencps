@@ -253,7 +253,7 @@
 			</div>
 			
 			<div class="btn-group-3">
-				<c:if test="<%=isEditDossier%>">
+				<c:if test="<%=isEditDossier && dossierFileId > 0 %>">
 					<aui:a
 						cssClass='<%="opencps dossiermgt part-file-ctr remove-dossier-file " + (version == 0 ? StringPool.BLANK : "remove-dossier-file-has-file")%>'
 						dossier-part="<%=String.valueOf(isChildDossierPart ? childDossierPartId : dossierPartId) %>"
@@ -358,7 +358,7 @@
 			</div>
 			
 			<div class="btn-group-3">
-				<c:if test="<%=isEditDossier %>">
+				<c:if test="<%=isEditDossier && dossierFileId > 0 %>">
 					<aui:a 
 						cssClass='<%="opencps dossiermgt part-file-ctr remove-dossier-file " + (version == 0 ? StringPool.BLANK : "remove-dossier-file-has-file")%>'
 						dossier-part="<%=String.valueOf(isChildDossierPart ? childDossierPartId : dossierPartId) %>"
@@ -460,7 +460,7 @@
 			</div>
 			
 			<div class="btn-group-3">
-				<c:if test="<%=isEditDossier%>">
+				<c:if test="<%=isEditDossier && dossierFileId > 0%>">
 					<aui:a 
 						cssClass='<%="opencps dossiermgt part-file-ctr remove-dossier-file " + (version == 0 ? StringPool.BLANK : "remove-dossier-file-has-file")%>'
 						dossier-file="<%=String.valueOf(dossierFileId) %>"
@@ -607,7 +607,7 @@
 			</div>
 			
 			<div class="btn-group-3">
-				<c:if test="<%=isEditDossier %>">
+				<c:if test="<%=isEditDossier && dossierFileId > 0 %>">
 					<aui:a
 						cssClass='<%="opencps dossiermgt part-file-ctr remove-dossier-file " + (version == 0 ? StringPool.BLANK : "remove-dossier-file-has-file")%>'
 						process-order="<%=String.valueOf(processOrderId) %>"
