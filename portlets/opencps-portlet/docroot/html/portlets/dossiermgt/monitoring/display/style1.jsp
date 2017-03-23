@@ -75,7 +75,7 @@ if(Validator.isNotNull(dossierpage)){
 	<div class="monitoring-style1-content">
 		<p><liferay-ui:message key="monitoring-style1-heading"/></p>
 		<aui:form action="<%= searchUrl %>" method="post" name="fm">
-			<input class="search-query" name="keywords" type="text" title='<liferay-ui:message key="keywords" />'>
+			<input class="search-query" name="<portlet:namespace/>keywords" type="text" title='<liferay-ui:message key="keywords" />'>
 		
 			<button class="btn" type="submit"><i></i> <liferay-ui:message key="keywords" /></button>
 		</aui:form>
