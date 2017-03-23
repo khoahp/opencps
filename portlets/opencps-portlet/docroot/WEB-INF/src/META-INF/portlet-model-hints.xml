@@ -83,9 +83,7 @@
 		<field name="modifiedDate" type="Date" />
 		<field name="workingUnitId" type="long" />
 		<field name="employeeNo" type="String" />
-		<field name="fullName" type="String">
-			<hint name="max-length">255</hint>
-		</field>
+		<field name="fullName" type="String" />
 		<field name="gender" type="int" />
 		<field name="birthdate" type="Date" />
 		<field name="telNo" type="String" />
@@ -102,12 +100,8 @@
 		<field name="userId" type="long" />
 		<field name="createDate" type="Date" />
 		<field name="modifiedDate" type="Date" />
-		<field name="title" type="String">
-			<hint name="max-length">255</hint>
-		</field>
-		<field name="description" type="String">
-			<hint-collection name="TEXTAREA" />
-		</field>
+		<field name="title" type="String" />
+		<field name="description" type="String" />
 		<field name="workingUnitId" type="long" />
 		<field name="directWorkingUnitId" type="long" />
 		<field name="leader" type="int" />
@@ -120,12 +114,8 @@
 		<field name="userId" type="long" />
 		<field name="createDate" type="Date" />
 		<field name="modifiedDate" type="Date" />
-		<field name="name" type="String">
-			<hint name="max-length">255</hint>
-		</field>
-		<field name="enName" type="String">
-			<hint name="max-length">255</hint>
-		</field>
+		<field name="name" type="String" />
+		<field name="enName" type="String" />
 		<field name="govAgencyCode" type="String" />
 		<field name="managerWorkingUnitId" type="long" />
 		<field name="parentWorkingUnitId" type="long" />
@@ -138,9 +128,7 @@
 		<field name="telNo" type="String" />
 		<field name="faxNo" type="String" />
 		<field name="email" type="String" />
-		<field name="website" type="String">
-			<hint-collection name="URL" />
-		</field>
+		<field name="website" type="String" />
 		<field name="isEmployer" type="boolean" />
 		<field name="mappingOrganisationId" type="long" />
 	</model>
