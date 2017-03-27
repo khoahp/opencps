@@ -1867,7 +1867,13 @@ public class ApiServiceServiceImpl extends ApiServiceServiceBaseImpl {
 					if (df.getFileEntryId() > 0) {
 						try {
 							FileEntry fileEntry = DLAppLocalServiceUtil.getFileEntry(df.getFileEntryId());
-							jsonDossierFile.put("dossierFullFileName", df.getDisplayName() + "." + fileEntry.getExtension());
+							String fullFileName = fileEntry.getTitle();
+							
+							if(!fullFileName.contains(StringPool.PERIOD)) {
+								fullFileName = fileEntry.getTitle() + "." + fileEntry.getExtension();
+							}
+							
+							jsonDossierFile.put("dossierFullFileName", fullFileName);
 							
 							String url = getFileURL(fileEntry, serviceContext);
 	
