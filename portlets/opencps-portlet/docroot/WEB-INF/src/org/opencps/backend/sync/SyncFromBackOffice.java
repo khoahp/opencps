@@ -52,6 +52,7 @@ import com.liferay.portal.kernel.messaging.MessageListenerException;
 import com.liferay.portal.kernel.util.PrefsPropsUtil;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.util.SubscriptionSender;
 import com.liferay.util.PwdGenerator;
 
@@ -187,10 +188,16 @@ public class SyncFromBackOffice implements MessageListener {
 				
 				HolidayCheckUtils holidayCheckUtils = new HolidayCheckUtils();
 
-				OutDateStatus outDate = holidayCheckUtils.getOutDateStatus(toBackOffice.getProcessOrderId(), toBackOffice.getProcessWorkflowId());
+				OutDateStatus outDate = new OutDateStatus();
+				
+				try{
+					holidayCheckUtils.getOutDateStatus(toBackOffice.getProcessOrderId(), toBackOffice.getProcessWorkflowId());
+				}catch(Exception e){
+					
+				}
 				
 				long delayTimes = 0;
-				delayTimes = outDate.getTimeOutDate();
+				delayTimes = Validator.isNotNull(outDate) ? outDate.getTimeOutDate(): 0;
 				int daysDoing = 0;
 				
 				toCallBack.setProcessOrderId(toBackOffice.getProcessOrderId());

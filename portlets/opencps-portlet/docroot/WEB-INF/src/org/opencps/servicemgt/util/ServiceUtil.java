@@ -72,7 +72,7 @@ public class ServiceUtil {
 		return fileURL;
 	}
 	
-	public static String getFileType(long fileEntryId) {
+	public static String getFileTypeCSSClass(long fileEntryId) {
 		DLFileEntry file = null;
 		
 		String fileType = StringPool.BLANK;
@@ -86,37 +86,37 @@ public class ServiceUtil {
 			
 			switch (fileType) {
 			case FileExtensionKeys.EXT_DOC:
-				cssClass = "fa-file-word-o";
+				cssClass = "fa fa-file-word-o";
 				break;
 			case FileExtensionKeys.EXT_DOCX:
-				cssClass = "fa-file-word-o";
+				cssClass = "fa fa-file-word-o";
 				break;
 			case FileExtensionKeys.EXT_ODT:
-				cssClass = "fa-file-word-o";
+				cssClass = "fa fa-file-word-o";
 				break;
 			case FileExtensionKeys.EXT_XLS:
-				cssClass = "fa-file-excel-o";
+				cssClass = "fa fa-file-excel-o";
 				break;
 			case FileExtensionKeys.EXT_XLSX:
-				cssClass = "fa-file-excel-o";
+				cssClass = "fa fa-file-excel-o";
 				break;
 			case FileExtensionKeys.EXT_ODS:
-				cssClass = "fa-file-excel-o";
+				cssClass = "fa fa-file-excel-o";
 				break;
 			case FileExtensionKeys.EXT_PDF:
-				cssClass = "fa-file-pdf-o";
+				cssClass = "fa fa-file-pdf-o";
 				break;
 			case FileExtensionKeys.EXT_GIP:
-				cssClass = "fa-image";
+				cssClass = "fa fa-image";
 				break;
 			case FileExtensionKeys.EXT_PNG:
-				cssClass = "fa-image";
+				cssClass = "fa fa-image";
 				break;
 			case FileExtensionKeys.EXT_JPG:
-				cssClass = "fa-image";
+				cssClass = "fa fa-image";
 				break;
 			default:
-				cssClass = "fa-file";
+				cssClass = "fa fa-file";
 				break;
 			}
 			

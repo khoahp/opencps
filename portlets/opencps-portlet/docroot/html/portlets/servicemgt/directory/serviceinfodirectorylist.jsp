@@ -217,7 +217,7 @@ $(document).ready(function(){
 							<%
 								for (TemplateFile tf : templates) {
 							%>
-								<li> <i class="icon-file"></i> <a href="<%= ServiceUtil.getDLFileURL(tf.getFileEntryId()) %>"> <%= tf.getFileName() %> </a></li>
+								<li> <i class="<%=ServiceUtil.getFileTypeCSSClass(tf.getFileEntryId())%>"></i> <a href="<%= ServiceUtil.getDLFileURL(tf.getFileEntryId()) %>"> <%= tf.getFileName() %> </a></li>
 							<%		
 								}
 							%>
