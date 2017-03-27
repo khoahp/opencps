@@ -30,5 +30,5 @@
 	
 	String style = preferences.getValue("style","default");
 	
-	boolean showListServiceTemplateFile = GetterUtil.getBoolean(preferences.getValue("style", null), true);
+	boolean showListServiceTemplateFile = GetterUtil.getBoolean(preferences.getValue("showListServiceTemplateFile", null), true);
 %>
