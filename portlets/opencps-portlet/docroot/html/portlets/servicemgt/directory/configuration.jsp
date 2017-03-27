@@ -59,6 +59,10 @@
 			<aui:option value="table" label="table" selected='<%= "table".equals(style) %>'/>
 		</aui:select>
 	</aui:row>
+	
+	<aui:row>
+		<aui:input name="showListServiceTemplateFile" value="<%= showListServiceTemplateFile %>" type="checkbox"/>
+	</aui:row>
 
 	<aui:button type="submit" name="Save" value="save"></aui:button>
 

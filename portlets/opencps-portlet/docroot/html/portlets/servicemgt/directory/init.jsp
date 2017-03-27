@@ -29,4 +29,6 @@
 	long plidServiceDetail = GetterUtil.getLong(preferences.getValue("plidServiceDetail","0"));
 	
 	String style = preferences.getValue("style","default");
+	
+	boolean showListServiceTemplateFile = GetterUtil.getBoolean(preferences.getValue("style", null), true);
 %>
