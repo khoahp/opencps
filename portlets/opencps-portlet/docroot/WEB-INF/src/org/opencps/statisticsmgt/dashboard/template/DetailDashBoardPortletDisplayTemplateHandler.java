@@ -5,9 +5,8 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.opencps.statisticsmgt.model.DossiersStatistics;
-import org.opencps.statisticsmgt.service.DossiersStatisticsLocalServiceUtil;
-import org.opencps.statisticsmgt.service.DossiersStatisticsServiceUtil;
-import org.opencps.statisticsmgt.util.StatisticsUtil;
+import org.opencps.statisticsmgt.service.DossiersStatisticsLocalService;
+import org.opencps.statisticsmgt.service.DossiersStatisticsService;
 import org.opencps.util.WebKeys;
 
 import com.liferay.portal.kernel.portletdisplaytemplate.BasePortletDisplayTemplateHandler;
@@ -34,6 +33,7 @@ public class DetailDashBoardPortletDisplayTemplateHandler extends
 		return WebKeys.DETAIL_DASHBOARD_PORTLET;
 	}
 
+	@Override
 	public Map<String, TemplateVariableGroup> getTemplateVariableGroups(
 			long classPK, String language, Locale locale) throws Exception {
 
@@ -54,13 +54,30 @@ public class DetailDashBoardPortletDisplayTemplateHandler extends
 				List.class, PortletDisplayTemplateConstants.ENTRIES,
 				"dossierStatistics", DossiersStatistics.class,
 				"curDossierStatistics", "year");
-
-		templateVariableGroup.addVariable("dossierStatistics", List.class,
-				PortletDisplayTemplateConstants.ENTRIES, "curDossierStatistics");
-		templateVariableGroup.addServiceLocatorVariables(StatisticsUtil.class);
-		templateVariableGroup.addServiceLocatorVariables(DossiersStatisticsLocalServiceUtil.class);
-		templateVariableGroup.addServiceLocatorVariables(DossiersStatisticsServiceUtil.class);
 		
+		templateVariableGroup.addVariable(
+			"json-data", String.class, "jsonData");
+
+		templateVariableGroup
+				.addVariable("dossierStatistics", List.class,
+						PortletDisplayTemplateConstants.ENTRIES,
+						"curDossierStatistics");
+
+		String[] restrictedVariables = getRestrictedVariables(language);
+		
+		TemplateVariableGroup statisticsServicesTemplateVariableGroup = new TemplateVariableGroup(
+				"statistic-services", restrictedVariables);
+
+		statisticsServicesTemplateVariableGroup.setAutocompleteEnabled(true);
+
+		statisticsServicesTemplateVariableGroup.addServiceLocatorVariables(
+				DossiersStatisticsLocalService.class,
+				DossiersStatisticsService.class);
+
+		templateVariableGroups.put(
+				statisticsServicesTemplateVariableGroup.getLabel(),
+				statisticsServicesTemplateVariableGroup);
+
 		return templateVariableGroups;
 	}
 }

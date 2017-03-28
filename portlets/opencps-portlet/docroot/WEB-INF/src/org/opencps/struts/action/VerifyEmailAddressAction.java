@@ -85,7 +85,7 @@ public class VerifyEmailAddressAction extends Action {
 					//Neu cau hinh = 2 thi cap nhat mat khau va trang thai gui email thong tin user cho nguoi dung
 					//Neu cau hinh = 3 thi cap nhat trang thai thanh confirm de quan tri vao xac nhan
 					if(PortletConstants.EMAIL_CONFIG_2_STEP.equals(emailConfigStep)){
-						User mappingUser = UserLocalServiceUtil.updatePassword(citizen.getMappingUserId(), password, password, false);
+						User mappingUser = UserLocalServiceUtil.updatePassword(citizen.getMappingUserId(), password, password, true);
 						
 						citizen.setAccountStatus(PortletConstants.ACCOUNT_STATUS_APPROVED);
 						
@@ -129,7 +129,7 @@ public class VerifyEmailAddressAction extends Action {
 					if(PortletConstants.EMAIL_CONFIG_2_STEP.equals(emailConfigStep)){
 						
 						User mappingUser = UserLocalServiceUtil.updatePassword(business
-							        .getMappingUserId(), password, password, false);
+							        .getMappingUserId(), password, password, true);
 						
 						business.setAccountStatus(PortletConstants.ACCOUNT_STATUS_APPROVED);
 						

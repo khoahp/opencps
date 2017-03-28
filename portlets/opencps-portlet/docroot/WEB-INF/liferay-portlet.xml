@@ -431,6 +431,7 @@
 		<icon>/icon.png</icon>
 		<configuration-action-class>org.opencps.statisticsmgt.dashboard.portlet.DetailDashBoardConfigurationImpl</configuration-action-class>
 		<template-handler>org.opencps.statisticsmgt.dashboard.template.DetailDashBoardPortletDisplayTemplateHandler</template-handler>
+		<instanceable>true</instanceable>
 		<header-portlet-css>/css/statistics.css</header-portlet-css>
 		<footer-portlet-javascript>
 			/js/main.js
@@ -438,6 +439,15 @@
 		<css-class-wrapper>35-portlet</css-class-wrapper>
 	</portlet>
 
+	<portlet>
+		<portlet-name>36</portlet-name>
+		<icon>/icon.png</icon>
+		<header-portlet-css>/css/main.css</header-portlet-css>
+		<footer-portlet-javascript>
+			/js/main.js
+		</footer-portlet-javascript>
+		<css-class-wrapper>36-portlet</css-class-wrapper>
+	</portlet>
 	<role-mapper>
 		<role-name>administrator</role-name>
 		<role-link>Administrator</role-link>

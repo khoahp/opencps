@@ -56,7 +56,7 @@
 <%@page import="org.opencps.processmgt.util.ProcessMgtUtil"%>
 <%@page import="org.opencps.util.WebKeys"%>
 
-<%@ include file="/init.jsp"%>
+<%@ include file="../processorder/init.jsp"%>
 
 <%
 	boolean success = false;
@@ -131,9 +131,10 @@
 
 	boolean esign = false;
 	
-	long assigerToUserId = 0;
+	long assigerToUserId = ProcessMgtUtil.getAssignUser(processWorkflowId, processOrderId, workflow.getPostProcessStepId());
 	
-	if(Validator.isNotNull(processOrder)) {
+	
+	/* if(Validator.isNotNull(processOrder)) {
 		assigerToUserId = processOrder.getAssignToUserId();
 		
 		if(assigerToUserId == 0) {
@@ -142,7 +143,7 @@
 		
 	} else {
 		assigerToUserId = ProcessMgtUtil.getAssignUser(processWorkflowId, processOrderId, workflow.getPostProcessStepId());
-	}
+	} */
 			
 	
 	PortletURL backTodoListURL =PortletURLFactoryUtil.create(request, WebKeys.PROCESS_ORDER_PORTLET, themeDisplay.getPlid(), PortletRequest.RENDER_PHASE);

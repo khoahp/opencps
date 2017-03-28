@@ -719,44 +719,47 @@ public class AccountRegPortlet extends MVCPortlet {
 	}
 	protected static void validatePassword(String curPass,String newPass, String rePass, 
 			ServiceContext serviceContext) throws PortalException, SystemException{
+		
 		if(Validator.isNull(curPass)
-				&& Validator.isNotNull(newPass) 
-				&& Validator.isNotNull(rePass)){
+				&& ( Validator.isNotNull(newPass)
+				|| Validator.isNotNull(rePass))){
+			
 			throw new UserPasswordException(0);
 		}
 		if(Validator.isNotNull(curPass)
-				&&Validator.isNotNull(newPass)
-				&&Validator.isNull(rePass)){
+				&& (Validator.isNull(newPass)
+				|| Validator.isNull(rePass))){
 			throw new UserPasswordException(0);
 		}
-		Company company = CompanyLocalServiceUtil.getCompany(serviceContext.getCompanyId());
-        User user = UserLocalServiceUtil.getUser(serviceContext.getUserId());
-        
-        String authType = company.getAuthType();
-        String login = StringPool.BLANK;
-        
-        if(authType.equals(CompanyConstants.AUTH_TYPE_EA)){
-          login = user.getEmailAddress();
-        }else if(authType.equals(CompanyConstants.AUTH_TYPE_SN)){
-          login = user.getScreenName();
-        }else if(authType.equals(CompanyConstants.AUTH_TYPE_ID)){
-          login = String.valueOf(user.getUserId());
-        }
-        
-        long userChangePasswordId = 
-            UserLocalServiceUtil.authenticateForBasic(
-                          serviceContext.getCompanyId(), 
-                          authType, 
-                          login, 
-                          curPass);
-        
-        if (!Validator.equals(userChangePasswordId, 
-            serviceContext.getUserId())){
-          throw new UserPasswordException(0);
-        }
 		
-	}
-		
+		if(Validator.isNotNull(curPass)) {
+			Company company = CompanyLocalServiceUtil.getCompany(serviceContext.getCompanyId());
+	        User user = UserLocalServiceUtil.getUser(serviceContext.getUserId());
+	        
+	        String authType = company.getAuthType();
+	        String login = StringPool.BLANK;
+	        
+	        if(authType.equals(CompanyConstants.AUTH_TYPE_EA)){
+	          login = user.getEmailAddress();
+	        }else if(authType.equals(CompanyConstants.AUTH_TYPE_SN)){
+	          login = user.getScreenName();
+	        }else if(authType.equals(CompanyConstants.AUTH_TYPE_ID)){
+	          login = String.valueOf(user.getUserId());
+	        }
+	        
+	        long userChangePasswordId = 
+	            UserLocalServiceUtil.authenticateForBasic(
+	                          serviceContext.getCompanyId(), 
+	                          authType, 
+	                          login, 
+	                          curPass);
+	        
+	        if (!Validator.equals(userChangePasswordId, 
+	            serviceContext.getUserId())){
+	          throw new UserPasswordException(0);
+	        	}
+			}
+		}	
 
 	protected static void validateBusiness(
 	    long businessId, String email, String name, String enName,

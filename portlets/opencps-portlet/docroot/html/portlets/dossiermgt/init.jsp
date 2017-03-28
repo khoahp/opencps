@@ -90,7 +90,7 @@
 	
 	/*dossier file list  */
 	
-	String dossierFileDisplayStyle = preferences.getValue("dossierFileListOrderByField", "default");
+	String dossierFileDisplayStyle = preferences.getValue("dossierFileDisplayStyle", "default");
 	
 	String dossierFileListOrderByField = preferences.getValue("dossierFileListOrderByField", StringPool.BLANK);
 	

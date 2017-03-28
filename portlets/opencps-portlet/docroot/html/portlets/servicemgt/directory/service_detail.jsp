@@ -54,7 +54,7 @@
 <liferay-portlet:renderURL 
 		var="renderToSubmitOnline" 
 		portletName="<%=WebKeys.P26_SUBMIT_ONLINE %>"
-		plid="<%=Long.valueOf(plidServiceDetail) %>"
+		plid="<%=plidServiceDetail %>"
 		portletMode="VIEW"
 		windowState="<%=LiferayWindowState.NORMAL.toString() %>"
 	>
@@ -200,13 +200,13 @@
 						
 					</td>
 				</tr>
-				<!-- <tr>
+				<tr>
 					<c:if test="<%= serviceIsConfiged %>">
 						<td class="col-left" colspan="2">
-							<aui:button href="<%= renderToSubmitOnline.toString() %>" cssClass="des-sub-button radius20" value="online-url-button"></aui:button>
+							<aui:button href="<%= renderToSubmitOnline.toString() %>" cssClass="des-sub-button radius20" value="dossier-submit-online-temp"></aui:button>
 						</td>
 					</c:if>
-				</tr>  -->
+				</tr>
 			</table>
 		</div>
 	</c:if>

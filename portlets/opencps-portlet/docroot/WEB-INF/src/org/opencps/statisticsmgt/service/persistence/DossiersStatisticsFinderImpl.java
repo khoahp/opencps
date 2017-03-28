@@ -19,11 +19,15 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.opencps.datamgt.model.DictItem;
+import org.opencps.datamgt.service.DictItemLocalServiceUtil;
 import org.opencps.statisticsmgt.bean.DossierStatisticsBean;
+import org.opencps.statisticsmgt.bean.FieldDatasShema;
 import org.opencps.statisticsmgt.model.DossiersStatistics;
 import org.opencps.statisticsmgt.model.impl.DossiersStatisticsImpl;
 import org.opencps.statisticsmgt.util.StatisticsUtil;
 import org.opencps.statisticsmgt.util.StatisticsUtil.StatisticsFieldNumber;
+import org.opencps.util.DictItemUtil;
 
 import com.liferay.portal.kernel.dao.orm.QueryPos;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
@@ -32,6 +36,7 @@ import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.Type;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
@@ -125,14 +130,14 @@ public class DossiersStatisticsFinderImpl
 
 			sql = StringUtil.replace(sql, "$FILTER$", definedCondition);
 
-			// _log.info(sql);
-
 			String definedColumnDataTypes =
 				CustomSQLUtil.get(SQL_STATISTICS_DATA_TYPES_0);
 
 			String[] columnNames = StringUtil.split(definedColumnNames);
 
 			String[] columnDataTypes = StringUtil.split(definedColumnDataTypes);
+
+			_log.info(sql);
 
 			SQLQuery q = session.createSQLQuery(sql);
 
@@ -525,9 +530,11 @@ public class DossiersStatisticsFinderImpl
 	 */
 	public List<DossiersStatistics> getStatsByGovAndDomain(
 		long groupId, int startMonth, int startYear, int period,
-		String govCode, String domainCode, int level, boolean notNullGov,
-		boolean notNullDomain) {
+		String govCodes, String domainCodes, int level, int domainDeepLevel) {
 
+		//Get tree dictitem by code
+		//List<DictItem> dictItems = new ArrayList<DictItem>();
+		
 		Session session = null;
 
 		try {
@@ -537,34 +544,74 @@ public class DossiersStatisticsFinderImpl
 
 			// _log.info(sql);
 
-			if (notNullDomain) {
-				sql =
-					StringUtil.replace(
-						sql, "(opencps_dossierstatistics.domainCode = ?)",
-						"(opencps_dossierstatistics.domainCode != '')");
-			}
-			else {
-				if (Validator.isNull(domainCode)) {
-					sql =
-						StringUtil.replace(
-							sql, "(opencps_dossierstatistics.domainCode = ?)",
-							"(opencps_dossierstatistics.domainCode = '')");
-				}
-			}
-
-			if (notNullGov) {
+			if (Validator.isNull(govCodes)) {
 				sql =
 					StringUtil.replace(
 						sql, "(opencps_dossierstatistics.govAgencyCode = ?)",
-						"(opencps_dossierstatistics.govAgencyCode != '')");
+						"(opencps_dossierstatistics.govAgencyCode = '')");
 			}
 			else {
-				if (Validator.isNull(govCode)) {
+				if (govCodes.equalsIgnoreCase("all")) {
 					sql =
 						StringUtil.replace(
 							sql,
 							"(opencps_dossierstatistics.govAgencyCode = ?)",
-							"(opencps_dossierstatistics.govAgencyCode = '')");
+							"(opencps_dossierstatistics.govAgencyCode != '')");
+				}
+				else {
+					String[] arrGovCode = StringUtil.split(govCodes);
+					List<String> tmp = new ArrayList<String>();
+
+					if (arrGovCode != null && arrGovCode.length > 0) {
+						for (int g = 0; g < arrGovCode.length; g++) {
+							if (Validator.isNotNull(arrGovCode[g])) {
+								tmp.add(StringPool.APOSTROPHE + arrGovCode[g] +
+									StringPool.APOSTROPHE);
+							}
+						}
+					}
+
+					sql =
+						StringUtil.replace(
+							sql,
+							"(opencps_dossierstatistics.govAgencyCode = ?)",
+							"(opencps_dossierstatistics.govAgencyCode IN (" +
+								StringUtil.merge(tmp) + "))");
+				}
+			}
+
+			if (Validator.isNull(domainCodes)) {
+				sql =
+					StringUtil.replace(
+						sql, "(opencps_dossierstatistics.domainCode = ?)",
+						"(opencps_dossierstatistics.domainCode = '')");
+			}
+			else {
+				if (domainCodes.equalsIgnoreCase("all")) {
+					sql =
+						StringUtil.replace(
+							sql, "(opencps_dossierstatistics.domainCode = ?)",
+							"(opencps_dossierstatistics.domainCode != '')");
+				}
+				else {
+					String[] arrDomainCode = StringUtil.split(domainCodes);
+					List<String> tmp = new ArrayList<String>();
+
+					if (arrDomainCode != null && arrDomainCode.length > 0) {
+						for (int d = 0; d < arrDomainCode.length; d++) {
+							if (Validator.isNotNull(arrDomainCode[d])) {
+								tmp.add(StringPool.APOSTROPHE +
+									arrDomainCode[d] + StringPool.APOSTROPHE);
+
+							}
+						}
+					}
+
+					sql =
+						StringUtil.replace(
+							sql, "(opencps_dossierstatistics.domainCode = ?)",
+							"(opencps_dossierstatistics.domainCode IN (" +
+								StringUtil.merge(tmp) + "))");
 				}
 			}
 
@@ -573,6 +620,7 @@ public class DossiersStatisticsFinderImpl
 					startMonth, startYear, period);
 
 			sql = StringUtil.replace(sql, "$FILTER$", conditions);
+
 			_log.info(sql);
 
 			SQLQuery q = session.createSQLQuery(sql);
@@ -582,14 +630,6 @@ public class DossiersStatisticsFinderImpl
 			QueryPos qPos = QueryPos.getInstance(q);
 
 			qPos.add(groupId);
-
-			if (Validator.isNotNull(domainCode) && !notNullDomain) {
-				qPos.add(domainCode);
-			}
-
-			if (Validator.isNotNull(govCode) && !notNullGov) {
-				qPos.add(govCode);
-			}
 
 			qPos.add(level);
 

@@ -28,6 +28,8 @@
 	String dossierfilepage_cfg = GetterUtil.getString(portletPreferences.getValue("dossierfilepage", StringPool.BLANK));
 	List<String> portletIdList = themeDisplay.getLayoutTypePortlet().getPortletIds();
 	List<Layout> layoutPages = LayoutLocalServiceUtil.getLayouts(scopeGroupId, false);
+	
+	String displayStyle = GetterUtil.getString(portletPreferences.getValue("displayStyle", "default"));
 %>
 <liferay-portlet:actionURL var="configurationURL" portletConfiguration="true" />
 <liferay-ui:success key="config-stored" message="config-stored"
@@ -47,12 +49,12 @@
 			for (Layout l : layoutPages) {
 				if (l.getFriendlyURL().equals(servicepage_cfg)) {
 		%>
-		<aui:option selected="<%= true %>" value="<%= l.getFriendlyURL() %>"><%= l.getName() %></aui:option>
+		<aui:option selected="<%= true %>" value="<%= l.getFriendlyURL() %>"><%= l.getName(locale) %></aui:option>
 		<%
 				}
 				else {
 		%>
-		<aui:option selected="<%= false %>" value="<%= l.getFriendlyURL() %>"><%= l.getName() %></aui:option>
+		<aui:option selected="<%= false %>" value="<%= l.getFriendlyURL() %>"><%= l.getName(locale) %></aui:option>
 		<%
 				}
 			}
@@ -64,12 +66,12 @@
 			for (Layout l : layoutPages) {
 				if (l.getFriendlyURL().equals(dossierpage_cfg)) {
 		%>
-		<aui:option selected="<%= true %>" value="<%= l.getFriendlyURL() %>"><%= l.getName() %></aui:option>
+		<aui:option selected="<%= true %>" value="<%= l.getFriendlyURL() %>"><%= l.getName(locale) %></aui:option>
 		<%
 				}
 				else {
 		%>
-		<aui:option selected="<%= false %>" value="<%= l.getFriendlyURL() %>"><%= l.getName() %></aui:option>
+		<aui:option selected="<%= false %>" value="<%= l.getFriendlyURL() %>"><%= l.getName(locale) %></aui:option>
 		<%
 				}
 			}
@@ -81,16 +83,20 @@
 			for (Layout l : layoutPages) {
 				if (l.getFriendlyURL().equals(dossierfilepage_cfg)) {
 		%>
-		<aui:option selected="<%= true %>" value="<%= l.getFriendlyURL() %>"><%= l.getName() %></aui:option>
+		<aui:option selected="<%= true %>" value="<%= l.getFriendlyURL() %>"><%= l.getName(locale) %></aui:option>
 		<%
 				}
 				else {
 		%>
-		<aui:option selected="<%= false %>" value="<%= l.getFriendlyURL() %>"><%= l.getName() %></aui:option>
+		<aui:option selected="<%= false %>" value="<%= l.getFriendlyURL() %>"><%= l.getName(locale) %></aui:option>
 		<%
 				}
 			}
 		%>
+	</aui:select>
+	<aui:select name="displayStyle" label="display-style">
+		<aui:option selected='<%= "default".equals(displayStyle) %>' value="default" label="default"/>
+		<aui:option selected='<%= "style1".equals(displayStyle) %>' value="style1" label="style1"/>
 	</aui:select>
     <aui:input name="action" type="hidden" id="action"></aui:input>
     <aui:button-row>

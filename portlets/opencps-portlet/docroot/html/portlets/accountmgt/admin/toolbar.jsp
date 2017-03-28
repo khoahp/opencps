@@ -155,7 +155,7 @@
 										itemNames= "<%=BusinessDisplayTerms.BUSINESS_DOMAIN %>"
 										cssClass="search-input select-box"
 										optionValueType="code"
-										selectedItems="<%=String.valueOf(businessDomainItemId)%>"
+										selectedItems="<%= businessDomain %>"
 									/>
 							</aui:col>
 							

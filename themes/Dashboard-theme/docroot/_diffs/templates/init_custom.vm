@@ -1,0 +1,7 @@
+#*
+This file allows you to override and define new Velocity variables.
+*#
+
+#set ($theme-type = $theme.getSetting("theme-type"))
+
+#set ($theme_vm = $theme-type + "_portal_normal.vm")

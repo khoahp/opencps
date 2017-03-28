@@ -108,6 +108,9 @@ public class DossierFinderImpl extends BasePersistenceImpl<Dossier> implements
 	public static final String SEARCH_DOSSIER_BY_P_PS_U = DossierFinder.class
 			.getName() + ".searchDossierByP_PS_U";
 
+	public static final String SEARCH_DOSSIER_BY_G_S_API = DossierFinder.class
+			.getName() + ".searchDossierByGovAndStatusAPI";
+	
 	private Log _log = LogFactoryUtil.getLog(DossierFinder.class.getName());
 
 	/**
@@ -2058,6 +2061,50 @@ public class DossierFinderImpl extends BasePersistenceImpl<Dossier> implements
 
 			return 0;
 
+		} catch (Exception e) {
+			throw new SystemException();
+		} finally {
+			closeSession(session);
+		}
+	}
+	
+	public List<Dossier> searchDossierByGovAndStatusAPI(String govAgencyCode,
+			String dossierStatus, int start, int end) throws SystemException {
+
+		return _searchDossierByGovAndStatusAPI(govAgencyCode, dossierStatus, start, end);
+	}
+
+	private List<Dossier> _searchDossierByGovAndStatusAPI(String govAgencyCode,
+			String dossierStatus, int start, int end)
+			throws SystemException {
+		
+		Session session = null;
+		
+		try {
+
+			session = openSession();
+
+			String sql = CustomSQLUtil.get(SEARCH_DOSSIER_BY_G_S_API);
+
+			SQLQuery q = session.createSQLQuery(sql);
+
+			q.addEntity("Dossier", DossierImpl.class);
+
+			QueryPos qPos = QueryPos.getInstance(q);
+
+			if (Validator.isNotNull(dossierStatus)) {
+				qPos.add(dossierStatus);
+			} else {
+				qPos.add(StringPool.BLANK);
+			}
+			
+			if (Validator.isNotNull(govAgencyCode)) {
+				qPos.add(govAgencyCode);
+			} else {
+				qPos.add(StringPool.BLANK);
+			}
+
+			return (List<Dossier>) QueryUtil.list(q, getDialect(), start, end);
 		} catch (Exception e) {
 			throw new SystemException();
 		} finally {

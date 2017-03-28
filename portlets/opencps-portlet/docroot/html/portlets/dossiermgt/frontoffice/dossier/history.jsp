@@ -231,6 +231,7 @@
 							%>
 								<div style="padding: 3px; ">
 									<%= StringPool.GREATER_THAN %> 
+									<%= LanguageUtil.get(pageContext, "history-file-action-"+lf.getActionCode()) %> :
 										 <aui:a href="#" >
 										 	<%= lf.getFileName() %> 
 										 	<span style="font: smaller; color: #cbcbcb;">(<%= sdf.format(lf.getModifiedDate()) %> )</span>

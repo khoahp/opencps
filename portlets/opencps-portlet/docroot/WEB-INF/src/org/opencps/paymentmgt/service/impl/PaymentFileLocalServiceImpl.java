@@ -429,21 +429,12 @@ public class PaymentFileLocalServiceImpl
 	 * @param end
 	 * @return
 	 */
-	public List<PaymentFile> searchPaymentFiles(
-		long groupId, int paymentStatus, long govAgencyOrganizationId, String keywords, int start, int end) {
+	public List<PaymentFile> searchPaymentFiles(long groupId,
+			int paymentStatus, long govAgencyOrganizationId, String keywords,
+			int start, int end) throws SystemException {
 
-		List<PaymentFile> listPaymentFile = new ArrayList<PaymentFile>();
-
-		try {
-			listPaymentFile =
-				paymentFileFinder.searchPaymentFiles(
-					groupId, paymentStatus, govAgencyOrganizationId, keywords, start, end);
-		}
-		catch (SystemException e) {
-			// TODO Auto-generated catch block
-			_log.error(e);
-		}
-		return listPaymentFile;
+		return paymentFileFinder.searchPaymentFiles(groupId, paymentStatus,
+				govAgencyOrganizationId, keywords, start, end);
 	}
 
 	/**

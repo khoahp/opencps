@@ -46,6 +46,7 @@
 <%@page import="org.opencps.util.PortletPropsValues"%>
 <%@page import="org.opencps.util.PortletUtil"%>
 <%@page import="org.opencps.util.WebKeys"%>
+<%@page import="java.text.DecimalFormatSymbols"%>
 
 <%@ include file="init.jsp"%>
 
@@ -93,6 +94,8 @@
 	
 	String backURL = ParamUtil.getString(request, "backURL");
 	
+	boolean requiredActionNote = ParamUtil.getBoolean(request, "requiredActionNote");
+	
 	Date receiveDate = ProcessOrderUtils.getRecevieDate(dossierId, processWorkflowId, processStepId);
 	
 	Date estimateDate = null;
@@ -123,12 +126,6 @@
 	boolean esign = false;
 	
 	long assigerToUserId = ProcessMgtUtil.getAssignUser(processWorkflowId, processOrderId, workflow.getPostProcessStepId());
-	
-	System.out.print("=================  assigerToUserId  ^^^^^^^^^^^^^^^^^ " + assigerToUserId);
-	
-	/* long assigerToUserIdWasActioning = ProcessMgtUtil.getAssignUserWasActioning(processOrderId);
-	
-	System.out.print("=================  assigerToUserIdWasActioning   " + assigerToUserIdWasActioning); */
 	
 	PortletURL backTodoListURL =PortletURLFactoryUtil.create(request, WebKeys.PROCESS_ORDER_PORTLET, themeDisplay.getPlid(), PortletRequest.RENDER_PHASE);
 
@@ -335,14 +332,19 @@
 		</c:choose>
 		
 		<c:if test="<%= processWorkflow.getRequestPayment() %>">
-		
+		<%
+			DecimalFormatSymbols otherSymbols = new DecimalFormatSymbols(locale);
+			otherSymbols.setDecimalSeparator(',');
+			otherSymbols.setGroupingSeparator('.'); 
+			DecimalFormat df = new DecimalFormat("###,###", otherSymbols);
+		%>
 			<div class="span12">
 				<aui:input 
 					cssClass="input100"
 					name="<%=ProcessOrderDisplayTerms.PAYMENTVALUE %>" 
 					label="requirement-to-pay-charges" 
 					type="text"
-					value="<%=Validator.isNotNull(processWorkflow.getPaymentFee()) ? PaymentRequestGenerator.getTotalPayment(processWorkflow.getPaymentFee(), dossierId) : StringPool.BLANK %>"
+					value='<%=Validator.isNotNull(processWorkflow.getPaymentFee()) ? df.format(PaymentRequestGenerator.getTotalPayment(processWorkflow.getPaymentFee(), dossierId)) + " VND" : StringPool.BLANK %>'
 				/>
 			</div>
 		</c:if>		
@@ -516,7 +518,14 @@
 		
 		if(submitButton){
 			submitButton.on('click', function(){
-				submitForm(document.<portlet:namespace />fm);
+				var requiredActionNote = '<%=requiredActionNote%>';
+				var A = AUI();
+				var actionNote = A.one('#<portlet:namespace />actionNote');
+				if (requiredActionNote == 'true' && actionNote.val() == ''){
+					alert(Liferay.Language.get('please-add-note-before-send'));
+				} else {
+					submitForm(document.<portlet:namespace />fm);
+				}
 			});
 		}
 		

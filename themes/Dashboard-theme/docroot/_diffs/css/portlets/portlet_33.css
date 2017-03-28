@@ -1,0 +1,134 @@
+/* .portlet-boundary_33_WAR_opencpsportlet_ {
+	overflow: hidden;
+}
+.portlet-boundary_33_WAR_opencpsportlet_ .widget-header {
+	display: none;
+}
+.portlet-boundary_33_WAR_opencpsportlet_ .widget-header .key {
+	width: auto;
+    max-width: 65.81197%;
+}
+.portlet-boundary_33_WAR_opencpsportlet_ .widget-content {
+    width: 100%;
+	display: -webkit-flex;
+	display: flex;
+	-webkit-flex-wrap: wrap;
+    flex-wrap: wrap;
+}
+.portlet-boundary_33_WAR_opencpsportlet_ .widget-content li {
+    width: 15.833333%;
+    margin: 0 1% 0 0;
+    float: left;
+    background: white;
+	padding: 15px 10px;
+}
+.portlet-boundary_33_WAR_opencpsportlet_ .widget-content li:last-child {
+	margin-right: 0;
+}
+.mBody .portlet-boundary_33_WAR_opencpsportlet_ .widget-content li span {
+	display: -webkit-flex;
+	display: flex;
+    -webkit-align-items: center;
+	align-items: center;
+	-webkit-justify-content: center;
+	justify-content: center;
+	width: 100%;
+	padding: 0;
+}
+.mBody .portlet-boundary_33_WAR_opencpsportlet_ .widget-content li .number {
+	font: 34px 'Roboto-Bold';
+	margin: 0;
+}
+.mBody .portlet-boundary_33_WAR_opencpsportlet_ .widget-content li:nth-child(1) .number {
+	color: orange;
+}
+.mBody .portlet-boundary_33_WAR_opencpsportlet_ .widget-content li:nth-child(2) .number {
+	color: #0502FF;
+}
+.mBody .portlet-boundary_33_WAR_opencpsportlet_ .widget-content li:nth-child(3) .number {
+	color: #68BE43;
+}
+.mBody .portlet-boundary_33_WAR_opencpsportlet_ .widget-content li:nth-child(4) .number {
+	color: #F5EE24;
+}
+.mBody .portlet-boundary_33_WAR_opencpsportlet_ .widget-content li:nth-child(5) .number {
+	color: #31b0d5;
+}
+.mBody .portlet-boundary_33_WAR_opencpsportlet_ .widget-content li:nth-child(6) .number {
+	color: red;
+} */
+
+
+.widget-content {
+    display: table;
+    flex-wrap: wrap;
+    table-layout: fixed;
+    width: 100%;
+}
+
+.widget-content li {
+    display: table-cell;
+    background-image: url("../../images/chart-bg.jps");
+}
+
+.widget-cell {
+    background: transparent url("../images/chart-bg.jpg") no-repeat scroll 0 0 / 100% 100%;
+    display: block;
+    margin: 0 10px 0 0;
+}
+
+
+ .widget-cell .content{
+    display: block;
+    height: 100%;
+    width: 100%;
+}
+
+.widget-content li:nth-child(1) .content{
+	background-color: rgba(239, 83, 80, 0.7);
+}
+
+.widget-content li:nth-child(2) .content{
+	background-color: rgba(255, 167, 38, 0.7);
+}
+
+
+.widget-content li:nth-child(3) .content{
+	background-color: rgba(102, 187, 106, 0.7);
+}
+
+
+.widget-content li:nth-child(4) .content{
+	background-color: rgba(41, 182, 246, 0.7);
+}
+
+
+.widget-content li:nth-child(5) .content{
+	background-color: rgba(185, 109, 242, 0.7);
+}
+
+
+.widget-content li:nth-child(6) .content{
+	background-color: rgba(242, 146, 109, 0.7);
+}
+
+.widget-content li:nth-child(6) .widget-cell{
+	margin-right: 0;
+}
+
+
+.widget-content li .number {
+    color: #fff;
+    display: block;
+    font: 100 35px "Roboto-Bold";
+    padding-right: 10px;
+    padding-top: 15px;
+    text-align: right;
+}
+
+.widget-content li .key {
+    color: hsla(0, 0%, 100%, 0.7);
+    display: block;
+    padding: 5px 10px 15px;
+    text-align: right;
+}

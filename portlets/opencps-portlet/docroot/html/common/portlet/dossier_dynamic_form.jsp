@@ -239,16 +239,16 @@
 </aui:form>
 <portlet:resourceURL var="getDataAjax"></portlet:resourceURL>
 
-<c:if test="<%= portleName.equals(WebKeys.DOSSIER_MGT_PORTLET) && dossierFileId > 0 %>">
+<%-- <c:if test="<%= portleName.equals(WebKeys.DOSSIER_MGT_PORTLET) && dossierFileId > 0 %>">
 	<aui:button value="sign" onclick="signatureFrontOffice()" />
-</c:if>
+</c:if> --%>
 
 <aui:script>
 	var url = '<%= getDataAjax %>';
 	var alpacaSchema = <%=Validator.isNotNull(alpacaSchema) ? alpacaSchema : PortletConstants.UNKNOW_ALPACA_SCHEMA%>;
 	var formData = '<%=formData%>';
 	var dossierFileId = '<%=dossierFileId%>';
-	function pluginload(loaded)
+	/* function pluginload(loaded)
 	{
 		if(!loaded) {
 			alert('Loading plugin is failed!');
@@ -272,11 +272,11 @@
 		{
 			alert('error with code:' + jsondata.errormsg);
 		}
-	}
+	} */
 	
 	function signatureFrontOffice(){
 		
-		var author = '<%= Validator.isNotNull(user) ? user.getFullName() : StringPool.BLANK %>';
+		/* var author = '<%= Validator.isNotNull(user) ? user.getFullName() : StringPool.BLANK %>';
 		var imgSrcName = '<%= Validator.isNotNull(user) ? user.getScreenName() : StringPool.BLANK %>';
 		$.ajax({
 			
@@ -355,11 +355,11 @@
 					});
 				}
 			}
-		});
+		}); */
 	}
 	
 	AUI().ready(function(A){
-		PDFSigningHelper.init(pluginload);
+		/* PDFSigningHelper.init(pluginload); */
 		
 		if(alpacaSchema.options != 'undefined' && alpacaSchema.schema != 'undefined'){
 			

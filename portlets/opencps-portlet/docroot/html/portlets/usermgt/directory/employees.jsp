@@ -116,14 +116,21 @@
 	</liferay-ui:search-container-results>
 	<liferay-ui:search-container-row 
 		className="org.opencps.usermgt.model.Employee" 
-		modelVar="employee" 
+		modelVar="employee1" 
 		keyProperty="employeeId"
 	>
 	
 		<%
-			JobPos jobPos = JobPosLocalServiceUtil.getJobPos(employee.getMainJobPosId());
-			String jobName = LanguageUtil.get(portletConfig ,themeDisplay.getLocale(), PortletUtil.getLeaderLabel(jobPos.getLeader(), themeDisplay.getLocale()));
-			WorkingUnit workingUnit = WorkingUnitLocalServiceUtil.getWorkingUnit(employee.getWorkingUnitId());
+			JobPos jobPos = null; 
+			String jobName = StringPool.BLANK;
+			WorkingUnit workingUnit = null;
+			try {
+				jobPos = JobPosLocalServiceUtil.getJobPos(employee1.getMainJobPosId());
+				jobName = LanguageUtil.get(portletConfig ,themeDisplay.getLocale(), PortletUtil.getLeaderLabel(jobPos.getLeader(), themeDisplay.getLocale()));
+				workingUnit = WorkingUnitLocalServiceUtil.getWorkingUnit(employee1.getWorkingUnitId());
+			} catch (Exception e) {
+				//
+			}
 		%>
 		<liferay-ui:search-container-column-text 
 			name="row-index" 
@@ -132,7 +139,7 @@
 		
 		<liferay-ui:search-container-column-text 
 			name="fullname" 
-			value="<%= employee.getFullName() %>"
+			value="<%= Validator.isNotNull(employee1) ? employee1.getFullName() : StringPool.BLANK %>"
 		/>
 		
 		<liferay-ui:search-container-column-text 
@@ -142,17 +149,17 @@
 		
 		<liferay-ui:search-container-column-text 
 			name="working-unit-name" 
-			value="<%= workingUnit.getName() %>"
+			value="<%= Validator.isNotNull(workingUnit) ? workingUnit.getName() : StringPool.BLANK %>"
 		/>
 		
 		<liferay-ui:search-container-column-text 
 			name="tel-no" 
-			value="<%= employee.getTelNo() %>"
+			value="<%= Validator.isNotNull(employee1) ? employee1.getTelNo() : StringPool.BLANK %>"
 		/>
 		
 		<liferay-ui:search-container-column-text 
 			name="email" 
-			value="<%= employee.getEmail() %>"
+			value="<%= Validator.isNotNull(employee1) ? employee1.getEmail() : StringPool.BLANK %>"
 		/>
 		
 	</liferay-ui:search-container-row>

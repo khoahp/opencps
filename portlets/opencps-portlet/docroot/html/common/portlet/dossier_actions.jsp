@@ -199,36 +199,33 @@
 						</c:when>
 						<c:when test="<%= ( isDynamicForm && fileEntryId > 0 ) || isOnlineData > 0  %>">
 							<c:if test="<%=!isReadOnly %>">
-							<aui:a 
-								id="<%=String.valueOf(dossierPartId) %>"
-								dossier="<%=String.valueOf(dossierId) %>"
-								dossier-part="<%=String.valueOf(isChildDossierPart ? childDossierPartId : dossierPartId) %>"
-								dossier-file="<%=String.valueOf(dossierFileId) %>"
-								file-group="<%=String.valueOf(fileGroupId) %>"
-								group-dossier-part="<%=String.valueOf(groupDossierPartId) %>"
-								group-name="<%=groupName %>"
-								href="javascript:void(0);" 
-								label="view-form" 
-								cssClass="label opencps dossiermgt part-file-ctr view-form"
-								title="view-form"
-							>
-							<i class="fa fa-search"></i>
-							</aui:a>
-							</c:if>
-							<c:if test="<%=!showVersionItemReference %>">
 								<aui:a 
 									id="<%=String.valueOf(dossierPartId) %>"
+									dossier="<%=String.valueOf(dossierId) %>"
 									dossier-part="<%=String.valueOf(isChildDossierPart ? childDossierPartId : dossierPartId) %>"
 									dossier-file="<%=String.valueOf(dossierFileId) %>"
+									file-group="<%=String.valueOf(fileGroupId) %>"
 									group-dossier-part="<%=String.valueOf(groupDossierPartId) %>"
 									group-name="<%=groupName %>"
 									href="javascript:void(0);" 
-									label="view-content" 
-									cssClass="label opencps dossiermgt part-file-ctr view-attachment"
-									title="view-attachment"
-								/>
+									label="view-form" 
+									cssClass="label opencps dossiermgt part-file-ctr view-form"
+									title="view-form"
+								>
+								<i class="fa fa-search"></i>
+								</aui:a>
 							</c:if>
-							
+							<aui:a 
+								id="<%=String.valueOf(dossierPartId) %>"
+								dossier-part="<%=String.valueOf(isChildDossierPart ? childDossierPartId : dossierPartId) %>"
+								dossier-file="<%=String.valueOf(dossierFileId) %>"
+								group-dossier-part="<%=String.valueOf(groupDossierPartId) %>"
+								group-name="<%=groupName %>"
+								href="javascript:void(0);" 
+								label="view-content" 
+								cssClass="label opencps dossiermgt part-file-ctr view-attachment"
+								title="view-attachment"
+							/>
 						</c:when>
 						<c:otherwise>
 							<c:choose>
@@ -244,14 +241,14 @@
 										cssClass="label opencps dossiermgt part-file-ctr view-attachment"
 										title="view-attachment"
 									/>
-									<c:if test="<%= isExtensionSignature && renderResponse.getNamespace().equals(StringPool.UNDERLINE + WebKeys.DOSSIER_MGT_PORTLET + StringPool.UNDERLINE) %>">
-										<%-- <aui:button value="Sign" /> --%>
+									<!-- comment kyso -->
+									<%-- <c:if test="<%= isExtensionSignature && renderResponse.getNamespace().equals(StringPool.UNDERLINE + WebKeys.DOSSIER_MGT_PORTLET + StringPool.UNDERLINE) %>">
 										<aui:a href="javascript:void(0);" 
 											   label="Sign" 
 											   cssClass="signatureCls"
 											   dossier-file="<%=String.valueOf(dossierFileId) %>"
 										/>
-									</c:if>
+									</c:if> --%>
 									<%-- <i title="<%= sbMessage.toString() %>" class="fa fa-pencil-square" id = "<portlet:namespace />signInfoMsg" /> --%>
 									<%-- <i title="<%= sbMessage.toString() %>" class="fa fa-certificate" id = "<portlet:namespace />signInfoMsg" /> --%>
 								</c:when>
@@ -361,12 +358,12 @@
 								cssClass="label opencps dossiermgt part-file-ctr view-attachment"
 								title="view-attachment"
 							/>
-							<c:if test="<%= isExtensionSignature && renderResponse.getNamespace().equals(StringPool.UNDERLINE + WebKeys.DOSSIER_MGT_PORTLET + StringPool.UNDERLINE) %>">
-								<%-- <aui:button value="Sign" /> --%>
+							<!-- comment kyso -->
+							<%-- <c:if test="<%= isExtensionSignature && renderResponse.getNamespace().equals(StringPool.UNDERLINE + WebKeys.DOSSIER_MGT_PORTLET + StringPool.UNDERLINE) %>">
 								<aui:a href="javascript:void(0);" 
 									label="Sign" 
 									cssClass="signatureCls" />
-							</c:if>
+							</c:if> --%>
 							<%-- <i title="<%= sbMessage.toString() %>" class="fa fa-pencil-square" id = "<portlet:namespace />signInfoMsg" /> --%>
 							<%-- <i title="<%= sbMessage.toString() %>" class="fa fa-certificate" id = "<portlet:namespace />signInfoMsg" /> --%>
 						</c:when>
@@ -491,11 +488,14 @@
 								cssClass="label opencps dossiermgt part-file-ctr view-attachment"
 								title="view-attachment"
 							/>
-							
-							<c:if test="<%= isExtensionSignature &&  renderResponse.getNamespace().equals(StringPool.UNDERLINE + WebKeys.DOSSIER_MGT_PORTLET + StringPool.UNDERLINE) %>">
-								<%-- <aui:button value="Sign" /> --%>
-								<aui:a href="javascript:void(0);" label="Sign" cssClass="signatureCls"/>
-							</c:if>
+							<!-- comment kyso -->
+							<%-- <c:if test="<%= isExtensionSignature &&  renderResponse.getNamespace().equals(StringPool.UNDERLINE + WebKeys.DOSSIER_MGT_PORTLET + StringPool.UNDERLINE) %>">
+								<aui:a 
+									href="javascript:void(0);" 
+									label="Sign" 
+									cssClass="signatureCls"
+								/>
+							</c:if> --%>
 							
 							<%-- <i title="<%= sbMessage.toString() %>" class="fa fa-pencil-square" id = "<portlet:namespace />signInfoMsg" /> --%>
 							<%-- <i title="<%= sbMessage.toString() %>" class="fa fa-certificate" id = "<portlet:namespace />signInfoMsg" /> --%>
@@ -641,11 +641,13 @@
 										
 										title="view-attachment"
 									/>
-									<c:if test="<%= isExtensionSignature && renderResponse.getNamespace().equals(StringPool.UNDERLINE + WebKeys.DOSSIER_MGT_PORTLET + StringPool.UNDERLINE) %>">
-										<%-- <aui:button value="Sign" /> --%>
-										
-										<aui:a href="javascript:void(0);" label="Sign" cssClass="signatureCls"/>
-									</c:if>
+									<!-- comment kyso -->
+									<%-- <c:if test="<%= isExtensionSignature && renderResponse.getNamespace().equals(StringPool.UNDERLINE + WebKeys.DOSSIER_MGT_PORTLET + StringPool.UNDERLINE) %>">
+										<aui:a 	href="javascript:void(0);" 
+												label="Sign" 
+												cssClass="signatureCls"
+										/>
+									</c:if> --%>
 									<%-- <i title="<%= sbMessage.toString() %>" class="fa fa-pencil-square" id = "<portlet:namespace />signInfoMsg" /> --%>
 									<%-- <i title="<%= sbMessage.toString() %>" class="fa fa-certificate" id = "<portlet:namespace />signInfoMsg" /> --%>
 								</c:when>

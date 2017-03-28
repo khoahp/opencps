@@ -8,6 +8,7 @@ import javax.portlet.PortletPreferences;
 
 import com.liferay.portal.kernel.portlet.DefaultConfigurationAction;
 import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portlet.PortletPreferencesFactoryUtil;
 
 /**
@@ -48,6 +49,40 @@ public class MonthlyDashBoardConfigurationImpl
 
 		int period = ParamUtil.getInteger(actionRequest, "period");
 
+		int[] fieldsIndexes =
+			StringUtil.split(
+				ParamUtil.getString(actionRequest, "fieldsIndexes"), 0);
+
+		if (fieldsIndexes != null && fieldsIndexes.length > 0) {
+
+			String[] fieldLabels = new String[fieldsIndexes.length];
+			String[] fieldKeys = new String[fieldsIndexes.length];
+			String[] fieldFormulas = new String[fieldsIndexes.length];
+			for (int f = 0; f < fieldsIndexes.length; f++) {
+
+				String fieldLabel =
+					ParamUtil.getString(actionRequest, "fieldLabel" +
+						fieldsIndexes[f]);
+				String fieldKey =
+					ParamUtil.getString(actionRequest, "fieldKey" +
+						fieldsIndexes[f]);
+				String fieldFormula =
+					ParamUtil.getString(actionRequest, "fieldFormula" +
+						fieldsIndexes[f]);
+
+				fieldLabels[f] = fieldLabel;
+				fieldKeys[f] = fieldKey;
+				fieldFormulas[f] = fieldFormula;
+
+				System.out.println(fieldLabel + "-----" + fieldKey + "-----" +
+					fieldFormula);
+			}
+
+			preferences.setValues("fieldLabels", fieldLabels);
+			preferences.setValues("fieldKeys", fieldKeys);
+			preferences.setValues("fieldFormulas", fieldFormulas);
+		}
+
 		preferences.setValue("chartTitle", chartTitle);
 
 		preferences.setValue("xaxisUnit", xaxisUnit);
@@ -58,7 +93,6 @@ public class MonthlyDashBoardConfigurationImpl
 		preferences.setValue("startYear", String.valueOf(startYear));
 		preferences.setValue("period", String.valueOf(period));
 		preferences.setValue("displayStyle", displayStyle);
-
 		preferences.store();
 
 		super.processAction(portletConfig, actionRequest, actionResponse);

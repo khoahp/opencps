@@ -486,7 +486,7 @@
 	
 	AUI().ready('aui-base','liferay-portlet-url','aui-io', function(A){
 		
-		PDFSigningHelper.init(pluginload);
+		/* PDFSigningHelper.init(pluginload);
 		
 		function pluginload(loaded)
 		{
@@ -589,7 +589,7 @@
 					}
 		    	});
 			});
-		});
+		}); */
 		
 		//Upload buttons
 		var uploadDossierFiles = A.all('.upload-dossier-file');

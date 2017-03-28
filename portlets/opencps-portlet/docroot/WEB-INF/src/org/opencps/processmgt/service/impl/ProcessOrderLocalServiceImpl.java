@@ -660,13 +660,15 @@ public class ProcessOrderLocalServiceImpl extends
 	 * @param keyWords
 	 * @return
 	 */
-	public int countProcessOrderKeyWords(
-		long serviceInfoId, long processStepId, long loginUserId,
-		long actionUserId, String keyWords, String dossierSubStatus, String processOrderStage) {
+	public int countProcessOrderKeyWords(long serviceInfoId,
+			long processStepId, long loginUserId, long actionUserId,
+			String keyWords, String dossierSubStatus, String processOrderStage,
+			Date fromDate, Date toDate, String domainCode) {
 
-		return processOrderFinder
-			.countProcessOrderKeyWords(serviceInfoId, processStepId, loginUserId,
-				actionUserId, keyWords, dossierSubStatus, processOrderStage);
+		return processOrderFinder.countProcessOrderKeyWords(serviceInfoId,
+				processStepId, loginUserId, actionUserId, keyWords,
+				dossierSubStatus, processOrderStage, fromDate, toDate,
+				domainCode);
 	}
 	/**
 	 * @param serviceInfoId
@@ -679,13 +681,16 @@ public class ProcessOrderLocalServiceImpl extends
 	 * @param orderByComparator
 	 * @return
 	 */
-	public List searchProcessOrderKeyWords(
-		long serviceInfoId, long processStepId, long loginUserId,
-		long actionUserId, String keyWords, String dossierSubStatus, String processOrderStage, int start, int end, OrderByComparator orderByComparator) {
-		
-		return processOrderFinder
-						.searchProcessOrderKeyWords(serviceInfoId, processStepId, loginUserId,
-							actionUserId, keyWords, dossierSubStatus, processOrderStage, start, end, orderByComparator);
+	public List searchProcessOrderKeyWords(long serviceInfoId,
+			long processStepId, long loginUserId, long actionUserId,
+			String keyWords, String dossierSubStatus, String processOrderStage,
+			Date fromDate, Date toDate, String domainCode, int start, int end,
+			OrderByComparator orderByComparator) {
+
+		return processOrderFinder.searchProcessOrderKeyWords(serviceInfoId,
+				processStepId, loginUserId, actionUserId, keyWords,
+				dossierSubStatus, processOrderStage, fromDate, toDate,
+				domainCode, start, end, orderByComparator);
 	}
 	
 	public ProcessOrder findBy_Dossier(long dossierId)

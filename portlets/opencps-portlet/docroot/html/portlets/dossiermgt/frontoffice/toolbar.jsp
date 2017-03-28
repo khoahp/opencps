@@ -87,6 +87,8 @@
 	if(Validator.isNotNull(collectionDomain)) {
 		dictItems = DictItemLocalServiceUtil.getDictItemsByDictCollectionId(collectionDomain.getDictCollectionId());
 	}
+	
+	long redirectAddDossierPlid = GetterUtil.getLong(preferences.getValue("redirectAddDossierPlid", null));
 %>
 
 <aui:nav-bar cssClass="opencps-toolbar custom-toolbar">
@@ -99,39 +101,48 @@
 				<c:if test="<%=DossierPermission.contains(permissionChecker, scopeGroupId, ActionKeys.ADD_DOSSIER) 
 					&& tabs1.equals(DossierMgtUtil.TOP_TABS_DOSSIER)%>">
 					
-					<portlet:renderURL var="addDossierURL" windowState="<%=LiferayWindowState.NORMAL.toString() %>">
-						<portlet:param name="isListServiceConfig" value="<%=String.valueOf(true) %>"/>
-						<portlet:param name="tabs1" value="<%=DossierMgtUtil.TOP_TABS_DOSSIER %>"/>
-						<portlet:param name="backURL" value="<%=currentURL %>"/>
-						<%
-							if(Validator.isNotNull(itemCode_cfg) && itemCode_cfg.length() > 0){
-								
-							DictItem dictItem_cfg = DictItemLocalServiceUtil.getDictItemInuseByItemCode(themeDisplay.getScopeGroupId(), PortletPropsValues.DATAMGT_MASTERDATA_SERVICE_DOMAIN, itemCode_cfg);
-								
-							if(Validator.isNotNull(dictItem_cfg)){
+					<%
+					// Trong truong hop cau hinh man hinh lua chon nop ho so se quay ra man hinh hien thi thu tuc hanh chinh de chon
+					// Neu khong thi toi portlet hien thi danh sach dich vu cong mac dinh
+					%>
+					<c:choose>
+						<c:when test="<%= redirectAddDossierPlid > 0 %>">
+							<liferay-portlet:renderURL var="addDossierURL" portletName="<%= WebKeys.SERVICE_MGT_DIRECTORY %>"  plid="<%= redirectAddDossierPlid %>"
+								windowState="<%=LiferayWindowState.NORMAL.toString() %>">
+								<liferay-portlet:param name="backURL" value="<%=currentURL %>"/>
+							</liferay-portlet:renderURL>
+							<aui:button icon="icon-plus" href="<%=addDossierURL %>" cssClass="action-button" value="select-service-info"/>
+						</c:when>
+						<c:otherwise>
+							<portlet:renderURL var="addDossierURL" windowState="<%=LiferayWindowState.NORMAL.toString() %>">
+								<portlet:param name="isListServiceConfig" value="<%=String.valueOf(true) %>"/>
+								<portlet:param name="tabs1" value="<%=DossierMgtUtil.TOP_TABS_DOSSIER %>"/>
+								<portlet:param name="backURL" value="<%=currentURL %>"/>
+								<%
+									if(Validator.isNotNull(itemCode_cfg) && itemCode_cfg.length() > 0){
+										
+									DictItem dictItem_cfg = DictItemLocalServiceUtil.getDictItemInuseByItemCode(themeDisplay.getScopeGroupId(), PortletPropsValues.DATAMGT_MASTERDATA_SERVICE_DOMAIN, itemCode_cfg);
+										
+									if(Validator.isNotNull(dictItem_cfg)){
+									
+								%>
+									<portlet:param name="mvcPath" value="<%=templatePath + \"display/20_80_servicelist_04.jsp\" %>"/>
+									<portlet:param name="serviceDomainId" value="<%=String.valueOf(dictItem_cfg.getDictItemId()) %>"/>
+									<portlet:param name="dictItemCode" value="<%=dictItem_cfg.getItemCode() %>"/>
+								<%
+									}
+									}else{
+								%>		
+									<portlet:param name="mvcPath" value="/html/portlets/dossiermgt/frontoffice/frontofficeservicelist.jsp"/>
+								<%
+									}
+								%>
+								<portlet:param name="backURLFromList" value="<%=currentURL %>"/>
+							</portlet:renderURL>
 							
-						%>
-							<portlet:param name="mvcPath" value="<%=templatePath + \"display/20_80_servicelist_04.jsp\" %>"/>
-							<portlet:param name="serviceDomainId" value="<%=String.valueOf(dictItem_cfg.getDictItemId()) %>"/>
-							<portlet:param name="dictItemCode" value="<%=dictItem_cfg.getItemCode() %>"/>
-						<%
-							}
-							}else{
-						%>		
-							<portlet:param name="mvcPath" value="/html/portlets/dossiermgt/frontoffice/frontofficeservicelist.jsp"/>
-						<%
-							}
-						%>
-						<portlet:param name="backURLFromList" value="<%=currentURL %>"/>
-					</portlet:renderURL>
-					<%-- <aui:nav-item 
-						id="addDictItem" 
-						label="add-dossier" 
-						iconCssClass="icon-plus"  
-						href="<%=addDossierURL %>"
-						cssClass="action-button"
-					/> --%>
-					<aui:button icon="icon-plus" href="<%=addDossierURL %>" cssClass="action-button" value="select-service-info"/>
+							<aui:button icon="icon-plus" href="<%=addDossierURL %>" cssClass="action-button" value="select-service-info"/>
+						</c:otherwise>
+					</c:choose>
 				</c:if>
 			</aui:nav>
 		</c:otherwise>

@@ -28,6 +28,8 @@ import java.util.List;
 
 import org.opencps.accountmgt.model.Citizen;
 import org.opencps.accountmgt.service.CitizenLocalServiceUtil;
+import org.opencps.api.DossierStatusException;
+import org.opencps.api.NoMessageContentException;
 import org.opencps.api.service.ApiServiceLocalServiceUtil;
 import org.opencps.api.service.base.ApiServiceServiceBaseImpl;
 import org.opencps.api.util.APIServiceConstants;
@@ -44,6 +46,8 @@ import org.opencps.dossiermgt.model.DossierFile;
 import org.opencps.dossiermgt.model.DossierPart;
 import org.opencps.dossiermgt.model.ServiceConfig;
 import org.opencps.dossiermgt.service.DossierLocalServiceUtil;
+import org.opencps.jms.business.SyncFromBackOffice;
+import org.opencps.jms.message.body.SyncFromBackOfficeMsgBody;
 import org.opencps.paymentmgt.InvalidPaymentAmountException;
 import org.opencps.paymentmgt.NoSuchPaymentFileException;
 import org.opencps.paymentmgt.model.PaymentFile;
@@ -53,18 +57,24 @@ import org.opencps.processmgt.NoSuchProcessWorkflowException;
 import org.opencps.processmgt.model.ProcessOrder;
 import org.opencps.processmgt.model.ProcessWorkflow;
 import org.opencps.servicemgt.model.ServiceInfo;
+import org.opencps.servicemgt.service.ServiceInfoLocalServiceUtil;
 import org.opencps.util.DLFolderUtil;
 import org.opencps.util.DateTimeUtil;
 import org.opencps.util.PortletConstants;
 import org.opencps.util.PortletUtil;
-import org.opencps.util.PortletUtil.SplitDate;
 import org.opencps.util.WebKeys;
+import org.opencps.util.PortletUtil.SplitDate;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 import com.liferay.portal.NoSuchUserException;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.json.JSONArray;
+import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.jsonwebservice.JSONWebService;
@@ -88,6 +98,9 @@ import com.liferay.portal.util.PortalUtil;
 import com.liferay.portlet.documentlibrary.model.DLFolder;
 import com.liferay.portlet.documentlibrary.service.DLAppLocalServiceUtil;
 import com.liferay.portlet.documentlibrary.util.DLUtil;
+import com.opencps.intergrate.analayze.AnalayzeMessageBusiness;
+import com.opencps.intergrate.analayze.IntergrateUtil;
+import com.opencps.intergrate.analayze.TTHCTransferOutObject;
 
 /**
  * The implementation of the api service remote service.
@@ -104,6 +117,93 @@ import com.liferay.portlet.documentlibrary.util.DLUtil;
  * @see org.opencps.api.service.ApiServiceServiceUtil
  */
 public class ApiServiceServiceImpl extends ApiServiceServiceBaseImpl {
+	
+	@JSONWebService(method = "POST")
+	public String receiveMessageFromBackOffice(String message)
+			throws SystemException, PortalException {
+		String result = "done";
+		validateMessage(message);
+		
+		Gson gson = new GsonBuilder().setDateFormat("MM-dd-yyyy hh-mm-ss")
+				.create();
+		JsonElement root = new JsonParser().parse(message);
+		
+		message = root.toString();
+		try {
+			TTHCTransferOutObject tthcTransferOutObject = gson.fromJson(
+					message, TTHCTransferOutObject.class);
+
+			if (Validator.isNotNull(tthcTransferOutObject)) {
+				AnalayzeMessageBusiness analayzeMessageBusiness = new AnalayzeMessageBusiness();
+
+				SyncFromBackOfficeMsgBody fromBackOfficeMsgBody = analayzeMessageBusiness
+						.receiveSyncFromBackOfficeMsgBodyLocal(
+								tthcTransferOutObject, message);
+				if(Validator.isNotNull(fromBackOfficeMsgBody)) {
+					
+					SyncFromBackOffice syncFromBackOffice = new SyncFromBackOffice();
+					syncFromBackOffice.syncDossierStatus(fromBackOfficeMsgBody);
+				}
+			}
+		} catch (Exception e) {
+			result = e.getClass().getName();
+			e.printStackTrace();
+		}
+		
+		
+		return result;
+	}
+	
+	private void validateMessage(String message) throws NoMessageContentException {
+		if(Validator.isNull(message)) {
+			throw new NoMessageContentException();
+		}
+	}
+	
+	@JSONWebService(method = "POST")
+	public JSONArray getMessageAlalyze(String govAgencyCode,
+			String dossierStatus) throws JSONException, SystemException, DossierStatusException {
+		JSONArray jsonMessageObjects = JSONFactoryUtil.createJSONArray();
+		List<Dossier> dossiers = new ArrayList<Dossier>();
+		ServiceContext serviceContext = getServiceContext();
+		AnalayzeMessageBusiness analayzeMessageBusiness = new AnalayzeMessageBusiness();
+		dossiers = IntergrateUtil.getDossierByStatusApi(govAgencyCode, dossierStatus);
+		User user = null;
+		try {
+			user = getUser();
+					
+					// DossierLocalServiceUtil.getByGC_DS(govAgencyCode, dossierStatus);
+		} catch (PortalException | SystemException e) {
+			e.printStackTrace();
+		}
+		
+		
+		if(dossiers.size() > 0) {
+			for(Dossier dossier : dossiers) {
+				ServiceInfo serviceInfo = null;
+				try {
+					serviceInfo = ServiceInfoLocalServiceUtil.getServiceInfo(dossier.getServiceInfoId());
+				} catch (PortalException | SystemException e) {
+					e.printStackTrace();
+				}
+				String stringJsonMessageContent;
+				try {
+					if(Validator.isNotNull(serviceInfo) && Validator.isNotNull(user)) {
+						stringJsonMessageContent = analayzeMessageBusiness
+								.getMessageFromBussiness(dossier, serviceContext, serviceInfo, user);
+						JSONObject jsonMessageContent = JSONFactoryUtil.createJSONObject(stringJsonMessageContent);
+						jsonMessageObjects.put(jsonMessageContent);
+					}
+				} catch (PortalException | SystemException e) {
+					// TODO Auto-generated catch block
+					 e.printStackTrace();
+				}
+				
+			}
+		}
+		
+		return jsonMessageObjects;
+	}
 	
 	@JSONWebService(value = "sms", method = "GET")
 	public void receiveSMS(String phone, String message) 
@@ -419,8 +519,6 @@ public class ApiServiceServiceImpl extends ApiServiceServiceBaseImpl {
 		
 		ServiceContext serviceContext = getServiceContext();
 		
-		_log.info("::DOSSIER_INFO:: " + dossierInfo);
-
 		long userId = 0;
 		
 		try {
@@ -498,21 +596,11 @@ public class ApiServiceServiceImpl extends ApiServiceServiceBaseImpl {
 				}
 			}
 			
-			
-			_log.info("::INFO:: " + serviceNo);
-			
 			ServiceInfo serviceInfo = serviceInfoPersistence.fetchByC_SN(
 				serviceContext.getCompanyId(), serviceNo);
 			
-			_log.info("::INFO:: " + serviceNo + serviceInfo.getServiceinfoId());
-
 			ServiceConfig serviceConfig = serviceConfigPersistence.findByG_S_G(
 				serviceContext.getScopeGroupId(), serviceInfo.getServiceinfoId(), govAgencyCode);
-			
-			//Get dossier status 
-			ProcessWorkflow processWorkflow = APIUtils.getProcessWorkflowByEvent(serviceConfig.getServiceProcessId(), event, 0);
-			
-			String nextStepStatus = APIUtils.getPostDossierStatus(processWorkflow);
 			
 			DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			
@@ -524,7 +612,7 @@ public class ApiServiceServiceImpl extends ApiServiceServiceBaseImpl {
 			String serviceDomainIndex = serviceConfig.getServiceDomainIndex();
 			long govAgencyOrganizationId = serviceConfig.getGovAgencyOrganizationId();
 			String govAgencyName = serviceConfig.getGovAgencyName();
-			int serviceMode = 1; 
+			int serviceMode = 1; //TODO: hard fix for remote dossier
 			String serviceAdministrationIndex = serviceConfig.getServiceAdministrationIndex();
 			String subjectId = StringPool.BLANK;
 			
@@ -656,8 +744,6 @@ public class ApiServiceServiceImpl extends ApiServiceServiceBaseImpl {
 			Message message = new Message();
 			
 			actionMsg.setAction(WebKeys.ACTION_SUBMIT_VALUE);
-			
-			actionMsg.setEvent(WebKeys.ACTION_ONEGATE_VALUE);
 
 			actionMsg.setDossierId(dossier.getDossierId());
 
@@ -685,8 +771,6 @@ public class ApiServiceServiceImpl extends ApiServiceServiceBaseImpl {
 			
 			resultObj.put("statusCode", "Success");
 			resultObj.put("oid", dossier.getOid());
-			resultObj.put("currentStatus", nextStepStatus);
-			
 		} catch (Exception e) {
 			_log.error(e);
 			
@@ -1144,7 +1228,7 @@ public class ApiServiceServiceImpl extends ApiServiceServiceBaseImpl {
 			input.put("actioncode", actioncode);
 			input.put("actionnote", actionnote);
 			input.put("username", username);
-
+			
 			// insert log received
 			ApiServiceLocalServiceUtil.addLog(userId, APIServiceConstants.CODE_05, 
 				serviceContext.getRemoteAddr(), oid, 
@@ -1630,7 +1714,6 @@ public class ApiServiceServiceImpl extends ApiServiceServiceBaseImpl {
 		return resultObj;
 	}
 
-
 	@JSONWebService(value = "dossiers", method = "GET")
 	public JSONObject searchDossierByDS_RD_SN_U(String dossierstatus,
 			String serviceno, String fromdate, String todate, String username)
@@ -1784,7 +1867,13 @@ public class ApiServiceServiceImpl extends ApiServiceServiceBaseImpl {
 					if (df.getFileEntryId() > 0) {
 						try {
 							FileEntry fileEntry = DLAppLocalServiceUtil.getFileEntry(df.getFileEntryId());
-							jsonDossierFile.put("dossierFullFileName", df.getDisplayName() + "." + fileEntry.getExtension());
+							String fullFileName = fileEntry.getTitle();
+							
+							if(!fullFileName.contains(StringPool.PERIOD)) {
+								fullFileName = fileEntry.getTitle() + "." + fileEntry.getExtension();
+							}
+							
+							jsonDossierFile.put("dossierFullFileName", fullFileName);
 							
 							String url = getFileURL(fileEntry, serviceContext);
 	
@@ -1824,7 +1913,6 @@ public class ApiServiceServiceImpl extends ApiServiceServiceBaseImpl {
 		JSONObject dossierObj = null;
 		
 		JSONArray paymentFiles = getPaymentFileObj(dossier.getDossierId());
-		
 		
 		if(dossier != null) {
 			ServiceInfo serviceInfo = serviceInfoPersistence.fetchByPrimaryKey(dossier.getServiceInfoId());
@@ -1933,7 +2021,7 @@ public class ApiServiceServiceImpl extends ApiServiceServiceBaseImpl {
 
 		return resultArr;
 	}
-
+	
 	private ServiceContext getServiceContext() {
 		
 		ServiceContext serviceContext = ServiceContextThreadLocal.getServiceContext();

@@ -1,0 +1,64 @@
+.dashboard-statistics table{
+	border: 1px solid #ddd;
+    border-collapse: collapse !important;
+    width: 100%;
+}
+
+.dashboard-statistics table thead th{
+	background-color: #40466e !important;
+    border: 1px solid #ccc !important;
+    color: white;
+    min-height: 48px !important;
+    padding: 5px !important;
+    vertical-align: middle;
+}
+
+.dashboard-statistics table tbody td{
+    border: 1px solid #ccc !important;
+    min-height: 32px !important;
+    padding: 0 5px !important;
+    vertical-align: middle;
+}
+
+.dashboard-statistics table tbody td:FIRST-CHILD{
+    background-color: #40466e !important;
+    color: white;
+    font-weight: bold;
+}
+
+.dashboard-statistics table tbody td .custom-cell {
+    cursor: pointer;
+    display: block;
+    height: 100%;
+    width: 100%;
+}
+
+.dashboard-statistics table tbody td .even {
+   /*  background-color: #f1f1f2 !important; */
+}
+
+.dashboard-statistics table tbody td .odd {
+    /* background-color: #ffffff !important; */
+}
+
+.widget-title {
+    background: red none repeat scroll 0 0;
+    color: white;
+    display: block;
+    font-weight: bold;
+    height: 35px;
+    line-height: 35px;
+    text-align: center;
+    text-transform: uppercase;
+    width: 100%;
+}
+
+.opencps-toptabs .container {
+    padding: 0;
+    width: 100%;
+}
+
+.formul-note {
+    color: #888;
+    font-style: italic;
+}

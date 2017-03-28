@@ -18,34 +18,60 @@
  */
 %>
 
+<%@page import="org.opencps.statisticsmgt.util.StatisticsUtil"%>
+<%@page import="org.opencps.statisticsmgt.bean.FieldDatasShema"%>
+<%@page import="java.util.List"%>
+<%@page import="com.liferay.portal.kernel.language.LanguageUtil"%>
 <%@ include file="../../init.jsp" %>
 
 <%
-	String chartTitle =  GetterUtil.getString(portletPreferences
-		.getValue("chartTitle", StringPool.BLANK));
-
+	String chartTitle = GetterUtil.getString(portletPreferences
+			.getValue("chartTitle", StringPool.BLANK));
+	
 	String xaxisUnit = GetterUtil.getString(portletPreferences
-		.getValue("xaxisUnit", StringPool.BLANK));
+			.getValue("xaxisUnit", StringPool.BLANK));
 	
 	String yaxisUnit = GetterUtil.getString(portletPreferences
-		.getValue("yaxisUnit", StringPool.BLANK));
+			.getValue("yaxisUnit", StringPool.BLANK));
 	
-	String govCode = GetterUtil.getString(portletPreferences
-		.getValue("govCode", StringPool.BLANK));
+	/* String govCode = GetterUtil.getString(portletPreferences.getValue(
+			"govCode", StringPool.BLANK));
 	
 	String domainCode = GetterUtil.getString(portletPreferences
-		.getValue("domainCode", StringPool.BLANK));
+			.getValue("domainCode", StringPool.BLANK)); */
 	
-	int startMonth = GetterUtil.getInteger(portletPreferences
-		.getValue("startMonth", String.valueOf(1)));
+	int startMonth = GetterUtil.getInteger(portletPreferences.getValue(
+			"startMonth", String.valueOf(1)));
 	
-	System.out.println("############################################# MONTHLY" + startMonth);
+	int startYear = GetterUtil.getInteger(portletPreferences.getValue(
+			"startYear", String.valueOf(1)));
 	
-	int startYear = GetterUtil.getInteger(portletPreferences
-		.getValue("startYear", String.valueOf(1)));
+	int period = GetterUtil.getInteger(portletPreferences.getValue(
+			"period", String.valueOf(1)));
 	
-	int period = GetterUtil.getInteger(portletPreferences
-		.getValue("period", String.valueOf(1)));
+	
+	String[] fields =
+		StringUtil.split(preferences.getValue(
+			"fields", "received-number"));
+	
+	String[] fieldLabels =
+		portletPreferences.getValues("fieldLabels", new String[] {
+			LanguageUtil.get(locale, "received-number")
+		});
+	String[] fieldKeys =
+		portletPreferences.getValues("fieldKeys", new String[] {
+			"k1"
+		});
+	String[] fieldFormulas =
+		portletPreferences.getValues("fieldFormulas", new String[] {
+			"receivedNumber"
+		});
+	
+	
+	
+	List<FieldDatasShema> fieldDatasShemas =
+		StatisticsUtil.getFieldDatasShemas(
+			fieldLabels, fieldKeys, fieldFormulas);
 
 %>
 

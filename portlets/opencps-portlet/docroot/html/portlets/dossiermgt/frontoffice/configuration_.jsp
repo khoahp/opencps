@@ -87,6 +87,10 @@
 	List<DictItem> dictItems = PortletUtil.getDictItemInUseByCode(themeDisplay.getScopeGroupId(), 
 			PortletPropsValues.DATAMGT_MASTERDATA_SERVICE_DOMAIN, 
 			PortletConstants.TREE_VIEW_DEFAULT_ITEM_CODE);
+	
+	String templatesToDisplay_cfg = preferences.getValue("templatesToDisplay", "default");
+	
+	long redirectAddDossierPlid = GetterUtil.getLong(preferences.getValue("redirectAddDossierPlid", null));
 %>
 
 
@@ -143,8 +147,20 @@
 							<aui:option selected="<%= dossierListDisplayStyle.equals(\"treemenu_left\") %>" value="treemenu_left">
 								<liferay-ui:message key="treemenu-left"/>
 							</aui:option>
+							
+							<aui:option selected="<%= dossierListDisplayStyle.equals(\"treemenu_left_table\") %>" value="treemenu_left_table">
+								<liferay-ui:message key="treemenu-left-table"/>
+							</aui:option>
 						</aui:select>
 					</aui:fieldset>
+					
+					<aui:select name="templatesToDisplay" id="templatesToDisplay">
+			
+						<aui:option selected="<%= templatesToDisplay_cfg.equals(\"default\") %>" value="default">default</aui:option>
+						
+						<aui:option selected="<%= templatesToDisplay_cfg.equals(\"20_80\") %>" value="20_80">20_80</aui:option>
+					
+					</aui:select>
 					
 					<aui:fieldset>
 						<aui:input 
@@ -232,7 +248,7 @@
 						<%
 							for (DictItem dictItem : dictItems) {
 						%>
-							<aui:option selected="<%= itemCode_cfg == dictItem.getItemCode() %>" value="<%= dictItem.getItemCode() %>"><%= dictItem.getItemName(locale) %></aui:option>
+							<aui:option selected="<%= itemCode_cfg.equals(dictItem.getItemCode()) %>" value="<%= dictItem.getItemCode() %>"><%= dictItem.getItemName(locale) %></aui:option>
 						<%
 							}
 						%>
@@ -247,6 +263,28 @@
 						<%
 							}
 						%>
+					</aui:select>
+					
+					<aui:select name="redirectAddDossierPlid" id="redirectAddDossierPlid" showEmptyOption="<%= true %>">
+						<optgroup label='----<liferay-ui:message key="private"/>----'>
+							<%
+								for (Layout layoutTemp : privateLayouts) {
+							%>
+								<aui:option value="<%= layoutTemp.getPlid() %>" selected="<%=layoutTemp.getPlid() == redirectAddDossierPlid %>"><%= layoutTemp.getName(locale) %></aui:option>
+							<%
+								}
+							%>
+						</optgroup>
+						
+						<optgroup label='----<liferay-ui:message key="public"/>----'>
+							<%
+								for (Layout layoutTemp : publicLayouts) {
+							%>
+								<aui:option value="<%= layoutTemp.getPlid() %>" selected="<%=layoutTemp.getPlid() == redirectAddDossierPlid %>"><%= layoutTemp.getName(locale) %></aui:option>
+							<%
+								}
+							%>
+						</optgroup>
 					</aui:select>
 				</liferay-ui:panel>
 			</liferay-ui:panel-container>
@@ -270,6 +308,10 @@
 						<aui:select name="dossierDisplayStyle" id="dossierDisplayStyle">		
 							<aui:option selected="<%= dossierDisplayStyle.equals(\"default\") %>" value="default">
 								<liferay-ui:message key="default"/>
+							</aui:option>
+							
+							<aui:option selected="<%= dossierDisplayStyle.equals(\"style1\") %>" value="style1">
+								<liferay-ui:message key="style1"/>
 							</aui:option>
 						</aui:select>
 					</aui:fieldset>

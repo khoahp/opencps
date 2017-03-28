@@ -17,22 +17,14 @@
  */
 %>
 <%@page import="org.opencps.usermgt.service.EmployeeLocalServiceUtil"%>
-<%@page import="com.liferay.portal.kernel.dao.search.SearchEntry"%>
-<%@page import="com.liferay.portal.kernel.portlet.LiferayWindowState"%>
-<%@page import="javax.portlet.PortletRequest"%>
-<%@page import="org.opencps.util.WebKeys"%>
-<%@page import="com.liferay.portlet.PortletURLFactoryUtil"%>
 <%@page import="com.liferay.portal.kernel.language.LanguageUtil"%>
 <%@page import="java.util.Date"%>
 <%@page import="org.opencps.holidayconfig.util.HolidayCheckUtils"%>
 <%@page import="org.opencps.processmgt.util.OutDateStatus"%>
-<%@page import="org.opencps.util.PortletUtil"%>
 <%@page import="org.opencps.util.DateTimeUtil"%>
 <%@page import="org.opencps.processmgt.service.ProcessStepLocalServiceUtil"%>
 <%@page import="org.opencps.processmgt.model.ProcessStep"%>
 <%@page import="org.opencps.usermgt.model.Employee"%>
-<%@page import="com.liferay.portal.model.User"%>
-<%@page import="com.liferay.portal.service.UserLocalServiceUtil"%>
 <%@page import="org.opencps.servicemgt.service.ServiceInfoLocalServiceUtil"%>
 <%@page import="org.opencps.servicemgt.model.ServiceInfo"%>
 <%@page import="org.opencps.dossiermgt.service.DossierLocalServiceUtil"%>

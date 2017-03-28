@@ -1307,9 +1307,6 @@ public class DossierFileLocalServiceImpl extends
 									currentSyncStatus,
 									workflowOutput.getDossierPartId(), removed);
 
-					System.out.println("FUCLLLLLLLLLLLLLLLLLLL"
-							+ dossierFileTemps.size());
-
 					if (dossierFileTemps != null) {
 						for (DossierFile dossierFile : dossierFileTemps) {
 							dossierFile.setSyncStatus(syncStatus);

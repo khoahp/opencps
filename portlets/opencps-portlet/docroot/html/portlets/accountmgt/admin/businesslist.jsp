@@ -1,3 +1,4 @@
+<%@page import="org.opencps.datamgt.model.DictItem"%>
 <%
 /**
  * OpenCPS is the open source Core Public Services software
@@ -36,6 +37,7 @@
 <%@page import="org.opencps.accountmgt.search.BusinessSearch"%>
 <%@page import="com.liferay.portal.kernel.upgrade.RenameUpgradePortletPreferences"%>
 <%@page import="com.liferay.portal.kernel.language.LanguageUtil"%>
+<%@page import="org.opencps.util.PortletPropsValues"%>
 
 <%@ include file="../init.jsp" %>
 
@@ -129,19 +131,34 @@
 		</liferay-ui:search-container-results>
 		<liferay-ui:search-container-row 
 			className="org.opencps.accountmgt.model.Business" 
-			modelVar="businesS" 
+			modelVar="businessRow" 
 			keyProperty="businessId"
 		>
 			<%
+				String businessTypeName = StringPool.BLANK;
+				DictItem dictBusinessType = null;
+				if (businessRow != null) {
+				dictBusinessType =
+					PortletUtil.getDictItem(
+						PortletPropsValues.DATAMGT_MASTERDATA_BUSINESS_TYPE,
+						businessRow.getBusinessType(), scopeGroupId);
+
+				}
+				businessTypeName =
+						dictBusinessType != null
+							? (Validator.isNotNull(dictBusinessType.getItemName(locale))
+								? dictBusinessType.getItemName(locale)
+								: dictBusinessType.getItemName())
+							: StringPool.BLANK;
 				String accoutStatus = StringPool.BLANK;
 				
-				accoutStatus = LanguageUtil.get(portletConfig, themeDisplay.getLocale(), PortletUtil.getAccountStatus(businesS.getAccountStatus(), themeDisplay.getLocale()));
+				accoutStatus = LanguageUtil.get(portletConfig, themeDisplay.getLocale(), PortletUtil.getAccountStatus(businessRow.getAccountStatus(), themeDisplay.getLocale()));
 				
 				row.setClassName("opencps-searchcontainer-row");
-				row.addText(businesS.getIdNumber());
-				row.addText(businesS.getName());
-				row.addText(businesS.getBusinessType());
-				row.addText(businesS.getEmail());
+				row.addText(businessRow.getIdNumber());
+				row.addText(businessRow.getName());
+				row.addText(businessTypeName);
+				row.addText(businessRow.getEmail());
 				row.addText(accoutStatus);
 				row.addJSP("center", SearchEntry.DEFAULT_VALIGN,  "/html/portlets/accountmgt/admin/business_actions.jsp", config.getServletContext(), request, response);
 				

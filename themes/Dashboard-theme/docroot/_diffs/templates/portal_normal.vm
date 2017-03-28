@@ -1,0 +1,3 @@
+#parse ($init)
+
+#parse ("$full_templates_path/$theme_vm")

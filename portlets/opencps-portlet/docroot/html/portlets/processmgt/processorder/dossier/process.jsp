@@ -537,14 +537,12 @@
 
 <aui:script use="aui-base,liferay-portlet-url,aui-io,aui-loading-mask-deprecated">
 
+	var requiredActionNote = false;
 	function validateRequiredResult(dossierId, processStepId, processWorkflowId) {
 		
 		var A = AUI();
 
-		var actionNote = A.one('#<portlet:namespace />actionNote');
-		
 		var requiredDossierPartIds = [];
-		var requiredActionNote = false;
 		var required = false;
 		
 		var portletURL = Liferay.PortletURL.createURL('<%= PortletURLFactoryUtil.create(request, WebKeys.PROCESS_ORDER_PORTLET, themeDisplay.getPlid(), PortletRequest.ACTION_PHASE) %>');
@@ -580,7 +578,6 @@
 						requiredDossierPartIds = responseObj.arrayDossierpartIds;
 						
 						requiredActionNote = responseObj.requiedActionNote;
-						
 						//requiredDossierPartIds = JSON.parse(response);
 						
 						for(var i = 0; i < requiredDossierPartIds.length; i++){
@@ -606,14 +603,20 @@
 		if (required){
 			return 'please-upload-dossier-part-required-before-send';
 		}
-		if (requiredActionNote == true && actionNote.val() == ''){
-			actionNote.addClass('changeDefErr');
-			A.one('#<portlet:namespace/>defErrActionNote').addClass('displayDefErr');
-			
-			return 'please-add-note-before-send';
-		} else {
-			actionNote.removeClass('changeDefErr');
-			A.one('#<portlet:namespace/>defErrActionNote').removeClass('displayDefErr');
+		
+		var assignFormDisplayStyle = '<%= assignFormDisplayStyle %>';
+		
+		if(assignFormDisplayStyle == 'form' ) {
+			var actionNote = A.one('#<portlet:namespace />actionNote');
+			if (requiredActionNote == true && actionNote.val() == ''){
+				actionNote.addClass('changeDefErr');
+				A.one('#<portlet:namespace/>defErrActionNote').addClass('displayDefErr');
+				
+				return 'please-add-note-before-send';
+			} else {
+				actionNote.removeClass('changeDefErr');
+				A.one('#<portlet:namespace/>defErrActionNote').removeClass('displayDefErr');
+			}
 		}
 		
 		return '';
@@ -668,6 +671,7 @@
 			portletURL.setParameter("backURL", '<%=backURL%>');
 			//<portlet:namespace/>validateRequiredResult(dossierId, processStepId, processWorkflowId);
 			var msg = validateRequiredResult(dossierId, processStepId, processWorkflowId);
+			portletURL.setParameter("requiredActionNote", requiredActionNote);
 			if(msg != '') {
 				alert(Liferay.Language.get(msg));
 				return;

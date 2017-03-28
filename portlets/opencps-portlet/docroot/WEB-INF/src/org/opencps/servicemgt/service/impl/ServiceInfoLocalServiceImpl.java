@@ -74,7 +74,7 @@ public class ServiceInfoLocalServiceImpl
 		throws PortalException, SystemException {
 
 		return serviceInfoFinder.searchService(
-			groupId, keywords, administrationCode, domainCode, start, end);
+			groupId, keywords, administrationCode, domainCode, null, start, end);
 	}
 
 	/**
@@ -94,7 +94,7 @@ public class ServiceInfoLocalServiceImpl
 		throws PortalException, SystemException {
 
 		return serviceInfoFinder.countService(
-			groupId, keywords, administrationCode, domainCode);
+			groupId, keywords, administrationCode, domainCode, null);
 
 	}
 
@@ -522,5 +522,54 @@ public class ServiceInfoLocalServiceImpl
 		throws NoSuchServiceInfoException, SystemException {
 
 		return serviceInfoPersistence.findByServiceNo(serviceNo);
+	}
+	
+	public List<ServiceInfo> getServiceInfoByDomainCode(String domainCode)
+		throws SystemException {
+
+		return serviceInfoPersistence.findByDomainCode(domainCode);
+	}
+	
+	/**
+	 * 
+	 * @param groupId
+	 * @param keywords
+	 * @param administrationCode
+	 * @param domainCode
+	 * @param serviceLevel
+	 * @return
+	 * @throws PortalException
+	 * @throws SystemException
+	 */
+	public int countService(
+		long groupId, String keywords, String administrationCode,
+		String domainCode, Integer serviceLevel)
+		throws PortalException, SystemException {
+
+		return serviceInfoFinder.countService(
+			groupId, keywords, administrationCode, domainCode, serviceLevel);
+
+	}
+	
+	/**
+	 * 
+	 * @param groupId
+	 * @param keywords
+	 * @param administrationCode
+	 * @param domainCode
+	 * @param serviceLevel
+	 * @param start
+	 * @param end
+	 * @return
+	 * @throws PortalException
+	 * @throws SystemException
+	 */
+	public List<ServiceInfo> searchService(
+		long groupId, String keywords, String administrationCode,
+		String domainCode, Integer serviceLevel, int start, int end)
+		throws PortalException, SystemException {
+
+		return serviceInfoFinder.searchService(
+			groupId, keywords, administrationCode, domainCode, serviceLevel, start, end);
 	}
 }

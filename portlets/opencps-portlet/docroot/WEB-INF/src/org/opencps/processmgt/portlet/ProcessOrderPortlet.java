@@ -482,7 +482,9 @@ public class ProcessOrderPortlet extends MVCPortlet {
 
 		String paymentValue = ParamUtil.getString(actionRequest,
 				ProcessOrderDisplayTerms.PAYMENTVALUE);
-
+		
+		paymentValue = paymentValue.replaceAll("\\D+", StringPool.BLANK);
+		
 		String estimateDate = ParamUtil.getString(actionRequest,
 				ProcessOrderDisplayTerms.ESTIMATE_DATE);
 
@@ -2653,7 +2655,7 @@ public class ProcessOrderPortlet extends MVCPortlet {
 						.countProcessOrderKeyWords(serviceInfoId,
 								processStepId, themeDisplay.getUserId(),
 								themeDisplay.getUserId(), keywords,
-								item.getItemCode(), processOrderStage);
+								item.getItemCode(), processOrderStage, null, null, StringPool.BLANK);
 
 			}
 			obj.put("code", item.getItemCode());

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+
+<html class="$root_css_class" dir="#language ("lang.dir")" lang="$w3c_language_id">
+
+<head>
+	<title>$the_title - $company_name</title>
+	
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	$theme.include($top_head_include)
+</head>
+
+<body class="$css_class mBody home-theme">
+
+<a href="#main-content" id="skip-to-content">#language ("skip-to-content")</a>
+
+$theme.include($body_top_include)
+
+#if ($is_signed_in && $permissionChecker.isOmniadmin())
+	#dockbar()
+#end
+
+<div class="dashboard-theme">
+	<header id="banner" role="banner">
+		<nav id="navigation" class="top-bar">
+			<div class="container">
+				<button type="button" class="navbar-toggle nav-top" data-toggle="collapse" data-target="#myTopbar">
+					<i class="fa fa-ellipsis-v"></i>
+				</button>
+				<div class="collapse navbar-collapse" id="myTopbar">
+					<ul class="nav navbar-nav navbar-left">
+						<li class="dashboar-logo"><i class="fa fa-bar-chart" aria-hidden="true"></i></li>
+						<li>
+							<div class="search-area">
+								<input type="text" placeholder="#language("search")">
+								<i class="fa fa-search"></i>
+							</div>
+						</li>
+						<li><span>#language("dashboard-sologan")</span></li>
+					</ul>
+				</div>
+			</div>
+		</nav>
+	</header>
+
+	<div id="content">
+		<div class="sidebar-wrapper">  
+			<div class="sidebar-toggle">
+				<i class="fa fa-bars"></i>
+			</div>      
+		    <div class="sidebar-menu">
+			    #set ($portlet_id = '85_INSTANCE_rhW48525U')
+			
+			    #set ($VOID = $velocityPortletPreferences.setValue('display-style', '1'))
+			    #set ($VOID = $velocityPortletPreferences.setValue('portlet-setup-show-borders', 'false'))
+			  
+			    $theme.runtime($portlet_id, '', $velocityPortletPreferences.toString())
+			    #set ($VOID = $velocityPortletPreferences.reset())
+	    	</div>
+		</div>
+			
+		<div class="container-fluid">		
+			#if ($selectable)
+				$theme.include($content_include)
+			#else
+				$portletDisplay.recycle()
+	
+				$portletDisplay.setTitle($the_title)
+	
+				$theme.wrapPortlet("portlet.vm", $content_include)
+			#end
+		</div>
+	</div>
+	
+	<footer id="footer" class="container-fluid"></footer>
+</div>
+
+<script src="$javascript_folder/jquery-2.2.4.min.js"></script>
+<script src="$javascript_folder/bootstrap.min.js"></script>
+
+$theme.include($body_bottom_include)
+
+$theme.include($bottom_include)
+
+</body>
+
+</html>

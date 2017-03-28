@@ -3200,7 +3200,7 @@ public class DossierMgtFrontOfficePortlet extends MVCPortlet {
 			boolean fileTypeIsAgreed = false;
 
 			for (String fileType : fileTypeArr) {
-				if (sourceFileName.endsWith(fileType)) {
+				if (sourceFileName.toLowerCase().endsWith(fileType.toLowerCase())) {
 					fileTypeIsAgreed = true;
 				}
 			}
