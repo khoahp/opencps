@@ -20,8 +20,6 @@ package org.opencps.dossiermgt.service.persistence;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -1908,13 +1906,9 @@ public class DossierFinderImpl extends BasePersistenceImpl<Dossier> implements
 						"lower(d.receptionNo)", StringPool.LIKE, false,
 						keywords);
 
-			} else {
+			}  else {
 				sql = StringUtil.replace(
-						sql, "AND (lower(df.dossierFileNo) LIKE ? [$AND_OR_NULL_CHECK$])",
-						StringPool.BLANK);
-				
-				sql = StringUtil.replace(
-						sql, "AND (lower(d.receptionNo) LIKE ? [$AND_OR_NULL_CHECK$])",
+						sql, "AND ((lower(df.dossierFileNo) LIKE ? [$AND_OR_NULL_CHECK$]) OR (lower(d.receptionNo) LIKE ? [$AND_OR_NULL_CHECK$]))",
 						StringPool.BLANK);
 			}
 			
@@ -1943,6 +1937,7 @@ public class DossierFinderImpl extends BasePersistenceImpl<Dossier> implements
 			}
 
 			if (keywords != null && keywords.length > 0) {
+				qPos.add(keywords, 2);
 				qPos.add(keywords, 2);
 			}
 			
@@ -2021,13 +2016,15 @@ public class DossierFinderImpl extends BasePersistenceImpl<Dossier> implements
 				sql = CustomSQLUtil.replaceKeywords(sql,
 						"lower(df.dossierFileNo)", StringPool.LIKE, false,
 						keywords);
+				
+				sql = CustomSQLUtil.replaceKeywords(sql,
+						"lower(d.receptionNo)", StringPool.LIKE, false,
+						keywords);
 
 			} else {
-				sql = StringUtil
-						.replace(
-								sql,
-								"AND (lower(df.dossierFileNo) LIKE ? [$AND_OR_NULL_CHECK$])",
-								StringPool.BLANK); 
+				sql = StringUtil.replace(
+						sql, "AND ((lower(df.dossierFileNo) LIKE ? [$AND_OR_NULL_CHECK$]) OR (lower(d.receptionNo) LIKE ? [$AND_OR_NULL_CHECK$]))",
+						StringPool.BLANK);
 			}
 			
 			if(ownerOrganizationId <= 0) {
@@ -2048,6 +2045,7 @@ public class DossierFinderImpl extends BasePersistenceImpl<Dossier> implements
 			
 			if (keywords != null && keywords.length > 0) {
 				qPos.add(keywords, 2);
+				qPos.add(keywords, 2);
 			}
 			
 			if(ownerOrganizationId > 0) {
@@ -2060,7 +2058,6 @@ public class DossierFinderImpl extends BasePersistenceImpl<Dossier> implements
 				Integer count = itr.next();
 
 				if (count != null) {
-					_log.info("count.intValue()  " + count.intValue());
 					return count.intValue();
 				}
 			}
