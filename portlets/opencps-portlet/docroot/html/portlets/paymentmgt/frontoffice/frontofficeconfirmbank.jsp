@@ -114,15 +114,15 @@
 		<div class="content">
 			<div class="box100 row-eq-height">
 				<div class="box50">
-					<div>
-					    <p><span><liferay-ui:message key="subject-name"></liferay-ui:message>:</span> </p><%= chuHoSo != null ? chuHoSo : "-"  %>
+					<div class="over100">
+					    <p><span><liferay-ui:message key="subject-name"></liferay-ui:message>:</span> <span><%= chuHoSo != null ? chuHoSo : "-"  %></span></p>
 					</div>
-					<div>
-					   <p><span><liferay-ui:message key="reception-no"></liferay-ui:message>:</span></p> <%= dossier != null ? dossier.getReceptionNo() : "-"  %>
+					<div class="over100">
+					   <p><span><liferay-ui:message key="reception-no"></liferay-ui:message>:</span> <span> <%= dossier != null ? dossier.getReceptionNo() : "-"  %></span></p>
 					</div>
 					
-					<div>
-					    <p><span><liferay-ui:message key="payment-name"></liferay-ui:message>:</span></p> <%= paymentFile != null ? paymentFile.getPaymentName() : "-"  %>
+					<div class="over100">
+					    <p><span><liferay-ui:message key="payment-name"></liferay-ui:message>:</span> <span> <%= paymentFile != null ? paymentFile.getPaymentName() : "-"  %></span></p>
 					</div>
 					
 					<div class="over100">
