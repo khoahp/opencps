@@ -1903,13 +1903,19 @@ public class DossierFinderImpl extends BasePersistenceImpl<Dossier> implements
 				sql = CustomSQLUtil.replaceKeywords(sql,
 						"lower(df.dossierFileNo)", StringPool.LIKE, false,
 						keywords);
+				
+				sql = CustomSQLUtil.replaceKeywords(sql,
+						"lower(d.receptionNo)", StringPool.LIKE, false,
+						keywords);
 
 			} else {
-				sql = StringUtil
-						.replace(
-								sql,
-								"AND (lower(df.dossierFileNo) LIKE ? [$AND_OR_NULL_CHECK$])",
-								StringPool.BLANK);
+				sql = StringUtil.replace(
+						sql, "AND (lower(df.dossierFileNo) LIKE ? [$AND_OR_NULL_CHECK$])",
+						StringPool.BLANK);
+				
+				sql = StringUtil.replace(
+						sql, "AND (lower(d.receptionNo) LIKE ? [$AND_OR_NULL_CHECK$])",
+						StringPool.BLANK);
 			}
 			
 			if(ownerOrganizationId <= 0) {
