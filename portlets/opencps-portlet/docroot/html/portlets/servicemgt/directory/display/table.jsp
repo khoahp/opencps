@@ -179,38 +179,39 @@ $(document).ready(function(){
 			%>
 				<liferay-util:buffer var="boundcol1">
 					
-					<div class="row-fluid">
+					<div class="row-fluid service-directory-service-info">
 						<div class="span12">
 							<a href="<%=viewURL.toString() %>"><%=service.getServiceName() %></a>
 						</div>
 						
-						<div class="span12">
-						<%
-							List<TemplateFile> templates = new ArrayList<TemplateFile>();
-							
-							String iconType = StringPool.BLANK;
-							
-						
-							if (Validator.isNotNull(service)) {
-								templates = TemplateFileLocalServiceUtil.getServiceTemplateFiles(service.getServiceinfoId());
-							}
-						%>
-						<ul class="ls-file-download">
-							<%
-								for (TemplateFile tf : templates) {
-							%>
-								<li> <i class="icon-file"></i> <a href="<%= ServiceUtil.getDLFileURL(tf.getFileEntryId()) %>"> <%= tf.getFileName() %> </a></li>
-							<%		
-								}
-							%>
-						</ul>
-
-						</div>
+						<c:if test="<%= showListServiceTemplateFile %>">
+							<div class="span12">
+								<%
+									List<TemplateFile> templates = new ArrayList<TemplateFile>();
+									
+									String iconType = StringPool.BLANK;
+									
+								
+									if (Validator.isNotNull(service)) {
+										templates = TemplateFileLocalServiceUtil.getServiceTemplateFiles(service.getServiceinfoId());
+									}
+								%>
+								<ul class="ls-file-download">
+									<%
+										for (TemplateFile tf : templates) {
+									%>
+										<li> <i class="icon-file"></i> <a href="<%= ServiceUtil.getDLFileURL(tf.getFileEntryId()) %>"> <%= tf.getFileName() %> </a></li>
+									<%		
+										}
+									%>
+								</ul>
+							</div>
+						</c:if>
 					</div>
 				</liferay-util:buffer>
 				
 				<liferay-util:buffer var="boundcol2">
-					<div class="row-fluid">
+					<div class="row-fluid service-directory-service-info">
 						<div class="span12">
 							<a href="<%=viewURL.toString() %>"><%=DictItemUtil.getNameDictItem(service.getDomainCode())%></a> / <a href="<%=viewURL.toString() %>"><%=DictItemUtil.getNameDictItem(service.getAdministrationCode())%></a>
 						</div>
@@ -218,32 +219,35 @@ $(document).ready(function(){
 				</liferay-util:buffer>
 				
 				<liferay-util:buffer var="boundcol3">
-					<div class="row-fluid">
+					<div class="row-fluid service-directory-service-level">
 						<div class="span12">
-							<%
-							int mucDo = 2;
-							
-							List<ServiceConfig> serviceConfigs = ServiceConfigLocalServiceUtil.getServiceConfigsByS_G(service.getServiceinfoId(), scopeGroupId);
-							
-							if(serviceConfigs != null && serviceConfigs.size() > 0) {
-								mucDo = serviceConfigs.get(0).getServiceLevel();
-							}
-							%>
-							
-							<%= mucDo %>
+						<%
+						int serviceLevel = 2;
+						
+						List<ServiceConfig> serviceConfigs = ServiceConfigLocalServiceUtil.getServiceConfigsByS_G(service.getServiceinfoId(), scopeGroupId);
+						
+						if(serviceConfigs != null && serviceConfigs.size() > 0) {
+							serviceLevel = serviceConfigs.get(0).getServiceLevel();
+						}
+						%>
+						
+						<%= serviceLevel %>
 						</div>
 					</div>
 				</liferay-util:buffer>
 				
 				<liferay-util:buffer var="boundcol4">
-					<aui:button href="<%= viewURL.toString() %>" cssClass="des-sub-button radius20" value="service-description"></aui:button>
-					
-					<aui:button href="<%= renderToSubmitOnline.toString() %>" cssClass="des-sub-button radius20" value="dossier-submit-online-temp"></aui:button>
-					
+					<div class="row-fluid service-directory-action">
+						<div class="span12">
+							<aui:button href="<%= viewURL.toString() %>" cssClass="des-sub-button radius20" value="service-description"></aui:button>
+							
+							<aui:button href="<%= renderToSubmitOnline.toString() %>" cssClass="des-sub-button radius20" value="dossier-submit-online-temp"></aui:button>
+						</div>
+					</div>
 				</liferay-util:buffer>
 			<%
 				if(service.getActiveStatus() !=0) {
-					row.setClassName("opencps-searchcontainer-row");
+					row.setClassName("opencps-searchcontainer-row service-directory-display-table-row");
 					
 					// no column
 					row.addText(String.valueOf((searchContainer.getCur() - 1) * searchContainer.getDelta() + index + 1), viewURL);

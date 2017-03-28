@@ -264,70 +264,81 @@
 						}
 					%>
 					<liferay-util:buffer var="col1">
-						<%=(searchContainer.getCur() - 1) * searchContainer.getDelta() + index + 1 %>
+						<div class="dossier-list-stt">
+							<%=(searchContainer.getCur() - 1) * searchContainer.getDelta() + index + 1 %>
+						</div>
 					</liferay-util:buffer>
 					
 					<liferay-util:buffer var="col2">
-						<%=dossier.getReceptionNo() %>
+						<div class="dossier-list-reception-no">
+							<%=dossier.getReceptionNo() %>
+						</div>
 					</liferay-util:buffer>
 					
 					<liferay-util:buffer var="col3">
-						<%=dossierBean.getServiceName() %>
+						<div class="dossier-list-service-name">
+							<%=dossierBean.getServiceName() %>
+						</div>
 					</liferay-util:buffer>
 					
 					<liferay-util:buffer var="col4">
-						<div class="row-fluid dossier-list-col-date">
-							<div class="col-key">
-								<liferay-ui:message key="create-date"/>:
+						<div class="dossier-list-col-date">
+							<div class="row-fluid"> 
+								<div class="col-key">
+									<liferay-ui:message key="create-date"/>:
+								</div>
+								<div class="col-value">
+									<%=
+										Validator.isNotNull(dossier.getCreateDate()) ? 
+										DateTimeUtil.convertDateToString(dossier.getCreateDate(), DateTimeUtil._VN_DATE_TIME_FORMAT) : 
+										StringPool.DASH 
+									%>
+								</div>
 							</div>
-							<div class="col-value">
-								<%=
-									Validator.isNotNull(dossier.getCreateDate()) ? 
-									DateTimeUtil.convertDateToString(dossier.getCreateDate(), DateTimeUtil._VN_DATE_TIME_FORMAT) : 
-									StringPool.DASH 
-								%>
-							</div>
-						</div>
 						
-						<div class="row-fluid">
-							<div class="col-key">
-								 <liferay-ui:message key="receive-datetime"/>:
+							<div class="row-fluid">
+								<div class="col-key">
+									 <liferay-ui:message key="receive-datetime"/>:
+								</div>
+								
+								<div class="col-value">
+									<%=
+										Validator.isNotNull(dossier.getReceiveDatetime()) ? 
+										DateTimeUtil.convertDateToString(dossier.getReceiveDatetime(), DateTimeUtil._VN_DATE_TIME_FORMAT): 
+										DateTimeUtil._EMPTY_DATE_TIME  
+									%>
+								</div>
 							</div>
 							
-							<div class="col-value">
-								<%=
-									Validator.isNotNull(dossier.getReceiveDatetime()) ? 
-									DateTimeUtil.convertDateToString(dossier.getReceiveDatetime(), DateTimeUtil._VN_DATE_TIME_FORMAT): 
-									DateTimeUtil._EMPTY_DATE_TIME  
-								%>
+							<div class="row-fluid">
+								<div class="col-key">
+									<liferay-ui:message key="finish-date"/>:
+								</div>
+								<div class="col-value">
+									<%=
+										Validator.isNotNull(dossier.getFinishDatetime()) ? 
+										DateTimeUtil.convertDateToString(dossier.getFinishDatetime(), DateTimeUtil._VN_DATE_TIME_FORMAT): 
+										DateTimeUtil._EMPTY_DATE_TIME 
+									%>
+								</div>
 							</div>
-						</div>
+							
+							<div class="row-fluid dossier-list-note">
+								<div class="col-key">
+									<liferay-ui:message key="note"/>:
+								</div>
+								<div class="col-value">
+									<liferay-ui:message key="<%= noteContent  %>"/>
+								</div>
+							</div>
 						
-						<div class="row-fluid">
-							<div class="col-key">
-								<liferay-ui:message key="finish-date"/>:
-							</div>
-							<div class="col-value">
-								<%=
-									Validator.isNotNull(dossier.getFinishDatetime()) ? 
-									DateTimeUtil.convertDateToString(dossier.getFinishDatetime(), DateTimeUtil._VN_DATE_TIME_FORMAT): 
-									DateTimeUtil._EMPTY_DATE_TIME 
-								%>
-							</div>
-						</div>
-						
-						<div class="row-fluid dossier-list-note">
-							<div class="col-key">
-								<liferay-ui:message key="note"/>:
-							</div>
-							<div class="col-value">
-								<liferay-ui:message key="<%= noteContent  %>"/>
-							</div>
 						</div>
 					</liferay-util:buffer>
 					
 					<liferay-util:buffer var="col5">
-						<%= PortletUtil.getDossierStatusLabel(dossier.getDossierStatus(), locale) %>
+						<div class="dossier-list-status">
+							<%= PortletUtil.getDossierStatusLabel(dossier.getDossierStatus(), locale) %>
+						</div>
 					</liferay-util:buffer>
 						
 					<%
