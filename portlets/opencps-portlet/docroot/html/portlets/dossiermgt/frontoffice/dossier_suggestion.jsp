@@ -142,7 +142,7 @@
 				if(accountBean.isBusiness()) {
 					owner = accountBean.getOwnerOrganizationId();
 				} else {
-					owner = accountBean.getOwnerUserId();
+					owner = 0;	// Neu la cong dan thi truong ownerOrganization = 0
 				}
 			
 				dossiersSuggestion = DossierLocalServiceUtil.getDossierSuggesstion(owner,keywords ,suggestionDossierStatus, dossierPartTypes , templateFileNos,dossierPartNos ,searchContainer.getStart(), searchContainer.getEnd());
