@@ -169,4 +169,15 @@ Liferay.provide(window, 'closeDialog', function(id, portletName) {
 	dialog.destroy();
 });
 
-
+function showConfirm(url){
+	
+	var msg = Liferay.Language.get("action-confirm");
+	
+	if(confirm(msg)) {
+		//do something
+		window.location.href = url;
+	} else {
+		return false;
+	}
+	
+}

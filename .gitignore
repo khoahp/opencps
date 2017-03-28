@@ -328,3 +328,5 @@ portlets/opencps-portlet/docroot/WEB-INF/src/org/opencps/notificationmgt/service
 portlets/opencps-portlet/docroot/WEB-INF/src/org/opencps/notificationmgt/service/persistence/NotificationStatusConfigPersistenceImpl.java
 portlets/opencps-portlet/docroot/WEB-INF/src/org/opencps/vnpost/
 
+portlets/opencps-portlet/docroot/WEB-INF/src/META-INF/portlet-model-hints.xml
+
