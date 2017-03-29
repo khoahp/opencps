@@ -74,7 +74,8 @@
     </tr>
     
     <%
-    	for(int i=0 ; i<6 ; i++){
+    	int i=0;
+    	for(DictItem dictItem_ : dictItems){
     		
     		int layout_cfg = GetterUtil.getInteger(portletPreferences.getValue("img-home-"+i+"_plid", ""));
     %>
@@ -98,9 +99,9 @@
 			<select name='<%="_86_img-home-"+i+"_itemCode" %>' id='<%="_86_img-home-"+i+"_itemCode" %>' label="">
 				<%
 					for(DictItem dictItem: dictItems){
-					String itemCode_cfg = GetterUtil.getString(portletPreferences.getValue("_86_img-home-"+i+"_itemCode", ""));
+					long itemCode_cfg = GetterUtil.getLong(portletPreferences.getValue("_86_img-home-"+i+"_itemCode", ""));
 				%>
-					<option <%= String.valueOf(dictItem.getDictItemId()).equals(itemCode_cfg) ? "selected":"" %> value="<%= dictItem.getDictItemId() %>"><%= dictItem.getItemName(locale) %></option>
+					<option <%= dictItem.getDictItemId() == itemCode_cfg ? "selected":"" %> value="<%= dictItem.getDictItemId() %>"><%= dictItem.getItemName(locale) %></option>
 				<%
 					}
 				%>
@@ -108,7 +109,7 @@
 			
 		</td>
     </tr>
-    <%} %>
+    <% i++; } %>
   </table>
 </div>
 
