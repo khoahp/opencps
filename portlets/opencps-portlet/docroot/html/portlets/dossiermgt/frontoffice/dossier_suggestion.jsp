@@ -295,7 +295,7 @@
 			<liferay-util:buffer var="boundcol4">
 				<aui:row>
 					<a href="<%=viewDossierUrlNomal.toString()%>" target="_blank" class="btn">
-						<i class="fa fa-eye"><liferay-ui:message key="view"/></i>
+						<i class="fa fa-eye"></i> <liferay-ui:message key="view"/>
 					</a>
 				</aui:row>
 				
@@ -303,7 +303,7 @@
 					 <aui:a cssClass="btn"
 						href="<%=\"javascript:\" + renderResponse.getNamespace()+ \"loadingMark('\" + updateDossierSuggestionURL.toString() +\"')\" %>" 
 					>
-						<i class = "fa fa-check"><liferay-ui:message key="choose"/></i>
+						<i class = "fa fa-check"></i> <liferay-ui:message key="choose"/>
 					</aui:a> 
 				</aui:row>
 				
