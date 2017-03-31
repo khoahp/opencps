@@ -125,7 +125,8 @@ public class NotificationsListener implements MessageListener {
 						}
 						if (sendType.contains(NotificationEventKeys.SMS)) {
 							phone = info.getUserPhone();
-
+							
+							//NotificationUtils.sendSMSNotification(item, groupId,phone, event,dossierId,userName);
 						}
 					
 				}

@@ -23,7 +23,6 @@ import java.util.Locale;
 
 import org.opencps.datamgt.model.DictCollection;
 import org.opencps.datamgt.model.DictItem;
-import org.opencps.datamgt.model.impl.DictCollectionImpl;
 import org.opencps.datamgt.service.DictCollectionLocalServiceUtil;
 import org.opencps.datamgt.service.DictItemLocalServiceUtil;
 

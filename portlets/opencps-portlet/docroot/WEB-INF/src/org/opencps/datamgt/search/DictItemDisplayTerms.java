@@ -54,6 +54,8 @@ public class DictItemDisplayTerms extends DisplayTerms {
 	public static final String MODIFIED_DATE = "modifiedDate";
 
 	public static final String PARENTITEM_ID = "parentItemId";
+	
+	public static final String ITEM_DESCRIPTION = "itemDescription";
 
 	public static final String TREEINDEX = "treeIndex";
 

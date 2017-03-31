@@ -17,6 +17,8 @@
 
 package org.opencps.util;
 
+import com.liferay.util.portlet.PortletProps;
+
 /**
  * @author trungnt
  */
@@ -149,5 +151,10 @@ public class PortletPropsKeys {
 	public static final String HOLIDAYCONFIG_DESCRIPTION_LENGTH = "opencps.holidayconfig.description.lengths";
 	
 	public static final String DM_USER_GROUP_NOTIFY = "opencps.datamgt.masterdata.notification.user.group";
+	
+	public static final String DM_SMS_CONFIG = "opencps.datamgt.masterdata.dm.sms.config";
+	
+	public static final String CONTENT_SMS_TO_CUSTOMER = "content.sms.to.customer";
+	public static final String CONTENT_SMS_TO_CUSTOMER_WITHOUT_RECEPTION_NO = "content.sms.to.customer.without.receptionNo";
 	
 }

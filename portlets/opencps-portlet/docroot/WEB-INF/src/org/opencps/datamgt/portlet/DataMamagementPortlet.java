@@ -58,6 +58,7 @@ import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.servlet.SessionMessages;
 import com.liferay.portal.kernel.util.LocalizationUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.ServiceContextFactory;
@@ -243,6 +244,9 @@ public class DataMamagementPortlet extends MVCPortlet {
 
 		long parentItemId = ParamUtil.getLong(actionRequest,
 				DictItemDisplayTerms.PARENTITEM_ID, 0L);
+		
+		String itemDescription = ParamUtil.getString(actionRequest,
+				DictItemDisplayTerms.ITEM_DESCRIPTION, StringPool.BLANK);
 
 		Map<Locale, String> itemNameMap = LocalizationUtil.getLocalizationMap(
 				actionRequest, DictItemDisplayTerms.ITEM_NAME);
@@ -265,26 +269,36 @@ public class DataMamagementPortlet extends MVCPortlet {
 			ServiceContext serviceContext = ServiceContextFactory
 					.getInstance(actionRequest);
 			validatetDictItem(dictItemId, itemName, itemCode, serviceContext);
+			
+			DictItem dictItem = null;
 
 			if (dictItemId == 0) {
 				if (dictVersionId == 0) {
-					DictItemLocalServiceUtil.addDictItem(
+					dictItem =DictItemLocalServiceUtil.addDictItem(
 							serviceContext.getUserId(), dictCollectionId,
 							itemCode, itemNameMap, parentItemId,
 							serviceContext);
 				} else {
-					DictItemLocalServiceUtil.addDictItem(
+					dictItem =DictItemLocalServiceUtil.addDictItem(
 							serviceContext.getUserId(), dictCollectionId,
 							dictVersionId, itemCode, itemNameMap, parentItemId,
 							serviceContext);
 				}
+				dictItem.setItemDescription(itemDescription);
+				
+				DictItemLocalServiceUtil.updateDictItem(dictItem);
 
 				SessionMessages.add(actionRequest,
 						MessageKeys.DATAMGT_ADD_SUCESS);
 			} else {
-				DictItemLocalServiceUtil.updateDictItem(dictItemId,
+				dictItem = DictItemLocalServiceUtil.updateDictItem(dictItemId,
 						dictCollectionId, dictVersionId, itemCode, itemNameMap,
 						parentItemId, serviceContext);
+				
+				dictItem.setItemDescription(itemDescription);
+				
+				DictItemLocalServiceUtil.updateDictItem(dictItem);
+				
 				SessionMessages.add(actionRequest,
 						MessageKeys.DATAMGT_UPDATE_SUCESS);
 			}

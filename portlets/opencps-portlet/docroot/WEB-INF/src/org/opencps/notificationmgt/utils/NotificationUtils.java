@@ -26,6 +26,7 @@ import java.util.Locale;
 import org.opencps.accountmgt.model.Business;
 import org.opencps.accountmgt.model.Citizen;
 import org.opencps.backend.util.PaymentRequestGenerator;
+import org.opencps.datamgt.model.DictItem;
 import org.opencps.dossiermgt.bean.AccountBean;
 import org.opencps.dossiermgt.model.Dossier;
 import org.opencps.dossiermgt.model.ServiceConfig;
@@ -51,6 +52,7 @@ import org.opencps.processmgt.util.ProcessUtils;
 import org.opencps.usermgt.model.Employee;
 import org.opencps.usermgt.service.EmployeeLocalServiceUtil;
 import org.opencps.util.AccountUtil;
+import org.opencps.util.DataMgtUtils;
 import org.opencps.util.MessageBusKeys;
 import org.opencps.util.PortletPropsValues;
 import org.opencps.util.SendMailUtils;
@@ -58,6 +60,8 @@ import org.opencps.util.SendMailUtils;
 import com.liferay.portal.NoSuchLayoutFriendlyURLException;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.json.JSONArray;
+import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.language.LanguageUtil;
@@ -701,4 +705,151 @@ public class NotificationUtils {
 		return notiMsgEmploy;
 
 	}
+	
+	public static void sendSMSNotification(SendNotificationMessage message,
+			long groupId, String phoneNumber, String event, long dossierId,
+			String userName) {
+
+		String smsContent = StringPool.BLANK;
+		String responseContent = StringPool.BLANK;
+
+		try {
+
+			smsContent = createSMSContent(message, dossierId, userName);
+
+			List<DictItem> dictItems = new ArrayList<DictItem>();
+
+			DataMgtUtils dataMgtUtil = new DataMgtUtils();
+
+			dictItems = dataMgtUtil.getDictItemList(groupId,
+					PortletPropsValues.DM_SMS_CONFIG);
+
+			if (dictItems.size() > 0) {
+
+				for (DictItem dictItem : dictItems) {
+
+					JSONObject smsConfig = null;
+
+					try {
+						smsConfig = JSONFactoryUtil.createJSONObject(dictItem
+								.getItemDescription());
+					} catch (JSONException e) {
+						e.printStackTrace();
+					}
+
+					if (smsConfig.toString().length() > 0) {
+
+						String version = StringPool.BLANK;
+						String key = StringPool.BLANK;
+						String task_num = StringPool.BLANK;
+						String username = StringPool.BLANK;
+						String password = StringPool.BLANK;
+						String DOMAIN = StringPool.BLANK;
+						String APIPATH = StringPool.BLANK;
+						boolean active = false;
+
+						try {
+
+							version = smsConfig.getString("version");
+							key = smsConfig.getString("key");
+							task_num = smsConfig.getString("task_num");
+							username = smsConfig.getString("userName");
+							password = smsConfig.getString("password");
+
+							DOMAIN = smsConfig.getString("domain");
+							APIPATH = smsConfig.getString("apiPath");
+
+							active = smsConfig.getBoolean("active");
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+
+						if (!Validator.isBlank(DOMAIN)
+								&& !Validator.isBlank(APIPATH) && active) {
+
+							JSONArray jsonArray = JSONFactoryUtil
+									.createJSONArray();
+							JSONObject jsonObject = JSONFactoryUtil
+									.createJSONObject();
+
+							Date date = new Date();
+
+							phoneNumber = phoneNumber.substring(1,
+									phoneNumber.length());
+							phoneNumber = PHONE_CODE + phoneNumber;
+
+							jsonObject.put("tid", date.getTime());
+							jsonObject.put("to", phoneNumber);
+							jsonObject.put("sms", smsContent);
+
+							jsonArray.put(jsonObject);
+
+							JSONObject jsonObjectSuper = JSONFactoryUtil
+									.createJSONObject();
+
+							jsonObjectSuper.put("version", version);
+							jsonObjectSuper.put("username", username);
+							jsonObjectSuper.put("password", password);
+							jsonObjectSuper.put("key", key);
+							jsonObjectSuper.put("task_num", task_num);
+							jsonObjectSuper.put("tasks", jsonArray);
+
+							responseContent = APISMSRequestUtils.sendSMS(
+									DOMAIN, APIPATH, jsonObjectSuper);
+						}
+
+					}
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public static String createSMSContent(SendNotificationMessage message,
+			long dossierId, String userName) {
+
+		String body = StringPool.BLANK;
+		String smsContent = StringPool.BLANK;
+
+		try {
+
+			Dossier dossier = new DossierImpl();
+
+			if (dossierId > 0) {
+				dossier = DossierLocalServiceUtil.getDossier(dossierId);
+			}
+
+			String fromName = PrefsPropsUtil
+					.getString(dossier.getCompanyId(),PropsKeys.ADMIN_EMAIL_FROM_NAME);
+			_log.info("fromName" + fromName);
+			
+
+			if (Validator.isNull(dossier.getReceptionNo())) {
+
+				body = PortletPropsValues.CONTENT_SMS_TO_CUSTOMER_WITHOUT_RECEPTION_NO;
+			} else {
+				body = PortletPropsValues.CONTENT_SMS_TO_CUSTOMER;
+			}
+
+			body = StringUtil.replace(body, "[receiverUserName]", "["
+					+ userName + "]");
+			body = StringUtil.replace(body, "{OpenCPS}", fromName);
+			body = StringUtil.replace(body, "{dossierId}",
+					String.valueOf(message.getDossierId()));
+			body = StringUtil.replace(body, "{receptionNo}",
+					dossier.getReceptionNo());
+			body = StringUtil.replace(body, "{event}",
+					PortletProps.get(message.getNotificationEventName()));
+			body = StringUtil.replace(body, "{message}",
+					message.getNotificationContent());
+
+			smsContent = body;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return smsContent;
+	}
+	public static final String PHONE_CODE = "84";
 }
