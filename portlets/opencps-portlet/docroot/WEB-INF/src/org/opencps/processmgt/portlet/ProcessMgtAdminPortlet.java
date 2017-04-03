@@ -575,7 +575,7 @@ public class ProcessMgtAdminPortlet extends MVCPortlet {
 		}
 		catch (Exception e) {
 			
-			e.printStackTrace();
+			_log.error(e);
 			
 			if (Validator.isNotNull(returnURL)) {
 				actionResponse.sendRedirect(returnURL);
@@ -666,7 +666,7 @@ public class ProcessMgtAdminPortlet extends MVCPortlet {
 
 		}
 		catch (Exception e) {
-			e.printStackTrace();
+			_log.error(e);
 			
 			if (Validator.isNotNull(returnURL)) {
 				actionResponse.sendRedirect(returnURL);
