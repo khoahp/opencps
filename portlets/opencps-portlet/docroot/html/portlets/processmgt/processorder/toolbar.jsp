@@ -94,13 +94,11 @@
 	String fromDatePicker = ParamUtil.getString(request, "fromDatePicker");
 	String toDatePicker = ParamUtil.getString(request, "toDatePicker");
 	  
-	  Date fromDate = DateTimeUtil.convertStringToDate(fromDatePicker);
-	  fromDate = DateTimeUtil.getStartDateDay(fromDate);
+	Date fromDate = DateTimeUtil.convertStringToDate(fromDatePicker);
+	fromDate = DateTimeUtil.getStartDateDay(fromDate);
 	  
-	  Date toDate = DateTimeUtil.convertStringToDate(toDatePicker);
-	  toDate = DateTimeUtil.getEndDateDay(toDate);
-	  _log.info("========+fromDate+=======  " +fromDate );
-	  _log.info("========+toDate+=======  " +toDate );
+	Date toDate = DateTimeUtil.convertStringToDate(toDatePicker);
+	toDate = DateTimeUtil.getEndDateDay(toDate);
 	
 	List<DictItem> dictItems = DictItemLocalServiceUtil.getDictItemsByDictCollectionId(dictCollection.getDictCollectionId());
 	
