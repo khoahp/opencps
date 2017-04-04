@@ -93,35 +93,16 @@
 	
 	String serviceDomainCode = ParamUtil.getString(request, "serviceDomainCode");
 	
-	Date fromDate = null;
-	Date toDate = null;
-	
-	int fromDateDay = ParamUtil.getInteger(request, "fromDateDay");
-	int fromDateMonth = ParamUtil.getInteger(request, "fromDateMonth");
-	int fromDateYear = ParamUtil.getInteger(request, "fromDateYear");
-	int toDateDay = ParamUtil.getInteger(request, "toDateDay");
-	int toDateMonth = ParamUtil.getInteger(request, "toDateMonth");
-	int toDateYear = ParamUtil.getInteger(request, "toDateYear");
-	
-	if(fromDateDay > 0
-			&& fromDateMonth >= 0
-			&& fromDateYear > 0){
-		fromDate = 
-			DateTimeUtil.getDateBeginOfDay(fromDateDay, fromDateMonth, fromDateYear);
-	}
-	if(toDateDay > 0
-			&& toDateMonth >= 0
-			&& toDateYear > 0
-			&& fromDate != null){
-		toDate = 
-			DateTimeUtil.getDateEndOfDay(toDateDay, toDateMonth, toDateYear);
-	} else if (fromDateDay > 0
-			&& fromDateMonth >= 0
-			&& fromDateYear > 0
-			&& fromDate != null){
-		toDate = 
-			DateTimeUtil.getDateEndOfDay(fromDateDay, fromDateMonth, fromDateYear);
-	}
+	String fromDatePicker = ParamUtil.getString(request, "fromDatePicker");
+	String toDatePicker = ParamUtil.getString(request, "toDatePicker");
+	  
+	  Date fromDate = DateTimeUtil.convertStringToDate(fromDatePicker);
+	  fromDate = DateTimeUtil.getStartDateDay(fromDate);
+	  
+	  Date toDate = DateTimeUtil.convertStringToDate(toDatePicker);
+	  toDate = DateTimeUtil.getEndDateDay(toDate);
+	  _log.info("========+fromDate+=======  " +fromDate );
+	  _log.info("========+toDate+=======  " +toDate );
 	
 	JSONObject arrayParam = JSONFactoryUtil
 		    .createJSONObject();
