@@ -118,6 +118,7 @@
 				<aui:select name="<%=DictItemDisplayTerms.DICTVERSION_ID %>" label="dict-version">
 					<aui:option value="0"></aui:option>
 				</aui:select>
+				<aui:input name="<%=DictItemDisplayTerms.ITEM_DESCRIPTION %>" type="textarea"/>
 				
 			</aui:fieldset>
 			
