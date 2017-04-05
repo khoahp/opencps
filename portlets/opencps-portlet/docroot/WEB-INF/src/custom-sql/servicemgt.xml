@@ -71,6 +71,7 @@
 			AND ((opencps_serviceinfo.domainCode = ?) OR (opencps_serviceinfo.domainIndex like ?))
 			AND (opencps_service_config.serviceLevel = ?)
 			GROUP BY opencps_serviceinfo.serviceInfoId
+			ORDER BY opencps_serviceinfo.createDate
 		]]>
 	</sql>
 
