@@ -315,5 +315,13 @@ public class PortletPropsValues {
 	
 	public static final String DM_USER_GROUP_NOTIFY = PortletProps
 			.get(PortletPropsKeys.DM_USER_GROUP_NOTIFY);
+	
+	public static final String DM_SMS_CONFIG = PortletProps
+			.get(PortletPropsKeys.DM_SMS_CONFIG);
+	
+	public static final String CONTENT_SMS_TO_CUSTOMER = PortletProps
+			.get(PortletPropsKeys.CONTENT_SMS_TO_CUSTOMER);
+	public static final String CONTENT_SMS_TO_CUSTOMER_WITHOUT_RECEPTION_NO = PortletProps
+			.get(PortletPropsKeys.CONTENT_SMS_TO_CUSTOMER_WITHOUT_RECEPTION_NO);
 
 }

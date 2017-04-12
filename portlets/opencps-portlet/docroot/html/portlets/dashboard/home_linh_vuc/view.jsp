@@ -45,6 +45,12 @@
 
 <%@ include file="../init.jsp"%>
 
+<%
+List<DictItem> dictItems = PortletUtil.getDictItemInUseByCode(themeDisplay.getScopeGroupId(), 
+		PortletPropsValues.DATAMGT_MASTERDATA_SERVICE_DOMAIN, 
+		PortletConstants.TREE_VIEW_DEFAULT_ITEM_CODE);
+%>
+
 <aui:row>
 	<aui:col width="100" >
 	<hr style="opacity: 0.7;">
@@ -58,7 +64,8 @@
 		<ul class="sitemap-class opencps-horizontal links-image">
 		
 			<%
-				for(int i=0 ; i<6 ; i++){
+			int i=0;
+			for(DictItem dictItem: dictItems){
 					
 					int layout_cfg = GetterUtil.getInteger(portletPreferences.getValue("img-home-"+i+"_plid", ""));
 					String itemCode_cfg = GetterUtil.getString(portletPreferences.getValue("img-home-"+i+"_itemCode", ""));
@@ -77,7 +84,7 @@
 			</li>
 			
 			<%
-				}
+				i++; }
 			%>
 		
 		</ul>
