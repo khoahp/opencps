@@ -105,6 +105,12 @@ public class DossierFinderImpl extends BasePersistenceImpl<Dossier> implements
 
 	public static final String SEARCH_DOSSIER_BY_P_PS_U = DossierFinder.class
 			.getName() + ".searchDossierByP_PS_U";
+	
+	public static final String SEARCH_DOSSIER_FOR_API = DossierFinder.class
+			.getName() + ".searchDossierAPI";
+	
+	public static final String COUNT_DOSSIER_FOR_API = DossierFinder.class
+			.getName() + ".countDossierAPI";
 
 	public static final String SEARCH_DOSSIER_BY_G_S_API = DossierFinder.class
 			.getName() + ".searchDossierByGovAndStatusAPI";
@@ -1677,6 +1683,161 @@ public class DossierFinderImpl extends BasePersistenceImpl<Dossier> implements
 		}
 
 		return null;
+	}
+
+	public List<Dossier> searchDossierAPI(String processNo,
+			String processStepNo, long userId, String govAgencyCode,
+			String dossierStatus, int start, int end) {
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			String sql = CustomSQLUtil.get(SEARCH_DOSSIER_FOR_API);
+
+			if (userId <= 0) {
+				sql = StringUtil.replace(sql, "AND opencps_dossier.userId = ?",
+						StringPool.BLANK);
+			}
+
+			if (Validator.isNull(dossierStatus) || dossierStatus.length() <= 0) {
+				sql = StringUtil.replace(sql,
+						"AND opencps_dossier.dossierStatus = ?",
+						StringPool.BLANK);
+			}
+			if (Validator.isNull(govAgencyCode) || govAgencyCode.length() <= 0) {
+				sql = StringUtil.replace(sql,
+						"AND opencps_dossier.govAgencyCode = ?",
+						StringPool.BLANK);
+			}
+
+			if (Validator.isNull(processNo) || processNo.length() <= 0) {
+				sql = StringUtil.replace(sql,
+						"AND opencps_serviceprocess.processNo = ?",
+						StringPool.BLANK);
+			}
+
+			if (Validator.isNull(processStepNo) || processStepNo.length() <= 0) {
+				sql = StringUtil.replace(sql,
+						"AND opencps_processstep.processStepNo = ?",
+						StringPool.BLANK);
+			}
+
+			SQLQuery q = session.createSQLQuery(sql);
+			q.addEntity("Dossier", DossierImpl.class);
+
+			QueryPos qPos = QueryPos.getInstance(q);
+
+			if (Validator.isNotNull(processNo) && processNo.length() > 0) {
+				qPos.add(processNo);
+			}
+			if (Validator.isNotNull(processStepNo)
+					&& processStepNo.length() > 0) {
+				qPos.add(processStepNo);
+			}
+			if (userId > 0) {
+				qPos.add(userId);
+			}
+			if (Validator.isNotNull(govAgencyCode)
+					&& govAgencyCode.length() > 0) {
+				qPos.add(govAgencyCode);
+			}
+			if (Validator.isNotNull(dossierStatus)
+					&& dossierStatus.length() > 0) {
+				qPos.add(dossierStatus);
+			}
+
+			return (List<Dossier>) QueryUtil.list(q, getDialect(), start, end);
+		} catch (Exception e) {
+			_log.error(e);
+		} finally {
+			closeSession(session);
+		}
+
+		return null;
+	}
+
+	public int countDossierAPI(String processNo, String processStepNo,
+			long userId, String govAgencyCode, String dossierStatus) {
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			String sql = CustomSQLUtil.get(COUNT_DOSSIER_FOR_API);
+
+			if (userId <= 0) {
+				sql = StringUtil.replace(sql, "AND opencps_dossier.userId = ?",
+						StringPool.BLANK);
+			}
+
+			if (Validator.isNull(dossierStatus) || dossierStatus.length() <= 0) {
+				sql = StringUtil.replace(sql,
+						"AND opencps_dossier.dossierStatus = ?",
+						StringPool.BLANK);
+			}
+			if (Validator.isNull(govAgencyCode) || govAgencyCode.length() <= 0) {
+				sql = StringUtil.replace(sql,
+						"AND opencps_dossier.govAgencyCode = ?",
+						StringPool.BLANK);
+			}
+
+			if (Validator.isNull(processNo) || processNo.length() <= 0) {
+				sql = StringUtil.replace(sql,
+						"AND opencps_serviceprocess.processNo = ?",
+						StringPool.BLANK);
+			}
+
+			if (Validator.isNull(processStepNo) || processStepNo.length() <= 0) {
+				sql = StringUtil.replace(sql,
+						"AND opencps_processstep.processStepNo = ?",
+						StringPool.BLANK);
+			}
+
+			SQLQuery q = session.createSQLQuery(sql);
+			q.addScalar(COUNT_COLUMN_NAME, Type.INTEGER);
+
+			QueryPos qPos = QueryPos.getInstance(q);
+
+			if (Validator.isNotNull(processNo) && processNo.length() > 0) {
+				qPos.add(processNo);
+			}
+			if (Validator.isNotNull(processStepNo)
+					&& processStepNo.length() > 0) {
+				qPos.add(processStepNo);
+			}
+			if (userId > 0) {
+				qPos.add(userId);
+			}
+			if (Validator.isNotNull(govAgencyCode)
+					&& govAgencyCode.length() > 0) {
+				qPos.add(govAgencyCode);
+			}
+			if (Validator.isNotNull(dossierStatus)
+					&& dossierStatus.length() > 0) {
+				qPos.add(dossierStatus);
+			}
+
+			Iterator<Integer> itr = q.iterate();
+
+			if (itr.hasNext()) {
+				Integer count = itr.next();
+
+				if (count != null) {
+					return count.intValue();
+				}
+			}
+
+			return 0;
+		} catch (Exception e) {
+			_log.error(e);
+		} finally {
+			closeSession(session);
+		}
+
+		return 0;
 	}
 
 	/**

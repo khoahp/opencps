@@ -2432,4 +2432,19 @@ public class DossierLocalServiceImpl extends DossierLocalServiceBaseImpl {
 		return dossierFinder.searchDossierByGovAndStatusAPI(govAgencyCode, dossierStatus, start,
 				end);
 	}
+	
+	public List<Dossier> searchDossierAPI(String processNo,
+			String processStepNo, long userId, String govAgencyCode,
+			String dossierStatus, int start, int end) throws PortalException,
+			SystemException {
+		return dossierFinder.searchDossierAPI(processNo, processStepNo, userId,
+				govAgencyCode, dossierStatus, start, end);
+	}
+
+	public int countDossierAPI(String processNo, String processStepNo,
+			long userId, String govAgencyCode, String dossierStatus)
+			throws PortalException, SystemException {
+		return dossierFinder.countDossierAPI(processNo, processStepNo, userId,
+				govAgencyCode, dossierStatus);
+	}
 }

@@ -942,6 +942,62 @@
 		]]>
 	</sql>	
 	
+	<sql id="org.opencps.dossiermgt.service.persistence.DossierFinder.searchDossierAPI">	
+		<![CDATA[
+			SELECT
+				opencps_dossier.*
+			FROM
+				opencps_dossier
+			INNER JOIN
+				opencps_processorder
+			ON
+				opencps_dossier.dossierId = opencps_processorder.dossierId
+			LEFT JOIN
+				opencps_processstep
+			ON
+				opencps_processstep.processStepId = opencps_processorder.processStepId
+			LEFT JOIN
+				opencps_serviceprocess
+			ON	
+				opencps_processorder.serviceProcessId = opencps_serviceprocess.serviceProcessId
+			WHERE
+				1
+			AND opencps_serviceprocess.processNo = ?
+			AND opencps_processstep.processStepNo = ?
+			AND opencps_dossier.userId = ?	
+			AND opencps_dossier.govAgencyCode = ?	
+			AND opencps_dossier.dossierStatus = ?	
+		]]>
+	</sql>	
+	
+	<sql id="org.opencps.dossiermgt.service.persistence.DossierFinder.countDossierAPI">	
+		<![CDATA[
+			SELECT
+				count(*) AS COUNT_VALUE
+			FROM
+				opencps_dossier
+			INNER JOIN
+				opencps_processorder
+			ON
+				opencps_dossier.dossierId = opencps_processorder.dossierId
+			LEFT JOIN
+				opencps_processstep
+			ON
+				opencps_processstep.processStepId = opencps_processorder.processStepId
+			LEFT JOIN
+				opencps_serviceprocess
+			ON	
+				opencps_processorder.serviceProcessId = opencps_serviceprocess.serviceProcessId
+			WHERE
+				1
+			AND opencps_serviceprocess.processNo = ?
+			AND opencps_processstep.processStepNo = ?
+			AND opencps_dossier.userId = ?	
+			AND opencps_dossier.govAgencyCode = ?	
+			AND opencps_dossier.dossierStatus = ?	
+		]]>
+	</sql>	
+	
 	<sql id="org.opencps.dossiermgt.service.persistence.DossierFinder.countDossierByUserNewRequest">	
 		<![CDATA[
 			SELECT
