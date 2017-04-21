@@ -37,7 +37,7 @@ ivy-settings.xml
 ivy.xml
 ivy.xml.MD5
 layouttpl/
-lib/
+lib/*
 misc/
 modules/
 osgi/
@@ -74,7 +74,6 @@ portlets/opencps-portlet/docroot/WEB-INF/.gitignore
 portlets/opencps-portlet/docroot/WEB-INF/classes/
 portlets/opencps-portlet/docroot/WEB-INF/service/
 portlets/opencps-portlet/docroot/WEB-INF/sql/
-portlets/opencps-portlet/docroot/WEB-INF/lib/
 portlets/opencps-portlet/docroot/css/.sass-cache/
 portlets/opencps-portlet/docroot/WEB-INF/src/META-INF
 portlets/opencps-portlet/docroot/WEB-INF/src/service.properties
@@ -326,3 +325,10 @@ portlets/opencps-portlet/docroot/WEB-INF/lib/opencps-portlet-taglib.jar
 portlets/opencps-portlet/docroot/WEB-INF/src/org/opencps/notificationmgt/service/persistence/NotificationEventConfigPersistenceImpl.java
 portlets/opencps-portlet/docroot/WEB-INF/src/org/opencps/notificationmgt/service/persistence/NotificationRedirectConfigPersistenceImpl.java
 portlets/opencps-portlet/docroot/WEB-INF/src/org/opencps/notificationmgt/service/persistence/NotificationStatusConfigPersistenceImpl.java
+
+
+portlets/opencps-portlet/docroot/WEB-INF/src/org/opencps/postal/service/persistence/PostalOrderPersistenceImpl.java
+portlets/opencps-portlet/docroot/WEB-INF/src/org/opencps/postal/model/impl/*
+portlets/opencps-portlet/docroot/WEB-INF/src/org/opencps/postal/service/base/*
+portlets/opencps-portlet/docroot/WEB-INF/src/org/opencps/postal/service/persistence/*
+portlets/opencps-portlet/docroot/WEB-INF/src/META-INF/portlet-model-hints.xml

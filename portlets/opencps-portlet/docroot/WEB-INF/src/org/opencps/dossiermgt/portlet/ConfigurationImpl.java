@@ -74,6 +74,7 @@ public class ConfigurationImpl implements ConfigurationAction {
 		} else if(tabs2.equals("digital-signature")) {
 			updateSignatureConfig(preferences, actionRequest, actionResponse);
 		}
+		
 
 		preferences.store();
 
@@ -194,6 +195,9 @@ public class ConfigurationImpl implements ConfigurationAction {
 
 		String dossierListDisplayStyle = ParamUtil.getString(actionRequest,
 				"dossierListDisplayStyle", "default");
+		
+		String templatesToDisplay = ParamUtil.getString(actionRequest, "templatesToDisplay", "default");
+
 
 		boolean hiddenTreeNodeEqualNone = ParamUtil.getBoolean(actionRequest,
 				"hiddenTreeNodeEqualNone", true);
@@ -230,6 +234,10 @@ public class ConfigurationImpl implements ConfigurationAction {
 				String.valueOf(displayRecentlyResultWhenSearch));
 		preferences.setValue("dossierStatusCodes",
 				String.valueOf(StringUtil.merge(dossierStatusCodes)));
+		
+		preferences.setValue("templatesToDisplay", templatesToDisplay);
+		
+		
 
 		preferences.setValue("war_opencpsportlet_26_cfg",
 				war_opencpsportlet_26_cfg);

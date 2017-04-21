@@ -569,6 +569,24 @@ public class ProcessUtils {
 
 		return step;
 	}
+	
+	/**
+	 * @param processStepId
+	 * @return
+	 */
+	public static ProcessStep getProcessStep(long processStepId) {
+
+		ProcessStep step = new ProcessStepImpl();
+
+		try {
+			step = ProcessStepLocalServiceUtil.getProcessStep(processStepId);
+		} catch (Exception e) {
+
+		}
+
+		return step;
+	}
+
 
 	public static ActionHistory getActionHistoryByLogId(long logId) {
 		ActionHistory actionHistory = new ActionHistoryImpl();

@@ -192,7 +192,7 @@
 							<%
 								for (TemplateFile tf : templates) {
 							%>
-								<li> <a href="<%= ServiceUtil.getDLFileURL(tf.getFileEntryId()) %>"> <%= tf.getFileName() %> </a></li>
+								<li>  <i class="icon-file"></i>  <a href="<%= ServiceUtil.getDLFileURL(tf.getFileEntryId()) %>"> <%= tf.getFileName() %> </a></li>
 							<%		
 								}
 							%>
@@ -200,13 +200,13 @@
 						
 					</td>
 				</tr>
-				<tr>
+				<!-- <tr>
 					<c:if test="<%= serviceIsConfiged %>">
 						<td class="col-left" colspan="2">
 							<aui:button href="<%= renderToSubmitOnline.toString() %>" cssClass="des-sub-button radius20" value="online-url-button"></aui:button>
 						</td>
 					</c:if>
-				</tr>
+				</tr>  -->
 			</table>
 		</div>
 	</c:if>

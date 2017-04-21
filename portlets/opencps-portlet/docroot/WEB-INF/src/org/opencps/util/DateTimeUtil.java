@@ -263,7 +263,7 @@ public class DateTimeUtil {
 	public static String convertTimemilisecondsToFormat(long time, Locale locale) {
 
 		String format = new String(DATE_TIME_FORMAT);
-		String day = LanguageUtil.get(locale, DAY_PROPERTIES);
+		String day = LanguageUtil.get(locale, DAY_PROPERTIES).toLowerCase();;
 
 		long diffMinutes = 0;
 		long diffHours = 0;
@@ -273,17 +273,18 @@ public class DateTimeUtil {
 		diffHours = time / (60 * 60 * 1000) % 24;
 		diffDays = time / (24 * 60 * 60 * 1000);
 
-		if (diffDays > 0) {
-			format = format.replace(DAY, String.valueOf(diffDays));
-			format = format.replace(DAY_LANG, day);
-		} else if (diffDays < 0) {
+		if (diffDays != 0) {
+			
 			format = format.replace(DAY, String.valueOf(Math.abs(diffDays)));
 			format = format.replace(DAY_LANG, day);
+			
 		} else {
-			format = format.replace(DAY, StringPool.BLANK.trim());
-			format = format.replace(DAY_LANG, StringPool.BLANK.trim());
+			
+			format = format.replace(DAY, StringPool.BLANK);
+			format = format.replace(DAY_LANG, StringPool.BLANK);
+			
 		}
-
+		
 		if (diffHours == 0 && diffMinutes == 0) {
 			format = format.replace(SUB_DATE_TIME_FORMAT, StringPool.BLANK);
 		} else {
@@ -293,9 +294,12 @@ public class DateTimeUtil {
 		}
 
 		if (time > 0) {
-			format = LanguageUtil.get(locale, LATE) + format.trim();
+			format = LanguageUtil.get(locale, EARLY) + StringPool.SPACE
+					+ format.trim();
 		} else if (time < 0) {
-			format = LanguageUtil.get(locale, EARLY) + format.trim();
+			format = LanguageUtil.get(locale, LATE) + StringPool.SPACE
+					
+					+ format.trim();
 		} else {
 			format = LanguageUtil.get(locale, ONTIME) + format.trim();
 		}
@@ -313,11 +317,15 @@ public class DateTimeUtil {
 		
 		/* Pattern Format Example : "3 10:30" */
 		
-		if(pattern.trim().length() > 0){
-		
+		if (pattern.trim().length() > 0) {
+
 			String[] splitPattern = StringUtil.split(pattern, StringPool.SPACE);
 
-			if (splitPattern.length == 2) {
+			if (splitPattern.length == 1) {
+				
+				Days = GetterUtil.getInteger(splitPattern[0], 0);
+
+			} else if (splitPattern.length == 2) {
 
 				Days = GetterUtil.getInteger(splitPattern[0], 0);
 
@@ -327,7 +335,10 @@ public class DateTimeUtil {
 				if (splitHour.length == 2) {
 					Hours = GetterUtil.getInteger(splitHour[0]);
 					Minutes = GetterUtil.getInteger(splitHour[1]);
+				} else if (splitHour.length == 1) {
+					Hours = GetterUtil.getInteger(splitHour[0]);
 				}
+
 			}
 		}
 		dateTimeBean.setDays(Days);

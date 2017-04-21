@@ -33,7 +33,6 @@ import org.opencps.processmgt.service.ProcessStepLocalServiceUtil;
 import org.opencps.processmgt.service.ProcessWorkflowLocalServiceUtil;
 import org.opencps.processmgt.util.OutDateStatus;
 import org.opencps.util.DateTimeUtil;
-import org.opencps.util.DateTimeUtil.DateTimeBean;
 
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
@@ -171,7 +170,7 @@ public class HolidayCheckUtils {
 			if (processOrderId > 0 && processWorkflowId > 0) {
 
 				actionHistoryList = ActionHistoryLocalServiceUtil
-						.getActionHistoryByProcessOrderId(processWorkflowId, 1,
+						.getActionHistoryByProcessOrderId(processOrderId, 0,
 								1, false);
 
 				if (actionHistoryList.size() > 0) {

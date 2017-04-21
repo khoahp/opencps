@@ -203,4 +203,14 @@ public class ServiceProcessLocalServiceImpl
 		return serviceProcessPersistence.findByG_P(groupId, processNo);
 	}
 	
+	public List<ServiceProcess> searchServiceProcess(long groupId,String keyword,int start,int end){
+		
+		return serviceProcessFinder.searchServiceProcess(groupId, keyword, start, end);
+	}
+	
+	public int countServiceProcess(long groupId,String keyword){
+		
+		return serviceProcessFinder.countServiceProcess(groupId, keyword);
+	}
+	
 }

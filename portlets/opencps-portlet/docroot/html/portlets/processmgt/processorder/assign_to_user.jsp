@@ -427,6 +427,7 @@
 							%>
 								<tr>
 									<td class="file-name" width="80%">
+									<i class="fa fa-minus" aria-hidden="true"></i>
 										<%=dossierFileInUse.getDisplayName()%>
 									</td>
 									<td class="signature-status" width="10%">

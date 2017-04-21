@@ -154,7 +154,8 @@
 	
 			int partType = dossierPartLevel1.getPartType();
 			
-			List<DossierPart> dossierParts = DossierMgtUtil.getTreeDossierPart(dossierPartLevel1.getDossierpartId());
+			List<DossierPart> dossierParts = new ArrayList<DossierPart>();
+			DossierMgtUtil.getTreeDossierPart(dossierPartLevel1.getDossierpartId(), dossierParts);
 			
 			if(dossierParts != null){
 				%>
@@ -211,12 +212,12 @@
 													<c:when test="<%=(partType == PortletConstants.DOSSIER_PART_TYPE_OPTION ||
 														partType == PortletConstants.DOSSIER_PART_TYPE_OTHER) && level == 0%>"
 													>
-														<span class="dossier-part-stt"> <%=doubleFomart.format(dossierPart.getSibling()) %></span>
+														<span class="dossier-part-stt"> <%= dossierPart.getTreeIndex() %></span>
 														<i class="fa fa-circle" aria-hidden="true"></i>
 														
 													</c:when>
 													<c:otherwise>
-															<span class="dossier-part-stt"> <%=doubleFomart.format(dossierPart.getSibling()) %></span>
+															<span class="dossier-part-stt"> <%=dossierPart.getTreeIndex() %></span>
 														<i 
 															id='<%="rowcheck" + dossierPart.getDossierpartId() + StringPool.DASH + index %>' 
 															class='<%=dossierFile != null &&  dossierFile.getFileEntryId() > 0 ? "fa fa-check-square-o" : "fa fa-square-o" %>' 

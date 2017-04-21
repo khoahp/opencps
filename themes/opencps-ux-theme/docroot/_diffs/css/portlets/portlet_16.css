@@ -250,7 +250,7 @@
     font-size: 14px;
 }
 .opencps-theme.ux .process-order-detail-container .remove-dossier-file {
-    background: transparent url("../../images/custom/icon_remove_dossierfile.png") no-repeat scroll left center;
+    background: transparent url("../images/custom/icon_remove_dossierfile.png") no-repeat scroll left center;
     color: #555!important;
     font-family: "Roboto-Medium";
     margin-left: 10px;
@@ -265,7 +265,7 @@
 	opacity: 1;
 }
 .opencps-theme.ux .process-order-detail-container .upload-dossier-file {
-    background: transparent url("../../images/custom/icon_upload.png") no-repeat scroll left center;
+    background: transparent url("../images/custom/icon_upload.png") no-repeat scroll left center;
 }
 .opencps-theme .process-order-detail-container .dossier-version-counter {
     width: 16px;

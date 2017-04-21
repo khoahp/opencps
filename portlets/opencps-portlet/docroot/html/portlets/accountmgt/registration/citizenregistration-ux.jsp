@@ -213,6 +213,9 @@
 	 					name="<%=CitizenDisplayTerms.CITIZEN_FULLNAME %>" 
 	 					cssClass="input100"
 	 					placeholder="citizen-full-name-require"
+	 					maxLength="255"
+						type="text"
+						label=""
 	 				>
 		 				<aui:validator name="required" />
 		 				<aui:validator name="maxLength">255</aui:validator>
@@ -224,6 +227,9 @@
 						name="<%=CitizenDisplayTerms.CITIZEN_EMAIL %>"
 						cssClass="input100"
 						placeholder="email-require"
+						maxLength="255"
+						type="text"
+						label=""
 					>
 						<aui:validator name="required" />
 						<aui:validator name="email" />
@@ -236,12 +242,24 @@
 	 					name="<%=CitizenDisplayTerms.CITIZEN_PERSONALID %>"
 	 					cssClass="input100"
 	 					placeholder="<%=CitizenDisplayTerms.CITIZEN_PERSONALID %>"
-	 				/>
+	 					maxLength="75"
+						type="text"
+						label=""
+	 				>
+						<aui:validator name="maxLength">75</aui:validator>	
+	 				</aui:input>
 				</aui:row>
 				
 				<aui:row>
 					<div id = "<portlet:namespace/>def">
-					<aui:input name="<%=CitizenDisplayTerms.CITIZEN_TELNO %>" cssClass="input100" placeholder="<%=CitizenDisplayTerms.CITIZEN_TELNO %>" />
+					<aui:input name="<%=CitizenDisplayTerms.CITIZEN_TELNO %>" 
+						cssClass="input100" 
+						placeholder="<%=CitizenDisplayTerms.CITIZEN_TELNO %>" 
+						maxLength="20"
+						type="text"
+						label="">
+						<aui:validator name="maxLength">20</aui:validator>	
+					</aui:input>
 					</div>
 					<div  id="<portlet:namespace/>defErr" style="text-align: left; color: #b50303; margin-left:7px; margin-bottom: 10px; display: none;">
 						<liferay-ui:message key="Error_TelNo_message"/>
@@ -332,8 +350,11 @@
 						name="<%=CitizenDisplayTerms.CITIZEN_ADDRESS %>" 
 						cssClass="input100"
 						placeholder="address-place-holder"
+						maxLength="500"
+						type="text"
+						label=""
 					>
-						<aui:validator name="maxLength">255</aui:validator>
+						<aui:validator name="maxLength">500</aui:validator>
 						<aui:validator name="required"/>
 					</aui:input>
 				</aui:row>

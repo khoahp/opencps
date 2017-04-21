@@ -36,7 +36,6 @@
 	PortletURL iteratorURL = renderResponse.createRenderURL();
 	iteratorURL.setParameter("mvcPath", templatePath + "dossier_common/dossierpartlist.jsp");
 	iteratorURL.setParameter("tabs1", DossierMgtUtil.DOSSIER_PART_TOOLBAR);
-	List<DossierPart> dossierParts = new ArrayList<DossierPart>();
 	List<String> headerNames = new ArrayList<String>();
 	
 	/* headerNames.add("row-no");
@@ -44,8 +43,6 @@
 	headerNames.add("part-name");
 	headerNames.add("part-type");
 	headerNames.add("part-tip"); 
-	
-	
 	
 	boolean isPermission =
 					DossierPartPermission.contains(
@@ -65,8 +62,10 @@
 	
 	String headers = StringUtil.merge(headerNames, StringPool.COMMA);
 	
- // chua sap xep theo sibling
-					
+	List<DossierPart> dossierPartRoots = DossierPartLocalServiceUtil.getDossierPartsByT_P_Order(dossierTemplateId, 0);
+	List<DossierPart> dossierPartResult = new ArrayList<DossierPart>();
+	DossierMgtUtil.getDossierPartsTreeIndexShort(dossierPartRoots, dossierPartResult);
+	
 %>
 
 <portlet:renderURL var="editDossierPartURL">
@@ -89,12 +88,8 @@
 		headerNames="<%= headers %>">
 		<liferay-ui:search-container-results>
 			<%
-				
-				dossierParts = DossierPartLocalServiceUtil.getDossierParts(
-						dossierTemplateId, searchContainer.getStart(), searchContainer.getEnd());
-										
 				total = totalCount;
-				results = dossierParts;
+				results = dossierPartResult;
 				pageContext.setAttribute("results", results);
 				pageContext.setAttribute("total", total);
 			%>
@@ -114,7 +109,7 @@
 					<div class="span5 bold-label">
 						<liferay-ui:message key="sibling"/>
 					</div>
-					<div class="span7"><%=String.valueOf((int)dossierPart.getSibling())%></div>
+					<div class="span7"><%=dossierPart.getTreeIndex()%></div>
 				</div>
 				
 				<div class="row-fluid">

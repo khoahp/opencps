@@ -11,7 +11,7 @@
 	padding: 0 30px
 }
 .opencps-accountinfo-wrapper .header p {
-	background: url("../../images/custom/icon_thongtintaikhoan_blue.png") 0 center no-repeat;
+	background: url("../images/custom/icon_thongtintaikhoan_blue.png") 0 center no-repeat;
 	padding-left: 20px;
 	text-transform: uppercase;
 	font-family: 'Roboto-Bold';
@@ -59,7 +59,7 @@
 	position: absolute;
 	right: 0;
 	padding-left: 20px;
-	background: url("../../images/custom/icon_edit_blue.png") 0 center no-repeat;
+	background: url("../images/custom/icon_edit_blue.png") 0 center no-repeat;
 	top: 0;
 }
 .opencps-accountinfo-wrapper .box_scroll {

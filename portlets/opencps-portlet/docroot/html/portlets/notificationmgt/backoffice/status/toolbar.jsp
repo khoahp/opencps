@@ -1,3 +1,4 @@
+
 <%
 	/**
 	 * OpenCPS is the open source Core Public Services software
@@ -19,7 +20,7 @@
 
 <%@page import="com.liferay.portal.kernel.log.LogFactoryUtil"%>
 <%@page import="com.liferay.portal.kernel.log.Log"%>
-<%@page import="com.liferay.portal.kernel.portlet.LiferayWindowState"%>
+
 <%@page import="org.opencps.util.ActionKeys"%>
 <%@page import="javax.portlet.PortletURL"%>
 <%@page import="org.opencps.util.PortletUtil"%>
@@ -27,8 +28,10 @@
 <%@page import="com.liferay.portlet.PortletURLFactoryUtil"%>
 <%@page import="javax.portlet.PortletRequest"%>
 <%@page import="com.liferay.portal.kernel.language.UnicodeLanguageUtil"%>
-<%@page import="org.opencps.notificationmgt.permisson.NotificationStatusConfigPermission"%>
-<%@page import="org.opencps.notificationmgt.search.NotificationStatusConfigDisplayTerms"%>
+<%@page
+	import="org.opencps.notificationmgt.permisson.NotificationStatusConfigPermission"%>
+<%@page
+	import="org.opencps.notificationmgt.search.NotificationStatusConfigDisplayTerms"%>
 
 
 <%@ include file="../../init.jsp"%>
@@ -43,24 +46,25 @@
 <aui:nav-bar cssClass="opencps-toolbar custom-toolbar">
 	<aui:nav id="toolbarContainer"
 		cssClass="nav-button-container  nav-display-style-buttons pull-left">
-		<c:if
-			test="<%=isPermisson%>">
+		<c:if test="<%=isPermisson%>">
 
-			<portlet:renderURL var="addNotificationConfigURL">
+			<portlet:renderURL var="addNotificationConfigURL" windowState="<%=LiferayWindowState.POP_UP.toString() %>">
 				<portlet:param name="mvcPath"
-					value="/html/portlets/notificationmgt/backoffice/notification_status_config_edit.jsp" />
-				<portlet:param name="backURL" value="<%=currentURL.toString()%>" />
+					value="/html/portlets/notificationmgt/backoffice/status/notification_status_config_edit.jsp" />
 			</portlet:renderURL>
 
-			<aui:button icon="icon-plus" href="<%=addNotificationConfigURL%>"
+			<aui:button 
+				icon="icon-plus"
 				cssClass="action-button"
 				value='<%=String.valueOf(LanguageUtil.get(pageContext,
-								"add-notification-status-config"))%>' />
+								"add-notification-status-config"))%>'
+				id="popup_id"
+				useDialog="true"
+				href="<%=addNotificationConfigURL.toString()%>"
+			 />
 		</c:if>
 	</aui:nav>
 </aui:nav-bar>
 
-
-
 <%!private Log _log = LogFactoryUtil
-			.getLog("html.portlets.notificationmgt.backoffice.toolbar.jsp");%>
+			.getLog("html.portlets.notificationmgt.backoffice.status.toolbar");%>

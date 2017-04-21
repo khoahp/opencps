@@ -55,6 +55,8 @@
 		business = (Business) request.getAttribute(WebKeys.BUSINESS_ENTRY);
 	}
 
+	System.out.println("businessregistration-ux.jsp");
+
 	long businessId = business!=null ? business.getBusinessId() : 0L;
 	
 	DictCollection dictCollectionDomain = null;
@@ -239,6 +241,9 @@
 						name="<%=BusinessDisplayTerms.BUSINESS_NAME %>" 
 						cssClass="input100" 
 						placeholder="business-full-name"
+						maxLength="255"
+						type="text"
+						label=""
 					>
 						<aui:validator name="required" />
 						<aui:validator name="maxLength">255</aui:validator>
@@ -249,7 +254,10 @@
 					<aui:input 
 						name="<%=BusinessDisplayTerms.BUSINESS_IDNUMBER %>" 
 						cssClass="input100"
-						placeholder="<%=BusinessDisplayTerms.BUSINESS_IDNUMBER %>"	
+						placeholder="<%=BusinessDisplayTerms.BUSINESS_IDNUMBER %>"
+						maxLength="100"
+						type="text"
+						label=""	
 					>
 						<aui:validator name="required" />
 						<aui:validator name="maxLength">100</aui:validator>
@@ -261,6 +269,9 @@
 						name="<%= BusinessDisplayTerms.BUSINESS_ENNAME %>" 
 						cssClass="input100"
 						placeholder="<%=BusinessDisplayTerms.BUSINESS_ENNAME %>"
+						maxLength="255"
+						type="text"
+						label=""
 					>
 						<aui:validator name="maxLength">255</aui:validator>
 					</aui:input>
@@ -271,6 +282,9 @@
 						name="<%=BusinessDisplayTerms.BUSINESS_SHORTNAME %>" 
 						cssClass="input100"
 						placeholder="<%=BusinessDisplayTerms.BUSINESS_SHORTNAME %>"
+						maxLength="100"
+						type="text"
+						label=""
 					>
 						<aui:validator name="maxLength">100</aui:validator>
 					</aui:input>
@@ -281,6 +295,9 @@
 						cssClass="input100"
 						name="<%=BusinessDisplayTerms.BUSINESS_EMAIL %>"
 						placeholder="<%=BusinessDisplayTerms.BUSINESS_EMAIL %>"
+						maxLength="255"
+						type="text"
+						label=""
 					>
 						<aui:validator name="required" />
 						<aui:validator name="email" />
@@ -293,6 +310,9 @@
 						name="<%=BusinessDisplayTerms.BUSINESS_TELNO %>" 
 						cssClass="input100"
 						placeholder="<%=BusinessDisplayTerms.BUSINESS_TELNO %>"
+						maxLength="20"
+						type="text"
+						label=""
 					>
 						<aui:validator name="maxLength">20</aui:validator>
 					</aui:input>
@@ -333,6 +353,9 @@
 						name="<%=BusinessDisplayTerms.BUSINESS_ADDRESS %>" 
 						cssClass="input100"
 						placeholder="address-place-holder"
+						maxLength="500"
+						type="text"
+						label=""
 					>
 						<aui:validator name="required" />
 						<aui:validator name="maxLength">500</aui:validator>
@@ -402,6 +425,9 @@
 						name="<%=BusinessDisplayTerms.BUSINESS_REPRESENTATIVENAME %>" 
 						cssClass="input100"
 						placeholder="<%=BusinessDisplayTerms.BUSINESS_REPRESENTATIVENAME %>"
+						maxLength="255"
+						type="text"
+						label=""
 						>
 						<aui:validator name="maxLength">255</aui:validator>
 					</aui:input>
@@ -412,6 +438,9 @@
 						name="<%=BusinessDisplayTerms.BUSINESS_REPRESENTATIVEROLE %>" 
 						cssClass="input100"
 						placeholder="<%=BusinessDisplayTerms.BUSINESS_REPRESENTATIVEROLE %>"
+						maxLength="100"
+						type="text"
+						label=""
 						>
 						<aui:validator name="maxLength">100</aui:validator>
 					</aui:input>

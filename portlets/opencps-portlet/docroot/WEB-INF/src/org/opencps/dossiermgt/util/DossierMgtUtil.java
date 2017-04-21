@@ -19,7 +19,6 @@ package org.opencps.dossiermgt.util;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -62,6 +61,7 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.Base64;
 import com.liferay.portal.kernel.util.OrderByComparator;
+import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
@@ -74,9 +74,11 @@ import com.liferay.portlet.documentlibrary.service.DLFileEntryLocalServiceUtil;
  */
 public class DossierMgtUtil {
 
-	public static final String TOP_TABS_DOSSIER_TEMPLATE = "top_tabs_dossier_template";
+	public static final String TOP_TABS_DOSSIER_TEMPLATE =
+		"top_tabs_dossier_template";
 	public static final String TOP_TABS_DOSSIER_PART = "top_tabs_dossier_part";
-	public static final String TOP_TABS_SERVICE_CONFIG = "top_tabs_service_config";
+	public static final String TOP_TABS_SERVICE_CONFIG =
+		"top_tabs_service_config";
 	public static final String DOSSIER_PART_TOOLBAR = "dossierPartToolBar";
 	public static final String SERVICE_CONFIG_TOOLBAR = "serviceConfigToolBar";
 
@@ -92,11 +94,16 @@ public class DossierMgtUtil {
 	public static final int DOSSIERFILEMARK_BAN_CONG_CHUNG = 2;
 	public static final int DOSSIERFILEMARK_BAN_CHUP = 3;
 
-	public static final String TOP_TABS_DOSSIER_MONITORING_SEARCH = "dossier-monitoring-search";
-	public static final String TOP_TABS_DOSSIER_MONITORING_DOSSIER_FILE_LIST = "dossier-monitoring-dossier-file-list";
-	public static final String TOP_TABS_DOSSIER_MONITORING_SERVICE = "dossier-monitoring-service";
+	public static final String TOP_TABS_DOSSIER_MONITORING_SEARCH =
+		"dossier-monitoring-search";
+	public static final String TOP_TABS_DOSSIER_MONITORING_DOSSIER_FILE_LIST =
+		"dossier-monitoring-dossier-file-list";
+	public static final String TOP_TABS_DOSSIER_MONITORING_SERVICE =
+		"dossier-monitoring-service";
 
-	public static String[] _DOSSIER_CATEGORY_NAMES = { "update-dossier-info" };
+	public static String[] _DOSSIER_CATEGORY_NAMES = {
+		"update-dossier-info"
+	};
 
 	/**
 	 * @param orderByCol
@@ -104,7 +111,7 @@ public class DossierMgtUtil {
 	 * @return
 	 */
 	public static OrderByComparator getDossierTemplateOrderByComparator(
-			String orderByCol, String orderByType) {
+		String orderByCol, String orderByType) {
 
 		boolean orderByAsc = false;
 
@@ -114,11 +121,10 @@ public class DossierMgtUtil {
 
 		OrderByComparator orderByComparator = null;
 
-		if (orderByCol
-				.equals(DossierTemplateDisplayTerms.DOSSIERTEMPLATE_TEMPLATENO)) {
+		if (orderByCol.equals(DossierTemplateDisplayTerms.DOSSIERTEMPLATE_TEMPLATENO)) {
 			orderByComparator = new DossierTemplateNoComparator(orderByAsc);
-		} else if (orderByCol
-				.equals(DossierTemplateDisplayTerms.DOSSIERTEMPLATE_TEMPLATENAME)) {
+		}
+		else if (orderByCol.equals(DossierTemplateDisplayTerms.DOSSIERTEMPLATE_TEMPLATENAME)) {
 			orderByComparator = new DossierTemplateNameComparator(orderByAsc);
 		}
 
@@ -131,7 +137,7 @@ public class DossierMgtUtil {
 	 * @return
 	 */
 	public static OrderByComparator getDossierOrderByComparator(
-			String orderByCol, String orderByType) {
+		String orderByCol, String orderByType) {
 
 		boolean orderByAsc = false;
 
@@ -154,17 +160,17 @@ public class DossierMgtUtil {
 	 * @return
 	 */
 	public static List<DossierFile> orderDossierFileByDossierFileDate(
-			String orderByType, List<DossierFile> dossierFiles) {
+		String orderByType, List<DossierFile> dossierFiles) {
+
 		int value = 0;
 		DossierFile dossierFileTemp = null;
 
 		if (orderByType.equals(WebKeys.ORDER_BY_ASC)) {
 			for (int i = 0; i < dossierFiles.size() - 1; i++) {
 				for (int j = i + 1; j < dossierFiles.size(); j++) {
-					value = dossierFiles
-							.get(i)
-							.getDossierFileDate()
-							.compareTo(dossierFiles.get(j).getDossierFileDate());
+					value =
+						dossierFiles.get(i).getDossierFileDate().compareTo(
+							dossierFiles.get(j).getDossierFileDate());
 					if (value >= 0) {
 						dossierFileTemp = dossierFiles.get(i);
 						dossierFiles.set(i, dossierFiles.get(j));
@@ -173,13 +179,13 @@ public class DossierMgtUtil {
 				}
 			}
 			return dossierFiles;
-		} else if (orderByType.equals(WebKeys.ORDER_BY_DESC)) {
+		}
+		else if (orderByType.equals(WebKeys.ORDER_BY_DESC)) {
 			for (int i = 0; i < dossierFiles.size() - 1; i++) {
 				for (int j = i + 1; j < dossierFiles.size(); j++) {
-					value = dossierFiles
-							.get(i)
-							.getDossierFileDate()
-							.compareTo(dossierFiles.get(j).getDossierFileDate());
+					value =
+						dossierFiles.get(i).getDossierFileDate().compareTo(
+							dossierFiles.get(j).getDossierFileDate());
 					if (value < 0) {
 						dossierFileTemp = dossierFiles.get(i);
 						dossierFiles.set(i, dossierFiles.get(j));
@@ -285,6 +291,7 @@ public class DossierMgtUtil {
 	 * @param dossierpartId
 	 * @return
 	 */
+	@Deprecated
 	public static List<DossierPart> getTreeDossierPart(long dossierpartId) {
 
 		List<DossierPart> dossierPartsResult = new ArrayList<DossierPart>();
@@ -292,8 +299,8 @@ public class DossierMgtUtil {
 		Stack<DossierPart> dossierPartsStack = new Stack<DossierPart>();
 
 		try {
-			DossierPart dossierPart = DossierPartLocalServiceUtil
-					.getDossierPart(dossierpartId);
+			DossierPart dossierPart =
+				DossierPartLocalServiceUtil.getDossierPart(dossierpartId);
 
 			dossierPartsStack.add(dossierPart);
 
@@ -302,10 +309,10 @@ public class DossierMgtUtil {
 			while (!dossierPartsStack.isEmpty()) {
 				dossierPartIndex = dossierPartsStack.pop();
 
-				List<DossierPart> dossierPartsChild = new ArrayList<DossierPart>();
-				dossierPartsChild = DossierPartLocalServiceUtil
-						.getDossierPartsByParentId(dossierPartIndex
-								.getDossierpartId());
+				List<DossierPart> dossierPartsChild =
+					new ArrayList<DossierPart>();
+				dossierPartsChild =
+					DossierPartLocalServiceUtil.getDossierPartsByParentId(dossierPartIndex.getDossierpartId());
 
 				if (!dossierPartsChild.isEmpty()) {
 
@@ -318,7 +325,8 @@ public class DossierMgtUtil {
 				dossierPartsResult.add(dossierPartIndex);
 			}
 			return dossierPartsResult;
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			_log.error(e);
 		}
 
@@ -334,8 +342,8 @@ public class DossierMgtUtil {
 			statusLabel = LanguageUtil.get(locale, "loai-giay-to-ban-chinh");
 			break;
 		case DOSSIERFILEMARK_BAN_CONG_CHUNG:
-			statusLabel = LanguageUtil.get(locale,
-					"loai-giay-to-ban-cong-chung");
+			statusLabel =
+				LanguageUtil.get(locale, "loai-giay-to-ban-cong-chung");
 			break;
 		case DOSSIERFILEMARK_BAN_CHUP:
 			statusLabel = LanguageUtil.get(locale, "loai-giay-to-ban-chup");
@@ -348,8 +356,8 @@ public class DossierMgtUtil {
 		return statusLabel;
 	}
 
-	public static String getURLDownloadTemplateFile(ThemeDisplay themeDisplay,
-			String templateFileNo) {
+	public static String getURLDownloadTemplateFile(
+		ThemeDisplay themeDisplay, String templateFileNo) {
 
 		String result = StringPool.BLANK;
 
@@ -359,22 +367,25 @@ public class DossierMgtUtil {
 
 		try {
 
-			templateFile = TemplateFileLocalServiceUtil.getTemplateFileByNo(
+			templateFile =
+				TemplateFileLocalServiceUtil.getTemplateFileByNo(
 					themeDisplay.getScopeGroupId(), templateFileNo);
 
 			if (Validator.isNotNull(templateFile)) {
 
-				dlFileEntry = DLFileEntryLocalServiceUtil
-						.getDLFileEntry(templateFile.getFileEntryId());
+				dlFileEntry =
+					DLFileEntryLocalServiceUtil.getDLFileEntry(templateFile.getFileEntryId());
 
-				result = themeDisplay.getPortalURL()
-						+ "/c/document_library/get_file?uuid="
-						+ dlFileEntry.getUuid() + "&groupId="
-						+ themeDisplay.getScopeGroupId();
+				result =
+					themeDisplay.getPortalURL() +
+						"/c/document_library/get_file?uuid=" +
+						dlFileEntry.getUuid() + "&groupId=" +
+						themeDisplay.getScopeGroupId();
 
 			}
 
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 
 			_log.error(e);
 
@@ -388,23 +399,24 @@ public class DossierMgtUtil {
 	 * @param messageInfo
 	 * @return
 	 */
-	public static String getDossierLogs(String requestCommand,
-			String messageInfo) {
+	public static String getDossierLogs(
+		String requestCommand, String messageInfo) {
 
 		String dossierLog = StringPool.BLANK;
 
 		if (Validator.isNotNull(messageInfo)) {
-			if (Validator.equals(requestCommand,
-					PortletConstants.REQUEST_COMMAND_PAYMENT)) {
+			if (Validator.equals(
+				requestCommand, PortletConstants.REQUEST_COMMAND_PAYMENT)) {
 
-				String[] arrMsgInfo = StringUtil.split(messageInfo,
-						StringPool.SEMICOLON);
+				String[] arrMsgInfo =
+					StringUtil.split(messageInfo, StringPool.SEMICOLON);
 
 				if (arrMsgInfo.length != 0) {
 					dossierLog = arrMsgInfo[0];
 				}
 
-			} else {
+			}
+			else {
 				dossierLog = messageInfo;
 			}
 
@@ -426,17 +438,18 @@ public class DossierMgtUtil {
 
 		if (Validator.isNotNull(dossierId) && dossierId != 0) {
 			try {
-				Dossier dossier = DossierLocalServiceUtil
-						.fetchDossier(dossierId);
+				Dossier dossier =
+					DossierLocalServiceUtil.fetchDossier(dossierId);
 
-				ServiceConfig serviceConfig = ServiceConfigLocalServiceUtil
-						.fetchServiceConfig(dossier.getServiceConfigId());
+				ServiceConfig serviceConfig =
+					ServiceConfigLocalServiceUtil.fetchServiceConfig(dossier.getServiceConfigId());
 
-				ServiceInfo serviceInfo = ServiceInfoLocalServiceUtil
-						.fetchServiceInfo(serviceConfig.getServiceInfoId());
+				ServiceInfo serviceInfo =
+					ServiceInfoLocalServiceUtil.fetchServiceInfo(serviceConfig.getServiceInfoId());
 
 				serviceName = serviceInfo.getServiceName();
-			} catch (Exception e) {
+			}
+			catch (Exception e) {
 				_log.error("dossierId is not validator");
 			}
 		}
@@ -444,14 +457,17 @@ public class DossierMgtUtil {
 		return serviceName;
 	}
 
-	public static List<DossierFileLog> getFileLogs(long dossierLogId,
-			long dossierId) {
+	public static List<DossierFileLog> getFileLogs(
+		long dossierLogId, long dossierId) {
+
 		List<DossierFileLog> ls = new ArrayList<DossierFileLog>();
 
 		try {
-			ls = DossierFileLogLocalServiceUtil.getFileLogs(dossierLogId,
-					dossierId);
-		} catch (Exception e) {
+			ls =
+				DossierFileLogLocalServiceUtil.getFileLogs(
+					dossierLogId, dossierId);
+		}
+		catch (Exception e) {
 			// TODO: handle exception
 		}
 
@@ -463,85 +479,247 @@ public class DossierMgtUtil {
 		ProcessOrder processOrder = new ProcessOrderImpl();
 
 		try {
-			processOrder = ProcessOrderLocalServiceUtil.getProcessOrder(
-					dossierId, 0);
-		} catch (Exception e) {
+			processOrder =
+				ProcessOrderLocalServiceUtil.getProcessOrder(dossierId, 0);
+		}
+		catch (Exception e) {
 			// TODO: handle exception
 		}
 
 		return processOrder;
 
 	}
-	
-	
+
 	public static JSONObject getSignImageAsBase64(long signImageId) {
-		
+
 		JSONObject signImageInfo = JSONFactoryUtil.createJSONObject();
 		String signImageAsBase64 = StringPool.BLANK;
 		String signImageName = StringPool.BLANK;
 		try {
-			if(signImageId > 0) {
-				DLFileEntry dlFileEntry = DLFileEntryLocalServiceUtil.getDLFileEntry(signImageId);
-				
+			if (signImageId > 0) {
+				DLFileEntry dlFileEntry =
+					DLFileEntryLocalServiceUtil.getDLFileEntry(signImageId);
+
 				InputStream is = dlFileEntry.getContentStream();
 				signImageName = dlFileEntry.getTitle();
-				byte [] bytes = IOUtils.toByteArray(is);
+				byte[] bytes = IOUtils.toByteArray(is);
 				signImageAsBase64 = Base64.encode(bytes);
-				
+
 				signImageInfo.put("signImageAsBase64", signImageAsBase64);
 				signImageInfo.put("signImageName", signImageName);
 			}
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			_log.error(e);
 		}
-		
-		
+
 		return signImageInfo;
 	}
-	
+
 	public static String base64File(long dossierFileId) {
+
 		String base64FileContent = StringPool.BLANK;
 		DossierFile dossierFile = null;
 		try {
-			 if(dossierFileId > 0) {
-				  dossierFile = DossierFileLocalServiceUtil.getDossierFile(dossierFileId);
-				  DLFileEntry fileEntry = DLFileEntryLocalServiceUtil.getDLFileEntry(dossierFile.getFileEntryId());
-				  
-				  InputStream is = fileEntry.getContentStream();
-				  
-				  byte[] bytes = IOUtils.toByteArray(is);
-				  
-				   base64FileContent = Base64.encode(bytes);
-				  
-				 // _log.info("base64FileContent : " + base64FileContent);
-				  
-			 }
-		 } catch (Exception e) {
-			 _log.error(e);
-		 }
-		
+			if (dossierFileId > 0) {
+				dossierFile =
+					DossierFileLocalServiceUtil.getDossierFile(dossierFileId);
+				DLFileEntry fileEntry =
+					DLFileEntryLocalServiceUtil.getDLFileEntry(dossierFile.getFileEntryId());
+
+				InputStream is = fileEntry.getContentStream();
+
+				byte[] bytes = IOUtils.toByteArray(is);
+
+				base64FileContent = Base64.encode(bytes);
+
+				// _log.info("base64FileContent : " + base64FileContent);
+
+			}
+		}
+		catch (Exception e) {
+			_log.error(e);
+		}
+
 		return base64FileContent;
 	}
-	
+
 	public static String getFileName(long dossierFileId) {
+
 		String fileName = StringPool.BLANK;
 		DossierFile dossierFile = null;
 		try {
-			 if(dossierFileId > 0) {
-				  dossierFile = DossierFileLocalServiceUtil.getDossierFile(dossierFileId);
-				  DLFileEntry fileEntry = DLFileEntryLocalServiceUtil.getDLFileEntry(dossierFile.getFileEntryId());
-				  fileName = fileEntry.getTitle();
-			 }
-		 } catch (Exception e) {
-			 _log.error(e);
-		 }
-		
+			if (dossierFileId > 0) {
+				dossierFile =
+					DossierFileLocalServiceUtil.getDossierFile(dossierFileId);
+				DLFileEntry fileEntry =
+					DLFileEntryLocalServiceUtil.getDLFileEntry(dossierFile.getFileEntryId());
+				fileName = fileEntry.getTitle();
+			}
+		}
+		catch (Exception e) {
+			_log.error(e);
+		}
+
 		return fileName;
 	}
 
-	private static Log _log = LogFactoryUtil.getLog(DossierMgtUtil.class
-			.getName());
+	@Deprecated
+	public static int getLevelDossierPart(long dossierPartId)
+		throws PortalException, SystemException {
+
+		int level = 1;
+		long dossierPartParentId = 0;
+		DossierPart dossierPart =
+			DossierPartLocalServiceUtil.getDossierPart(dossierPartId);
+		dossierPartParentId = dossierPart.getParentId();
+		if (dossierPartParentId > 0) {
+			DossierPart dossierPartParent =
+				DossierPartLocalServiceUtil.getDossierPart(dossierPartParentId);
+			getLevelDossierPart(dossierPartParent.getDossierpartId());
+			level++;
+		}
+
+		return level;
+	}
+
+	public static double getMaxSibLingDossierPartInDepth(
+		long dossierTemplateId, long dossierPartParentId)
+		throws SystemException {
+
+		List<DossierPart> dossierParts =
+			DossierPartLocalServiceUtil.getDossierPartsByT_P(
+				dossierTemplateId, dossierPartParentId);
+		double maxSibling = 0;
+		for (DossierPart dossierPart : dossierParts) {
+			if (dossierPart.getSibling() > maxSibling) {
+				maxSibling = dossierPart.getSibling();
+			}
+		}
+
+		return maxSibling;
+
+	}
+
+	/**
+	 * @param dossierPartRoots
+	 * @param temp
+	 * @return
+	 * @throws SystemException
+	 */
+	public static List<DossierPart> getDossierPartsTreeIndexShort(
+		List<DossierPart> dossierPartRoots, List<DossierPart> temp)
+		throws SystemException {
+
+		for (DossierPart dossierPart : dossierPartRoots) {
+			List<DossierPart> dossierPartChirlds =
+				DossierPartLocalServiceUtil.getDossierPartsByT_P_Order(
+					dossierPart.getDossierTemplateId(),
+					dossierPart.getDossierpartId());
+			temp.add(dossierPart);
+			getDossierPartsTreeIndexShort(dossierPartChirlds, temp);
+		}
+
+		return temp;
+	}
+
+	public static List<DossierPart> getTreeDossierPart(
+		long dossierPartId, List<DossierPart> temp)
+		throws SystemException {
+
+		DossierPart dossierPartRoot =
+			DossierPartLocalServiceUtil.fetchDossierPart(dossierPartId);
+		if (temp.size() == 0) {
+			temp.add(dossierPartRoot);
+		}
+		if (Validator.isNotNull(dossierPartRoot)) {
+
+			List<DossierPart> dossierPartChirlds =
+				DossierPartLocalServiceUtil.getDossierPartsByT_P_Order(
+					dossierPartRoot.getDossierTemplateId(),
+					dossierPartRoot.getDossierpartId());
+
+			for (DossierPart dossierPart : dossierPartChirlds) {
+				temp.add(dossierPart);
+				getTreeDossierPart(dossierPart.getDossierpartId(), temp);
+			}
+		}
+		return temp;
+	}
+
+	/**
+	 * @param receptionNo
+	 * @return
+	 */
+	public static Dossier getDossierByReceptionNo(String receptionNo) {
+
+		Dossier dossier = null;
+
+		if (Validator.isNotNull(receptionNo)) {
+			try {
+				dossier =
+					DossierLocalServiceUtil.getDossierByReceptionNo(receptionNo);
+			}
+			catch (Exception e) {
+				_log.debug(e);
+			}
+		}
+
+		return dossier;
+	}
+
+	/**
+	 * @param dossierId
+	 * @return
+	 */
+	public static Dossier getDossierByDossierId(long dossierId) {
+
+		Dossier dossier = null;
+
+		if (dossierId != 0) {
+			try {
+				dossier = DossierLocalServiceUtil.getDossier(dossierId);
+			}
+			catch (Exception e) {
+				_log.debug(e);
+			}
+		}
+
+		return dossier;
+	}
+
+	public static Dossier searchDossier(String keywords) {
+
+		Dossier dossier = null;
+
+		dossier = getDossierByReceptionNo(keywords);
+
+		if (Validator.isNull(dossier)) {
+
+			long dossierId = convertStringToLong(keywords);
+
+			dossier = getDossierByDossierId(dossierId);
+
+		}
+
+		return dossier;
+	}
+
+	private static long convertStringToLong(String input) {
+
+		long output = 0;
+
+		try {
+			output = Long.valueOf(input);
+		}
+		catch (Exception e) {
+
+		}
+
+		return output;
+	}
+
+	private static Log _log =
+		LogFactoryUtil.getLog(DossierMgtUtil.class.getName());
 
 }
-
-

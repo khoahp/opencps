@@ -50,7 +50,7 @@
 <%@ include file="/init.jsp" %>
 
 <%
-
+	boolean isMultiAssign = false;
 	DecimalFormat doubleFomart=new DecimalFormat("#,###.#");
 
 	PortletPreferences preferences = renderRequest.getPreferences();

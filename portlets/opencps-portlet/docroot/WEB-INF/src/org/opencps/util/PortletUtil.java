@@ -999,7 +999,7 @@ public class PortletUtil {
 			}
 		} else {
 			Date now = new Date();
-
+			
 			if (Validator.isNotNull(dossier.getEstimateDatetime())) {
 				if (dossier.getEstimateDatetime().before(now)) {
 					statusLabel = LanguageUtil.get(locale, "status-toosoon");
@@ -1007,7 +1007,10 @@ public class PortletUtil {
 
 					statusLabel = LanguageUtil.get(locale, "status-toolate");
 				}
+			} else {
+				statusLabel = LanguageUtil.get(locale, "status-toosoon");
 			}
+
 		}
 
 		return statusLabel;

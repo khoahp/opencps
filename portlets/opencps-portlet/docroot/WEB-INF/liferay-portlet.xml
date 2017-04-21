@@ -192,6 +192,16 @@
 			</trigger>
 		</scheduler-entry>
 		
+		<scheduler-entry>
+			<scheduler-event-listener-class>org.opencps.backend.scheduler.CheckPostalOrderStatus</scheduler-event-listener-class>
+			<trigger>
+				<simple>
+					<simple-trigger-value>10</simple-trigger-value>
+					<time-unit>minute</time-unit>
+				</simple>
+			</trigger>
+		</scheduler-entry>
+		
 		<action-url-redirect>true</action-url-redirect>
 		<header-portlet-css>/css/main.css</header-portlet-css>
 		<footer-portlet-javascript>
@@ -315,6 +325,16 @@
 			/js/main.js
 		</footer-portlet-javascript>
 		<css-class-wrapper>22-portlet</css-class-wrapper>
+	</portlet>
+	<portlet>
+		<portlet-name>23</portlet-name>
+		<icon>/icon.png</icon>
+		<instanceable>false</instanceable>
+		<header-portlet-css>/css/main.css</header-portlet-css>
+		<footer-portlet-javascript>
+			/js/main.js
+		</footer-portlet-javascript>
+		<css-class-wrapper>23-portlet</css-class-wrapper>
 	</portlet>
 	<portlet>
 		<portlet-name>24</portlet-name>

@@ -318,5 +318,8 @@ public class PortletPropsValues {
 	
 	public static final String DM_USER_GROUP_NOTIFY = PortletProps
 			.get(PortletPropsKeys.DM_USER_GROUP_NOTIFY);
+	
+	public static final String DM_POSTAL_GATE = PortletProps
+			.get(PortletPropsKeys.DM_POSTAL_GATE);
 
 }

@@ -987,7 +987,7 @@ public class StatisticsUtil {
 							groupId,
 							PortletPropsValues.DATAMGT_MASTERDATA_GOVERNMENT_AGENCY);
 				}
-				else if(filterKey.equals("domain")){
+				else if (filterKey.equals("domain")) {
 					dictCollection =
 						DictCollectionLocalServiceUtil.getDictCollection(
 							groupId,
@@ -1053,8 +1053,8 @@ public class StatisticsUtil {
 							int level = 0;
 
 							// Tham chieu den bang du lieu danh muc
-							
-							if(dictCollection != null){
+
+							if (dictCollection != null) {
 								dictItem =
 									DictItemLocalServiceUtil.getDictItemInuseByItemCode(
 										dictCollection.getDictCollectionId(),
@@ -1076,8 +1076,7 @@ public class StatisticsUtil {
 										StringPool.PERIOD);
 
 							}
-							
-							
+
 							// luu vao json
 							item.put("code", code);
 
@@ -1315,11 +1314,11 @@ public class StatisticsUtil {
 							item.put("keys", keys);
 
 							item.put("period-labels", periods);
-							
+
 							item.put("start-month", startMonth);
-							
+
 							item.put("start-year", startYear);
-							
+
 							item.put("period", period);
 
 						}
@@ -1363,8 +1362,8 @@ public class StatisticsUtil {
 	 */
 	public static JSONArray sortByCodes(JSONArray jsonArray, String[] codes) {
 
-		JSONArray temp = JSONFactoryUtil.createJSONArray();
 		if (codes != null && codes.length > 0 && jsonArray != null) {
+			JSONArray temp = JSONFactoryUtil.createJSONArray();
 			for (int c = 0; c < codes.length; c++) {
 				for (int j = 0; j < jsonArray.length(); j++) {
 					JSONObject object = jsonArray.getJSONObject(j);
@@ -1374,9 +1373,12 @@ public class StatisticsUtil {
 					}
 				}
 			}
+			return temp;
+		}
+		else {
+			return jsonArray;
 		}
 
-		return temp;
 	}
 
 	/**

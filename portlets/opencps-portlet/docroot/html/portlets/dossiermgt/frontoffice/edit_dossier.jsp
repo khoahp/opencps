@@ -507,7 +507,8 @@
 						if(required === true) {
 							alert('<%= LanguageUtil.get(themeDisplay.getLocale(), "please-upload-dossier-part-required-before-send") %>');
 						} else {
-							location.href = '<%= updateDossierStatusURL %>';
+						
+							showConfirm('<%= updateDossierStatusURL %>');
 						}
 					}
 				},

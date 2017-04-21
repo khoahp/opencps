@@ -57,7 +57,7 @@
 <%@page import="org.opencps.processmgt.util.ProcessMgtUtil"%>
 <%@page import="org.opencps.util.WebKeys"%>
 
-<%@ include file="/init.jsp"%>
+<%@ include file="init.jsp"%>
 
 <%
 	boolean success = false;
@@ -438,6 +438,7 @@
 								%>
 									<tr>
 										<td class="file-name" width="80%">
+											<i class="fa fa-minus" aria-hidden="true"></i>
 											<%=dossierFileInUse.getDisplayName()%>
 										</td>
 										<td class="signature-status" width="10%">

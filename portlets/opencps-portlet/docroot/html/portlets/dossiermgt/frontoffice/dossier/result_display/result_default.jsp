@@ -1,3 +1,4 @@
+<%@page import="java.util.ArrayList"%>
 <%
 /**
  * OpenCPS is the open source Core Public Services software
@@ -56,7 +57,9 @@
 	<c:choose>
 		<c:when test="<%=partType == PortletConstants.DOSSIER_PART_TYPE_RESULT %>">
 			<%
-				List<DossierPart> dossierParts = DossierMgtUtil.getTreeDossierPart(dossierPartLevel1.getDossierpartId());
+			//	List<DossierPart> dossierParts = DossierMgtUtil.getTreeDossierPart(dossierPartLevel1.getDossierpartId());
+			List<DossierPart> dossierParts = new ArrayList<DossierPart>();
+			DossierMgtUtil.getTreeDossierPart(dossierPartLevel1.getDossierpartId(), dossierParts);
 				if(dossierParts != null){
 					for(DossierPart dossierPart : dossierParts){
 						DossierFile dossierFile = null;

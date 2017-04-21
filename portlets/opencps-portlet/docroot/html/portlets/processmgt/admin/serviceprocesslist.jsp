@@ -46,18 +46,49 @@
 	message="<%=ProcessMgtUtil.DEL_PROCESS_SUCC %>" 
 />
 	
-<liferay-util:include page='<%= templatePath + "toolbar.jsp" %>' servletContext="<%= application %>" />
-
 <%
+	PortletURL searchURL = renderResponse.createRenderURL();
+
+
+	boolean isPermission =
+	ProcessPermission.contains(
+	    themeDisplay.getPermissionChecker(),
+	    themeDisplay.getScopeGroupId(), ActionKeys.ADD_PROCESS);
+	
 	PortletURL iteratorURL = renderResponse.createRenderURL();
 	iteratorURL.setParameter("mvcPath", templatePath + "serviceprocesslist.jsp");
-	
-	boolean isPermission =
-				    ProcessPermission.contains(
-				        themeDisplay.getPermissionChecker(),
-				        themeDisplay.getScopeGroupId(), ActionKeys.ADD_PROCESS);
 
 %>
+<aui:nav-bar cssClass="opencps-toolbar custom-toolbar">
+	<aui:nav id="toolbarContainer" cssClass="nav-display-style-buttons pull-left" >
+		<c:if test="<%= isPermission %>">
+			<portlet:renderURL var="editProcessURL">
+				<portlet:param name="mvcPath" value='<%= templatePath + "edit_process.jsp" %>'/>
+				<portlet:param name="redirectURL" value="<%=currentURL %>"/>
+				<portlet:param name="backURL" value="<%=currentURL %>"/>
+			</portlet:renderURL>
+			<aui:button icon="icon-plus" href="<%=editProcessURL %>" cssClass="action-button" value="add-process"/>
+		</c:if>
+	</aui:nav>
+	<aui:nav-bar-search cssClass="pull-right">
+		<div class="form-search">
+			<aui:form action="<%= iteratorURL %>" method="post" name="fm">
+				<div class="toolbar_search_input">
+					<liferay-ui:input-search 
+						id="keywords1"
+						name="keywords"
+						title=''
+						placeholder='<%= LanguageUtil.get(locale, "process-no")
+								+StringPool.COMMA+LanguageUtil.get(locale, "process-name")
+								+StringPool.COMMA+LanguageUtil.get(locale, "service-name")
+								+StringPool.COMMA+LanguageUtil.get(locale, "service-no")%>'
+						cssClass="search-input input-keyword"
+					/>
+				</div>
+			</aui:form>
+		</div>
+	</aui:nav-bar-search>
+</aui:nav-bar>
 
 <div class="opencps-searchcontainer-wrapper default-box-shadow radius8">
 
@@ -67,10 +98,10 @@
 			<%
 				ProcessSearchTerms searchTerms = (ProcessSearchTerms) searchContainer.getSearchTerms();
 	
-				total = ServiceProcessLocalServiceUtil.countProcess(scopeGroupId, searchTerms.getKeywords()); 
-	
-				results = ServiceProcessLocalServiceUtil.searchProcess(scopeGroupId, searchTerms.getKeywords(),
-					searchContainer.getStart(), searchContainer.getEnd());
+				total = ServiceProcessLocalServiceUtil.countServiceProcess(scopeGroupId, searchTerms.getKeywords());
+				
+				results = ServiceProcessLocalServiceUtil.searchServiceProcess(scopeGroupId, searchTerms.getKeywords(),
+						searchContainer.getStart(), searchContainer.getEnd());
 				
 				pageContext.setAttribute("results", results);
 				pageContext.setAttribute("total", total);

@@ -106,8 +106,9 @@
 		for (DossierPart dossierPartLevel1 : dossierPartsLevel1){
 	
 			int partType = dossierPartLevel1.getPartType();
-			List<DossierPart> dossierParts = DossierMgtUtil.getTreeDossierPart(dossierPartLevel1.getDossierpartId());
-			
+			// List<DossierPart> dossierParts = DossierMgtUtil.getTreeDossierPart(dossierPartLevel1.getDossierpartId());
+			List<DossierPart> dossierParts = new ArrayList<DossierPart>();
+			DossierMgtUtil.getTreeDossierPart(dossierPartLevel1.getDossierpartId(), dossierParts);
 			if(dossierParts != null){
 %>
 				<div class="opencps dossiermgt dossier-part-tree" id='<%= renderResponse.getNamespace() + "tree" + dossierParts.get(0).getDossierpartId()%>'>

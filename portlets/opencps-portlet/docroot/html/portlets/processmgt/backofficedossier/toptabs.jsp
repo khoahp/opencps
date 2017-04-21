@@ -29,16 +29,14 @@
 
 	List<String> urls = new ArrayList<String>();
 
-	if (PortletPermissionUtil.contains(permissionChecker, plid, portletDisplay.getId(), ActionKeys.VIEW) && 
-			DossierPermission.contains(permissionChecker, scopeGroupId, ActionKeys.VIEW)) {
+	if (PortletPermissionUtil.contains(permissionChecker, plid, portletDisplay.getId(), ActionKeys.VIEW)) {
 		PortletURL viewDossierListURL = renderResponse.createRenderURL();
 		viewDossierListURL.setParameter("mvcPath", templatePath + "backofficedossierlist.jsp");
 		viewDossierListURL.setParameter("tabs1", ProcessMgtUtil.TOP_TABS_DOSSIERLIST);
 		urls.add(viewDossierListURL.toString());
 	}
 	
-	if (PortletPermissionUtil.contains(permissionChecker, plid, portletDisplay.getId(), ActionKeys.VIEW) && 
-			DossierPermission.contains(permissionChecker, scopeGroupId, ActionKeys.VIEW)) {
+	if (PortletPermissionUtil.contains(permissionChecker, plid, portletDisplay.getId(), ActionKeys.VIEW)) {
 		PortletURL viewDossierFileListURL = renderResponse.createRenderURL();
 		viewDossierFileListURL.setParameter("mvcPath", templatePath + "backofficedossierfilelist.jsp");
 		viewDossierFileListURL.setParameter("tabs1", ProcessMgtUtil.TOP_TABS_DOSSIERFILELIST);

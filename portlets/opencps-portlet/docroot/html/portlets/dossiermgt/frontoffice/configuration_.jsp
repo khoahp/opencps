@@ -37,6 +37,8 @@
 	String tabs2 = ParamUtil.getString(request, "tabs2", "dossier-list");
 	String tabs2Names = "dossier-list,dossier,dossier-file-list, digital-signature";
 	
+	String templatesToDisplay_cfg = GetterUtil.getString(portletPreferences.getValue("templatesToDisplay", "default"));
+
 	List<Layout> privateLayouts = LayoutLocalServiceUtil.getLayouts(scopeGroupId, true);
 	List<Layout> publicLayouts = LayoutLocalServiceUtil.getLayouts(scopeGroupId, false);
 	List<Layout> allLayouts = new ArrayList<Layout>();
@@ -142,6 +144,16 @@
 								<liferay-ui:message key="treemenu-left"/>
 							</aui:option>
 						</aui:select>
+					</aui:fieldset>
+					
+					<aui:fieldset>
+						<aui:select name="templatesToDisplay" id="templatesToDisplay">
+							<aui:option selected="<%= templatesToDisplay_cfg.equals(\"default\") %>" value="default">default</aui:option>
+							
+							<aui:option selected="<%= templatesToDisplay_cfg.equals(\"20_80\") %>" value="20_80">20_80</aui:option>
+						
+						</aui:select>
+					
 					</aui:fieldset>
 					
 					<aui:fieldset>

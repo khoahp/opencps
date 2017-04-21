@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE service-builder PUBLIC "-//Liferay//DTD Service Builder 6.2.0//EN" "http://www.liferay.com/dtd/liferay-service-builder_6_2_0.dtd">
+<service-builder package-path="org.opencps.postal" auto-namespace-tables="false">
+	<author>nhanhlt</author>
+	<namespace>postalmgt</namespace>
+
+	<entity name="PostalOrder" local-service="true"
+		remote-service="false" table="opencps_postalorder">
+
+		<!-- PK fields -->
+
+		<column name="postalOrderId" type="long" primary="true" />
+
+		<!-- Audit fields -->
+
+		<column name="companyId" type="long" />
+		<column name="groupId" type="long" />
+		<column name="userId" type="long" />
+		<column name="createDate" type="Date" />
+		<column name="modifiedDate" type="Date" />
+
+		<!-- Other fields -->
+
+		<column name="dossierId" type="long" />
+		<column name="transactionCode" type="String" />
+		<column name="postalOrderContent" type="String"/>
+		<column name="postalOrderStatus" type="String" />
+		<column name="postalConfigId" type="long" />
+
+		<!-- Order -->
+		<order by="desc">
+			<order-column name="postalOrderId" />
+			<order-column name="createDate" />
+		</order>
+
+		<!-- Finder methods -->
+		<finder name="D_S" return-type="PostalOrder">
+			<finder-column name="dossierId" />
+			<finder-column name="postalOrderStatus" />
+		</finder>
+		
+		<finder name="dossierId" return-type="PostalOrder">
+			<finder-column name="dossierId" />
+		</finder>
+		
+		<finder return-type="Collection" name="postalOrderStatus">
+			<finder-column name="postalOrderStatus" />
+		</finder>
+
+
+	</entity>
+	
+		<entity name="PostalOrderLog" local-service="true"
+		remote-service="false" table="opencps_postalorder_log">
+
+		<!-- PK fields -->
+
+		<column name="postalOrderLogId" type="long" primary="true" />
+
+		<!-- Audit fields -->
+
+		<column name="companyId" type="long" />
+		<column name="groupId" type="long" />
+		<column name="userId" type="long" />
+		<column name="createDate" type="Date" />
+		<column name="modifiedDate" type="Date" />
+
+		<!-- Other fields -->
+
+		<column name="postalOrderId" type="long" />
+		<column name="postalOrderContent" type="String"/>
+		<column name="postalOrderStatus" type="String" />
+
+		<!-- Order -->
+		<order by="desc">
+			<order-column name="postalOrderLogId" />
+			<order-column name="createDate" />
+		</order>
+
+	</entity>
+
+	<entity name="VnPostal" local-service="false" remote-service="false"
+		 json-enabled="true">
+
+		<column name="vnPostalId" type="long" primary="true" json-enabled="false"/>
+		<column name="posIdThuGom" type="int" json-enabled="true"/>
+		<column name="soDonHang" type="String" json-enabled="true"/>
+		<column name="maKhachHang" type="String" json-enabled="true"/>
+		<column name="diaChiNguoiGui" type="String" json-enabled="true"/>
+		<column name="tenNguoiGui" type="String" json-enabled="true"/>
+		<column name="emailNguoiGui" type="String" json-enabled="true"/>
+		<column name="dienThoaiNguoiGui" type="String" json-enabled="true"/>
+		<column name="noiDungHang" type="String" json-enabled="true"/>
+		<column name="soTienCOD" type="double" json-enabled="true"/>
+		<column name="ghiChu" type="String" json-enabled="true"/>
+		<column name="ngayNhap" type="String" json-enabled="true"/>
+		<column name="posIdNhanTin" type="int" json-enabled="true"/>
+		<column name="tenNguoiNhan" type="String" json-enabled="true"/>
+		<column name="diaChiNguoiNhan" type="String" json-enabled="true"/>
+		<column name="dienThoaiNguoiNhan" type="String" json-enabled="true"/>
+		<column name="maBuuGui" type="String" json-enabled="true"/>
+		<column name="donHangNoiHuyen" type="boolean" json-enabled="true"/>
+		<column name="maTinhNhan" type="int" json-enabled="true"/>
+		<column name="emailNguoiNhan" type="String" json-enabled="true"/>
+
+	</entity>
+	
+	<entity name="PostOfficeMapping" local-service="true" remote-service="false" table="opencps_postoffcicemapping"
+		 json-enabled="true">
+
+		<column name="postOfficeMappingId" type="long" primary="true" />
+		
+		
+		<!-- Audit fields -->
+
+		<column name="companyId" type="long" />
+		<column name="groupId" type="long" />
+		<column name="userId" type="long" />
+		<column name="createDate" type="Date" />
+		<column name="modifiedDate" type="Date" />
+		
+		<column name="postOfficeCode" type="String"/>
+		<column name="postOfficeName" type="String"/>
+		<column name="opencpsCityCode" type="String"/>
+		
+		<!-- Order -->
+		<order by="asc">
+			<order-column name="postOfficeCode" />
+			<order-column name="createDate" />
+		</order>
+		
+		<finder return-type="PostOfficeMapping" name="OpencpsCityCode">
+			<finder-column name="opencpsCityCode" />
+		</finder>
+		
+		<finder return-type="PostOfficeMapping" name="PostOfficeCode">
+			<finder-column name="postOfficeCode" />
+		</finder>
+
+	</entity>
+	
+	<entity name="PostalConfig" local-service="true" remote-service="false" table="opencps_postalconfig"
+		 json-enabled="true">
+
+		<column name="postalConfigId" type="long" primary="true" />
+		
+		
+		<!-- Audit fields -->
+
+		<column name="companyId" type="long" />
+		<column name="groupId" type="long" />
+		<column name="userId" type="long" />
+		<column name="createDate" type="Date" />
+		<column name="modifiedDate" type="Date" />
+		
+		<column name="govAgencyOrganizationId" type="long"/>
+		<column name="postalDomain" type="String"/>
+		<column name="postalCustomerCode" type="String"/>
+		<column name="postalTokenCode" type="String"/>
+		<column name="postalGateType" type="String"/>
+		<column name="status" type="boolean"/>
+		
+		<!-- Order -->
+		<order by="asc">
+			<order-column name="govAgencyOrganizationId" />
+			<order-column name="createDate" />
+		</order>
+		
+		<finder return-type="PostalConfig" name="O_T_S">
+			<finder-column name="govAgencyOrganizationId" />
+			<finder-column name="postalGateType" />
+			<finder-column name="status" />
+		</finder>
+		
+		<finder return-type="PostalConfig" name="O_S">
+			<finder-column name="govAgencyOrganizationId" />
+			<finder-column name="status" />
+		</finder>
+		
+		<finder return-type="Collection" name="OrgId">
+			<finder-column name="govAgencyOrganizationId" />
+		</finder>
+		
+		<finder return-type="PostalConfig" name="O_T">
+			<finder-column name="govAgencyOrganizationId" />
+			<finder-column name="postalGateType" />
+		</finder>
+
+	</entity>
+
+</service-builder>

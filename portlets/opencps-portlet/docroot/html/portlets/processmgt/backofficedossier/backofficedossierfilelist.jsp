@@ -1,3 +1,4 @@
+<%@page import="com.liferay.portal.kernel.util.OrderByComparator"%>
 <%@page import="org.opencps.util.PortletConstants"%>
 <%
 /**
@@ -47,7 +48,7 @@
 	
 	PortletURL iteratorURL = renderResponse.createRenderURL();
 	iteratorURL.setParameter("mvcPath", templatePath + "backofficedossierfilelist.jsp");
-	iteratorURL.setParameter("tab1", ProcessMgtUtil.TOP_TABS_DOSSIERFILELIST);
+	iteratorURL.setParameter("tabs1", ProcessMgtUtil.TOP_TABS_DOSSIERFILELIST);
 	iteratorURL.setParameter(ProcessDisplayTerms.PROCESS_DOSSIERTEMPLATE_ID, (dossierTemplateId > 0)?String.valueOf(dossierTemplateId):StringPool.BLANK);
 	iteratorURL.setParameter("onlyViewFileResult", String.valueOf(onlyViewFileResult));
 
@@ -62,7 +63,6 @@
 	//headerNames.add("subjectname");
 	
 	String headers = StringUtil.merge(headerNames, StringPool.COMMA);
-	
 %>
 <div class="opencps-searchcontainer-wrapper">
 	<div class="opcs-serviceinfo-list-label">
@@ -228,9 +228,9 @@
 						 <liferay-ui:message key="reception-no"/>
 					</div>
 					<div class="span8">
-						<a href="<%=urlDownload%>" target="_blank">
-							<%=Validator.isNotNull(dossier.getReceptionNo()) ? dossier.getReceptionNo() : StringPool.DASH %>
-						</a>
+							<c:if test="<%= Validator.isNotNull(dossier)%>">
+								<%= dossier.getReceptionNo() %>
+							</c:if>
 					</div>
 				</div>
 				

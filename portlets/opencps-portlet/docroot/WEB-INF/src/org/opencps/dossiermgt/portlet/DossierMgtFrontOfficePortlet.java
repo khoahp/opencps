@@ -2709,8 +2709,8 @@ public class DossierMgtFrontOfficePortlet extends MVCPortlet {
 						serviceContext.getScopeGroupId(),
 						serviceContext.getCompanyId(), dossier.getDossierId(),
 						0, PortletConstants.DOSSIER_STATUS_NEW,
-						PortletConstants.DOSSIER_STATUS_NEW,
-						PortletConstants.DOSSIER_STATUS_NEW, new Date(), 0, 0,
+						"create-dossier",
+						"create-dossier", new Date(), 0, 0,
 						actor.getActor(), actor.getActorId(),
 						actor.getActorName(),
 						DossierMgtFrontOfficePortlet.class.getName()
@@ -2736,8 +2736,8 @@ public class DossierMgtFrontOfficePortlet extends MVCPortlet {
 						serviceContext.getScopeGroupId(),
 						serviceContext.getCompanyId(), dossierId, 0,
 						PortletConstants.DOSSIER_STATUS_UPDATE,
-						PortletConstants.DOSSIER_STATUS_UPDATE,
-						PortletConstants.DOSSIER_STATUS_UPDATE, new Date(), 0,
+						"update-dossier",
+						"update-dossier", new Date(), 0,
 						0, actor.getActor(), actor.getActorId(),
 						actor.getActorName(),
 						DossierMgtFrontOfficePortlet.class.getName()

@@ -212,6 +212,8 @@
 				(opencps_dossier_file.dossierFileType = ?)
 			AND
 				(opencps_dossierpart.dossierTemplateId = ?)
+				
+			ORDER BY opencps_dossier_file.createDate DESC
 		]]>
 	</sql>
 	
@@ -933,10 +935,6 @@
 				opencps_processorder.serviceProcessId = opencps_serviceprocess.serviceProcessId
 			WHERE
 				1
-			AND
-				opencps_dossier.receptionNo IS NOT NULL
-			AND 
-				opencps_dossier.receptionNo <> ''
 			AND
 				opencps_serviceprocess.processNo = ?
 			AND

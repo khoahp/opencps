@@ -1,4 +1,5 @@
 
+<%@page import="com.liferay.portal.kernel.language.LanguageUtil"%>
 <%
 	/**
 	 * OpenCPS is the open source Core Public Services software
@@ -167,21 +168,22 @@
 			<c:if test="<%=dossier.getDossierStatus().equals(
 								PortletConstants.DOSSIER_STATUS_WAITING)%>"
 			>
-				<portlet:actionURL 
-					var="updateDossierStatusURL"
-					name="updateDossierStatus"
-				>
+			
+			
+				<portlet:actionURL var="updateDossierStatusURL" name="updateDossierStatus">
 					<portlet:param name="<%=DossierDisplayTerms.DOSSIER_ID%>"
 						value="<%=String.valueOf(dossier.getDossierId())%>" />
 					<portlet:param name="<%=DossierDisplayTerms.DOSSIER_STATUS%>"
 						value="<%=String.valueOf(PortletConstants.DOSSIER_STATUS_WAITING)%>" />
 					<portlet:param name="redirectURL" value="<%=currentURL%>" />
 				</portlet:actionURL>
-				<liferay-ui:icon 
-					cssClass="search-container-action fa forward"
-					image="reply" 
+				
+				<liferay-ui:icon
+					cssClass="search-container-action fa forward" 
+					image="reply"
+					url="javascript:void(0);"
 					message="resend"
-					url="<%=updateDossierStatusURL.toString()%>" 
+					onClick="showConfirm('${updateDossierStatusURL}');"
 				/>
 			</c:if>
 		</c:if>
@@ -200,7 +202,7 @@
 				<portlet:param 
 					name="dossierStatus"
 					value="<%=dossier.getDossierStatus()%>" 
-				/>
+				/> 
 			</portlet:actionURL>
 			<liferay-ui:icon-delete image="delete"
 				cssClass="search-container-action fa delete"
@@ -238,4 +240,9 @@
 	</c:when>
 	
 </c:choose>
-<%-- </liferay-ui:icon-menu> --%>
+
+<script type="text/javascript">
+
+
+
+</script>

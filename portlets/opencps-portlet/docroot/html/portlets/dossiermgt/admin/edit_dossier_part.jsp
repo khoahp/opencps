@@ -1,3 +1,4 @@
+
 <%
 /**
  * OpenCPS is the open source Core Public Services software
@@ -16,7 +17,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 %>
-
+<%@page import="java.util.ArrayList"%>
+<%@page import="java.util.List"%>
 <%@page import="com.liferay.portal.kernel.log.LogFactoryUtil"%>
 <%@page import="org.opencps.dossiermgt.model.DossierPart"%>
 <%@page import="org.opencps.dossiermgt.model.DossierTemplate"%>
@@ -33,6 +35,8 @@
 
 <%@ include file="../init.jsp"%>
 <%
+
+	List<DossierPart> dossierPartSameLevels = new ArrayList<DossierPart>();
 	DossierTemplate dossierTemplate = (DossierTemplate) request.getAttribute(WebKeys.DOSSIER_TEMPLATE_ENTRY);
 	DossierPart dossierPart = (DossierPart) request.getAttribute(WebKeys.DOSSIER_PART_ENTRY);
 	DossierPart dossierPartIsAddChilds = null;
@@ -42,7 +46,7 @@
 	long dossierTemplateId = dossierTemplate != null ? dossierTemplate.getDossierTemplateId() : 0L;
 	long dossierPartId = dossierPart != null ? dossierPart.getDossierpartId() : 0L;
 	int [] dossierType = new int[6];
-	
+	long parentId = 0;
 	dossierType[0] = PortletConstants.DOSSIER_TYPE_PAPER_SUBMITED ; 
 	dossierType[1] = PortletConstants.DOSSIER_TYPE_OTHER_PAPERS_GROUP;
 	dossierType[2] = PortletConstants.DOSSIER_TYPE_GROUPS_OPTIONAL; 
@@ -53,6 +57,7 @@
 	String isAddChilds = ParamUtil.getString(request, "isAddChild");
 	String backURL = ParamUtil.getString(request, "backURL");
 	boolean isHasSign = false; 
+
 	try {
 		if(dossierPart != null) {
 			isHasSign = dossierPart.getHasSign();
@@ -62,6 +67,24 @@
 	}catch(Exception e) {
 		
 	}
+
+	
+	if(Validator.isNotNull(dossierPart)) {
+		dossierPartSameLevels = DossierPartLocalServiceUtil
+				.getDossierPartsByT_P(dossierTemplateId,dossierPart.getParentId());
+	}
+	if(Validator.isNotNull(isAddChilds)) {
+		parentId =  dossierPartId;
+	}
+	
+	double maxSibling = 0;
+	try {
+		maxSibling = DossierMgtUtil.getMaxSibLingDossierPartInDepth(dossierTemplateId, parentId);
+		maxSibling = maxSibling + 1;
+	} catch (Exception e) {
+		
+	}
+
 %>
 
 <liferay-ui:header
@@ -177,10 +200,37 @@
 		</aui:col>
 		
 		<aui:col width="30">
-			<aui:input name="<%=DossierPartDisplayTerms.DOSSIERPART_SIBLING %>" cssClass="input100">
-				<aui:validator name="required" />
-				<aui:validator name="numbers" />
-			</aui:input>
+			<c:choose>
+				<c:when test="<%=Validator.isNull(dossierPart) %>">
+					<aui:input 
+						name="<%=DossierPartDisplayTerms.DOSSIERPART_SIBLING %>" 
+						type="hidden" 
+						value="<%= maxSibling %>"></aui:input>
+				</c:when>
+				
+				<c:when test="<%=Validator.isNotNull(dossierPart) && Validator.isNotNull(isAddChilds) %>">
+					<aui:input 
+						name="<%=DossierPartDisplayTerms.DOSSIERPART_SIBLING %>" 
+						type="hidden" 
+						value="<%= maxSibling %>"></aui:input>
+				</c:when>
+				<c:otherwise>
+					<aui:select name="<%=DossierPartDisplayTerms.DOSSIERPART_SIBLING %>">
+						<%
+							for(DossierPart dossierPartSameLevelIndex : dossierPartSameLevels) {
+								%>
+									<aui:option 
+										value="<%= dossierPartSameLevelIndex.getSibling() %>"
+										selected="<%= dossierPartSameLevelIndex.getSibling() == dossierPart.getSibling()%>"
+									>
+										<%= (int)dossierPartSameLevelIndex.getSibling() %>
+									</aui:option>
+								<%
+							}
+						%>
+					</aui:select>
+				</c:otherwise>
+			</c:choose>
 		</aui:col>
 	</aui:row>
 	

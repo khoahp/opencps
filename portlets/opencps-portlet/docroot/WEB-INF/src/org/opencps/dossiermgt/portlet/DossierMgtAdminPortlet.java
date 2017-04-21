@@ -56,6 +56,7 @@ import org.opencps.dossiermgt.search.ServiceConfigDisplayTerms;
 import org.opencps.dossiermgt.service.DossierPartLocalServiceUtil;
 import org.opencps.dossiermgt.service.DossierTemplateLocalServiceUtil;
 import org.opencps.dossiermgt.service.ServiceConfigLocalServiceUtil;
+import org.opencps.dossiermgt.util.DossierMgtUtil;
 import org.opencps.servicemgt.model.ServiceInfo;
 import org.opencps.servicemgt.service.ServiceInfoLocalServiceUtil;
 import org.opencps.usermgt.model.WorkingUnit;
@@ -259,8 +260,15 @@ public class DossierMgtAdminPortlet extends MVCPortlet {
 
 		long dossierPartId = ParamUtil.getLong(actionRequest,
 				DossierPartDisplayTerms.DOSSIERPART_DOSSIERPARTID);
+		DossierPartLocalServiceUtil.deleteDossierPartById(dossierPartId);
 		String currentURL = ParamUtil.getString(actionRequest, "CurrentURL");
-		int dossierPartParentCount = DossierPartLocalServiceUtil
+		DossierPartLocalServiceUtil.deleteDossierPartById(dossierPartId);
+		
+		if (Validator.isNotNull(currentURL)) {
+			actionResponse.sendRedirect(currentURL);
+		}
+		
+		/*int dossierPartParentCount = DossierPartLocalServiceUtil
 				.CountByParentId(dossierPartId);
 
 		if (dossierPartParentCount == 0) {
@@ -275,7 +283,7 @@ public class DossierMgtAdminPortlet extends MVCPortlet {
 				actionResponse.sendRedirect(currentURL);
 			}
 		}
-
+*/
 	}
 
 	/**
@@ -322,6 +330,7 @@ public class DossierMgtAdminPortlet extends MVCPortlet {
 				DossierPartDisplayTerms.DOSSIERPART_PARTTYPE);
 		double sibling = ParamUtil.getDouble(actionRequest,
 				DossierPartDisplayTerms.DOSSIERPART_SIBLING);
+		
 		boolean required = ParamUtil.getBoolean(actionRequest,
 				DossierPartDisplayTerms.DOSSIERPART_REQUIRED);
 		try {
@@ -330,7 +339,7 @@ public class DossierMgtAdminPortlet extends MVCPortlet {
 					.getInstance(actionRequest);
 
 			dossierPartValidate(dossierTemplateId, dossierPartId, partName,
-					partNo, sibling, templateFileNo);
+					partNo, sibling, templateFileNo, parentId);
 			if (dossierPartId == 0) {
 				DossierPartLocalServiceUtil.addDossierPart(dossierTemplateId,
 						partNo, partName, partTip, partType, parentId, sibling,
@@ -645,7 +654,7 @@ public class DossierMgtAdminPortlet extends MVCPortlet {
 	 */
 	protected void dossierPartValidate(long dossierTemplateId,
 			long dossierPartId, String partName, String partNo, double sibling,
-			String templateFileNo) throws OutOfLengthDossierPartNameException,
+			String templateFileNo, long parentId ) throws OutOfLengthDossierPartNameException,
 			OutOfLengthDossierPartNumberException,
 			OutOfLengthDossierTemplateFileNumberException,
 			DuplicateDossierPartNumberException,
@@ -662,7 +671,7 @@ public class DossierMgtAdminPortlet extends MVCPortlet {
 
 		try {
 			dossierPartSibling = DossierPartLocalServiceUtil
-					.getDossierPartByT_S(dossierTemplateId, sibling);
+					.getDossierPartByT_S_P(dossierTemplateId, sibling, parentId);
 		} catch (Exception e) {
 			// TODO: handle exception
 		}
@@ -690,10 +699,10 @@ public class DossierMgtAdminPortlet extends MVCPortlet {
 			throw new DuplicateDossierPartSiblingException();
 		}
 
-		else if (dossierPartId > 0 && Validator.isNotNull(dossierPartSibling)
+		/*else if (dossierPartId > 0 && Validator.isNotNull(dossierPartSibling)
 				&& dossierPartSibling.getDossierpartId() != dossierPartId) {
 			throw new DuplicateDossierPartSiblingException();
-		}
+		}*/
 
 	}
 

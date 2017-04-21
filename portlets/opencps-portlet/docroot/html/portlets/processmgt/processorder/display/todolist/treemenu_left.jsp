@@ -1,5 +1,4 @@
 
-<%@page import="org.apache.poi.util.SystemOutLogger"%>
 <%
 /**
  * OpenCPS is the open source Core Public Services software
@@ -18,7 +17,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 %>
-
+<%@page import="org.opencps.processmgt.model.ProcessOrder"%>
 <%@page import="org.opencps.processmgt.service.ProcessWorkflowLocalServiceUtil"%>
 <%@page import="org.opencps.processmgt.model.ProcessWorkflow"%>
 <%@page import="com.liferay.portal.kernel.language.UnicodeLanguageUtil"%>
@@ -34,7 +33,6 @@
 <%@page import="com.liferay.portal.kernel.portlet.LiferayWindowState"%>
 <%@page import="com.liferay.portlet.PortletURLFactoryUtil"%>
 <%@page import="java.util.ArrayList"%>
-<%@page import="java.util.LinkedHashMap"%>
 <%@page import="java.util.List"%>
 <%@page import="javax.portlet.PortletRequest"%>
 <%@page import="javax.portlet.PortletURL"%>
@@ -48,15 +46,8 @@
 <%@page import="org.opencps.util.WebKeys"%>
 <%@page import="org.opencps.holidayconfig.util.HolidayCheckUtils"%>
 <%@page import="org.opencps.dossiermgt.service.DossierLocalServiceUtil"%>
-<%@page import="org.opencps.dossiermgt.service.impl.DossierLocalServiceImpl"%>
 <%@page import="org.opencps.dossiermgt.model.Dossier"%>
 <%@page import="org.opencps.util.DateTimeUtil"%>
-<%@page import="org.opencps.processmgt.permissions.ProcessOrderPermission"%>
-<%@page import="java.util.Set"%>
-<%@page import="java.util.HashSet"%>
-<%@page import="org.opencps.util.PortletConstants"%>
-<%@page import="java.text.SimpleDateFormat"%>
-<%@page import="java.text.DateFormat"%>
 
 <%@ include file="../../init.jsp"%>
 
@@ -138,8 +129,8 @@
 	iteratorURL.setParameter("processOrderStage", processOrderStage);
 	
 	boolean isShowRowChecker = false;
-	
-	if(ProcessOrderPermission.contains(permissionChecker, scopeGroupId, ActionKeys.ASSIGN_PROCESS_ORDER) && 
+	 rowChecker = new RowChecker(liferayPortletResponse);
+	  if(ProcessOrderPermission.contains(permissionChecker, scopeGroupId, ActionKeys.ASSIGN_PROCESS_ORDER) && 
 			tabs1.equals(ProcessUtils.TOP_TABS_PROCESS_ORDER_WAITING_PROCESS) &&
 			serviceInfoId > 0 && processStepId > 0){
 		
@@ -244,20 +235,24 @@
 							
 							try {
 								
-								long processWorkFlowId = ProcessOrderLocalServiceUtil
-										.getProcessOrder(processOrders.get(0).getProcessOrderId()).getProcessWorkflowId();
+								ProcessOrder order = ProcessOrderLocalServiceUtil
+										.getProcessOrder(processOrders.get(0).getProcessOrderId());
 								
-								if(processWorkFlowId > 0) {
-									ProcessWorkflow processWorkflow = ProcessWorkflowLocalServiceUtil.getProcessWorkflow(processWorkFlowId);
-									
-									if(Validator.isNotNull(processWorkflow) && processWorkflow.getIsMultipled()) {
-										isMultiAssign = true;
-									}
+								long preProcessStepId = order.getProcessStepId();
+								long serviceProcessId = order.getServiceProcessId();
+								
+								ProcessWorkflow processWorkflow = ProcessWorkflowLocalServiceUtil
+										.getPostProcessWorkflow(serviceProcessId,preProcessStepId).get(0);
+								
+								if(Validator.isNotNull(processWorkflow) && processWorkflow.getIsMultipled()) {
+									isMultiAssign = true;
 								}
 								
-							} catch(Exception e) {}
+							} catch(Exception e) {
+								// _log.error(e);
+							}
 							
-							if(isMultiAssign) {
+							if(isMultiAssign && isShowRowChecker) {
 								searchContainer.setRowChecker(rowChecker);
 							}
 						%>
@@ -304,7 +299,7 @@
 									</div>
 									
 									<%
-										Dossier dossier = DossierLocalServiceUtil.getDossierByReceptionNo(processOrder.getReceptionNo());
+										Dossier dossier = DossierLocalServiceUtil.getDossier(processOrder.getDossierId());
 									%>
 									
 									<div class="row-fluid">
@@ -401,18 +396,13 @@
 <aui:script use="liferay-util-list-fields,liferay-portlet-url">
 
 AUI().ready(function(A){
-
-	var arrowButton = A.one('#<portlet:namespace/>arrowButton');		
-	arrowButton.on('click', function() {
-		$('.showBottomRow').toggleClass('show');
-	});
 	
 	var processDossier = A.one("#<portlet:namespace />processDossier");
 	var isMultiAssignvar = '<%= isMultiAssign %>';
 	var isShowRowChecker = '<%= isShowRowChecker%>';
 	console.log(isMultiAssignvar);
-	console.log(processDossier);
-	if(isMultiAssignvar == 'false' && processDossier && isShowRowChecker == 'false') {
+	console.log("isShowRowChecker  " + isShowRowChecker);
+	if(isMultiAssignvar == 'false' || isShowRowChecker == 'false') {
 		processDossier.hide();
 	}
 	

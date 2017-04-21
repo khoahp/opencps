@@ -91,6 +91,12 @@
 			<finder-column name="sibling" />
 		</finder>
 
+		<finder return-type="DossierPart" name="T_S_P">
+			<finder-column name="dossierTemplateId" />
+			<finder-column name="sibling" />
+			<finder-column name="parentId" />
+		</finder>
+
 		<finder return-type="DosserPart" name="PartNo">
 			<finder-column name="partNo" />
 		</finder>

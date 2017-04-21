@@ -1274,6 +1274,46 @@
 			<role-name>user</role-name>
 		</security-role-ref>
 	</portlet>
+	
+	<portlet>
+		<portlet-name>23</portlet-name>
+		<display-name>Postal Config</display-name>
+		<portlet-class>
+			org.opencps.postal.portlet.PostalConfigPortlet
+		</portlet-class>
+		<init-param>
+			<name>view-template</name>
+			<value>
+				/html/portlets/postalmgt/view.jsp
+			</value>
+		</init-param>
+		<init-param>
+			<name>template-path</name>
+			<value>/html/portlets/postalmgt/</value>
+		</init-param>
+		<expiration-cache>0</expiration-cache>
+		<supports>
+			<mime-type>text/html</mime-type>
+		</supports>
+		<resource-bundle>content.Language_23</resource-bundle>
+		<portlet-info>
+			<title>Postal Config</title>
+			<short-title>Postal Config</short-title>
+			<keywords>Postal Config</keywords>
+		</portlet-info>
+		<security-role-ref>
+			<role-name>administrator</role-name>
+		</security-role-ref>
+		<security-role-ref>
+			<role-name>guest</role-name>
+		</security-role-ref>
+		<security-role-ref>
+			<role-name>power-user</role-name>
+		</security-role-ref>
+		<security-role-ref>
+			<role-name>user</role-name>
+		</security-role-ref>
+	</portlet>	
 	 
 	<portlet>
 		<portlet-name>36</portlet-name>

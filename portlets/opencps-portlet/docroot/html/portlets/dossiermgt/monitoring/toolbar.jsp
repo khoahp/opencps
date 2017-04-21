@@ -41,7 +41,6 @@
 	viewMonitoringServiceURL.setParameter("mvcPath", "/html/portlets/dossiermgt/monitoring/dossiermonitoringservice.jsp");
 	viewMonitoringServiceURL.setParameter("tabs1", DossierMgtUtil.TOP_TABS_DOSSIER_MONITORING_SERVICE);
 %>
-
 <portlet:actionURL name="searchAction" var="searchUrl"></portlet:actionURL>
 
 <portlet:actionURL name="searchServiceAction" var="serviceUrl"></portlet:actionURL>

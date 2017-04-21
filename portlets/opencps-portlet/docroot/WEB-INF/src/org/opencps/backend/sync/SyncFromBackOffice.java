@@ -181,7 +181,7 @@ public class SyncFromBackOffice implements MessageListener {
 					actorBean.getActorId(), actorBean.getActorName(),
 					SyncFromBackOffice.class.getName(),
 				    toBackOffice.getProcessOrderId(),
-				    toBackOffice.getProcessWorkflowId(), true);
+				    toBackOffice.getProcessWorkflowId(), true, toBackOffice.getCurStepId(), toBackOffice.getCurStepName());
 
 				SendToCallbackMsg toCallBack = new SendToCallbackMsg();
 				

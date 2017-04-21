@@ -13,6 +13,8 @@
 
 package org.opencps.servicemgt.util;
 
+import org.opencps.util.FileExtensionKeys;
+
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portlet.documentlibrary.model.DLFileEntry;
 import com.liferay.portlet.documentlibrary.service.DLFileEntryLocalServiceUtil;
@@ -68,5 +70,60 @@ public class ServiceUtil {
 		}
 
 		return fileURL;
+	}
+	
+	public static String getFileType(long fileEntryId) {
+		DLFileEntry file = null;
+		
+		String fileType = StringPool.BLANK;
+		
+		String cssClass = StringPool.BLANK;
+		
+		try {
+			file = DLFileEntryLocalServiceUtil.getDLFileEntry(fileEntryId);
+			
+			fileType = file.getExtension();
+			
+			switch (fileType) {
+			case FileExtensionKeys.EXT_DOC:
+				cssClass = "fa-file-word-o";
+				break;
+			case FileExtensionKeys.EXT_DOCX:
+				cssClass = "fa-file-word-o";
+				break;
+			case FileExtensionKeys.EXT_ODT:
+				cssClass = "fa-file-word-o";
+				break;
+			case FileExtensionKeys.EXT_XLS:
+				cssClass = "fa-file-excel-o";
+				break;
+			case FileExtensionKeys.EXT_XLSX:
+				cssClass = "fa-file-excel-o";
+				break;
+			case FileExtensionKeys.EXT_ODS:
+				cssClass = "fa-file-excel-o";
+				break;
+			case FileExtensionKeys.EXT_PDF:
+				cssClass = "fa-file-pdf-o";
+				break;
+			case FileExtensionKeys.EXT_GIP:
+				cssClass = "fa-image";
+				break;
+			case FileExtensionKeys.EXT_PNG:
+				cssClass = "fa-image";
+				break;
+			case FileExtensionKeys.EXT_JPG:
+				cssClass = "fa-image";
+				break;
+			default:
+				cssClass = "fa-file";
+				break;
+			}
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		
+		return cssClass;
 	}
 }
