@@ -114,33 +114,35 @@
 		<div class="content">
 			<div class="box100 row-eq-height">
 				<div class="box50">
-					<div>
-					    <p><span><liferay-ui:message key="subject-name"></liferay-ui:message>:</span> </p><%= chuHoSo != null ? chuHoSo : "-"  %>
+					<div class="over100">
+					    <p><span><liferay-ui:message key="subject-name"></liferay-ui:message>:</span> <span><%= chuHoSo != null ? chuHoSo : "-"  %></span></p>
 					</div>
-					<div>
-					   <p><span><liferay-ui:message key="reception-no"></liferay-ui:message>:</span></p> <%= dossier != null ? dossier.getReceptionNo() : "-"  %>
+					<div class="over100">
+					   <p><span><liferay-ui:message key="reception-no"></liferay-ui:message>:</span> <span> <%= dossier != null ? dossier.getReceptionNo() : "-"  %></span></p>
 					</div>
 					
-					<div>
-					    <p><span><liferay-ui:message key="payment-name"></liferay-ui:message>:</span></p> <%= paymentFile != null ? paymentFile.getPaymentName() : "-"  %>
+					<div class="over100">
+					    <p><span><liferay-ui:message key="payment-name"></liferay-ui:message>:</span> <span> <%= paymentFile != null ? paymentFile.getPaymentName() : "-"  %></span></p>
 					</div>
 					
 					<div class="over100">
 					   <p><span><liferay-ui:message key="service-name"/>:</span> <span><%=Validator.isNotNull(serviceInfo)? HtmlUtil.escape(serviceInfo.getServiceName()): "-" %></span></p>
 					</div>
 					
-					<div>
-						<p><span><liferay-ui:message key="administration-name"></liferay-ui:message>:</span> </p>
+					<div class="over100">
+						<p><span><liferay-ui:message key="administration-name"></liferay-ui:message>:</span> <span>
 						<c:if test="<%= dossier != null %>">
 						<%= dossier.getGovAgencyName() %>
 						</c:if>
+						</span>
+						</p>
 					</div>
-					<div>
-					    <p><span><liferay-ui:message key="ngay-yeu-cau"></liferay-ui:message>:</span> </p><%=paymentFile != null ? HtmlUtil.escape(DateTimeUtil.convertDateToString(paymentFile.getRequestDatetime(), DateTimeUtil._VN_DATE_TIME_FORMAT)): "-" %>
+					<div class="over100">
+					    <p><span><liferay-ui:message key="ngay-yeu-cau"></liferay-ui:message>:</span> <span><%=paymentFile != null ? HtmlUtil.escape(DateTimeUtil.convertDateToString(paymentFile.getRequestDatetime(), DateTimeUtil._VN_DATE_TIME_FORMAT)): "-" %></span></p>
 					</div>
 					
-					<div>
-					   <p><span><liferay-ui:message key="amount"></liferay-ui:message>: </span> </p><span class="black bold"><%= NumberFormat.getInstance(new Locale("vi","VN")).format(paymentFile.getAmount()) %> <liferay-ui:message key="vnd"></liferay-ui:message></span>
+					<div class="over100">
+					   <p><span><liferay-ui:message key="amount"></liferay-ui:message>: </span><span class="black bold"><%= NumberFormat.getInstance(new Locale("vi","VN")).format(paymentFile.getAmount()) %> <liferay-ui:message key="vnd"></liferay-ui:message></span></p>
 					</div>
 				</div>
 				

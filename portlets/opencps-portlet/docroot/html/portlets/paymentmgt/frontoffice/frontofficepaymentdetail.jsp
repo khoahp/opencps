@@ -110,8 +110,8 @@
                         <div>
                             <p><span><liferay-ui:message key="administration-name"></liferay-ui:message>:</span></p><%= dossier != null? dossier.getGovAgencyName() : "-"%>
                         </div>
-                        <div>
-                             <p><span><liferay-ui:message key="ten-phi-thanh-toan"></liferay-ui:message>:</span></p><%= paymentFile != null ? paymentFile.getPaymentName() : "-" %>
+                        <div class="over100">
+                             <p><span><liferay-ui:message key="ten-phi-thanh-toan"/>:</span><span><%= paymentFile != null ? paymentFile.getPaymentName() : "-" %></span></p>
                         </div>
                         <div>
                         	<p><span><liferay-ui:message key="request-datetime"></liferay-ui:message>:</span> </p><%= Validator.isNotNull(paymentFile.getRequestDatetime())?HtmlUtil.escape(DateTimeUtil.convertDateToString(paymentFile.getRequestDatetime(), DateTimeUtil._VN_DATE_TIME_FORMAT)): "-" %>
@@ -158,8 +158,8 @@
                         <div>
                             <p><span><liferay-ui:message key="ngay-da-bao-nop"></liferay-ui:message>:</span></p><%= Validator.isNotNull(paymentFile.getConfirmDatetime())?HtmlUtil.escape(DateTimeUtil.convertDateToString(paymentFile.getConfirmDatetime(), DateTimeUtil._VN_DATE_TIME_FORMAT)): "-" %>
                         </div>
-                        <div>
-                            <p><span><liferay-ui:message key="request-note"></liferay-ui:message>:</span></p> <%= Validator.isNotNull(paymentFile) ? paymentFile.getRequestNote() : "-" %>
+                        <div class="over100">
+                            <p class="payment-special-line"><span><liferay-ui:message key="request-note"/>:</span><span> <%= Validator.isNotNull(paymentFile) ? paymentFile.getRequestNote() : "-" %></span></p>
                         </div>
                         <div>
                             <p><span><liferay-ui:message key="confirm-file-entry-id"></liferay-ui:message>:</span> 
