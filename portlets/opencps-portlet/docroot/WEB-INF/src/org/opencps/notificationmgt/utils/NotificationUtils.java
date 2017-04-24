@@ -52,8 +52,10 @@ import org.opencps.util.SendMailUtils;
 
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.PrefsPropsUtil;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.StringPool;
@@ -99,6 +101,12 @@ public class NotificationUtils {
 		long plId = Long.valueOf(message.getPlId());
 		StringBuffer title = new StringBuffer();
 		StringBuffer content = new StringBuffer();
+		
+		String receptionNo = StringPool.BLANK;
+		String actionName = StringPool.BLANK;
+		String note = StringPool.BLANK;
+		
+		Locale locale = LocaleUtil.getDefault();
 
 		try {
 
@@ -110,15 +118,19 @@ public class NotificationUtils {
 				dossiser = DossierLocalServiceUtil.getDossier(dossierId);
 
 				title.append(StringUtil.replace(
-						PortletPropsValues.NOTIFICATION_INBOX_TITLE,
-						new String[] { "{receptionNo}", "{dossierId}" },
-						new String[] { dossiser.getReceptionNo(),
+						LanguageUtil.get(locale, "opencps.notificationmgt.title"),
+						new String[] {"{receptionNo}", "{dossierId}"},
+						new String[] {dossiser.getReceptionNo(),
 								String.valueOf(dossierId) }));
 
 				content.append(StringUtil.replace(
-						PortletPropsValues.NOTIFICATION_INBOX_BODY,
-						new String[] { "{actionName}" },
-						new String[] { message.getEventName() }));
+						LanguageUtil.get(locale, "opencps.notificationmgt.body"),
+						new String[] {"{actionName}","{actionNote}"},
+						new String[] {message.getEventName(),message.getNote()}));
+				
+				receptionNo = dossiser.getReceptionNo();
+				actionName = message.getEventName();
+				note  = message.getNote();
 			}
 
 		} catch (Exception e) {
@@ -133,6 +145,9 @@ public class NotificationUtils {
 		payloadJSONObject.put("title", title.toString());
 		payloadJSONObject.put("notificationText", content.toString());
 		payloadJSONObject.put("plId", plId);
+		payloadJSONObject.put("receptionNo", receptionNo);
+		payloadJSONObject.put("actionName", actionName);
+		payloadJSONObject.put("note", note);
 		payloadJSONObject.put("mvcPath", message.getJspRedirect());
 
 		return payloadJSONObject;
@@ -148,7 +163,7 @@ public class NotificationUtils {
 		String body = StringPool.BLANK;
 		boolean htmlFormat = true;
 
-		Locale locale = new Locale("vi", "VN");
+		Locale locale = LocaleUtil.getDefault();
 
 		try {
 
@@ -167,18 +182,16 @@ public class NotificationUtils {
 			fromName = PrefsPropsUtil.getString(dossier.getCompanyId(),
 					PropsKeys.ADMIN_EMAIL_FROM_NAME);
 			to = info.getEmailAddress();
-			subject = PortletPropsValues.SUBJECT_TO_CUSTOMER;
+			subject = LanguageUtil.get(locale, "subject.email.to.customer");
 			if (Validator.isNull(dossier.getReceptionNo())) {
-				body = PortletPropsValues.CONTENT_TO_CUSTOMER_WITHOUT_RECEPTION_NO;
+				body = LanguageUtil.get(locale, "content.email.to.customer.without.receptionNo");
 			} else {
-				body = PortletPropsValues.CONTENT_TO_CUSTOMER;
+				body = LanguageUtil.get(locale, "content.email.to.customer");
 			}
-			subject = StringUtil.replace(subject, "[OpenCPS]", "[" + fromName
-					+ "]");
+			subject = StringUtil.replace(subject, "{systemName}",fromName);
 
-			body = StringUtil.replace(body, "{receiverUserName}",
-					"[" + info.getFullName() + "]");
-			body = StringUtil.replace(body, "{OpenCPS}", fromName);
+			body = StringUtil.replace(body, "{receiverUserName}",info.getFullName());
+			body = StringUtil.replace(body, "{systemName}", fromName);
 			body = StringUtil.replace(body, "{dossierId}",
 					String.valueOf(message.getDossierId()));
 			body = StringUtil.replace(body, "{receptionNo}",
@@ -186,7 +199,7 @@ public class NotificationUtils {
 			body = StringUtil.replace(body, "{event}",
 					PortletProps.get(message.getEventName()));
 			body = StringUtil
-					.replace(body, "{message}", message.getEventName());
+					.replace(body, "{message}", message.getNote());
 
 			SendMailUtils.sendEmail(fromAddress, fromName, to,
 					StringPool.BLANK, subject, body, htmlFormat);
@@ -222,7 +235,7 @@ public class NotificationUtils {
 
 	public static List<SendNotificationMessage> sendNotification(
 			long processWorkflowId, long dossierId, long paymentFileId,
-			long processOrderId) {
+			long processOrderId,String actionNote) {
 
 		List<SendNotificationMessage> notificationList = new ArrayList<SendNotificationMessage>();
 
@@ -291,7 +304,7 @@ public class NotificationUtils {
 									paymentFileId,
 									Validator.isNotNull(processOrder) ? processOrder
 											.getProcessOrderId() : 0,
-									postProcessStep, isPay);
+									postProcessStep,actionNote, isPay);
 
 						}
 					}
@@ -309,7 +322,7 @@ public class NotificationUtils {
 
 	private static List<SendNotificationMessage> getListNoties(
 			ProcessWorkflow processWorkflow, Dossier dossier,
-			long paymentFileId, long processOrderId, ProcessStep processStep,
+			long paymentFileId, long processOrderId, ProcessStep processStep,String actionNote,
 			boolean isPayment) {
 
 		List<SendNotificationMessage> notificationList = new ArrayList<SendNotificationMessage>();
@@ -351,7 +364,7 @@ public class NotificationUtils {
 										processWorkflow, dossier.getUserId(),
 										dossier.getGroupId(),
 										dossier.getDossierId(), paymentFileId,
-										processOrderId, notiEventConfig);
+										processOrderId, notiEventConfig,actionNote);
 
 								notificationList.add(notiMsgCitizen);
 							} else if (notiEventConfig.getPattern()
@@ -371,7 +384,7 @@ public class NotificationUtils {
 										processWorkflow,
 										dossier.getDossierId(),
 										dossier.getGroupId(), processOrderId,
-										paymentFileId, notiEventConfig);
+										paymentFileId, notiEventConfig,actionNote);
 
 								notificationList.add(notiMsgEmploy);
 							}
@@ -423,7 +436,7 @@ public class NotificationUtils {
 	private static SendNotificationMessage setMessageCitizens(
 			ProcessWorkflow processWorkflow, long userId, long groupId,
 			long dossierId, long paymentFileId, long processOrderId,
-			NotificationEventConfig notiEventConfig) {
+			NotificationEventConfig notiEventConfig,String actionNote) {
 
 		AccountBean accountBean = AccountUtil.getAccountBean(userId, groupId,
 				null);
@@ -440,6 +453,7 @@ public class NotificationUtils {
 			notiMsgCitizen.setDossierId(String.valueOf(dossierId));
 			notiMsgCitizen.setPaymentFileId(String.valueOf(paymentFileId));
 			notiMsgCitizen.setProcessOrderId(String.valueOf(processOrderId));
+			notiMsgCitizen.setNote(actionNote);
 
 			if (notiEventConfig.getPattern().toUpperCase()
 					.contains(PortletKeys.USE_EVENT_DESCRIPTION)) {
@@ -490,7 +504,7 @@ public class NotificationUtils {
 	private static SendNotificationMessage setMessageEmployee(
 			ProcessWorkflow processWorkflow, long dossierId, long groupId,
 			long processOrderId, long paymentFileId,
-			NotificationEventConfig notiEventConfig) {
+			NotificationEventConfig notiEventConfig,String actionNote) {
 
 		List<Employee> coordinateEmployeeList = getListEmploy(processWorkflow,
 				groupId);
@@ -505,6 +519,7 @@ public class NotificationUtils {
 		notiMsgEmploy.setDossierId(String.valueOf(dossierId));
 		notiMsgEmploy.setProcessOrderId(String.valueOf(processOrderId));
 		notiMsgEmploy.setPaymentFileId(String.valueOf(paymentFileId));
+		notiMsgEmploy.setNote(actionNote);
 
 		if (notiEventConfig.getPattern().toUpperCase()
 				.contains(PortletKeys.USE_EVENT_DESCRIPTION)) {
