@@ -33,8 +33,6 @@ import com.liferay.portlet.documentlibrary.util.DLUtil;
 
 public class APIUtils {
 	
-	
-	
 	/**
 	 * @param companyId
 	 * @param email
@@ -98,6 +96,28 @@ public class APIUtils {
 		}
 
 		return fileURL;
+	}
+	
+	/**
+	 * @param fileEntryId
+	 * @return
+	 */
+	public static String getFileType(long fileEntryId) {
+		FileEntry file = null;
+
+		String fileTypes = StringPool.BLANK;
+
+		try {
+			file = DLAppLocalServiceUtil.getFileEntry(fileEntryId);
+
+			fileTypes = file.getExtension();
+			
+			
+		} catch (Exception e) {
+			_log.debug(e);
+		}
+
+		return fileTypes;
 	}
 	
 	/** Get DossierFileContent

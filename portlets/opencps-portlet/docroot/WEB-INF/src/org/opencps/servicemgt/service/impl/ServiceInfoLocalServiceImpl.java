@@ -54,6 +54,44 @@ public class ServiceInfoLocalServiceImpl
 	 * {@link org.opencps.servicemgt.service.ServiceInfoLocalServiceUtil} to
 	 * access the service info local service.
 	 */
+	public List<ServiceInfo> searchServiceAPI(
+			long groupId, String keywords, String administrationCode,
+			String domainCode, int start, int end, Integer level)
+			throws PortalException, SystemException {
+			
+			if (level == 2) {
+				level = null;
+			} 
+			
+			return serviceInfoFinder.searchService(
+				groupId, keywords, administrationCode, domainCode, level, start, end);
+		}
+
+		/**
+		 * Count service info
+		 * 
+		 * @param groupId
+		 * @param keywords
+		 * @param administrationCode
+		 * @param domainCode
+		 * @return
+		 * @throws PortalException
+		 * @throws SystemException
+		 */
+		public int countServiceAPI(
+			long groupId, String keywords, String administrationCode,
+			String domainCode, Integer level)
+			throws PortalException, SystemException {
+
+			if (level == 2) {
+				level = null;
+			} 
+			
+
+			return serviceInfoFinder.countService(
+				groupId, keywords, administrationCode, domainCode, level);
+
+		}
 
 	/**
 	 * Search ServiceInfo

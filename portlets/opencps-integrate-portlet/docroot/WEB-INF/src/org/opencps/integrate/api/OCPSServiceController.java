@@ -14,6 +14,8 @@ import javax.ws.rs.core.Response;
 
 import org.opencps.datamgt.model.DictItem;
 import org.opencps.datamgt.service.DictItemLocalServiceUtil;
+import org.opencps.dossiermgt.model.ServiceConfig;
+import org.opencps.dossiermgt.service.ServiceConfigLocalServiceUtil;
 import org.opencps.servicemgt.model.ServiceFileTemplate;
 import org.opencps.servicemgt.model.ServiceInfo;
 import org.opencps.servicemgt.model.TemplateFile;
@@ -40,10 +42,14 @@ public class OCPSServiceController {
 	public Response getServices(@QueryParam("keyword") String keyword,
 			@QueryParam("admcode") String admcode,
 			@QueryParam("domaincode") String domaincode,
-			@QueryParam("status") String status, @QueryParam("from") int from,
+			@QueryParam("level") Integer level, @QueryParam("from") int from,
 			@QueryParam("max") int max) {
 
 		JSONObject resp = JSONFactoryUtil.createJSONObject();
+		
+		if (Validator.isNull(level)) {
+			level = null;
+		}
 
 		if (Validator.isNull(admcode)) {
 			admcode = "0";
@@ -70,14 +76,12 @@ public class OCPSServiceController {
 
 			int count = 0;
 
-			int total = ServiceInfoLocalServiceUtil.countService(scopeGroupId,
-					keyword, admcode, domaincode);
-
-			System.out.println(total);
+			int total = ServiceInfoLocalServiceUtil.countServiceAPI(scopeGroupId,
+					keyword, admcode, domaincode, level);
 
 			List<ServiceInfo> results = ServiceInfoLocalServiceUtil
-					.searchService(scopeGroupId, keyword, admcode, domaincode,
-							start, end);
+					.searchServiceAPI(scopeGroupId, keyword, admcode, domaincode,
+							start, end, level);
 
 			if (from <= 0 && max <= 0) {
 				count = total;
@@ -96,6 +100,7 @@ public class OCPSServiceController {
 		}
 
 	}
+	
 
 	@GET
 	@Path("/services/{serviceid}")
@@ -111,6 +116,7 @@ public class OCPSServiceController {
 
 			resp.put("ServiceId", serviceid);
 			resp.put("ServiceNo", si.getServiceNo());
+			resp.put("ServiceLevel", getServiceLevel(serviceid));
 			resp.put("ServiceName", si.getServiceName());
 			resp.put("AdmServiceCode", si.getAdministrationCode());
 			resp.put("AdmServiceName", getItemName(si.getAdministrationCode()));
@@ -195,6 +201,7 @@ public class OCPSServiceController {
 
 			input.put("ServiceId", service.getServiceinfoId());
 			input.put("ServiceNo", service.getServiceNo());
+			input.put("ServiceLevel", getServiceLevel(service.getServiceinfoId()));
 			input.put("ServiceName", service.getServiceName());
 			input.put("AdmServiceCode", service.getAdministrationCode());
 			input.put("AdmServiceName",
@@ -207,6 +214,28 @@ public class OCPSServiceController {
 
 		return ls;
 	}
+	
+	private int getServiceLevel(long serviceInfoId) {
+		
+		int level = 2;
+
+		long scopeGroupId = 20182;
+
+		try {
+			List<ServiceConfig> scls = ServiceConfigLocalServiceUtil
+					.getServiceConfigsByS_G(serviceInfoId, scopeGroupId);
+			
+			for (ServiceConfig sc : scls) {
+				// TODO: implement 
+				level = sc.getServiceLevel();
+			}
+			
+		} catch (Exception e) {
+			_log.error(e);
+		}
+
+		return level;
+	}
 
 	/**
 	 * @param dictItemCode
@@ -218,8 +247,6 @@ public class OCPSServiceController {
 		try {
 
 			long dictItemId = GetterUtil.getLong(dictItemCode);
-
-			System.out.println("DASDSADSADSSD:::::::" + dictItemId);
 
 			Locale locale = new Locale("vi", "VN");
 
