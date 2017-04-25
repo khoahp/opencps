@@ -332,18 +332,18 @@ portlets/opencps-portlet/docroot/WEB-INF/src/org/opencps/postal/model/impl/*
 portlets/opencps-portlet/docroot/WEB-INF/src/org/opencps/postal/service/base/*
 portlets/opencps-portlet/docroot/WEB-INF/src/org/opencps/postal/service/persistence/*
 portlets/opencps-portlet/docroot/WEB-INF/src/META-INF/portlet-model-hints.xml
-portlets/opencps-portlet/docroot/WEB-INF/lib/commons-fileupload\.jar
+portlets/opencps-portlet/docroot/WEB-INF/lib/commons-fileupload.jar
 
-portlets/opencps-portlet/docroot/WEB-INF/lib/commons-logging\.jar
+portlets/opencps-portlet/docroot/WEB-INF/lib/commons-logging.jar
 
-portlets/opencps-portlet/docroot/WEB-INF/lib/commons-validator\.jar
+portlets/opencps-portlet/docroot/WEB-INF/lib/commons-validator.jar
 
-portlets/opencps-portlet/docroot/WEB-INF/lib/jstl-api\.jar
+portlets/opencps-portlet/docroot/WEB-INF/lib/jstl-api.jar
 
-portlets/opencps-portlet/docroot/WEB-INF/lib/jstl-impl\.jar
+portlets/opencps-portlet/docroot/WEB-INF/lib/jstl-impl.jar
 
-portlets/opencps-portlet/docroot/WEB-INF/lib/util-bridges\.jar
+portlets/opencps-portlet/docroot/WEB-INF/lib/util-bridges.jar
 
-portlets/opencps-portlet/docroot/WEB-INF/lib/util-java\.jar
+portlets/opencps-portlet/docroot/WEB-INF/lib/util-java.jar
 
-portlets/opencps-portlet/docroot/WEB-INF/lib/util-taglib\.jar
+portlets/opencps-portlet/docroot/WEB-INF/lib/util-taglib.jar
