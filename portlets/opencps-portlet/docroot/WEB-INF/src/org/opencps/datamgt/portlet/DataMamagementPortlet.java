@@ -18,6 +18,7 @@
 package org.opencps.datamgt.portlet;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -56,6 +57,7 @@ import org.opencps.util.MessageKeys;
 import org.opencps.util.PortletPropsValues;
 import org.opencps.util.WebKeys;
 
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -467,6 +469,63 @@ public class DataMamagementPortlet extends MVCPortlet {
 			if (dictItem != null && dictItem.getDictItemId() != dictItemId) {
 				throw new DuplicateItemException();
 			}
+		}
+	}
+	
+	public void editDictItemSibling(ActionRequest actionRequest,
+			ActionResponse actionResponse) throws SystemException,
+			NoSuchDictCollectionException, PortalException {
+		int numberedMode = ParamUtil.getInteger(actionRequest,
+				"numberedSiblingMode");
+		long dictCollectionId = ParamUtil.getLong(actionRequest,
+				DictItemDisplayTerms.DICTCOLLECTION_ID);
+
+		switch (numberedMode) {
+		case 1:
+			numberedSiblingDictItems(0);
+			break;
+		case 2:
+			numberedSiblingDictItems(dictCollectionId);
+			break;
+		default:
+			break;
+		}
+	}
+
+	private void numberedSiblingDictItems(long dictCollectionId)
+			throws SystemException, NoSuchDictCollectionException,
+			PortalException {
+		List<DictCollection> dictCollections = new ArrayList<DictCollection>();
+		if (dictCollectionId > 0) {
+			dictCollections.add(DictCollectionLocalServiceUtil
+					.getDictCollection(dictCollectionId));
+		} else {
+			dictCollections = DictCollectionLocalServiceUtil
+					.getDictCollections();
+		}
+
+		for (DictCollection dictCollection : dictCollections) {
+			List<DictItem> rootItems = DictItemLocalServiceUtil
+					.getDictItemsInUseByDictCollectionIdAndParentItemId(
+							dictCollection.getDictCollectionId(), 0);
+			numberedSiblingItemsTree(dictCollection.getDictCollectionId(),
+					rootItems);
+		}
+
+	}
+
+	private void numberedSiblingItemsTree(long dictCollectionId,
+			List<DictItem> dictItems) throws SystemException {
+		int sibling = 0;
+		for (DictItem dictItem : dictItems) {
+			sibling++;
+			dictItem.setSibling(sibling);
+			DictItemLocalServiceUtil.updateDictItem(dictItem);
+
+			List<DictItem> subDictItems = DictItemLocalServiceUtil
+					.getDictItemsInUseByDictCollectionIdAndParentItemId(
+							dictCollectionId, dictItem.getDictItemId());
+			numberedSiblingItemsTree(dictCollectionId, subDictItems);
 		}
 	}
 

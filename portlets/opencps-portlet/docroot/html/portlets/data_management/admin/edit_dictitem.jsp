@@ -78,7 +78,7 @@
 />
 
 
-<div class="opencps-datamgt dictitem-wrapper opencps-bound-wrapper pd20 default-box-shadow"">
+<div class="opencps-datamgt dictitem-wrapper opencps-bound-wrapper pd20 default-box-shadow">
 	<div class="edit-form">
 		<liferay-ui:error exception="<%= EmptyItemCodeException.class %>" message="<%=EmptyItemCodeException.class.getName() %>" />
 		<liferay-ui:error exception="<%= OutOfLengthItemCodeException.class %>" message="<%=OutOfLengthItemCodeException.class.getName() %>" />
@@ -131,7 +131,7 @@
 				
 				<!-- dictItem type -->
 				<label><liferay-ui:message key="dict-item-linked" /></label>
-				<div style="overflow-y:scroll;height:352px;width:100%;overflow-x:hidden">
+				<div style="overflow-y:scroll;height:250px;width:100%;overflow-x:hidden">
 					<div id='<%=renderResponse.getNamespace() + "itemLinkedContainer" %>' ></div>
 				</div>
 				
@@ -141,6 +141,39 @@
 				<aui:button type="submit" name="submit" value="submit"/>
 				<aui:button type="reset" value="clear"/>
 			</aui:fieldset>	
+		</aui:form>
+	</div>
+</div>
+
+<!-- edit sibling -->
+<div class="opencps-datamgt dictitem-wrapper opencps-bound-wrapper pd20 default-box-shadow">
+	<aui:row>
+		<liferay-ui:message key="edit-sibling"/>
+	</aui:row>
+	<div class="edit-form">
+		<portlet:actionURL name="editDictItemSibling" var="editDictItemSiblingURL"/>
+		<aui:form action="<%=editDictItemSiblingURL.toString() %>" method="POST" name="fm_editSibling">
+			<aui:row>
+				<aui:select name="numberedSiblingMode">
+					<aui:option value="1" label="numbered-for-all-dictItems"/>
+					<aui:option value="2" label="numbered-for-all-dictItems-in-dictcollection" selected="true"/>
+				</aui:select>
+			</aui:row>
+			<aui:row>
+				<aui:select name="<%=DictItemDisplayTerms.DICTCOLLECTION_ID %>">
+					<aui:option value="0" label="select-dictcollection"/>
+					<%
+						List<DictCollection> collections = DictCollectionLocalServiceUtil.getDictCollections();
+						for (DictCollection collection : collections){
+							%>
+								<aui:option value="<%=collection.getDictCollectionId() %>" ><%=collection.getCollectionName(locale) %></aui:option>
+							<%
+						}
+					%>
+				</aui:select>
+			</aui:row>
+			
+			<aui:button type="submit"/>
 		</aui:form>
 	</div>
 </div>

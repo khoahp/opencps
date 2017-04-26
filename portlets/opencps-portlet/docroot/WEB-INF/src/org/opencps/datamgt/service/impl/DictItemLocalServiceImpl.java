@@ -633,5 +633,18 @@ public class DictItemLocalServiceImpl extends DictItemLocalServiceBaseImpl {
 		return dictItemPersistence.findByF_TreeIndex_Status(treeIndex +
 			StringPool.PERIOD + StringPool.PERCENT, issueStatus);
 	}
+	
+	/**
+	 * @param dictCollectionId
+	 * @param parentItemId
+	 * @return
+	 * @throws SystemException
+	 */
+	public List<DictItem> getBy_D_P(long dictCollectionId, long parentItemId,
+			OrderByComparator orderBy) throws SystemException {
+		return dictItemPersistence.findByDictCollectionId_ParentItemId(
+				dictCollectionId, parentItemId, QueryUtil.ALL_POS,
+				QueryUtil.ALL_POS, orderBy);
+	}
 
 }

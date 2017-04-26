@@ -98,7 +98,7 @@
 				
 				<!-- dictCollections linked -->
 				<label><liferay-ui:message key="dict-collection-linked" /></label>
-				<div style="overflow-y:scroll;height:352px;width:100%;overflow-x:hidden">
+				<div style="overflow-y:scroll;height:250px;width:100%;overflow-x:hidden">
 					<ul>
 						<%
 							List<DictCollection> dictCollections = DictCollectionLocalServiceUtil.getDictCollections();

@@ -113,8 +113,8 @@
 
 		<!-- Order -->
 		<order by="asc">
-			<order-column name="sibling" />
 			<order-column name="treeIndex" />
+			<order-column name="sibling" />
 			<order-column name="itemName" />
 		</order>
 

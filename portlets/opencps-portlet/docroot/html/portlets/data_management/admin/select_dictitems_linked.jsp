@@ -31,6 +31,7 @@
 <%@page import="com.liferay.portal.kernel.log.Log"%>
 <%@page import="java.util.List"%>
 <%@page import="org.opencps.datamgt.search.DictItemDisplayTerms"%>
+<%@page import="org.opencps.datamgt.util.DataMgtUtil"%>
 
 <%@ include file="../init.jsp"%>
 
@@ -41,21 +42,31 @@
 	List<DictCollectionLink> collectionsLinked = new ArrayList<DictCollectionLink>();
 	List<DictItemLink> itemsLinked = new ArrayList<DictItemLink>();
 	try {
-		collectionsLinked = DictCollectionLinkLocalServiceUtil.getByDictCollectionId(dictCollectionId);
-		itemsLinked = DictItemLinkLocalServiceUtil.getByDictItemId(dictItemId);
+		collectionsLinked = DictCollectionLinkLocalServiceUtil
+				.getByDictCollectionId(dictCollectionId);
+		itemsLinked = DictItemLinkLocalServiceUtil
+				.getByDictItemId(dictItemId);
 	} catch (Exception e){
 		_log.error(e);
 	}
 	
 	DictCollection dictCollection = null;
 	List<DictItem> dictItems = new ArrayList<DictItem>();
+	List<DictItem> dictItemsOrdered = new ArrayList<DictItem>();
+	
 	for (DictCollectionLink linked : collectionsLinked){
-		dictCollection = DictCollectionLocalServiceUtil.getDictCollection(linked.getDictCollectionLinkedId());
+		
+		dictCollection = DictCollectionLocalServiceUtil
+				.getDictCollection(linked.getDictCollectionLinkedId());
 		%>
 			<label><%=dictCollection.getCollectionName(locale) %></label>
 		<%
 		try {
-			dictItems = DictItemLocalServiceUtil.getDictItemsByDictCollectionId(linked.getDictCollectionLinkedId());
+			dictItems = DictItemLocalServiceUtil
+					.getBy_D_P(dictCollection.getDictCollectionId(), 0, 
+							DataMgtUtil.getDictItemOrderByComparator("sibling", "asc"));
+			dictItemsOrdered = getDictItemsOrderBySibling(dictItemsOrdered, 
+					dictItems, dictCollection.getDictCollectionId());
 		} catch (Exception e){
 			_log.error(e);
 		}
@@ -63,7 +74,7 @@
 		%>
 			<ul>
 		<%
-				for (DictItem item : dictItems){
+				for (DictItem item : dictItemsOrdered){
 					boolean checked = false;
 					for (DictItemLink itemLinked : itemsLinked){
 						if (item.getDictItemId() == itemLinked.getDictItemLinkedId()){
@@ -96,6 +107,20 @@
 %>
 
 <%!
+	private List<DictItem> getDictItemsOrderBySibling(List<DictItem> result, List<DictItem> items, long dictCollectionId) 
+			throws Exception{
+		
+		for (DictItem item : items){
+			result.add(item);
+			List<DictItem> subItems = DictItemLocalServiceUtil
+					.getBy_D_P(dictCollectionId, item.getDictItemId(), 
+							DataMgtUtil.getDictItemOrderByComparator("sibling", "asc"));
+			getDictItemsOrderBySibling(result, subItems, dictCollectionId);
+		}
+	
+		return result;
+	}
+
 	private Log _log = LogFactoryUtil.getLog("html.portlets.data_management.admin.select_dictitems_linked.jsp");
 %>
 
