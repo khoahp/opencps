@@ -1,3 +1,4 @@
+
 <%
 /**
  * OpenCPS is the open source Core Public Services software
@@ -37,6 +38,9 @@
 <%@page import="javax.portlet.PortletRequest"%>
 <%@page import="com.liferay.portlet.PortletURLFactoryUtil"%>
 <%@page import="org.opencps.datamgt.service.DictItemLocalServiceUtil"%>
+<%@page import="org.opencps.datamgt.service.DictItemLinkLocalServiceUtil"%>
+<%@page import="org.opencps.datamgt.model.DictItemLink"%>
+
 <%@ include file="../init.jsp"%>
 
 <portlet:actionURL var="updateDictItemURL" name="updateDictItem" />
@@ -55,11 +59,17 @@
 		_log.error(e);
 	}
 	
-	/* try{
-		dictItems = DictItemLocalServiceUtil.getDictItemsByDictCollectionId(dictCollectionId)
-	}catch(Exception e){
-		_log.error(e);
-	} */
+	List<DictItemLink> itemsLinked = new ArrayList<DictItemLink>();
+	String itemsLinkedStr = StringPool.BLANK;
+	try {
+		itemsLinked = DictItemLinkLocalServiceUtil.getByDictItemId(dictItemId);
+		List<Long> itemsLinkedId = new ArrayList<Long>();
+		for (DictItemLink itemLinked : itemsLinked){
+			itemsLinkedId.add(itemLinked.getDictItemLinkedId());
+		}
+		itemsLinkedStr = StringUtil.merge(itemsLinkedId);
+	} catch (Exception e){}
+	
 %>
 
 <liferay-ui:header
@@ -119,6 +129,12 @@
 					<aui:option value="0"></aui:option>
 				</aui:select>
 				
+				<!-- dictItem type -->
+				<label><liferay-ui:message key="dict-item-linked" /></label>
+				<div style="overflow-y:scroll;height:352px;width:100%;overflow-x:hidden">
+					<div id='<%=renderResponse.getNamespace() + "itemLinkedContainer" %>' ></div>
+				</div>
+				
 			</aui:fieldset>
 			
 			<aui:fieldset>
@@ -128,6 +144,7 @@
 		</aui:form>
 	</div>
 </div>
+
 <aui:script>
 	AUI().ready('aui-base','liferay-portlet-url','aui-io',function(A){
 		
@@ -136,6 +153,10 @@
 		portletURL.setWindowState("<%=LiferayWindowState.EXCLUSIVE.toString()%>"); 
 		portletURL.setPortletMode("normal");
 		
+		var getItemsLinkedURL = Liferay.PortletURL.createURL('<%= PortletURLFactoryUtil.create(request, WebKeys.DATA_MANAGEMENT_ADMIN_PORTLET, themeDisplay.getPlid(), PortletRequest.RENDER_PHASE) %>');
+		getItemsLinkedURL.setParameter("mvcPath", "/html/portlets/data_management/admin/select_dictitems_linked.jsp");
+		getItemsLinkedURL.setWindowState("<%=LiferayWindowState.EXCLUSIVE.toString()%>"); 
+		getItemsLinkedURL.setPortletMode("normal");
 		
 		var dictCollection = A.one('#<portlet:namespace/><%=DictItemDisplayTerms.DICTCOLLECTION_ID%>');
 		
@@ -147,6 +168,10 @@
 			portletURL.setParameter("dictItemId", dictItemId);
 			getDictItems(portletURL.toString());
 			
+			getItemsLinkedURL.setParameter("dictCollectionId", dictCollectionId);
+			getItemsLinkedURL.setParameter("dictItemId", dictItemId);
+			getDictItemsLinked(getItemsLinkedURL.toString());
+			
 			dictCollection.on('change', function(){
 				
 				dictCollectionId = dictCollection.val();
@@ -155,9 +180,44 @@
 				portletURL.setParameter("dictItemId", dictItemId);
 				
 				getDictItems(portletURL.toString());
+				
+				getItemsLinkedURL.setParameter("dictCollectionId", dictCollectionId);
+				getItemsLinkedURL.setParameter("dictItemId", dictItemId);
+				getDictItemsLinked(getItemsLinkedURL.toString());
 			});
 		}
 	});
+	
+	Liferay.provide(window, 'getDictItemsLinked', function(url) {
+		var A = AUI();
+		A.io.request(
+			url,
+			{
+			    dataType: 'json',
+			    data:{    	
+			                	
+			    },   
+			    on: {
+			        success: function(event, id, obj) {
+						var instance = this;
+						var itemsLinked = instance.get('responseData');
+						var itemsLinkedContainer = A.one("#<portlet:namespace/>itemLinkedContainer");
+						if(itemsLinkedContainer){
+							itemsLinkedContainer.html(itemsLinked);
+						}
+						
+						var itemsLinkedStr = '<%=itemsLinkedStr %>';
+						A.all('#<portlet:namespace/>dictItemLinked').each(function(dictItem){
+							if (!itemsLinkedStr.includes(dictItem.attr('value'))){
+								dictItem.attr('value', '0');
+							}
+						});
+					},
+			    	error: function(){}
+				}
+			}
+		);
+	},['aui-base','liferay-portlet-url','aui-io']);
 	
 	Liferay.provide(window, 'getDictItems', function(url) {
 		var A = AUI();

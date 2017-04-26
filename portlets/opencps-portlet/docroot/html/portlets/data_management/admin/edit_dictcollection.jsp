@@ -1,4 +1,3 @@
-
 <%
 /**
  * OpenCPS is the open source Core Public Services software
@@ -28,6 +27,11 @@
 <%@page import="org.opencps.datamgt.EmptyCollectionCodeException"%>
 <%@page import="org.opencps.datamgt.EmptyDictCollectionNameException"%>
 <%@page import="org.opencps.util.WebKeys"%>
+<%@page import="org.opencps.datamgt.service.DictCollectionLinkLocalServiceUtil"%>
+<%@page import="org.opencps.datamgt.model.DictCollectionLink"%>
+<%@page import="org.opencps.datamgt.service.DictCollectionLocalServiceUtil"%>
+<%@page import="java.util.List"%>
+<%@page import="java.util.ArrayList"%>
 
 <%@ include file="../init.jsp"%>
 
@@ -37,6 +41,17 @@
 	DictCollection dictCollection = (DictCollection)request.getAttribute(WebKeys.DICT_COLLECTION_ENTRY);
 	long collectionId = dictCollection != null ? dictCollection.getDictCollectionId() : 0L;
 	String backURL = ParamUtil.getString(request, "backURL");
+	
+	List<DictCollectionLink> colsLinked = new ArrayList<DictCollectionLink>();
+	String collectionsLinked = StringPool.BLANK;
+	try {
+		colsLinked = DictCollectionLinkLocalServiceUtil.getByDictCollectionId(collectionId);
+		List<Long> colLinkedId = new ArrayList<Long>();
+		for (DictCollectionLink colLinked : colsLinked){
+			colLinkedId.add(colLinked.getDictCollectionLinkedId());
+		}
+		collectionsLinked = StringUtil.merge(colLinkedId);
+	} catch (Exception e){}
 %>
 
 <liferay-ui:header
@@ -78,8 +93,42 @@
 						</aui:input>
 					</aui:col>
 				</aui:row>
-
+				
 				<aui:input name="<%=DictCollectionDisplayTerms.DESCRIPTION %>" type="textarea" cssClass="input100"/>
+				
+				<!-- dictCollections linked -->
+				<label><liferay-ui:message key="dict-collection-linked" /></label>
+				<div style="overflow-y:scroll;height:352px;width:100%;overflow-x:hidden">
+					<ul>
+						<%
+							List<DictCollection> dictCollections = DictCollectionLocalServiceUtil.getDictCollections();
+							List<DictCollectionLink> dictCollectionsLinked = DictCollectionLinkLocalServiceUtil.getByDictCollectionId(collectionId);
+							for (DictCollection collection : dictCollections){
+								if (collection.getDictCollectionId() != collectionId){
+									boolean checked = false;
+									for (DictCollectionLink linked : dictCollectionsLinked){
+										if (linked.getDictCollectionLinkedId() == collection.getDictCollectionId()){
+											checked = true;
+											break;
+										}
+									}
+									%>
+										<li>
+											<aui:input 
+												name="dictCollectionsLinked" 
+												value="<%=collection.getDictCollectionId() %>"
+												label=""
+												type="checkbox" 
+												inlineField="true"
+												checked="<%=checked %>"/>
+											<%=collection.getCollectionName() %>
+										</li>
+									<%
+								}
+							}
+						%>
+					</ul>
+				</div>
 
 			</aui:fieldset>
 			<aui:fieldset>
@@ -89,3 +138,14 @@
 		</aui:form>
 	</div>
 </div>
+
+<aui:script>
+	AUI().ready(function(A){
+		var collectionsLinked = '<%=collectionsLinked %>';
+		A.all('#<portlet:namespace/>dictCollectionsLinked').each(function(dictCol){
+			if (!collectionsLinked.includes(dictCol.attr('value'))){
+				dictCol.attr('value', '0');
+			}
+		});
+	});
+</aui:script>

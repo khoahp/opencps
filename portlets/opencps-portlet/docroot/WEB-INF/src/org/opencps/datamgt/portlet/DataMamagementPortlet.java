@@ -18,6 +18,7 @@
 package org.opencps.datamgt.portlet;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -40,11 +41,15 @@ import org.opencps.datamgt.OutOfLengthCollectionNameException;
 import org.opencps.datamgt.OutOfLengthItemCodeException;
 import org.opencps.datamgt.OutOfLengthItemNameException;
 import org.opencps.datamgt.model.DictCollection;
+import org.opencps.datamgt.model.DictCollectionLink;
 import org.opencps.datamgt.model.DictItem;
+import org.opencps.datamgt.model.DictItemLink;
 import org.opencps.datamgt.model.DictVersion;
 import org.opencps.datamgt.search.DictCollectionDisplayTerms;
 import org.opencps.datamgt.search.DictItemDisplayTerms;
+import org.opencps.datamgt.service.DictCollectionLinkLocalServiceUtil;
 import org.opencps.datamgt.service.DictCollectionLocalServiceUtil;
+import org.opencps.datamgt.service.DictItemLinkLocalServiceUtil;
 import org.opencps.datamgt.service.DictItemLocalServiceUtil;
 import org.opencps.datamgt.service.DictVersionLocalServiceUtil;
 import org.opencps.util.MessageKeys;
@@ -165,6 +170,9 @@ public class DataMamagementPortlet extends MVCPortlet {
 
 		String collectionName = collectionNameMap
 				.get(actionRequest.getLocale());
+		
+		long[] dictCollectionsLinked = ParamUtil.getLongValues(actionRequest,
+				"dictCollectionsLinked");
 
 		for (Map.Entry<Locale, String> entry : collectionNameMap.entrySet()) {
 			if (entry.getValue().length() > collectionName.length()) {
@@ -174,27 +182,58 @@ public class DataMamagementPortlet extends MVCPortlet {
 
 		String redirectURL = ParamUtil.getString(actionRequest, "redirectURL");
 		String returnURL = ParamUtil.getString(actionRequest, "returnURL");
+		
+		DictCollection dictCollection = null;
 		try {
-
 			ServiceContext serviceContext = ServiceContextFactory
 					.getInstance(actionRequest);
 			validatetDictCollection(collectionId, collectionName,
 					collectionCode, serviceContext);
 
 			if (collectionId == 0) {
-				DictCollectionLocalServiceUtil.addDictCollection(
+				dictCollection = DictCollectionLocalServiceUtil.addDictCollection(
 						serviceContext.getUserId(), collectionCode,
 						collectionNameMap, description, serviceContext);
 				SessionMessages.add(actionRequest,
 						MessageKeys.DATAMGT_ADD_SUCESS);
+				
+				// collections linked
+				for (long l : dictCollectionsLinked) {
+					if (l > 0) {
+						DictCollectionLinkLocalServiceUtil
+								.addDictCollectionLink(
+										dictCollection.getDictCollectionId(),
+										l, 0, serviceContext);
+					}
+				}
 			} else {
-				DictCollectionLocalServiceUtil.updateDictCollection(
+				dictCollection = DictCollectionLocalServiceUtil.updateDictCollection(
 						collectionId, serviceContext.getUserId(),
 						collectionCode, collectionNameMap, description,
 						serviceContext);
 				SessionMessages.add(actionRequest,
 						MessageKeys.DATAMGT_UPDATE_SUCESS);
+				
+				// delete collection linked
+				List<DictCollectionLink> collectionTypes = DictCollectionLinkLocalServiceUtil
+						.getByDictCollectionId(dictCollection
+								.getDictCollectionId());
+				for (DictCollectionLink dictCollectionType : collectionTypes) {
+					DictCollectionLinkLocalServiceUtil
+							.deleteDictCollectionLink(dictCollectionType);
+				}
+
+				// collections linked
+				for (long l : dictCollectionsLinked) {
+					if (l > 0) {
+						DictCollectionLinkLocalServiceUtil
+								.addDictCollectionLink(
+										dictCollection.getDictCollectionId(),
+										l, 0, serviceContext);
+					}
+				}
 			}
+			
 		} catch (Exception e) {
 			if (e instanceof OutOfLengthCollectionCodeException) {
 				SessionErrors.add(actionRequest,
@@ -220,6 +259,8 @@ public class DataMamagementPortlet extends MVCPortlet {
 			}
 
 			redirectURL = returnURL;
+			
+			_log.error(e);
 
 		} finally {
 			if (Validator.isNotNull(redirectURL)) {
@@ -249,6 +290,8 @@ public class DataMamagementPortlet extends MVCPortlet {
 
 		String itemCode = ParamUtil.getString(actionRequest,
 				DictItemDisplayTerms.ITEM_CODE);
+		
+		long[] dictItemsLinked = ParamUtil.getLongValues(actionRequest, "dictItemLinked");
 
 		String itemName = itemNameMap.get(actionRequest.getLocale());
 
@@ -266,25 +309,53 @@ public class DataMamagementPortlet extends MVCPortlet {
 					.getInstance(actionRequest);
 			validatetDictItem(dictItemId, itemName, itemCode, serviceContext);
 
+			DictItem dictItem = null;
 			if (dictItemId == 0) {
 				if (dictVersionId == 0) {
-					DictItemLocalServiceUtil.addDictItem(
+					dictItem = DictItemLocalServiceUtil.addDictItem(
 							serviceContext.getUserId(), dictCollectionId,
 							itemCode, itemNameMap, parentItemId,
 							serviceContext);
 				} else {
-					DictItemLocalServiceUtil.addDictItem(
+					dictItem = DictItemLocalServiceUtil.addDictItem(
 							serviceContext.getUserId(), dictCollectionId,
 							dictVersionId, itemCode, itemNameMap, parentItemId,
 							serviceContext);
+				}
+				
+				// add dictItemLinked
+				for (long l : dictItemsLinked) {
+					if (l > 0){
+						DictItemLinkLocalServiceUtil.addDictItemLink(
+								dictItem.getDictItemId(), 0, 0, l, 0,
+								serviceContext);
+					}
 				}
 
 				SessionMessages.add(actionRequest,
 						MessageKeys.DATAMGT_ADD_SUCESS);
 			} else {
-				DictItemLocalServiceUtil.updateDictItem(dictItemId,
+				dictItem = DictItemLocalServiceUtil.updateDictItem(dictItemId,
 						dictCollectionId, dictVersionId, itemCode, itemNameMap,
 						parentItemId, serviceContext);
+				
+				// delete dictItemLinked
+				List<DictItemLink> dictItemLinks = DictItemLinkLocalServiceUtil
+						.getByDictItemId(dictItem.getDictItemId());
+				for (DictItemLink dictItemLink : dictItemLinks) {
+					DictItemLinkLocalServiceUtil
+							.deleteDictItemLink(dictItemLink);
+				}
+				
+				// add dictItemLinked
+				for (long l : dictItemsLinked) {
+					if (l > 0){
+						DictItemLinkLocalServiceUtil.addDictItemLink(
+								dictItem.getDictItemId(), 0, 0, l, 0,
+								serviceContext);
+					}
+				}
+				
 				SessionMessages.add(actionRequest,
 						MessageKeys.DATAMGT_UPDATE_SUCESS);
 			}
