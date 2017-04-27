@@ -1,6 +1,3 @@
-
-<%@page import="org.opencps.accountmgt.model.Citizen"%>
-<%@page import="org.opencps.accountmgt.model.Business"%>
 <%
 /**
  * OpenCPS is the open source Core Public Services software
