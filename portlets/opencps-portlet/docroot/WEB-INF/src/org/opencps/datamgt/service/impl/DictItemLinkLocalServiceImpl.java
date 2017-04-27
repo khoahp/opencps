@@ -45,8 +45,7 @@ import com.liferay.portal.service.ServiceContext;
 public class DictItemLinkLocalServiceImpl extends
 		DictItemLinkLocalServiceBaseImpl {
 
-	public DictItemLink addDictItemLink(long dictItemId, long dictCollectionId,
-			long dictCollectionLinkedId, long dictItemLinkedId,
+	public DictItemLink addDictItemLink(long dictItemId, long dictItemLinkedId,
 			long sequenceNo, ServiceContext serviceContext)
 			throws SystemException {
 
@@ -62,7 +61,6 @@ public class DictItemLinkLocalServiceImpl extends
 		dictItemLink.setModifiedDate(new Date());
 
 		dictItemLink.setDictItemId(dictItemId);
-		dictItemLink.setDictCollectionLinkedId(dictCollectionLinkedId);
 		dictItemLink.setDictItemLinkedId(dictItemLinkedId);
 		dictItemLink.setSequenceNo(sequenceNo);
 

@@ -53,10 +53,12 @@ import org.opencps.datamgt.service.DictCollectionLocalServiceUtil;
 import org.opencps.datamgt.service.DictItemLinkLocalServiceUtil;
 import org.opencps.datamgt.service.DictItemLocalServiceUtil;
 import org.opencps.datamgt.service.DictVersionLocalServiceUtil;
+import org.opencps.datamgt.util.DataMgtUtil;
 import org.opencps.util.MessageKeys;
 import org.opencps.util.PortletPropsValues;
 import org.opencps.util.WebKeys;
 
+import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
@@ -65,6 +67,7 @@ import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.servlet.SessionMessages;
 import com.liferay.portal.kernel.util.LocalizationUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.ServiceContextFactory;
@@ -199,15 +202,9 @@ public class DataMamagementPortlet extends MVCPortlet {
 				SessionMessages.add(actionRequest,
 						MessageKeys.DATAMGT_ADD_SUCESS);
 				
-				// collections linked
-				for (long l : dictCollectionsLinked) {
-					if (l > 0) {
-						DictCollectionLinkLocalServiceUtil
-								.addDictCollectionLink(
-										dictCollection.getDictCollectionId(),
-										l, 0, serviceContext);
-					}
-				}
+				updateDictCollectionsLinked(
+						dictCollection.getDictCollectionId(),
+						dictCollectionsLinked, 0, false, serviceContext);
 			} else {
 				dictCollection = DictCollectionLocalServiceUtil.updateDictCollection(
 						collectionId, serviceContext.getUserId(),
@@ -216,24 +213,9 @@ public class DataMamagementPortlet extends MVCPortlet {
 				SessionMessages.add(actionRequest,
 						MessageKeys.DATAMGT_UPDATE_SUCESS);
 				
-				// delete collection linked
-				List<DictCollectionLink> collectionTypes = DictCollectionLinkLocalServiceUtil
-						.getByDictCollectionId(dictCollection
-								.getDictCollectionId());
-				for (DictCollectionLink dictCollectionType : collectionTypes) {
-					DictCollectionLinkLocalServiceUtil
-							.deleteDictCollectionLink(dictCollectionType);
-				}
-
-				// collections linked
-				for (long l : dictCollectionsLinked) {
-					if (l > 0) {
-						DictCollectionLinkLocalServiceUtil
-								.addDictCollectionLink(
-										dictCollection.getDictCollectionId(),
-										l, 0, serviceContext);
-					}
-				}
+				updateDictCollectionsLinked(
+						dictCollection.getDictCollectionId(),
+						dictCollectionsLinked, 0, true, serviceContext);
 			}
 			
 		} catch (Exception e) {
@@ -269,7 +251,29 @@ public class DataMamagementPortlet extends MVCPortlet {
 				actionResponse.sendRedirect(redirectURL);
 			}
 		}
+	}
 
+	private void updateDictCollectionsLinked(long dictCollectionId,
+			long[] dictCollectionsIdLinked, long sequenceNo, boolean update,
+			ServiceContext serviceContext) throws SystemException {
+
+		// delete collection linked
+		if (update) {
+			List<DictCollectionLink> collectionTypes = DictCollectionLinkLocalServiceUtil
+					.getByDictCollectionId(dictCollectionId);
+			for (DictCollectionLink dictCollectionType : collectionTypes) {
+				DictCollectionLinkLocalServiceUtil
+						.deleteDictCollectionLink(dictCollectionType);
+			}
+		}
+
+		// collections linked
+		for (long l : dictCollectionsIdLinked) {
+			if (l > 0) {
+				DictCollectionLinkLocalServiceUtil.addDictCollectionLink(
+						dictCollectionId, l, sequenceNo, serviceContext);
+			}
+		}
 	}
 
 	public void updateDictItem(ActionRequest actionRequest,
@@ -292,9 +296,13 @@ public class DataMamagementPortlet extends MVCPortlet {
 
 		String itemCode = ParamUtil.getString(actionRequest,
 				DictItemDisplayTerms.ITEM_CODE);
-		
-		long[] dictItemsLinked = ParamUtil.getLongValues(actionRequest, "dictItemLinked");
 
+		long[] dictItemsLinked = ParamUtil.getLongValues(actionRequest,
+				"dictItemLinked");
+		
+		long sibling = ParamUtil.getLong(actionRequest,
+				DictItemDisplayTerms.SIBLING);
+		
 		String itemName = itemNameMap.get(actionRequest.getLocale());
 
 		for (Map.Entry<Locale, String> entry : itemNameMap.entrySet()) {
@@ -316,48 +324,40 @@ public class DataMamagementPortlet extends MVCPortlet {
 				if (dictVersionId == 0) {
 					dictItem = DictItemLocalServiceUtil.addDictItem(
 							serviceContext.getUserId(), dictCollectionId,
-							itemCode, itemNameMap, parentItemId,
-							serviceContext);
+							itemCode, itemNameMap, itemNameMap, parentItemId,
+							sibling, serviceContext);
 				} else {
 					dictItem = DictItemLocalServiceUtil.addDictItem(
 							serviceContext.getUserId(), dictCollectionId,
 							dictVersionId, itemCode, itemNameMap, parentItemId,
 							serviceContext);
 				}
-				
-				// add dictItemLinked
-				for (long l : dictItemsLinked) {
-					if (l > 0){
-						DictItemLinkLocalServiceUtil.addDictItemLink(
-								dictItem.getDictItemId(), 0, 0, l, 0,
-								serviceContext);
-					}
-				}
+
+				updateSiblingTree(dictItem, null, sibling, true);
+
+				updateDictItemLinked(dictItem.getDictItemId(), dictItemsLinked,
+						0, false, serviceContext);
 
 				SessionMessages.add(actionRequest,
 						MessageKeys.DATAMGT_ADD_SUCESS);
 			} else {
+				DictItem dictItemBefor = DictItemLocalServiceUtil
+						.getDictItem(dictItemId);
+
 				dictItem = DictItemLocalServiceUtil.updateDictItem(dictItemId,
 						dictCollectionId, dictVersionId, itemCode, itemNameMap,
-						parentItemId, serviceContext);
-				
-				// delete dictItemLinked
-				List<DictItemLink> dictItemLinks = DictItemLinkLocalServiceUtil
-						.getByDictItemId(dictItem.getDictItemId());
-				for (DictItemLink dictItemLink : dictItemLinks) {
-					DictItemLinkLocalServiceUtil
-							.deleteDictItemLink(dictItemLink);
+						itemNameMap, parentItemId, sibling, serviceContext);
+
+				boolean moveDown = true;
+				if (dictItemBefor.getSibling() > sibling) {
+					moveDown = false;
 				}
-				
-				// add dictItemLinked
-				for (long l : dictItemsLinked) {
-					if (l > 0){
-						DictItemLinkLocalServiceUtil.addDictItemLink(
-								dictItem.getDictItemId(), 0, 0, l, 0,
-								serviceContext);
-					}
-				}
-				
+
+				updateSiblingTree(dictItem, dictItemBefor, sibling, moveDown);
+
+				updateDictItemLinked(dictItem.getDictItemId(), dictItemsLinked,
+						0, true, serviceContext);
+
 				SessionMessages.add(actionRequest,
 						MessageKeys.DATAMGT_UPDATE_SUCESS);
 			}
@@ -383,11 +383,100 @@ public class DataMamagementPortlet extends MVCPortlet {
 			}
 
 			redirectURL = returnURL;
+			
+			_log.error(e);
 
 		} finally {
 			if (Validator.isNotNull(redirectURL)) {
 				actionResponse.sendRedirect(redirectURL);
 			}
+		}
+	}
+	
+	private void updateSiblingTree(DictItem dictItem, DictItem dictItemBefor,
+			long sibling, boolean moveDown) throws NoSuchDictItemException,
+			PortalException, SystemException {
+		List<DictItem> items = DictItemLocalServiceUtil.getBy_D_P(dictItem
+				.getDictCollectionId(), dictItem.getParentItemId(),
+				QueryUtil.ALL_POS, QueryUtil.ALL_POS, DataMgtUtil
+						.getDictItemOrderByComparator(
+								DictItemDisplayTerms.SIBLING,
+								WebKeys.ORDER_BY_ASC));
+		if (dictItemBefor == null) {
+			for (DictItem d : items) {
+				if (d.getDictItemId() != dictItem.getDictItemId()
+						&& d.getSibling() >= sibling) {
+					d.setSibling(d.getSibling() + 1);
+					DictItemLocalServiceUtil.updateDictItem(d);
+				}
+			}
+		} else {
+			// update sibling for current parent tree
+			for (DictItem d : items) {
+				if (d.getDictItemId() != dictItem.getDictItemId()
+						&& d.getSibling() >= sibling) {
+					d.setSibling(d.getSibling() + 1);
+					DictItemLocalServiceUtil.updateDictItem(d);
+				}
+			}
+			if (dictItem.getParentItemId() != dictItemBefor.getParentItemId()) {
+				items = DictItemLocalServiceUtil.getBy_D_P(dictItemBefor
+						.getDictCollectionId(),
+						dictItemBefor.getParentItemId(), QueryUtil.ALL_POS,
+						QueryUtil.ALL_POS, DataMgtUtil
+								.getDictItemOrderByComparator(
+										DictItemDisplayTerms.SIBLING,
+										WebKeys.ORDER_BY_ASC));
+				// update sibling for previous parent tree
+				for (DictItem d : items) {
+					if (d.getSibling() > dictItemBefor.getSibling()) {
+						d.setSibling(d.getSibling() - 1);
+						DictItemLocalServiceUtil.updateDictItem(d);
+					}
+				}
+
+				items = DictItemLocalServiceUtil
+						.getDictItemsByParentItemId(dictItem.getDictItemId());
+				// update tree index for children tree
+				updateTreeIndexChildrenTree(dictItem, items);
+			}
+		}
+	}
+
+	private void updateTreeIndexChildrenTree(DictItem parent,
+			List<DictItem> children) throws SystemException {
+		List<DictItem> subItem = new ArrayList<DictItem>();
+		String regex = "^.+" + String.valueOf(parent.getDictItemId());
+		String newTreIndex = StringPool.BLANK;
+		for (DictItem dictItem : children) {
+			newTreIndex = parent.getTreeIndex()
+					+ (StringPool.SPACE + dictItem.getTreeIndex()).replaceAll(
+							regex, StringPool.BLANK);
+			dictItem.setTreeIndex(newTreIndex);
+			DictItemLocalServiceUtil.updateDictItem(dictItem);
+			subItem = DictItemLocalServiceUtil
+					.getDictItemsByParentItemId(dictItem.getDictItemId());
+			updateTreeIndexChildrenTree(dictItem, subItem);
+		}
+	}
+
+	private void updateDictItemLinked(long dictItemId,
+			long[] dictItemsLinkedId, long sequenceNo, boolean update,
+			ServiceContext serviceContext) throws SystemException {
+
+		// delete dictItemLinked
+		if (update) {
+			List<DictItemLink> dictItemLinks = DictItemLinkLocalServiceUtil
+					.getByDictItemId(dictItemId);
+			for (DictItemLink dictItemLink : dictItemLinks) {
+				DictItemLinkLocalServiceUtil.deleteDictItemLink(dictItemLink);
+			}
+		}
+
+		// add dictItemLinked
+		for (long dictItemLinkedId : dictItemsLinkedId) {
+			DictItemLinkLocalServiceUtil.addDictItemLink(dictItemId,
+					dictItemLinkedId, sequenceNo, serviceContext);
 		}
 	}
 
@@ -516,7 +605,7 @@ public class DataMamagementPortlet extends MVCPortlet {
 
 	private void numberedSiblingItemsTree(long dictCollectionId,
 			List<DictItem> dictItems) throws SystemException {
-		int sibling = 0;
+		long sibling = 0;
 		for (DictItem dictItem : dictItems) {
 			sibling++;
 			dictItem.setSibling(sibling);

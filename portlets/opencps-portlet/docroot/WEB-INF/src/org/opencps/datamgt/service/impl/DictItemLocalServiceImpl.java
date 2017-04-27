@@ -32,7 +32,6 @@ import org.opencps.datamgt.service.base.DictItemLocalServiceBaseImpl;
 import org.opencps.datamgt.util.DataMgtUtil;
 import org.opencps.util.PortletConstants;
 
-import com.itextpdf.text.pdf.PdfStructTreeController.returnType;
 import com.liferay.counter.service.CounterLocalServiceUtil;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -218,6 +217,37 @@ public class DictItemLocalServiceImpl extends DictItemLocalServiceBaseImpl {
 		dictItem.setParentItemId(parentId);
 		dictItem.setTreeIndex(treeIndex);
 		dictItem.setUserId(userId);
+
+		return dictItemPersistence.update(dictItem);
+	}
+	
+	public DictItem addDictItem(long userId, long dictCollectionId,
+			String itemCode, Map<Locale, String> itemNameMap,
+			Map<Locale, String> itemDescriptionMap, long parentId,
+			long sibling, ServiceContext serviceContext)
+			throws SystemException, NoSuchDictItemException {
+
+		long dictItemId = CounterLocalServiceUtil.increment(DictItem.class
+				.getName());
+
+		DictItem dictItem = dictItemPersistence.create(dictItemId);
+
+		Date now = new Date();
+		String treeIndex = getTreeIndex(dictItemId, parentId);
+
+		dictItem.setCompanyId(serviceContext.getCompanyId());
+		dictItem.setCreateDate(now);
+		dictItem.setDictCollectionId(dictCollectionId);
+		dictItem.setGroupId(serviceContext.getScopeGroupId());
+		dictItem.setIssueStatus(PortletConstants.INUSE);
+		dictItem.setItemCode(itemCode);
+		dictItem.setItemNameMap(itemNameMap);
+		dictItem.setItemDescriptionMap(itemDescriptionMap);
+		dictItem.setModifiedDate(now);
+		dictItem.setParentItemId(parentId);
+		dictItem.setTreeIndex(treeIndex);
+		dictItem.setUserId(userId);
+		dictItem.setSibling(sibling);
 
 		return dictItemPersistence.update(dictItem);
 	}
@@ -596,6 +626,39 @@ public class DictItemLocalServiceImpl extends DictItemLocalServiceBaseImpl {
 		dictItem.setDictVersionId(dictVersionId);
 		return dictItemPersistence.update(dictItem);
 	}
+	
+	public DictItem updateDictItem(long dictItemId, long dictCollectionId,
+			long dictVersionId, String itemCode,
+			Map<Locale, String> itemNameMap,
+			Map<Locale, String> itemDescriptionMap, long parentItemId,
+			long sibling, ServiceContext serviceContext)
+			throws NoSuchDictItemException, SystemException,
+			NoSuchDictVersionException {
+
+		DictItem dictItem = dictItemPersistence.findByPrimaryKey(dictItemId);
+
+		Date now = new Date();
+
+		String treeIndex = getTreeIndex(dictItemId, parentItemId);
+
+		dictItem.setCompanyId(serviceContext.getCompanyId());
+		dictItem.setCreateDate(now);
+		dictItem.setDictCollectionId(dictCollectionId);
+		dictItem.setGroupId(serviceContext.getScopeGroupId());
+		dictItem.setIssueStatus(dictVersionId > 0 ? PortletConstants.DRAFTING
+				: PortletConstants.INUSE);
+		dictItem.setItemCode(itemCode);
+		dictItem.setItemNameMap(itemNameMap);
+		dictItem.setItemDescriptionMap(itemDescriptionMap);
+		dictItem.setModifiedDate(now);
+		dictItem.setParentItemId(parentItemId);
+		dictItem.setTreeIndex(treeIndex);
+		dictItem.setUserId(serviceContext.getUserId());
+		dictItem.setDictVersionId(dictVersionId);
+		dictItem.setSibling(sibling);
+		
+		return dictItemPersistence.update(dictItem);
+	}
 
 	public DictItem getDictItemByCode(String itemCode)
 		throws PortalException, SystemException {
@@ -641,10 +704,10 @@ public class DictItemLocalServiceImpl extends DictItemLocalServiceBaseImpl {
 	 * @throws SystemException
 	 */
 	public List<DictItem> getBy_D_P(long dictCollectionId, long parentItemId,
-			OrderByComparator orderBy) throws SystemException {
+			int start, int end, OrderByComparator orderBy)
+			throws SystemException {
 		return dictItemPersistence.findByDictCollectionId_ParentItemId(
-				dictCollectionId, parentItemId, QueryUtil.ALL_POS,
-				QueryUtil.ALL_POS, orderBy);
+				dictCollectionId, parentItemId, start, end, orderBy);
 	}
 
 }

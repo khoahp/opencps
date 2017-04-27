@@ -32,6 +32,8 @@
 <%@page import="java.util.List"%>
 <%@page import="org.opencps.datamgt.search.DictItemDisplayTerms"%>
 <%@page import="org.opencps.datamgt.util.DataMgtUtil"%>
+<%@page import="com.liferay.portal.kernel.dao.orm.QueryUtil"%>
+<%@page import="org.opencps.util.WebKeys"%>
 
 <%@ include file="../init.jsp"%>
 
@@ -64,7 +66,8 @@
 		try {
 			dictItems = DictItemLocalServiceUtil
 					.getBy_D_P(dictCollection.getDictCollectionId(), 0, 
-							DataMgtUtil.getDictItemOrderByComparator("sibling", "asc"));
+							QueryUtil.ALL_POS, QueryUtil.ALL_POS,
+							DataMgtUtil.getDictItemOrderByComparator(DictItemDisplayTerms.SIBLING, WebKeys.ORDER_BY_ASC));
 			dictItemsOrdered = getDictItemsOrderBySibling(dictItemsOrdered, 
 					dictItems, dictCollection.getDictCollectionId());
 		} catch (Exception e){
@@ -107,14 +110,16 @@
 %>
 
 <%!
-	private List<DictItem> getDictItemsOrderBySibling(List<DictItem> result, List<DictItem> items, long dictCollectionId) 
+	private List<DictItem> getDictItemsOrderBySibling(List<DictItem> result, 
+				List<DictItem> items, long dictCollectionId) 
 			throws Exception{
 		
 		for (DictItem item : items){
 			result.add(item);
 			List<DictItem> subItems = DictItemLocalServiceUtil
 					.getBy_D_P(dictCollectionId, item.getDictItemId(), 
-							DataMgtUtil.getDictItemOrderByComparator("sibling", "asc"));
+							QueryUtil.ALL_POS, QueryUtil.ALL_POS,
+							DataMgtUtil.getDictItemOrderByComparator(DictItemDisplayTerms.SIBLING, WebKeys.ORDER_BY_ASC));
 			getDictItemsOrderBySibling(result, subItems, dictCollectionId);
 		}
 	
