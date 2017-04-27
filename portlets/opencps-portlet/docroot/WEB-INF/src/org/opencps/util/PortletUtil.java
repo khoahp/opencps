@@ -394,7 +394,8 @@ public class PortletUtil {
 			}
 		}
 		catch (Exception e) {
-			_log.error(e);
+			//_log.error(e);
+			_log.info("Can not get DossierStatusLabel width itemCode = " + itemCode);
 		}
 
 		return name;

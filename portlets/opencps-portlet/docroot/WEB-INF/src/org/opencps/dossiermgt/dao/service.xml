@@ -467,193 +467,250 @@
 		<column name="modifiedDate" type="Date" />
 
 		<!-- Other fields -->
-		<column name="dossierId" type="long" />
 
-		<column name="oid" type="String" />
-		<column name="dossierPartId" type="long" />
-		<column name="templateFileNo" type="String" />
-		<column name="groupFileId" type="long" />
-		<column name="ownerUserId" type="long" />
-		<column name="ownerOrganizationId" type="long" />
-		<column name="govAgencyOrganizationId" type="int"></column>
-		<column name="displayName" type="String" />
-		<column name="formData" type="String" />
-		<column name="fileEntryId" type="long" />
-		<column name="dossierFileMark" type="int" />
-		<column name="dossierFileType" type="int" />
-		<column name="dossierFileNo" type="String" />
-		<column name="dossierFileDate" type="Date" />
-		<column name="removed" type="int" />
-		<column name="original" type="int" />
-		<column name="syncStatus" type="int" />
-		<column name="version" type="int" />
-		<column name="signed" type="boolean" />
-		<column name="signCheck" type="int" />
-		<column name="signInfo" type="String" />
-		<order>
-			<order-column name="modifiedDate" order-by="desc" />
-		</order>
-		<finder name="DID_DP_R" return-type="Collection">
-			<finder-column name="dossierId"></finder-column>
-			<finder-column name="dossierPartId"></finder-column>
-			<finder-column name="removed"></finder-column>
-		</finder>
-		<finder name="DossierId" return-type="Collection" where="removed=0">
-			<finder-column name="dossierId"></finder-column>
-		</finder>
-		<finder name="DID_GFID_R" return-type="Collection">
-			<finder-column name="dossierId"></finder-column>
-			<finder-column name="groupFileId"></finder-column>
-			<finder-column name="removed"></finder-column>
-		</finder>
-		<finder name="DossierFileInUse" return-type="DossierFile">
-			<finder-column name="dossierId"></finder-column>
-			<finder-column name="dossierPartId"></finder-column>
-			<finder-column name="removed"></finder-column>
-		</finder>
-		<finder name="DossierFileInUseSyncStatus" return-type="DossierFile">
-			<finder-column name="dossierId"></finder-column>
-			<finder-column name="dossierPartId"></finder-column>
-			<finder-column name="removed"></finder-column>
-			<finder-column name="syncStatus"></finder-column>
-		</finder>
+        <column name="dossierId" type="long"/>
+        
+        <column name="oid" type="String" />
+        <column name="dossierPartId" type="long"/>
+        <column name="templateFileNo" type="String"/>
+        <column name="groupFileId" type="long"/>
+        <column name="ownerUserId" type="long"/>
+        <column name="ownerOrganizationId" type="long" />
+        <column name="govAgencyOrganizationId" type="int"></column>
+        <column name="displayName" type="String"/>
+        <column name="formData" type="String"/>
+        <column name="fileEntryId" type="long"/>
+        <column name="dossierFileMark" type="int"/>
+        <column name="dossierFileType" type="int"/>
+        <column name="dossierFileNo" type="String"/>
+        <column name="dossierFileDate" type="Date"/>
+        <column name="removed" type="int"/>
+        <column name="original" type="int"/>
+        <column name="syncStatus" type="int"/>
+        <column name="version" type="int" />
+        <column name="signed" type="boolean" />
+        <column name="signCheck" type="int" />
+        <column name="signInfo" type="String" />
+        <column name="formSchema" type="String"></column>
+        <column name="formType" type="String"></column>
+        <column name="formScript" type="String"></column>
+        <column name="formReport" type="String"></column>
+        <order>
+        	<order-column name="modifiedDate" order-by="desc" />
+        </order>
+        <finder name="DID_DP_R" return-type="Collection">
+            <finder-column name="dossierId"></finder-column>
+            <finder-column name="dossierPartId"></finder-column>
+            <finder-column name="removed"></finder-column>
+        </finder>
+        <finder name="DossierId" return-type="Collection" where="removed=0">
+            <finder-column name="dossierId"></finder-column>
+        </finder>
+        <finder name="DID_GFID_R" return-type="Collection">
+            <finder-column name="dossierId"></finder-column>
+            <finder-column name="groupFileId"></finder-column>
+            <finder-column name="removed"></finder-column>
+        </finder>
+        <finder name="DossierFileInUse" return-type="DossierFile">
+            <finder-column name="dossierId"></finder-column>
+            <finder-column name="dossierPartId"></finder-column>
+            <finder-column name="removed"></finder-column>
+        </finder>
+        <finder name="DossierFileInUseSyncStatus" return-type="DossierFile">
+            <finder-column name="dossierId"></finder-column>
+            <finder-column name="dossierPartId"></finder-column>
+            <finder-column name="removed"></finder-column>
+            <finder-column name="syncStatus"></finder-column>
+        </finder>
 
-		<finder name="DID_DP_GF" return-type="Collection">
-			<finder-column name="dossierId"></finder-column>
-			<finder-column name="dossierPartId"></finder-column>
-			<finder-column name="groupFileId"></finder-column>
-		</finder>
-		<finder name="DossierFileInUseByGroupFileId" return-type="DossierFile"
-			where="removed=0 AND syncStatus=2">
-			<finder-column name="dossierId"></finder-column>
-			<finder-column name="dossierPartId"></finder-column>
-			<finder-column name="groupFileId"></finder-column>
-		</finder>
-		<finder name="TemplateFileNoDossierId" return-type="Collection">
-			<finder-column name="dossierId"></finder-column>
-			<finder-column name="templateFileNo"></finder-column>
-		</finder>
-		<finder name="Oid" return-type="DossierFile">
-			<finder-column name="oid"></finder-column>
-		</finder>
-		<finder name="DID_SS_R" return-type="Collection">
-			<finder-column name="dossierId"></finder-column>
-			<finder-column name="syncStatus"></finder-column>
-			<finder-column name="removed"></finder-column>
-		</finder>
-		<finder name="DID_GFID_SS_R" return-type="Collection">
-			<finder-column name="dossierId"></finder-column>
-			<finder-column name="groupFileId"></finder-column>
-			<finder-column name="syncStatus"></finder-column>
-			<finder-column name="removed"></finder-column>
-		</finder>
-		<finder name="DID_SS_DPID_R" return-type="Collection">
-			<finder-column name="dossierId"></finder-column>
-			<finder-column name="syncStatus"></finder-column>
-			<finder-column name="dossierPartId"></finder-column>
-			<finder-column name="removed"></finder-column>
-		</finder>
-		<finder name="DID_DP" return-type="Collection">
-			<finder-column name="dossierId"></finder-column>
-			<finder-column name="dossierPartId"></finder-column>
-		</finder>
-		<finder name="DID_SS_DP" return-type="Collection">
-			<finder-column name="dossierId"></finder-column>
-			<finder-column name="dossierPartId"></finder-column>
-			<finder-column name="syncStatus"></finder-column>
-		</finder>
-		<reference package-path="com.liferay.portlet.documentlibrary"
-			entity="DLApp" />
-		<reference entity="DLFileEntry" package-path="com.liferay.portlet.documentlibrary" />
-	</entity>
-
-	<entity name="DossierFileLog" local-service="true"
-		table="opencps_dossier_file_log">
-
-		<!-- PK fields -->
-
-		<column name="dossierFileLogId" type="long" primary="true" />
-
-		<!-- Audit fields -->
+        <finder name="DID_DP_GF" return-type="Collection">
+            <finder-column name="dossierId"></finder-column>
+            <finder-column name="dossierPartId"></finder-column>
+            <finder-column name="groupFileId"></finder-column>
+        </finder>
+        <finder name="DossierFileInUseByGroupFileId" return-type="DossierFile" where="removed=0 AND syncStatus=2">
+            <finder-column name="dossierId"></finder-column>
+            <finder-column name="dossierPartId"></finder-column>
+            <finder-column name="groupFileId"></finder-column>
+        </finder>
+        <finder name="TemplateFileNoDossierId" return-type="Collection">
+            <finder-column name="dossierId"></finder-column>
+            <finder-column name="templateFileNo"></finder-column>
+        </finder>
+        <finder name="Oid" return-type="DossierFile">
+            <finder-column name="oid"></finder-column>
+        </finder>
+        <finder name="DID_SS_R" return-type="Collection">
+            <finder-column name="dossierId"></finder-column>
+            <finder-column name="syncStatus"></finder-column>
+            <finder-column name="removed"></finder-column>
+        </finder>
+        <finder name="DID_GFID_SS_R" return-type="Collection">
+            <finder-column name="dossierId"></finder-column>
+            <finder-column name="groupFileId"></finder-column>
+            <finder-column name="syncStatus"></finder-column>
+            <finder-column name="removed"></finder-column>
+        </finder>
+        <finder name="DID_SS_DPID_R" return-type="Collection">
+            <finder-column name="dossierId"></finder-column>
+            <finder-column name="syncStatus"></finder-column>
+            <finder-column name="dossierPartId"></finder-column>
+            <finder-column name="removed"></finder-column>
+        </finder>
+        <finder name="DID_DP" return-type="Collection">
+            <finder-column name="dossierId"></finder-column>
+            <finder-column name="dossierPartId"></finder-column>
+        </finder>
+        <finder name="DID_SS_DP" return-type="Collection">
+            <finder-column name="dossierId"></finder-column>
+            <finder-column name="dossierPartId"></finder-column>
+            <finder-column name="syncStatus"></finder-column>
+        </finder>
+        <finder name="DID_R" return-type="Collection">
+            <finder-column name="dossierId"></finder-column>
+            <finder-column name="removed"></finder-column>
+        </finder>
+		<reference package-path="com.liferay.portlet.documentlibrary" entity="DLApp" />
+        <reference entity="DLFileEntry" package-path="com.liferay.portlet.documentlibrary"/>
+    </entity>
+    
+    <entity name="DossierFileLog" local-service="true" table="opencps_dossier_file_log">
+    
+   		<!-- PK fields -->
+    
+        <column name="dossierFileLogId" type="long" primary="true"/>
+        
+        <!-- Audit fields -->
 
 		<column name="modifiedDate" type="Date" />
 		<column name="userId" type="long" />
 		<column name="userName" type="String" />
 
 		<!-- Other fields -->
+		
+        <column name="dossierId" type="long"/>
+        <column name="fileGroupId" type="long"/>
+        <column name="stepId" type="long"/>
+        <column name="isUpdate" type="boolean"/>
+        <column name="actor" type="int"/>
+        <column name="logId" type="long"/>
 
-		<column name="dossierId" type="long" />
-		<column name="fileGroupId" type="long" />
-		<column name="stepId" type="long" />
-		<column name="isUpdate" type="boolean" />
-		<column name="actor" type="int" />
-		<column name="logId" type="long" />
+        <column name="fileName" type="String"/>
+        <column name="fileVersion" type="int"/>
+        <column name="fileLink" type="String"/>
+        <column name="actionCode" type="int"/>
+        <column name="count_" type="int"/>
+        <column name="oId" type="String"/>
+        <column name="fileEntryId" type="long"/>
+        
+        <finder name="L_D" return-type="Collection">
+            <finder-column name="logId"/>
+            <finder-column name="dossierId"/>
+        </finder>
+        
+        <finder name="L_D_A" return-type="Collection">
+            <finder-column name="logId"/>
+            <finder-column name="dossierId"/>
+            <finder-column name="actor"/>
+        </finder>
+        
+        
+        <finder name="D_F_S" return-type="Collection">
+            <finder-column name="dossierId"/>
+            <finder-column name="fileGroupId"/>
+            <finder-column name="stepId"/>
+        </finder>
 
-		<column name="fileName" type="String" />
-		<column name="fileVersion" type="int" />
-		<column name="fileLink" type="String" />
-		<column name="actionCode" type="int" />
-		<column name="count_" type="int" />
-		<column name="oId" type="String" />
-		<column name="fileEntryId" type="long" />
+        <finder name="D_F_S_U" return-type="Collection">
+            <finder-column name="dossierId"/>
+            <finder-column name="fileGroupId"/>
+            <finder-column name="stepId"/>
+            <finder-column name="isUpdate"/>
+        </finder>
 
-		<finder name="L_D" return-type="Collection">
-			<finder-column name="logId" />
-			<finder-column name="dossierId" />
+        <finder name="D_F_S_U_C" return-type="Collection">
+            <finder-column name="dossierId"/>
+            <finder-column name="fileGroupId"/>
+            <finder-column name="stepId"/>
+            <finder-column name="isUpdate"/>
+            <finder-column name="count_"/>
+        </finder>
+
+        <finder name="D_F_S_A" return-type="Collection">
+            <finder-column name="dossierId"/>
+            <finder-column name="fileGroupId"/>
+            <finder-column name="stepId"/>
+            <finder-column name="actionCode"/>
+        </finder>
+
+    </entity>
+
+	<entity name="ServiceOption" local-service="true"
+		table="opencps_service_option">
+		<column name="serviceOptionId" type="long" primary="true"/>
+
+		<!-- Audit fields -->
+
+		<column name="companyId" type="long" />
+		<column name="groupId" type="long" />
+		<column name="userId" type="long" />
+		<column name="createDate" type="Date" />
+		<column name="modifiedDate" type="Date" />
+		
+		<!-- Data -->
+		<column name="serviceConfigId" type="long"/>
+		<column name="optionCode" type="String"/>
+		<column name="optionName" type="String"/>
+		<column name="optionOrder" type="int"/>
+		<column name="autoSelect" type="String"/>
+		<column name="dossierTemplateId" type="long"/>
+		<column name="serviceProcessId" type="long"/>
+		
+		<!-- Finder -->
+		<finder name="G_SCID_DTID" return-type="ServiceOption">
+			<finder-column name="groupId"/>
+			<finder-column name="serviceConfigId"/>
+			<finder-column name="dossierTemplateId"/>
 		</finder>
+	</entity>
 
-		<finder name="L_D_A" return-type="Collection">
-			<finder-column name="logId" />
-			<finder-column name="dossierId" />
-			<finder-column name="actor" />
+	<entity name="BusinessRegister" local-service="true"
+		table="opencps_business_register">
+		<column name="businessRegisterId" type="long" primary="true"/>
+
+		<!-- Audit fields -->
+
+		<column name="companyId" type="long" />
+		<column name="groupId" type="long" />
+		<column name="userId" type="long" />
+		<column name="createDate" type="Date" />
+		<column name="modifiedDate" type="Date" />
+
+		<!-- Data -->
+		<column name="ownerOrganizationId" type="long" />
+		<column name="dossierTemplateId" type="String"/>
+		<column name="serviceProcessId" type="String"/>
+		<column name="dossierId" type="int"/>
+		<column name="validStatus" type="String"/>
+		
+		<!-- Finder -->
+		<finder name="OOI" return-type="BusinessRegister">
+			<finder-column name="ownerOrganizationId"/>
 		</finder>
-
-
-		<finder name="D_F_S" return-type="Collection">
-			<finder-column name="dossierId" />
-			<finder-column name="fileGroupId" />
-			<finder-column name="stepId" />
-		</finder>
-
-		<finder name="D_F_S_U" return-type="Collection">
-			<finder-column name="dossierId" />
-			<finder-column name="fileGroupId" />
-			<finder-column name="stepId" />
-			<finder-column name="isUpdate" />
-		</finder>
-
-		<finder name="D_F_S_U_C" return-type="Collection">
-			<finder-column name="dossierId" />
-			<finder-column name="fileGroupId" />
-			<finder-column name="stepId" />
-			<finder-column name="isUpdate" />
-			<finder-column name="count_" />
-		</finder>
-
-		<finder name="D_F_S_A" return-type="Collection">
-			<finder-column name="dossierId" />
-			<finder-column name="fileGroupId" />
-			<finder-column name="stepId" />
-			<finder-column name="actionCode" />
-		</finder>
-
 	</entity>
 
 	<exceptions>
 		<exception>OutOfLengthDossierTemplateName</exception>
 		<exception>OutOfLengthDossierTemplateNumber</exception>
 		<exception>DuplicateDossierTemplateNumber</exception>
-
 		<exception>OutOfLengthDossierPartName</exception>
 		<exception>OutOfLengthDossierPartNumber</exception>
 		<exception>OutOfLengthDossierTemplateFileNumber</exception>
 		<exception>DuplicateDossierPartNumber</exception>
 		<exception>DuplicateDossierPartSibling</exception>
-
 		<exception>OutOfLengthServiceConfigGovName</exception>
 		<exception>OutOfLengthServiceConfigGovCode</exception>
 		<exception>DuplicateServiceConfigGovCodeAndServiceInFo</exception>
-
 		<exception>InvalidServiceConfigGovName</exception>
 		<exception>InvalidServiceConfigGovCode</exception>
 		<exception>InvalidInWorkingUnit</exception>
@@ -681,6 +738,9 @@
 		<exception>DuplicateFileGroup</exception>
 		<exception>RequiredDossierPart</exception>
 		<exception>ServiceUrlHasExisted</exception>
+		<exception>UnknownDossierFileFormType</exception>
+		<exception>DossierFileFormSchemaFormat</exception>
+		<exception>DossierFileFormSchemaEmpty</exception>
 		<exception>PaymentFileUnfinished</exception>
 	</exceptions>
 

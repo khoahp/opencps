@@ -276,6 +276,7 @@ portlets/opencps-portlet/docroot/WEB-INF/src/org/opencps/api/service/persistence
 portlets/opencps-portlet/docroot/WEB-INF/src/org/opencps/api/model/impl/ApiServiceImpl.java
 portlets/opencps-portlet/docroot/WEB-INF/src/org/opencps/api/model/impl/
 themes/opencps-ux-theme/docroot/WEB-INF/liferay-look-and-feel.xml
+themes/opencps-theme/.settings/org.eclipse.jdt.core.prefs
 portlets/opencps-portlet/ivy.xml.MD5
 portlets/opencps-portlet/docroot/WEB-INF/lib/jasperreports-fonts-6.2.2.jar
 CONTRIBUTING.markdown
@@ -332,6 +333,7 @@ portlets/opencps-portlet/docroot/WEB-INF/src/org/opencps/postal/model/impl/*
 portlets/opencps-portlet/docroot/WEB-INF/src/org/opencps/postal/service/base/*
 portlets/opencps-portlet/docroot/WEB-INF/src/org/opencps/postal/service/persistence/*
 portlets/opencps-portlet/docroot/WEB-INF/src/META-INF/portlet-model-hints.xml
+
 portlets/opencps-portlet/docroot/WEB-INF/lib/commons-fileupload.jar
 
 portlets/opencps-portlet/docroot/WEB-INF/lib/commons-logging.jar
@@ -342,8 +344,7 @@ portlets/opencps-portlet/docroot/WEB-INF/lib/jstl-api.jar
 
 portlets/opencps-portlet/docroot/WEB-INF/lib/jstl-impl.jar
 
-portlets/opencps-portlet/docroot/WEB-INF/lib/util-bridges.jar
-
-portlets/opencps-portlet/docroot/WEB-INF/lib/util-java.jar
-
-portlets/opencps-portlet/docroot/WEB-INF/lib/util-taglib.jar
+portlets/opencps-integrate-portlet/*
+themes/opencps-ux-theme/docroot/WEB-INF/lib/util-bridges.jar
+themes/opencps-ux-theme/docroot/WEB-INF/lib/util-java.jar
+themes/opencps-ux-theme/docroot/WEB-INF/lib/util-taglib.jar

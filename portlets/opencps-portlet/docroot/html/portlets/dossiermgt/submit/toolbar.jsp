@@ -1,3 +1,4 @@
+<%@page import="com.liferay.portal.kernel.util.HtmlUtil"%>
 <%@page import="com.liferay.portal.kernel.portlet.LiferayWindowState"%>
 <%@page import="javax.portlet.PortletRequest"%>
 <%@page import="com.liferay.portlet.PortletURLFactoryUtil"%>
@@ -70,7 +71,7 @@
 <aui:script use="aui-base,aui-io">
 $(document).ready(function(){
 	var myComboTree = '<%=myComboTree %>';
-	var domainCode = '<%=domainCode%>';
+	var domainCode = '<%=HtmlUtil.escape(domainCode)%>';
 	var comboboxTree = $('#comboboxTree').comboTree({  
 		boundingBox: 'comboboxTree',
 		name: '#<portlet:namespace /><%=ServiceDisplayTerms.SERVICE_DOMAINCODE %>',

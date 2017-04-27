@@ -33,7 +33,6 @@ import org.opencps.dossiermgt.model.DossierTemplate;
 import org.opencps.dossiermgt.model.FileGroup;
 import org.opencps.dossiermgt.model.ServiceConfig;
 import org.opencps.dossiermgt.service.base.DossierLocalServiceBaseImpl;
-import org.opencps.dossiermgt.service.persistence.DossierFinderImpl;
 import org.opencps.paymentmgt.model.PaymentFile;
 import org.opencps.servicemgt.model.ServiceInfo;
 import org.opencps.usermgt.model.WorkingUnit;
@@ -531,7 +530,7 @@ public class DossierLocalServiceImpl extends DossierLocalServiceBaseImpl {
 	public void deleteAllDossierFilesByDossierId(long dossierId)
 			throws NoSuchDossierException, SystemException {
 
-		Dossier dossier = dossierPersistence.findByPrimaryKey(dossierId);
+		//Dossier dossier = dossierPersistence.findByPrimaryKey(dossierId);
 
 		List<FileGroup> fileGroups = fileGroupLocalService
 				.getFileGroupByDossierId(dossierId);
@@ -1944,6 +1943,10 @@ public class DossierLocalServiceImpl extends DossierLocalServiceBaseImpl {
 			dossier.setNote(note);
 
 			dossierPersistence.update(dossier);
+			
+			Indexer indexer = IndexerRegistryUtil.nullSafeGetIndexer(Dossier.class);
+
+			indexer.reindex(dossier);
 		}
 
 		return dossier;
@@ -1981,6 +1984,10 @@ public class DossierLocalServiceImpl extends DossierLocalServiceBaseImpl {
 		dossier.setDossierStatus(dossierStatus);
 
 		dossierPersistence.update(dossier);
+		
+		Indexer indexer = IndexerRegistryUtil.nullSafeGetIndexer(Dossier.class);
+
+		indexer.reindex(dossier);
 
 		// add DossierLog
 
@@ -2067,6 +2074,10 @@ public class DossierLocalServiceImpl extends DossierLocalServiceBaseImpl {
 				PortletUtil.getMessageInfo(status, locale), now, level);
 
 		dossierPersistence.update(dossier);
+		
+		Indexer indexer = IndexerRegistryUtil.nullSafeGetIndexer(Dossier.class);
+
+		indexer.reindex(dossier);
 
 		return dossier;
 	}
@@ -2131,6 +2142,10 @@ public class DossierLocalServiceImpl extends DossierLocalServiceBaseImpl {
 		 */
 
 		dossierPersistence.update(dossier);
+		
+		Indexer indexer = IndexerRegistryUtil.nullSafeGetIndexer(Dossier.class);
+
+		indexer.reindex(dossier);
 
 		return dossier;
 	}
@@ -2214,6 +2229,10 @@ public class DossierLocalServiceImpl extends DossierLocalServiceBaseImpl {
 		 * messageInfo, level);
 		 */
 		dossierPersistence.update(dossier);
+		
+		Indexer indexer = IndexerRegistryUtil.nullSafeGetIndexer(Dossier.class);
+
+		indexer.reindex(dossier);
 	}
 
 	/**
@@ -2257,6 +2276,10 @@ public class DossierLocalServiceImpl extends DossierLocalServiceBaseImpl {
 			dossier.setDossierStatus(dossierStatus);
 
 			dossierPersistence.update(dossier);
+			
+			Indexer indexer = IndexerRegistryUtil.nullSafeGetIndexer(Dossier.class);
+
+			indexer.reindex(dossier);
 
 			result = true;
 		} catch (Exception e) {
@@ -2320,6 +2343,10 @@ public class DossierLocalServiceImpl extends DossierLocalServiceBaseImpl {
 				dossierFileLocalService.updateDossierFile(dossierFile);
 			}
 		}
+		
+		Indexer indexer = IndexerRegistryUtil.nullSafeGetIndexer(Dossier.class);
+
+		indexer.reindex(dossier);
 
 	}
 
@@ -2389,6 +2416,10 @@ public class DossierLocalServiceImpl extends DossierLocalServiceBaseImpl {
 		 */
 
 		dossierPersistence.update(dossier);
+		
+		Indexer indexer = IndexerRegistryUtil.nullSafeGetIndexer(Dossier.class);
+
+		indexer.reindex(dossier);
 
 		return dossier;
 	}
@@ -2425,5 +2456,11 @@ public class DossierLocalServiceImpl extends DossierLocalServiceBaseImpl {
 		String partNosStr = StringUtil.merge(partNos, "','");
 		return dossierFinder.countDossierSuggesstion(ownerOrganizationId, dossierFileNo, dossierStatus,
 				partTypesStr, templateFileNosStr, partNosStr);
+	}
+	
+	public List<Dossier> getByGovAndStatusAPI(String govAgencyCode, String dossierStatus,
+			int start, int end) throws SystemException {
+		return dossierFinder.searchDossierByGovAndStatusAPI(govAgencyCode, dossierStatus, start,
+				end);
 	}
 }

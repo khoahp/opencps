@@ -133,10 +133,10 @@
 						themeDisplay.getScopeGroupId(),
 						dossierTemplate.getDossierTemplateId());
 
-				String process = "<i class=\"opencps-icon checked\"></i>";
+				String process = "<i class=\"fa fa-check-square\"></i>";
 
 				if (countProcess == 0) {
-					process = "<i class=\"opencps-icon removed\"></i>";
+					process = "<i class=\"fa fa-close\"></i>";
 				}
 				
 			%>
@@ -149,12 +149,10 @@
 				</div>
 				
 				<div class="row-fluid">
+					<div class="span4 bold"><liferay-ui:message key="service-name"/></div>
 					
-					<div class="span4 bold">
-						<liferay-ui:message key="product-name"/>
-					</div>
+					<div class="span8"><%=serviceInfo.getServiceName()%></div>
 					
-					<div class="span8"><%=dossierTemplate.getTemplateName() %></div>
 				</div>
 				
 			</liferay-util:buffer>	
@@ -173,14 +171,107 @@
 						<liferay-ui:message key="service-mode"/>
 					</div>
 					
-					<div class="span8"><%=serviceConfigModeName%></div>
+					<div class="span8">
+						<div class="row-fluid">
+							<div class="span8">
+								<liferay-ui:message key="service-portal"/>
+							</div>
+							<div class="span4">
+								<%
+									String icon = StringPool.BLANK;
+								
+									if (serviceConfig.getServicePortal()) {
+										icon = "<i class=\"fa fa-check-square\"></i>";
+									} else {
+										icon = "<i class=\"fa fa-close\"></i>";
+									}
+								%>
+								
+								<%= icon  %>
+							</div>
+						</div>
+						<div class="row-fluid">
+							<div class="span8">
+								<liferay-ui:message key="service-onegate"/>
+							</div>
+							<div class="span4">
+								<%
+									String icon2 = StringPool.BLANK;
+								
+									if (serviceConfig.getServiceOnegate()) {
+										icon2 = "<i class=\"fa fa-check-square\"></i>";
+									} else {
+										icon2 = "<i class=\"fa fa-close\"></i>";
+									}
+								%>
+								
+								<%= icon2  %>
+							</div>
+						</div>
+						<div class="row-fluid">
+							<div class="span8">
+								<liferay-ui:message key="service-backoffice"/>
+							</div>
+							<div class="span4">
+								<%
+									String icon3 = StringPool.BLANK;
+								
+									if (serviceConfig.getServiceBackoffice()) {
+										icon3 = "<i class=\"fa fa-check-square\"></i>";
+									} else {
+										icon3 = "<i class=\"fa fa-close\"></i>";
+									}
+								%>
+								
+								<%= icon3  %>
+							</div>
+						</div>
+						<div class="row-fluid">
+							<div class="span8">
+								<liferay-ui:message key="service-citizen"/>
+							</div>
+							<div class="span4">
+								<%
+									String icon4 = StringPool.BLANK;
+								
+									if (serviceConfig.getServiceCitizen()) {
+										icon4 = "<i class=\"fa fa-check-square\"></i>";
+									} else {
+										icon4 = "<i class=\"fa fa-close\"></i>";
+									}
+								%>
+								
+								<%= icon4  %>
+							</div>
+						</div>
+						<div class="row-fluid">
+							<div class="span8">
+								<liferay-ui:message key="service-businees"/>
+							</div>
+							<div class="span4">
+								<%
+									String icon5 = StringPool.BLANK;
+								
+									if (serviceConfig.getServiceBusinees()) {
+										icon5 = "<i class=\"fa fa-check-square\"></i>";
+									} else {
+										icon5 = "<i class=\"fa fa-close\"></i>";
+									}
+								%>
+								
+								<%= icon5  %>
+							</div>
+						</div>
+					</div>
 				</div>
 				
 				<div class="row-fluid">
-
-					<div class="span4 bold"><liferay-ui:message key="service-name"/></div>
+					<div class="span4 bold">
+						<liferay-ui:message key="dossier-template"/>
+					</div>
 					
-					<div class="span8"><%=serviceInfo.getServiceName()%></div>
+					<div class="span8"><%=dossierTemplate.getTemplateName() %></div>
+
 				</div>
 				
 			</liferay-util:buffer>

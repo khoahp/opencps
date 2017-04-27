@@ -21,16 +21,18 @@ import java.net.URL;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 import org.opencps.accountmgt.model.Citizen;
 import org.opencps.accountmgt.service.CitizenLocalServiceUtil;
+import org.opencps.api.DossierStatusException;
+import org.opencps.api.NoMessageContentException;
 import org.opencps.api.service.ApiServiceLocalServiceUtil;
 import org.opencps.api.service.base.ApiServiceServiceBaseImpl;
 import org.opencps.api.util.APIServiceConstants;
-import org.opencps.api.util.APIUtils;
 import org.opencps.backend.message.SendToEngineMsg;
 import org.opencps.backend.message.UserActionMsg;
 import org.opencps.dossiermgt.NoSuchDossierException;
@@ -42,11 +44,14 @@ import org.opencps.dossiermgt.model.DossierFile;
 import org.opencps.dossiermgt.model.DossierPart;
 import org.opencps.dossiermgt.model.ServiceConfig;
 import org.opencps.dossiermgt.service.DossierLocalServiceUtil;
+import org.opencps.jms.business.SyncFromBackOffice;
+import org.opencps.jms.message.body.SyncFromBackOfficeMsgBody;
 import org.opencps.processmgt.NoSuchProcessOrderException;
 import org.opencps.processmgt.NoSuchProcessWorkflowException;
 import org.opencps.processmgt.model.ProcessOrder;
 import org.opencps.processmgt.model.ProcessWorkflow;
 import org.opencps.servicemgt.model.ServiceInfo;
+import org.opencps.servicemgt.service.ServiceInfoLocalServiceUtil;
 import org.opencps.util.DLFolderUtil;
 import org.opencps.util.DateTimeUtil;
 import org.opencps.util.PortletConstants;
@@ -54,11 +59,16 @@ import org.opencps.util.PortletUtil;
 import org.opencps.util.WebKeys;
 import org.opencps.util.PortletUtil.SplitDate;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 import com.liferay.portal.NoSuchUserException;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.json.JSONArray;
+import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.jsonwebservice.JSONWebService;
@@ -82,6 +92,9 @@ import com.liferay.portal.util.PortalUtil;
 import com.liferay.portlet.documentlibrary.model.DLFolder;
 import com.liferay.portlet.documentlibrary.service.DLAppLocalServiceUtil;
 import com.liferay.portlet.documentlibrary.util.DLUtil;
+import com.opencps.intergrate.analayze.AnalayzeMessageBusiness;
+import com.opencps.intergrate.analayze.IntergrateUtil;
+import com.opencps.intergrate.analayze.TTHCTransferOutObject;
 
 /**
  * The implementation of the api service remote service.
@@ -98,6 +111,92 @@ import com.liferay.portlet.documentlibrary.util.DLUtil;
  * @see org.opencps.api.service.ApiServiceServiceUtil
  */
 public class ApiServiceServiceImpl extends ApiServiceServiceBaseImpl {
+	
+	@JSONWebService(method = "POST")
+	public String receiveMessageFromBackOffice(String message)
+			throws SystemException, PortalException {
+		String result = "done";
+		validateMessage(message);
+		
+		Gson gson = new GsonBuilder().setDateFormat("MM-dd-yyyy hh-mm-ss")
+				.create();
+		JsonElement root = new JsonParser().parse(message);
+		
+		message = root.toString();
+		try {
+			TTHCTransferOutObject tthcTransferOutObject = gson.fromJson(
+					message, TTHCTransferOutObject.class);
+
+			if (Validator.isNotNull(tthcTransferOutObject)) {
+				AnalayzeMessageBusiness analayzeMessageBusiness = new AnalayzeMessageBusiness();
+
+				SyncFromBackOfficeMsgBody fromBackOfficeMsgBody = analayzeMessageBusiness
+						.receiveSyncFromBackOfficeMsgBodyLocal(
+								tthcTransferOutObject, message);
+				if(Validator.isNotNull(fromBackOfficeMsgBody)) {
+					
+					SyncFromBackOffice syncFromBackOffice = new SyncFromBackOffice();
+					syncFromBackOffice.syncDossierStatus(fromBackOfficeMsgBody);
+				}
+			}
+		} catch (Exception e) {
+			result = e.getClass().getName();
+			_log.error(e);
+		}
+		
+		
+		return result;
+	}
+	
+	private void validateMessage(String message) throws NoMessageContentException {
+		if(Validator.isNull(message)) {
+			throw new NoMessageContentException();
+		}
+	}
+	
+	@JSONWebService(method = "POST")
+	public JSONArray getMessageAlalyze(String govAgencyCode,
+			String dossierStatus) throws JSONException, SystemException, DossierStatusException {
+		JSONArray jsonMessageObjects = JSONFactoryUtil.createJSONArray();
+		List<Dossier> dossiers = new ArrayList<Dossier>();
+		ServiceContext serviceContext = getServiceContext();
+		AnalayzeMessageBusiness analayzeMessageBusiness = new AnalayzeMessageBusiness();
+		dossiers = IntergrateUtil.getDossierByStatusApi(govAgencyCode, dossierStatus);
+		User user = null;
+		try {
+			user = getUser();
+					
+					// DossierLocalServiceUtil.getByGC_DS(govAgencyCode, dossierStatus);
+		} catch (PortalException | SystemException e) {
+			_log.error(e);
+		}
+		
+		
+		if(dossiers.size() > 0) {
+			for(Dossier dossier : dossiers) {
+				ServiceInfo serviceInfo = null;
+				try {
+					serviceInfo = ServiceInfoLocalServiceUtil.getServiceInfo(dossier.getServiceInfoId());
+				} catch (PortalException | SystemException e) {
+					_log.error(e);
+				}
+				String stringJsonMessageContent;
+				try {
+					if(Validator.isNotNull(serviceInfo) && Validator.isNotNull(user)) {
+						stringJsonMessageContent = analayzeMessageBusiness
+								.getMessageFromBussiness(dossier, serviceContext, serviceInfo, user);
+						JSONObject jsonMessageContent = JSONFactoryUtil.createJSONObject(stringJsonMessageContent);
+						jsonMessageObjects.put(jsonMessageContent);
+					}
+				} catch (PortalException | SystemException e) {
+					_log.error(e);
+				}
+				
+			}
+		}
+		
+		return jsonMessageObjects;
+	}
 	
 	@JSONWebService(value = "sms", method = "GET")
 	public void receiveSMS(String phone, String message) 

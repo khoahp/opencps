@@ -88,7 +88,7 @@
 <aui:script use="aui-base,aui-io">
 $(document).ready(function(){
 	var myComboTree = '<%=myComboTree %>';
-	var domainCode = '<%=domainCode%>';
+	var domainCode = '<%=HtmlUtil.escape(domainCode)%>';
 	var comboboxTree = $('#comboboxTree').comboTree({  
 		boundingBox: 'comboboxTree',
 		name: '#<portlet:namespace /><%=ServiceDisplayTerms.SERVICE_DOMAINCODE %>',

@@ -17,7 +17,9 @@
 
 package org.opencps.util;
 
+import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
+//import com.sun.corba.se.spi.orb.StringPair;
 
 /**
  * @author trungnt
@@ -63,6 +65,9 @@ public class PortletConstants {
 	
 	public static final int ACCOUNT_API_TYPE_CITIZEN = 1;
 	public static final int ACCOUNT_API_TYPE_BUSINESS = 2;
+	
+	public static final String FORM_TYPE_DEFAULT = StringPool.BLANK;//default alpaca form 
+	public static final String FORM_TYPE_DKLR = "dklr"; 
 
 	public static enum DestinationRoot {
 		CITIZEN("Citizen"), BUSINESS("Business");

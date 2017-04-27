@@ -73,6 +73,12 @@ body.mbody form {
     text-align: center;
     font-size: 16px;
 }
+.top-bar .dashboar-logo i {
+	font-size: 34px;
+	position: absolute;
+	top: 9px;
+	left: -25px;
+}
 
 
 

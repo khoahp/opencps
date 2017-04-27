@@ -415,6 +415,19 @@
 		<field name="postback" type="boolean" />
 		<field name="pattern" type="String" />
 	</model>
+	<model name="org.opencps.dossiermgt.model.BusinessRegister">
+		<field name="businessRegisterId" type="long" />
+		<field name="companyId" type="long" />
+		<field name="groupId" type="long" />
+		<field name="userId" type="long" />
+		<field name="createDate" type="Date" />
+		<field name="modifiedDate" type="Date" />
+		<field name="ownerOrganizationId" type="long" />
+		<field name="dossierTemplateId" type="String" />
+		<field name="serviceProcessId" type="String" />
+		<field name="dossierId" type="int" />
+		<field name="validStatus" type="String" />
+	</model>
 	<model name="org.opencps.dossiermgt.model.Dossier">
 		<field name="dossierId" type="long" />
 		<field name="companyId" type="long" />
@@ -520,6 +533,10 @@
 		<field name="signed" type="boolean" />
 		<field name="signCheck" type="int" />
 		<field name="signInfo" type="String" />
+		<field name="formSchema" type="String" />
+		<field name="formType" type="String" />
+		<field name="formScript" type="String" />
+		<field name="formReport" type="String" />
 	</model>
 	<model name="org.opencps.dossiermgt.model.DossierFileLog">
 		<field name="dossierFileLogId" type="long" />
@@ -682,6 +699,21 @@
 		<field name="serviceUrl" type="String">
 			<hint-collection name="TEXTAREA" />
 		</field>
+	</model>
+	<model name="org.opencps.dossiermgt.model.ServiceOption">
+		<field name="serviceOptionId" type="long" />
+		<field name="companyId" type="long" />
+		<field name="groupId" type="long" />
+		<field name="userId" type="long" />
+		<field name="createDate" type="Date" />
+		<field name="modifiedDate" type="Date" />
+		<field name="serviceConfigId" type="long" />
+		<field name="optionCode" type="String" />
+		<field name="optionName" type="String" />
+		<field name="optionOrder" type="int" />
+		<field name="autoSelect" type="String" />
+		<field name="dossierTemplateId" type="long" />
+		<field name="serviceProcessId" type="long" />
 	</model>
 	<model name="org.opencps.paymentmgt.model.PaymentConfig">
 		<field name="paymentConfigId" type="long" />
@@ -870,9 +902,7 @@
 		<field name="createDate" type="Date" />
 		<field name="modifiedDate" type="Date" />
 		<field name="notiStatusConfigId" type="long" />
-		<field name="eventName" type="String">
-			<hint name="max-length">255</hint>
-		</field>
+		<field name="eventName" type="String" />
 		<field name="description" type="String" />
 		<field name="pattern" type="String" />
 		<field name="userExcept" type="String" />
@@ -975,5 +1005,16 @@
 		<field name="donHangNoiHuyen" type="boolean" />
 		<field name="maTinhNhan" type="int" />
 		<field name="emailNguoiNhan" type="String" />
+	</model>
+	<model name="org.opencps.lucenequery.model.LuceneQueryPattern">
+		<field name="patternId" type="long" />
+		<field name="companyId" type="long" />
+		<field name="groupId" type="long" />
+		<field name="userId" type="long" />
+		<field name="createdDate" type="Date" />
+		<field name="modifiedDate" type="Date" />
+		<field name="name" type="String" />
+		<field name="pattern" type="String" />
+		<field name="url" type="String" />
 	</model>
 </model-hints>

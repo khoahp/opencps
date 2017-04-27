@@ -480,6 +480,15 @@
 		</footer-portlet-javascript>
 		<css-class-wrapper>36-portlet</css-class-wrapper>
 	</portlet>
+	<portlet>
+		<portlet-name>37</portlet-name>
+		<icon>/icon.png</icon>
+		<header-portlet-css>/css/main.css</header-portlet-css>
+		<footer-portlet-javascript>
+			/js/main.js
+		</footer-portlet-javascript>
+		<css-class-wrapper>37-portlet</css-class-wrapper>
+	</portlet>
 	<role-mapper>
 		<role-name>administrator</role-name>
 		<role-link>Administrator</role-link>

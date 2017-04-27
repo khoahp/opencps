@@ -139,8 +139,6 @@
 		}
 	}
 	
-	System.out.println("######################################### " + dossierPart.getPartName() + " | " + dossierPart.getPartType());
-	
 	String formData = "";
 	
 	String auTock = AuthTokenUtil.getToken(request);
@@ -157,6 +155,13 @@
 			dossierFile = DossierFileLocalServiceUtil.getDossierFile(dossierFileId);
 			
 			signCheck = dossierFile.getSignCheck();
+			
+			//Kiem tra neu DossierFile luu formScript thi lay alpacaSchema = formScript;
+			
+			if(Validator.isNotNull(dossierFile.getFormScript())){
+				alpacaSchema = dossierFile.getFormScript();
+			}
+			
 		}catch(Exception e){
 			
 		}
@@ -203,6 +208,9 @@
 	<aui:input name="<%=DossierDisplayTerms.FILE_GROUP_ID %>" type="hidden" value="<%=fileGroupId%>"/>
 	<aui:input name="<%=DossierFileDisplayTerms.DOSSIER_FILE_TYPE %>" type="hidden" value="<%=String.valueOf(renderResponse.getNamespace().equals(StringPool.UNDERLINE + WebKeys.DOSSIER_MGT_PORTLET + StringPool.UNDERLINE) ? PortletConstants.DOSSIER_FILE_TYPE_INPUT : PortletConstants.DOSSIER_FILE_TYPE_OUTPUT) %>"/>
 	<aui:input name="groupDossierPartId" type="hidden" value="<%=groupDossierPartId%>"/>
+	<aui:input name="<%=DossierFileDisplayTerms.FORM_SCHEMA %>" type="hidden" value="" cssClass="<%=DossierFileDisplayTerms.FORM_SCHEMA %>"/>
+	<aui:input name="<%=DossierFileDisplayTerms.FORM_TYPE %>" type="hidden" value="" cssClass="<%=DossierFileDisplayTerms.FORM_TYPE %>"/>
+	<aui:input name="<%=DossierFileDisplayTerms.FORM_DATA_ATERNATIVE %>" type="hidden" value="" cssClass="<%=DossierFileDisplayTerms.FORM_DATA_ATERNATIVE %>"/>
 	
 	<div id="dynamicForm"></div>
 	<aui:fieldset>
@@ -522,6 +530,7 @@
 				$(".saveForm").click(function(e) {
 					//Liferay.Util.getOpener().Liferay.fire('turnOnOverlaymask');
 					var formData = control.getValue();
+					
 					$("#<portlet:namespace />formData" ).val(JSON.stringify(formData));
 					
 					//Validate form submit

@@ -1,4 +1,5 @@
 
+<%@page import="com.liferay.portal.kernel.util.HtmlUtil"%>
 <%
 /**
  * OpenCPS is the open source Core Public Services software
@@ -125,11 +126,11 @@
 	
 	var depthLevel<%=randomInstance %> = parseInt('<%=depthLevel %>');
 	
-	var strSelectItems = '<%=StringUtil.merge(selectedItems) %>';
+	var strSelectItems = '<%=HtmlUtil.escape(StringUtil.merge(selectedItems)) %>';
 	
 	var strItemEmptyOption<%=randomInstance %> = '<%=StringUtil.merge(itemsEmptyOption) %>';
 	
-	var strEmptyOptionLabel = '<%=StringUtil.merge(emptyOptionLabels) %>';
+	var strEmptyOptionLabel = '<%=HtmlUtil.escape(StringUtil.merge(emptyOptionLabels)) %>';
 	
 	var selectItems<%=randomInstance %> = strSelectItems.split(",");
 	
@@ -148,7 +149,7 @@
 	
 		rootDictItemsContainer = A.one('#<portlet:namespace/>col_<%=randomInstance %>1');
 		
-		var dictCollectionCode = '<%=dictCollectionCode %>';
+		var dictCollectionCode = '<%=HtmlUtil.escape(dictCollectionCode) %>';
 		
 		var initDictItemId = parseInt('<%=initDictItemId %>');
 		

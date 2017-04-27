@@ -186,7 +186,7 @@ public class SyncFromBackOffice implements MessageListener {
 				OutDateStatus outDate = holidayCheckUtils.getOutDateStatus(toBackOffice.getProcessOrderId(), toBackOffice.getProcessWorkflowId());
 				
 				long delayTimes = 0;
-				delayTimes = outDate.getTimeOutDate();
+				delayTimes = outDate != null ? outDate.getTimeOutDate() : 0;
 				int daysDoing = 0;
 				
 				toCallBack.setProcessOrderId(toBackOffice.getProcessOrderId());
