@@ -1,6 +1,7 @@
 package org.opencps.integrate.api;
 
 import org.opencps.dossiermgt.model.Dossier;
+import org.opencps.integrate.utils.APIUtils;
 
 import com.liferay.portal.kernel.util.Validator;
 
