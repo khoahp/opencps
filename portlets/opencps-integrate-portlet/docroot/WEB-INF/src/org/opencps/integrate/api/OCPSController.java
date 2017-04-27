@@ -25,14 +25,12 @@ import org.opencps.dossiermgt.model.Dossier;
 import org.opencps.dossiermgt.model.DossierFile;
 import org.opencps.dossiermgt.model.DossierLog;
 import org.opencps.dossiermgt.model.ServiceConfig;
-import org.opencps.dossiermgt.service.DossierLocalServiceUtil;
 import org.opencps.dossiermgt.service.DossierLogLocalServiceUtil;
 import org.opencps.dossiermgt.service.ServiceConfigLocalServiceUtil;
 import org.opencps.integrate.dao.model.IntegrateAPI;
 import org.opencps.integrate.dao.service.IntegrateAPILocalServiceUtil;
 import org.opencps.integrate.utils.APIUtils;
 import org.opencps.integrate.utils.DossierUtils;
-import org.opencps.integrate.utils.PortletUtil.SplitDate;
 import org.opencps.paymentmgt.model.PaymentFile;
 import org.opencps.servicemgt.model.ServiceInfo;
 import org.opencps.servicemgt.service.ServiceInfoLocalServiceUtil;
@@ -45,14 +43,10 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.model.PortletConstants;
 import com.liferay.portal.model.User;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.UserLocalServiceUtil;
-import com.liferay.portal.service.persistence.PortletUtil;
 import com.liferay.portal.util.PortalUtil;
-import com.liferay.portlet.documentlibrary.model.DLFolder;
-import com.liferay.portlet.documentlibrary.service.persistence.DLFolderUtil;
 
 @Path("/api")
 public class OCPSController {
@@ -226,33 +220,6 @@ public class OCPSController {
 		} else {
 			// Not validate
 			return Response.status(401).entity(resp.toString()).build();
-		}
-	}
-
-	@GET
-	@Path("/login")
-	@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
-	public Response alo(@Context HttpServletRequest request,
-			@HeaderParam("username") String username,
-			@HeaderParam("password") String password) {
-
-		JSONObject resp = JSONFactoryUtil.createJSONObject();
-
-		long companyId = PortalUtil.getCompanyId(request);
-
-		User user = login(companyId, username, password);
-
-		if (Validator.isNull(user)) {
-			return Response.status(401).entity(resp.toString()).build();
-		} else {
-
-			resp.put("ApiKey", getAPI(user.getUserId()));
-			resp.put("UserId", user.getUserId());
-			resp.put("ScreenName", user.getScreenName());
-			resp.put("FullName", user.getFullName());
-			resp.put("UserEmail", user.getEmailAddress());
-
-			return Response.status(200).entity(resp.toString()).build();
 		}
 	}
 
@@ -709,58 +676,6 @@ public class OCPSController {
 
 	}
 
-	/**
-	 * @param companyId
-	 * @param username
-	 * @param password
-	 * @return
-	 */
-	private User login(long companyId, String username, String password) {
-		User user = null;
-		try {
-			user = IntegrateAPILocalServiceUtil.basicLogin(companyId, username,
-					password);
-		} catch (Exception e) {
-			_log.error("Login Fail");
-		}
-		return user;
-	}
-
-	/**
-	 * @param userId
-	 * @return
-	 */
-	private String getAPI(long userId) {
-
-		IntegrateAPI api = null;
-
-		String tokenKey = StringPool.BLANK;
-
-		try {
-			api = IntegrateAPILocalServiceUtil.getAPIByUserId(userId);
-
-			tokenKey = api.getApiKey();
-
-		} catch (Exception e) {
-			_log.debug("NoAPIKeyWithUserID" + new Date());
-		}
-
-		if (Validator.isNull(api)) {
-			try {
-
-				tokenKey = UUID.randomUUID().toString() + "-"
-						+ Long.toString(userId);
-
-				api = IntegrateAPILocalServiceUtil.addAPIKey(userId,
-						StringPool.BLANK, tokenKey);
-			} catch (Exception e) {
-				_log.debug(e);
-			}
-		}
-
-		return tokenKey;
-
-	}
 
 	private Log _log = LogFactoryUtil.getLog(OCPSController.class);
 

@@ -6,6 +6,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import org.opencps.datamgt.model.DictItem;
+import org.opencps.datamgt.service.DictItemLocalServiceUtil;
 import org.opencps.dossiermgt.model.Dossier;
 import org.opencps.dossiermgt.model.DossierFile;
 import org.opencps.dossiermgt.model.DossierPart;
@@ -32,7 +34,30 @@ import com.liferay.portlet.documentlibrary.service.DLFileEntryLocalServiceUtil;
 import com.liferay.portlet.documentlibrary.util.DLUtil;
 
 public class APIUtils {
-	
+
+	/**
+	 * @param dictItemCode
+	 * @return
+	 */
+	public static String getDictItemName(String dictItemCode) {
+
+		String name = StringPool.BLANK;
+
+		DictItem di = null;
+
+		Locale locale = new Locale("vi", "VN");
+
+		try {
+			di = DictItemLocalServiceUtil.getDictItemByCode(dictItemCode);
+
+			name = di.getItemName(locale);
+		} catch (Exception e) {
+			_log.debug(e);
+		}
+
+		return name;
+	}
+
 	/**
 	 * @param companyId
 	 * @param email
@@ -40,42 +65,45 @@ public class APIUtils {
 	 */
 	public static User getUserByEmail(long companyId, String email) {
 		User user = null;
-		
+
 		try {
 			user = UserLocalServiceUtil.getUserByEmailAddress(companyId, email);
 		} catch (Exception e) {
 			_log.error(e);
 		}
-		
+
 		return user;
 	}
-	
-	/** Get DossierFileSize 
+
+	/**
+	 * Get DossierFileSize
 	 * 
 	 * @param dossierFileId
 	 * @return file size in Byte
 	 */
 	public static long getFileSize(long dossierFileId) {
 		long fileSize = 0;
-		
+
 		try {
-			DossierFile dossierFile = DossierFileLocalServiceUtil.getDossierFile(dossierFileId);
-			
+			DossierFile dossierFile = DossierFileLocalServiceUtil
+					.getDossierFile(dossierFileId);
+
 			long fileEntryId = dossierFile.getFileEntryId();
-			
-			DLFileEntry fileEntry = DLFileEntryLocalServiceUtil.getDLFileEntry(fileEntryId);
-			
+
+			DLFileEntry fileEntry = DLFileEntryLocalServiceUtil
+					.getDLFileEntry(fileEntryId);
+
 			fileSize = fileEntry.getSize();
-			
+
 		} catch (Exception e) {
 			_log.debug(e);
 		}
-		
+
 		return fileSize;
 	}
 
-	
-	/** Get dossierFileURL
+	/**
+	 * Get dossierFileURL
 	 * 
 	 * @param fileEntryId
 	 * @return
@@ -88,16 +116,16 @@ public class APIUtils {
 		try {
 			file = DLAppLocalServiceUtil.getFileEntry(fileEntryId);
 
-			fileURL = DLUtil.getPreviewURL(file, file.getFileVersion(), null, "");
-			
-			
+			fileURL = DLUtil.getPreviewURL(file, file.getFileVersion(), null,
+					"");
+
 		} catch (Exception e) {
 			_log.debug(e);
 		}
 
 		return fileURL;
 	}
-	
+
 	/**
 	 * @param fileEntryId
 	 * @return
@@ -111,16 +139,16 @@ public class APIUtils {
 			file = DLAppLocalServiceUtil.getFileEntry(fileEntryId);
 
 			fileTypes = file.getExtension();
-			
-			
+
 		} catch (Exception e) {
 			_log.debug(e);
 		}
 
 		return fileTypes;
 	}
-	
-	/** Get DossierFileContent
+
+	/**
+	 * Get DossierFileContent
 	 * 
 	 * @param dossierFileId
 	 * @return
@@ -139,7 +167,7 @@ public class APIUtils {
 					.getDossierPart(dossierPartId);
 
 			boolean isEForm = isEForm(dossierPart);
-			
+
 			System.out.println(":::::" + file.getFormData());
 
 			if (isEForm) {
@@ -155,15 +183,16 @@ public class APIUtils {
 
 	private static boolean isEForm(DossierPart dossierPart) {
 		boolean isEForm = false;
-		
+
 		if (Validator.isNotNull(dossierPart.getFormScript().trim())) {
 			isEForm = true;
 		}
-		
+
 		return isEForm;
 	}
-	
-	/** Get DossierPartNo
+
+	/**
+	 * Get DossierPartNo
 	 * 
 	 * @param dossierFileId
 	 * @return
@@ -187,7 +216,7 @@ public class APIUtils {
 
 		return dossierPartNo;
 	}
-	
+
 	/**
 	 * @param dossierId
 	 * @return
@@ -204,7 +233,7 @@ public class APIUtils {
 
 		return dossierFiles;
 	}
-	
+
 	/**
 	 * @param dossierId
 	 * @return
@@ -221,14 +250,15 @@ public class APIUtils {
 
 		return paymentFiles;
 	}
-	
-	/** Count DossierFile
+
+	/**
+	 * Count DossierFile
 	 * 
 	 * @param dossierId
 	 * @return
 	 */
 	public static int countDossierFile(long dossierId) {
-		
+
 		int count = 0;
 		try {
 			count = DossierFileLocalServiceUtil.getDossierFileByDossierId(
@@ -239,14 +269,15 @@ public class APIUtils {
 
 		return count;
 	}
-	
-	/** Count Payment files
+
+	/**
+	 * Count Payment files
 	 * 
 	 * @param dossierId
 	 * @return
 	 */
 	public static int countPaymentFile(long dossierId) {
-		
+
 		int count = 0;
 		try {
 			count = PaymentFileLocalServiceUtil.countAllPaymentFile(dossierId);
@@ -257,57 +288,58 @@ public class APIUtils {
 		return count;
 	}
 
-	/** Get Language
+	/**
+	 * Get Language
 	 * 
 	 * @param key
 	 * @return
 	 */
 	public static String getLanguageValue(String key) {
-		
+
 		Locale locale = new Locale("vi", "VN");
 
 		return LanguageUtil.get(locale, key);
 	}
-	
-	/** Count DossierLog
+
+	/**
+	 * Count DossierLog
 	 * 
 	 * @param dossierId
 	 * @return
 	 */
 	public static int countDossierLogs(long dossierId) {
 		int count = 0;
-		
+
 		try {
 			count = DossierLogLocalServiceUtil.countDossierLog(1, dossierId);
 		} catch (Exception e) {
 			_log.debug(e);
 		}
-		
+
 		return count;
 	}
-	
+
 	/**
 	 * @param serviceInfoId
 	 * @return
 	 */
 	public static String getApplicantIdType(long dossierId) {
-		
+
 		String applicationType = StringPool.BLANK;
 
 		return applicationType;
 	}
-	
+
 	/**
 	 * @param dossierId
 	 * @return
 	 */
 	public static String getApplicantIdNo(long dossierId) {
-		
+
 		String applicationNo = StringPool.BLANK;
 
 		return applicationNo;
 	}
-
 
 	/**
 	 * @param serviceInfoId
@@ -319,13 +351,13 @@ public class APIUtils {
 		try {
 			ServiceInfo si = ServiceInfoLocalServiceUtil
 					.getServiceInfo(serviceInfoId);
-			
+
 			serviceName = si.getServiceName();
-			
+
 		} catch (Exception e) {
 			_log.debug(e);
 		}
-		
+
 		return serviceName;
 	}
 
@@ -339,13 +371,13 @@ public class APIUtils {
 		try {
 			ServiceInfo si = ServiceInfoLocalServiceUtil
 					.getServiceInfo(serviceInfoId);
-			
+
 			serviceCode = si.getServiceNo();
-			
+
 		} catch (Exception e) {
 			_log.debug(e);
 		}
-		
+
 		return serviceCode;
 	}
 
@@ -418,13 +450,15 @@ public class APIUtils {
 
 		return count;
 	}
-	
-	/** Format DateTime
+
+	/**
+	 * Format DateTime
+	 * 
 	 * @param date
 	 * @return
 	 */
 	public static String formatDateTime(Date date) {
-		
+
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 		if (Validator.isNotNull(date)) {
 			return sdf.format(date);

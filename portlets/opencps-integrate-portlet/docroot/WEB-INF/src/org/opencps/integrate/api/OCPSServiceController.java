@@ -37,20 +37,18 @@ import com.liferay.portal.kernel.util.Validator;
 @Path("/api")
 public class OCPSServiceController {
 
+	// TODO: Hard code groupId = 20182, will be update
+	public static int GROUPID = 20182;
+
 	@GET
 	@Path("/services")
 	@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
 	public Response getServices(@QueryParam("keyword") String keyword,
 			@QueryParam("admcode") String admcode,
 			@QueryParam("domaincode") String domaincode,
-			@QueryParam("level") Integer level, @QueryParam("from") int from,
-			@QueryParam("max") int max) {
+			@QueryParam("from") int from, @QueryParam("max") int max) {
 
 		JSONObject resp = JSONFactoryUtil.createJSONObject();
-		
-		if (Validator.isNull(level)) {
-			level = null;
-		}
 
 		if (Validator.isNull(admcode)) {
 			admcode = "0";
@@ -59,9 +57,6 @@ public class OCPSServiceController {
 		if (Validator.isNull(domaincode)) {
 			domaincode = "0";
 		}
-
-		// TODO: Hard code groupId = 20182, will be update
-		long scopeGroupId = 20182;
 
 		int start, end = 0;
 
@@ -77,12 +72,12 @@ public class OCPSServiceController {
 
 			int count = 0;
 
-			int total = ServiceInfoLocalServiceUtil.countServiceAPI(scopeGroupId,
-					keyword, admcode, domaincode, level);
+			int total = ServiceInfoLocalServiceUtil.countService(GROUPID,
+					keyword, admcode, domaincode);
 
 			List<ServiceInfo> results = ServiceInfoLocalServiceUtil
-					.searchServiceAPI(scopeGroupId, keyword, admcode, domaincode,
-							start, end, level);
+					.searchService(GROUPID, keyword, admcode, domaincode,
+							start, end);
 
 			if (from <= 0 && max <= 0) {
 				count = total;
@@ -101,7 +96,6 @@ public class OCPSServiceController {
 		}
 
 	}
-	
 
 	@GET
 	@Path("/services/{serviceid}")
@@ -117,29 +111,60 @@ public class OCPSServiceController {
 
 			resp.put("ServiceId", serviceid);
 			resp.put("ServiceNo", si.getServiceNo());
-			resp.put("ServiceLevel", getServiceLevel(serviceid));
+			resp.put("ServiceMaxLevel", getServiceLevel(serviceid));
 			resp.put("ServiceName", si.getServiceName());
-			resp.put("AdmServiceCode", si.getAdministrationCode());
-			resp.put("AdmServiceName", getItemName(si.getAdministrationCode()));
-			resp.put("DomainServiceCode", si.getDomainCode());
-			resp.put("DomainServiceName", getItemName(si.getDomainCode()));
-			resp.put("ServiceProcess", si.getServiceProcess());
-			resp.put("ServiceMethod", si.getServiceMethod());
-			resp.put("ServiceDossier", si.getServiceDossier());
-			resp.put("ServiceCondition", si.getServiceCondition());
-			resp.put("ServiceDuration", si.getServiceDuration());
-			resp.put("ServiceActors", si.getServiceActors());
-			resp.put("ServiceResults", si.getServiceResults());
-			resp.put("ServiceRecords", si.getServiceRecords());
-			resp.put("ServiceFee", si.getServiceFee());
-			resp.put("ActiveStatus", si.getActiveStatus());
-			resp.put("TemplateFiles", getFileTemplates(serviceid));
+			resp.put("FullName", si.getFullName());
+			resp.put("AdministrationCode", si.getAdministrationCode());
+			resp.put("AdministrationName", getItemName(si.getAdministrationCode()));
+			resp.put("DomainCode", si.getDomainCode());
+			resp.put("DomainName", getItemName(si.getDomainCode()));
+			resp.put("ProcessText", si.getServiceProcess());
+			resp.put("MethodText", si.getServiceMethod());
+			resp.put("DossierText", si.getServiceDossier());
+			resp.put("ConditionText", si.getServiceCondition());
+			resp.put("DurationText", si.getServiceDuration());
+			resp.put("ApplicantText", si.getServiceActors());
+			resp.put("ResultText", si.getServiceResults());
+			resp.put("RegularText", si.getServiceRecords());
+			resp.put("FeeText", si.getServiceFee());
+			resp.put("CreateDate", APIUtils.formatDateTime(si.getCreateDate()));
+			resp.put("ModifiedDate", APIUtils.formatDateTime(si.getModifiedDate()));
+			resp.put("TemplateForms", getFileTemplates(serviceid));
+			resp.put("GovAgencies", getGovAgencies(serviceid));
 
 			return Response.status(200).entity(resp.toString()).build();
 		} catch (Exception e) {
 			return Response.status(404).entity(resp.toString()).build();
 		}
 
+	}
+	
+	/**
+	 * @param serviceId
+	 * @return
+	 */
+	private JSONArray getGovAgencies(long serviceId) {
+		JSONArray output = JSONFactoryUtil.createJSONArray();
+
+		try {
+			List<ServiceConfig> lsSC = ServiceConfigLocalServiceUtil
+					.getServiceConfigsByS_G(serviceId, GROUPID);
+			
+			for (ServiceConfig sc : lsSC) {
+				JSONObject in = JSONFactoryUtil.createJSONObject();
+				in.put("AgencyCode", sc.getGovAgencyCode());
+				in.put("AgencyName", sc.getGovAgencyName());
+				in.put("ServiceLevel", sc.getServiceLevel());
+				in.put("InstructionText", sc.getServiceInstruction());
+				
+				output.put(in);
+			}
+			
+		} catch (Exception e) {
+			_log.error(e);
+		}
+
+		return output;
 	}
 
 	/**
@@ -161,8 +186,8 @@ public class OCPSServiceController {
 
 				JSONObject jstf = JSONFactoryUtil.createJSONObject();
 
-				jstf.put("FileName", tf.getFileName());
-				jstf.put("FileNo", tf.getFileNo());
+				jstf.put("FormName", tf.getFileName());
+				jstf.put("FormNo", tf.getFileNo());
 				jstf.put("FileType", APIUtils.getFileType(tf.getFileEntryId()));
 				jstf.put("FileSize", APIUtils.getFileSize(tf.getFileEntryId()));
 				jstf.put("FileURL", APIUtils.getFileURL(tf.getFileEntryId()));
@@ -202,22 +227,23 @@ public class OCPSServiceController {
 
 			input.put("ServiceId", service.getServiceinfoId());
 			input.put("ServiceNo", service.getServiceNo());
-			input.put("ServiceLevel", getServiceLevel(service.getServiceinfoId()));
+			input.put("ServiceMaxLevel",
+					getServiceLevel(service.getServiceinfoId()));
 			input.put("ServiceName", service.getServiceName());
-			input.put("AdmServiceCode", service.getAdministrationCode());
-			input.put("AdmServiceName",
+			input.put("AdministrationCode", service.getAdministrationCode());
+			input.put("AdministrationName",
 					getItemName(service.getAdministrationCode()));
-			input.put("DomainServiceCode", service.getDomainCode());
-			input.put("DomainServiceName", getItemName(service.getDomainCode()));
+			input.put("DomainCode", service.getDomainCode());
+			input.put("DomainName", getItemName(service.getDomainCode()));
 
 			ls.put(input);
 		}
 
 		return ls;
 	}
-	
+
 	private int getServiceLevel(long serviceInfoId) {
-		
+
 		int level = 2;
 
 		long scopeGroupId = 20182;
@@ -225,12 +251,12 @@ public class OCPSServiceController {
 		try {
 			List<ServiceConfig> scls = ServiceConfigLocalServiceUtil
 					.getServiceConfigsByS_G(serviceInfoId, scopeGroupId);
-			
+
 			for (ServiceConfig sc : scls) {
-				// TODO: implement 
+				// TODO: incorrect in case a serviceInfo have more serviceCongif
 				level = sc.getServiceLevel();
 			}
-			
+
 		} catch (Exception e) {
 			_log.error(e);
 		}

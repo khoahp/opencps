@@ -7,6 +7,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -25,7 +26,94 @@ import com.liferay.portal.kernel.util.Validator;
 @Path("/api")
 public class OCPSDictItemsController {
 	
-	public final String COLLECTION_CODE_REGION = "ADMINISTRATIVE_REGION";
+	public static final String COLLECTION_CODE_REGION = "ADMINISTRATIVE_REGION";
+	public static final long GROUPID = 20182;
+	public static final String PARENT_ROOT = "ROOT";
+	
+	@GET
+	@Path("/collections/{collectioncode: .*}/items")
+	@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
+	public Response getCollectionItems(
+			@PathParam("collectioncode") String collectioncode,
+			@QueryParam("level") int level,
+			@QueryParam("parent") String parent) {
+
+		JSONObject resp = JSONFactoryUtil.createJSONObject();
+
+
+		if (Validator.isNotNull(collectioncode)) {
+			try {
+				
+				if (Validator.equals(PARENT_ROOT, parent)) {
+					
+					DictCollection dc = DictCollectionLocalServiceUtil
+							.getDictCollection(GROUPID, collectioncode);
+
+					List<DictItem> dictItems = DictItemLocalServiceUtil
+							.getDictItemsByDictCollectionId(dc
+									.getDictCollectionId());
+
+					int total = dictItems.size();
+
+					JSONArray items = getRespDictItems(dictItems);
+
+					resp.put("Total", total);
+					resp.put("Items", items);
+				} else {
+					
+					if (level != 0) {
+						
+					} else {
+
+						DictItem parentDictItem = getDictItemByCode(parent);
+						
+						long dictCollectionId = getCollectionId(collectioncode);
+						
+						List<DictItem> dictItems = DictItemLocalServiceUtil
+								.getDictItemsInUseByDictCollectionIdAndParentItemId(
+										dictCollectionId,
+										Validator.isNotNull(parentDictItem) ? parentDictItem
+												.getDictItemId() : 0);
+
+						int total = dictItems.size();
+
+						JSONArray items = getRespDictItems(dictItems);
+
+						resp.put("Total", total);
+						resp.put("Items", items);
+					}
+					
+				}
+				
+				return Response.status(200).entity(resp.toString()).build();
+
+			} catch (Exception e) {
+				return Response.status(404).entity(resp.toString()).build();
+			}
+
+		} else {
+
+			return Response.status(404).entity(resp.toString()).build();
+		}
+
+	}
+	
+	
+	/**
+	 * @param itemCode
+	 * @return
+	 */
+	private DictItem getDictItemByCode(String itemCode) {
+		DictItem di = null;
+		
+		try {
+			di = DictItemLocalServiceUtil.getDictItemByCode(itemCode);
+		} catch (Exception e) {
+			_log.debug(e);
+		}
+		
+		return di;
+	}
 
 	/**
 	 * @param request
@@ -178,6 +266,7 @@ public class OCPSDictItemsController {
 			input.put("ItemCode", di.getItemCode());
 			input.put("ItemId", di.getDictItemId());
 			input.put("ItemDescription", di.getItemDescription());
+			input.put("TreeIndex", di.getTreeIndex());
 			
 			ls.put(input);
 		}
