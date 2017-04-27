@@ -19,12 +19,16 @@ package org.opencps.notificationmgt.bean;
 
 import java.sql.Date;
 
+import javax.portlet.RenderRequest;
+import javax.portlet.WindowStateException;
+
 import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.model.UserNotificationEvent;
+import com.liferay.portal.service.ServiceContext;
 
 /**
  * @author nhanhoang
@@ -36,7 +40,9 @@ public class UserNotificationEventBean {
 			.getLog(UserNotificationEventBean.class);
 
 	public static UserNotificationEventBean getBean(
-			UserNotificationEvent userNotificationEvent) throws JSONException {
+			UserNotificationEvent userNotificationEvent,
+			ServiceContext serviceContext, RenderRequest renderRequest)
+			throws JSONException, WindowStateException {
 
 		UserNotificationEventBean userBean = new UserNotificationEventBean();
 
@@ -53,6 +59,8 @@ public class UserNotificationEventBean {
 
 			userBean.setDelivered(userNotificationEvent.getDelivered());
 			userBean.setArchived(userNotificationEvent.getArchived());
+			// userBean.setUrl(NotificationUtils.getLink(userNotificationEvent,
+			// null,renderRequest));
 
 		} catch (JSONException e) {
 			_log.error(e);
@@ -68,6 +76,15 @@ public class UserNotificationEventBean {
 	protected String actionName;
 	protected String note;
 	protected Date createDate;
+	protected String url;
+
+	public String getUrl() {
+		return url;
+	}
+
+	public void setUrl(String url) {
+		this.url = url;
+	}
 
 	public long getUserNotificationEventId() {
 		return userNotificationEventId;

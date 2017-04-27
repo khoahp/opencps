@@ -24,7 +24,6 @@ import javax.portlet.PortletRequest;
 import javax.portlet.PortletURL;
 
 import org.opencps.datamgt.model.DictItem;
-import org.opencps.util.DateTimeUtil;
 
 import com.liferay.portal.kernel.dao.search.SearchContainer;
 import com.liferay.portal.kernel.log.Log;
@@ -34,25 +33,21 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
  * @author nhanhoang
  *
  */
-public class UserNotificationEventSearch extends SearchContainer<DictItem> {
+public class UserNotificationEventSearch extends SearchContainer{
 	static List<String> headerNames = new ArrayList<String>();
 	static {
-		headerNames.add("");
-		headerNames.add("receptionNo");
-		headerNames.add("actionName");
-		headerNames.add("note");
-		headerNames.add("create-date");
+		
 	}
 
-	public static final String EMPTY_RESULTS_MESSAGE = "no-notification-event-config-where-found";
+	public static final String EMPTY_RESULTS_MESSAGE = "no-user-notification-event-where-found";
 
 	public UserNotificationEventSearch(PortletRequest portletRequest, int delta,
 			PortletURL iteratorURL) {
 
 		super(portletRequest,
 				new UserNotificationEventDisplayTerms(portletRequest),
-				new UserNotificationEventDisplayTerms(portletRequest),
-				DEFAULT_CUR_PARAM, delta, iteratorURL, headerNames,
+				new UserNotificationEventSearchTerms(portletRequest),
+				DEFAULT_CUR_PARAM, delta, iteratorURL, null,
 				EMPTY_RESULTS_MESSAGE);
 
 		UserNotificationEventDisplayTerms displayTerms = (UserNotificationEventDisplayTerms) getDisplayTerms();
@@ -67,6 +62,11 @@ public class UserNotificationEventSearch extends SearchContainer<DictItem> {
 
 		
 
+	}
+	public UserNotificationEventSearch(PortletRequest portletRequest,
+			PortletURL iteratorURL) {
+
+		this(portletRequest, DEFAULT_DELTA, iteratorURL);
 	}
 
 	private static Log _log = LogFactoryUtil

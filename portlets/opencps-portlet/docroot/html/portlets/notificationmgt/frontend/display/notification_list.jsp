@@ -1,7 +1,3 @@
-<%@page import="org.opencps.notificationmgt.bean.UserNotificationEventBean"%>
-<%@page import="org.opencps.notificationmgt.search.UserNotificationEventSearch"%>
-<%@page import="com.liferay.portal.service.UserNotificationEventLocalServiceUtil"%>
-<%@page import="com.liferay.portal.model.UserNotificationEvent"%>
 <%
 	/**
 	 * OpenCPS is the open source Core Public Services software
@@ -24,107 +20,90 @@
 <%@ include file="../init.jsp"%>
 
 <%
-
-	
 	PortletURL iteratorURL = renderResponse.createRenderURL();
+	iteratorURL.setParameter("mvcPath", templatePath + "display/notification_list.jsp");
+	
+	List<UserNotificationEvent> userNotificationEvents = new ArrayList<UserNotificationEvent>();
+	
+	SearchContainer searchContainer = new SearchContainer(renderRequest, null, null, SearchContainer.DEFAULT_CUR_PARAM, 5, iteratorURL, null, "");
+	
+	int totalSize = 0;
+	userNotificationEvents = UserNotificationEventLocalServiceUtil
+			.getUserNotificationEvents(themeDisplay.getUserId(), false,
+					searchContainer.getStart(),
+					searchContainer.getEnd());
 
+	totalSize = UserNotificationEventLocalServiceUtil
+			.getDeliveredUserNotificationEventsCount(
+					themeDisplay.getUserId(), false);
+	
+	searchContainer.setResults(userNotificationEvents);
+	searchContainer.setTotal(totalSize);
 %>
 
-<div class="opencps-searchcontainer-wrapper-width-header default-box-shadow radius8">
-
-	<liferay-ui:error key="error" 
-		message="error" />
-
-	<liferay-ui:search-container
-		searchContainer="<%=new UserNotificationEventSearch(renderRequest,
-						SearchContainer.DEFAULT_DELTA, iteratorURL)%>">
+<div
+	class="opencps-searchcontainer-wrapper-width-header default-box-shadow radius8">
+	
+	<portlet:actionURL var="submitNotiFormURL" name="markMessageReaded">
+		
+	</portlet:actionURL>
+	
+	<aui:form action="<%=submitNotiFormURL.toString() %>" name="fm_notification" method="post">
+		<c:choose>
+			<c:when test="<%=userNotificationEvents.size() > 0 %>">
+				<aui:button type="button" class="btn-default" onClick='<%=renderResponse.getNamespace()+"submitMarkAsReaded()"%>' value="mark-as-readed"/>	
+				<table width="100%">
+					<tbody>
+						<tr>
+							<td width="10%"><input name="<portlet:namespace/>checkAll" label="" type="checkbox" 
+								onClick="<portlet:namespace />markAsReaded();" />
+							</td>
+							<td width="30%"><liferay-ui:message key="dossier-reception-no"/></td>
+							<td width="30%"><liferay-ui:message key="action-name"/></td>
+							<td width="30%"><liferay-ui:message key="note"/></td>
+						</tr>
+						<%
+							PortletURL editURL = renderResponse.createRenderURL();
 						
-		<liferay-ui:search-container-results>
-			<%
-			List<UserNotificationEvent> userNotificationEvents = null;
-					int totalSize = 0;
-
-			userNotificationEvents = UserNotificationEventLocalServiceUtil
-					.getUserNotificationEvents(
-							themeDisplay.getUserId(), true,
-							searchContainer.getStart(),
-							searchContainer.getEnd());
-
-			totalSize = UserNotificationEventLocalServiceUtil
-					.getDeliveredUserNotificationEventsCount(
-							themeDisplay.getUserId(), false);
-
-			pageContext.setAttribute("results", userNotificationEvents);
-			pageContext.setAttribute("total", totalSize);
-			%>
-
-		</liferay-ui:search-container-results>
-		<liferay-ui:search-container-row
-			className="com.liferay.portal.model.UserNotificationEvent"
-			modelVar="userNofiticationEvent" keyProperty="userNotificationEventId">
-			
-			<%
-				UserNotificationEventBean userNotificationBean = UserNotificationEventBean.getBean(userNofiticationEvent);
-				
-				PortletURL editURL = renderResponse.createRenderURL();
-			%>
-			
-			<liferay-util:buffer var="rowCheck">
-				<div class="row-fluid">
-					<div class="span12">
-						<aui:input name="check_test" type="checkbox"/>
-					</div>
-				</div>
-			</liferay-util:buffer>
-			
-			<liferay-util:buffer var="receptionNo">
-				<div class="row-fluid">
-					<div class="span12">
-						<a href="<%=editURL%>"><%= userNotificationBean.getReceptionNo() %></a>
-					</div>
-				</div>
-			</liferay-util:buffer>
-			
-			<liferay-util:buffer var="actionName">
-				<div class="row-fluid">
-					<div class="span12">
-						<a href="<%=editURL%>"><%= userNotificationBean.getActionName() %></a>
-					</div>
-				</div>
-			</liferay-util:buffer>
-			
-			<liferay-util:buffer var="note">
-				<div class="row-fluid">
-					<div class="span12">
-						<a href="<%=editURL%>"><%= userNotificationBean.getNote() %></a>
-					</div>
-				</div>
-			</liferay-util:buffer>
-			
-			<liferay-util:buffer var="createDate">
-				<div class="row-fluid">
-					<div class="span12">
-						<a href="<%=editURL%>"><%= userNotificationBean.getCreateDate() %></a>
-					</div>
-				</div>
-			</liferay-util:buffer>
-			
-			<%
-				row.addText(rowCheck);
-				row.addText(receptionNo);
-				row.addText(actionName);
-				row.addText(note);
-				row.addText(createDate);
-			%>
-			
-
-		</liferay-ui:search-container-row>
-
-	</liferay-ui:search-container>
-
+							for(UserNotificationEvent userNotificationEvent:userNotificationEvents){
+								
+								UserNotificationEventBean userNotificationBean = UserNotificationEventBean.getBean(userNotificationEvent, null, renderRequest);
+						%>
+							<tr>
+								<td width="10%"><input name="<portlet:namespace/>checkboxs" label="" 
+									type="checkbox" value="<%=userNotificationBean.getUserNotificationEventId()%>" />
+								</td>
+								<td width="30%"><a href="<%=editURL%>"><%= userNotificationBean.getReceptionNo() %></a></td>
+								<td width="30%"><a href="<%=editURL%>"><%= userNotificationBean.getActionName() %></a></td>
+								<td width="30%"><a href="<%=editURL%>"><%= userNotificationBean.getNote() %></a></td>
+							</tr>
+						<%} %>
+					</tbody>
+					<tfoot>
+						<liferay-ui:search-paginator searchContainer="<%= searchContainer %>" type="opencs_page_iterator"/>
+					</tfoot>
+				</table>
+			</c:when>
+			<c:otherwise>
+				<liferay-ui:message key="no-user-notification-event-where-found" />
+			</c:otherwise>
+		</c:choose>
+	</aui:form>
 </div>
 
+<script type="text/javascript">
+	
+	function <portlet:namespace />submitMarkAsReaded(){
+		
+		$("form[name='<portlet:namespace/>fm_notification']").submit();
 
+	}
+	
+	function <portlet:namespace />markAsReaded(){
+		
+		$("input[name='<portlet:namespace/>checkboxs']").prop("checked", $("input[name='<portlet:namespace/>checkAll']").prop("checked"));
+		
+	}
+</script>
 
-<%!private static Log _log = LogFactoryUtil
-			.getLog("html.portlets.notificationmgt.frontend.display.notification_list");%>
+<%!private static Log _log = LogFactoryUtil.getLog("html.portlets.notificationmgt.frontend.display.notification_list");%>
