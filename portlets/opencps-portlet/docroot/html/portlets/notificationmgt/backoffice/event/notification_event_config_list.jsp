@@ -19,7 +19,7 @@
 
 <%@ include file="../init.jsp"%>
 
-<liferay-util:include page='<%=templatePath + "backoffice/event/toolbar.jsp"%>'
+<liferay-util:include page='<%=templatePath + "event/toolbar.jsp"%>'
 	servletContext="<%=application%>" />
 
 <%

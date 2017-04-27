@@ -106,8 +106,9 @@
 		<portlet:actionURL var="updateNotificationEventConfigURL" name="updateNotificationEventConfig" />
 
 		<aui:form action="<%=updateNotificationEventConfigURL.toString()%>"
-			onSubmit='<%= "event.preventDefault(); " + renderResponse.getNamespace() + "getValueRightBox();" %>'> 
-			method="post" name="fm">
+			onSubmit='<%= "event.preventDefault(); " + renderResponse.getNamespace() + "getValueRightBox();" %>'
+			method="post" name="fm"> 
+			
 
 			<aui:model-context bean="<%=notiEventConfig%>"
 				model="<%=NotificationEventConfig.class%>" />

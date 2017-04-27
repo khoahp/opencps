@@ -8,6 +8,7 @@
 				<xs:element name="DossierId" type="xs:string"></xs:element>
 				<xs:element name="PaymentFileId" type="xs:string"></xs:element>
 				<xs:element name="EventName" type="xs:string"></xs:element>
+				<xs:element name="Note" type="xs:string"></xs:element>
 				<xs:element name="PatternConfig" type="xs:string"></xs:element>
 				<xs:element name="PlId" type="xs:string"></xs:element>
 				<xs:element name="JspRedirect" type="xs:string"></xs:element>
