@@ -76,7 +76,6 @@ portlets/opencps-portlet/docroot/WEB-INF/service/
 portlets/opencps-portlet/docroot/WEB-INF/sql/
 portlets/opencps-portlet/docroot/WEB-INF/lib/
 portlets/opencps-portlet/docroot/css/.sass-cache/
-portlets/opencps-portlet/docroot/WEB-INF/src/META-INF
 portlets/opencps-portlet/docroot/WEB-INF/src/service.properties
 
 portlets/opencps-portlet/docroot/WEB-INF/src/org/opencps/datamgt/model/
@@ -129,7 +128,6 @@ hooks/opencps-hook/docroot/WEB-INF/classes/content/Language_vi.properties
 
 portlets/opencps-portlet/docroot/WEB-INF/src/org/opencps/servicemgt/service/base/
 
-portlets/opencps-portlet/docroot/WEB-INF/src/META-INF/
 portlets/opencps-portlet/docroot/WEB-INF/src/org/opencps/accountmgt/model/
 
 portlets/opencps-portlet/docroot/WEB-INF/src/org/opencps/usermgt/model/impl/

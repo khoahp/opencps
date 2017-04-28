@@ -9,6 +9,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -24,16 +25,22 @@ import org.opencps.integrate.utils.DossierUtils;
 import org.opencps.integrate.utils.MessageBusUtil;
 import org.opencps.integrate.utils.UserUtils;
 
+import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.util.PrefsPropsUtil;
+import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.User;
 import com.liferay.portal.service.ServiceContext;
+import com.liferay.portal.service.ServiceContextFactory;
 import com.liferay.portal.service.UserLocalServiceUtil;
 import com.liferay.portal.util.PortalUtil;
+
 
 @Path("/api")
 public class OCPSUserController {
@@ -238,6 +245,68 @@ public class OCPSUserController {
 		}
 		
 		return acc;
+	}
+	
+	@GET
+	@Path("/forgot/{email}")
+	public Response forgotPassword(@Context HttpServletRequest request,
+			@PathParam("email") String email) {
+
+		JSONObject resp = JSONFactoryUtil.createJSONObject();
+
+		try {
+
+			ServiceContext context = ServiceContextFactory.getInstance(request);
+
+			User user = null;
+
+			try {
+				user = UserLocalServiceUtil.getUserByEmailAddress(
+						context.getCompanyId(), email);
+			} catch (PortalException e) {
+
+			}
+
+			if (Validator.isNull(user)) {
+
+				resp.put("message", "NoUserExistWithThisEmail "+email);
+
+				return Response.status(401).entity(resp.toString()).build();
+			} else {
+
+				UserUtils userUtil = new UserUtils();
+
+				AccountModel acc = userUtil.getAccountModel(user.getUserId());
+
+				if (Validator.isNotNull(acc)) {
+
+					String fromName = PrefsPropsUtil.getString(
+							user.getCompanyId(),
+							PropsKeys.ADMIN_EMAIL_FROM_NAME);
+
+					String fromAddress = PrefsPropsUtil.getString(
+							user.getCompanyId(),
+							PropsKeys.ADMIN_EMAIL_FROM_ADDRESS);
+
+					UserLocalServiceUtil.sendPassword(context.getCompanyId(),
+							user.getEmailAddress(), fromName, fromAddress,
+							StringPool.BLANK, StringPool.BLANK, context);
+
+					resp.put("message", "Success");
+
+					return Response.status(200).entity(resp.toString()).build();
+				} else {
+					resp.put("message", "NoUserExistIsBussinessOrCitizenWithEmail "+email);
+
+					return Response.status(401).entity(resp.toString()).build();
+				}
+
+			}
+		} catch (PortalException | SystemException e) {
+
+			resp.put("message", "SystemError");
+			return Response.status(404).entity(resp.toString()).build();
+		}
 	}
 
 	private Log _log = LogFactoryUtil.getLog(OCPSUserController.class);
