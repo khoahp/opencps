@@ -35,7 +35,7 @@ import com.liferay.portlet.documentlibrary.util.DLUtil;
 
 public class APIUtils {
 	
-
+	public static final long GROUPID = 20182;
 
 	/**
 	 * @param dictItemCode

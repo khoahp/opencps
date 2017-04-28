@@ -15,7 +15,12 @@ public class UserUtils {
 	public static final String APPLICANT_TYPE_BUSINESS = "MST";
 	
 	
-	public User getUser(long companyId, String email) {
+	/**
+	 * @param companyId
+	 * @param email
+	 * @return
+	 */
+	public static User getUser(long companyId, String email) {
 		
 		User user = null;
 		
