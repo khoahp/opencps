@@ -34,6 +34,8 @@ import com.liferay.portlet.documentlibrary.service.DLFileEntryLocalServiceUtil;
 import com.liferay.portlet.documentlibrary.util.DLUtil;
 
 public class APIUtils {
+	
+
 
 	/**
 	 * @param dictItemCode

@@ -13,6 +13,20 @@ public class UserUtils {
 
 	public static final String APPLICANT_TYPE_CITY = "CMT";
 	public static final String APPLICANT_TYPE_BUSINESS = "MST";
+	
+	
+	public User getUser(long companyId, String email) {
+		
+		User user = null;
+		
+		try {
+			user = UserLocalServiceUtil.getUserByEmailAddress(companyId, email);
+		} catch (Exception e) {
+			
+		}
+		
+		return user;
+	}
 
 	public AccountModel getAccountModel(long userId) {
 
