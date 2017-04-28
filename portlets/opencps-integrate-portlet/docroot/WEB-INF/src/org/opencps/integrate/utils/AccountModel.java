@@ -1,6 +1,12 @@
 package org.opencps.integrate.utils;
 
 public class AccountModel {
+	
+	public static final int ACCOUNT_STATUS_REGISTERED = 0;
+	public static final int ACCOUNT_STATUS_CONFIRMED = 1;
+	public static final int ACCOUNT_STATUS_APPROVED = 2;
+	public static final int ACCOUNT_STATUS_LOCKED = 3;
+	
 	public String getScreenName() {
 		return screenName;
 	}
@@ -79,6 +85,12 @@ public class AccountModel {
 	public void setContactEmail(String contactEmail) {
 		this.contactEmail = contactEmail;
 	}
+	public String getAddress() {
+		return address;
+	}
+	public void setAddress(String address) {
+		this.address = address;
+	}
 	public String screenName;
 	public String applicantName;
 	public String applicantIdType;
@@ -92,4 +104,5 @@ public class AccountModel {
 	public String wardName;
 	public String contactTelNo;
 	public String contactEmail;
+	public String address;
 }

@@ -1,20 +1,27 @@
 package org.opencps.integrate.api;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.opencps.accountmgt.model.Citizen;
+import org.opencps.accountmgt.service.CitizenLocalServiceUtil;
 import org.opencps.integrate.dao.model.IntegrateAPI;
 import org.opencps.integrate.dao.service.IntegrateAPILocalServiceUtil;
+import org.opencps.integrate.utils.APIUtils;
 import org.opencps.integrate.utils.AccountModel;
+import org.opencps.integrate.utils.DossierUtils;
+import org.opencps.integrate.utils.MessageBusUtil;
 import org.opencps.integrate.utils.UserUtils;
 
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
@@ -24,10 +31,15 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.User;
+import com.liferay.portal.service.ServiceContext;
+import com.liferay.portal.service.UserLocalServiceUtil;
 import com.liferay.portal.util.PortalUtil;
 
 @Path("/api")
 public class OCPSUserController {
+	
+	public static int GROUPID = 20182;
+	public static final String PORTAL_URL = "http://202.151.168.104:2180";
 
 	@GET
 	@Path("/login")
@@ -129,6 +141,103 @@ public class OCPSUserController {
 
 		return tokenKey;
 
+	}
+	
+	@POST
+	@Path("/register")
+	@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
+	public Response addUser(@Context HttpServletRequest request, String body) {
+
+		JSONObject resp = JSONFactoryUtil.createJSONObject();
+
+		ServiceContext context = DossierUtils.getServletContext(request);
+		
+		context.setPortalURL(PORTAL_URL);
+		
+		try {
+
+			JSONObject input = JSONFactoryUtil.createJSONObject(body);
+			
+			_log.info(body);
+
+			AccountModel acc = getAccountModelInput(input);
+			
+			String regEmail = acc.getContactEmail();
+
+			if (acc.getApplicantIdType().equalsIgnoreCase(
+					UserUtils.APPLICANT_TYPE_CITY)) {
+
+				Calendar cal = Calendar.getInstance();
+				int birthDateDay = cal.get(Calendar.DAY_OF_MONTH);
+				int birthDateMonth = cal.get(Calendar.MONTH);
+				int birthDateYear = cal.get(Calendar.YEAR);
+
+				Citizen citizen = CitizenLocalServiceUtil.addCitizen(
+						acc.getApplicantName(), StringPool.BLANK, 0,
+						birthDateDay, birthDateMonth, birthDateYear,
+						acc.getAddress(), acc.getCityCode(),
+						acc.getDistrictCode(), acc.getWardCode(),
+						APIUtils.getDictItemName(acc.getCityCode()),
+						APIUtils.getDictItemName(acc.getDistrictCode()),
+						APIUtils.getDictItemName(acc.getWardCode()),
+						acc.getContactEmail(), StringPool.BLANK, GROUPID,
+						StringPool.BLANK, StringPool.BLANK, StringPool.BLANK,
+						null, 0, context);
+
+				if (citizen != null) {
+					User mappingUser = UserLocalServiceUtil.getUser(citizen
+							.getMappingUserId());
+					
+					MessageBusUtil.sendEmailAddressVerification(
+							citizen.getUuid(), mappingUser,
+							acc.getContactEmail(), "CITIZEN",
+							"2", "khoavd@gmail.com", context);
+
+					CitizenLocalServiceUtil.updateStatus(
+							citizen.getCitizenId(), context.getUserId(),
+							AccountModel.ACCOUNT_STATUS_APPROVED);
+				}
+				
+				resp.put("Result", "New");
+				resp.put("UserId", citizen.getMappingUserId());
+				resp.put("ErrorMessage", APIUtils.getLanguageValue("create-new"));
+			}
+
+			if (acc.getApplicantIdType().equals(
+					UserUtils.APPLICANT_TYPE_BUSINESS)) {
+				
+			}
+			
+			
+
+			return Response.status(200).entity(resp.toString()).build();
+
+		} catch (Exception e) {
+
+			return Response.status(404).entity(resp.toString()).build();
+		}
+
+	}
+	
+	private AccountModel getAccountModelInput(JSONObject input) {
+		AccountModel acc = new AccountModel();
+		
+		try {
+			acc.setScreenName(input.getString("ScreenName"));
+			acc.setApplicantName(input.getString("ApplicantName"));
+			acc.setApplicantIdType(input.getString("ApplicantIdType"));
+			acc.setApplicantIdNo(input.getString("ApplicantIdNo"));
+			acc.setAddress(input.getString("Address"));
+			acc.setCityCode(input.getString("CityCode"));
+			acc.setDistrictCode(input.getString("DistrictCode"));
+			acc.setWardCode(input.getString("WardCode"));
+			acc.setContactTelNo(input.getString("ContactTelNo"));
+			acc.setContactEmail(input.getString("ContactEmail"));
+		} catch (Exception e) {
+			acc = null;
+		}
+		
+		return acc;
 	}
 
 	private Log _log = LogFactoryUtil.getLog(OCPSUserController.class);
