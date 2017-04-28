@@ -140,10 +140,8 @@
 				</div>
 				
 				<!-- dictItem linked -->
-				<label><liferay-ui:message key="dict-item-linked" /></label>
-				<div style="overflow-y:scroll;height:250px;width:100%;overflow-x:hidden">
-					<div id='<%=renderResponse.getNamespace() + "itemLinkedContainer" %>' ></div>
-				</div>
+				<aui:row><label><liferay-ui:message key="dict-items-linked" /></label></aui:row>
+				<aui:row><div id='<%=renderResponse.getNamespace() + "itemLinkedContainer" %>' ></div></aui:row>
 				
 			</aui:fieldset>
 			
@@ -250,6 +248,9 @@
 		);
 	},['aui-base','liferay-portlet-url','aui-io']);
 	
+	// use for toggle expand
+	var previousId = '';
+	
 	Liferay.provide(window, 'getDictItemsLinked', function(dictCollectionId, dictItemId) {
 		var A = AUI();
 		
@@ -278,11 +279,31 @@
 						}
 						
 						var itemsLinkedStr = '<%=itemsLinkedStr %>';
+						
+						// set initial value
 						A.all('#<portlet:namespace/>dictItemLinked').each(function(dictItem){
 							if (!itemsLinkedStr.includes(dictItem.attr('value'))){
 								dictItem.attr('value', '0');
 							}
 						});
+						
+						// toggle expand
+						for (var i = 0; i < $('.expand-anchor').length; i++){
+							var colId = $('.expand-anchor')[i].id.replace(/\D+\d+\D+/, '');
+							$('#<portlet:namespace/>expandable' + colId).slideToggle( "normal");
+							A.one('#<portlet:namespace/>expand-anchor' + colId).on('click', function(){
+								var id = this['_node']['id'].replace(/\D+\d+\D+/, '');
+								$('#<portlet:namespace/>expandable' + id).slideToggle( "normal");
+								if (previousId.length > 0 && previousId != id){
+									$('#<portlet:namespace/>expandable' + previousId).slideToggle( "normal");
+								} 
+								if (previousId == id) {
+									previousId = '';
+								} else {
+									previousId = id;
+								}
+							});
+						}
 					},
 			    	error: function(){}
 				}
