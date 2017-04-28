@@ -61,13 +61,18 @@
 		dictCollection = DictCollectionLocalServiceUtil
 				.getDictCollection(linked.getDictCollectionLinkedId());
 		%>
-			<label><%=dictCollection.getCollectionName(locale) %></label>
+			<label class="expand-anchor"
+				id='<%=renderResponse.getNamespace() + "expand-anchor_dictCollectionId_" +linked.getDictCollectionLinkedId() %>'
+			>
+				<%=dictCollection.getCollectionName(locale) %>
+			</label>
 		<%
 		try {
 			dictItems = DictItemLocalServiceUtil
 					.getBy_D_P(dictCollection.getDictCollectionId(), 0, 
 							QueryUtil.ALL_POS, QueryUtil.ALL_POS,
 							DataMgtUtil.getDictItemOrderByComparator(DictItemDisplayTerms.SIBLING, WebKeys.ORDER_BY_ASC));
+			dictItemsOrdered.clear();
 			dictItemsOrdered = getDictItemsOrderBySibling(dictItemsOrdered, 
 					dictItems, dictCollection.getDictCollectionId());
 		} catch (Exception e){
@@ -75,7 +80,7 @@
 		}
 		
 		%>
-			<ul>
+			<div id='<%=renderResponse.getNamespace() + "expandable_" + linked.getDictCollectionLinkedId() %>'><ul>
 		<%
 				for (DictItem item : dictItemsOrdered){
 					boolean checked = false;
@@ -88,7 +93,7 @@
 					int level = StringUtil.count(item.getTreeIndex(), StringPool.PERIOD);
 					String index = "|";
 					for(int i = 0; i < level; i++){
-						index += "_";
+						index += "__";
 					}
 					%>
 						<li>
@@ -104,7 +109,7 @@
 					<%
 				}
 		%>
-			</ul>
+			</ul></div>
 		<%
 	}
 %>

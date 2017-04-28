@@ -140,10 +140,8 @@
 				</div>
 				
 				<!-- dictItem linked -->
-				<label><liferay-ui:message key="dict-item-linked" /></label>
-				<div style="overflow-y:scroll;height:250px;width:100%;overflow-x:hidden">
-					<div id='<%=renderResponse.getNamespace() + "itemLinkedContainer" %>' ></div>
-				</div>
+				<label><liferay-ui:message key="dict-items-linked" /></label>
+				<div id='<%=renderResponse.getNamespace() + "itemLinkedContainer" %>' ></div>
 				
 			</aui:fieldset>
 			
@@ -250,6 +248,9 @@
 		);
 	},['aui-base','liferay-portlet-url','aui-io']);
 	
+	// use for toggle expand
+	var previousId = '';
+	
 	Liferay.provide(window, 'getDictItemsLinked', function(dictCollectionId, dictItemId) {
 		var A = AUI();
 		
@@ -277,12 +278,40 @@
 							itemsLinkedContainer.html(itemsLinked);
 						}
 						
+						// set initial value
 						var itemsLinkedStr = '<%=itemsLinkedStr %>';
+						var itemsLinkedArr = itemsLinkedStr.split(',');
+						var match = false;
 						A.all('#<portlet:namespace/>dictItemLinked').each(function(dictItem){
-							if (!itemsLinkedStr.includes(dictItem.attr('value'))){
+							match = false;
+							for (var i = 0; i < itemsLinkedArr.length; i++) {
+						        if (itemsLinkedArr[i] == dictItem.attr('value')) {
+						        	match = true;
+						        	break;
+						        }
+						    }
+							if (!match){
 								dictItem.attr('value', '0');
 							}
 						});
+						
+						// toggle expand
+						for (var i = 0; i < $('.expand-anchor').length; i++){
+							var colId = $('.expand-anchor')[i].id.replace(/^.+dictCollectionId_/, '');
+							$('#<portlet:namespace/>expandable_' + colId).slideToggle( "normal");
+							A.one('#<portlet:namespace/>expand-anchor_dictCollectionId_' + colId).on('click', function(){
+								var id = this['_node']['id'].replace(/^.+dictCollectionId_/, '');
+								$('#<portlet:namespace/>expandable_' + id).slideToggle( "normal");
+								if (previousId.length > 0 && previousId != id){
+									$('#<portlet:namespace/>expandable_' + previousId).slideToggle("normal");
+								} 
+								if (previousId == id) {
+									previousId = '';
+								} else {
+									previousId = id;
+								}
+							});
+						}
 					},
 			    	error: function(){}
 				}

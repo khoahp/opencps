@@ -142,8 +142,17 @@
 <aui:script>
 	AUI().ready(function(A){
 		var collectionsLinked = '<%=collectionsLinked %>';
+		var linkedArr = collectionsLinked.split(',');
+		var match = false;
 		A.all('#<portlet:namespace/>dictCollectionsLinked').each(function(dictCol){
-			if (!collectionsLinked.includes(dictCol.attr('value'))){
+			match = false;
+			for (var i = 0; i < linkedArr.length; i++) {
+		        if (linkedArr[i] == dictCol.attr('value')) {
+		        	match = true;
+		        	break;
+		        }
+		    }
+			if (!match){
 				dictCol.attr('value', '0');
 			}
 		});
