@@ -230,20 +230,20 @@
 				<%
 					DossierFileSearchTerms searchTerms = (DossierFileSearchTerms)searchContainer.getSearchTerms();
 								
-						List<DossierFile> dossierFiles = new ArrayList<DossierFile>();
-						int totalCount = 0;
-						try {
-							dossierFiles = DossierFileLocalServiceUtil.searchDossierFile(scopeGroupId, citizen != null ? citizen.getMappingUserId() : 0, business != null ? business.getMappingOrganizationId() : 0, searchTerms.getKeywords(), templateFileNo, 0, searchContainer.getStart(), searchContainer.getEnd(), searchContainer.getOrderByComparator());
-							totalCount = DossierFileLocalServiceUtil.countDossierFile(scopeGroupId, citizen != null ? citizen.getMappingUserId() : 0, business != null ? business.getMappingOrganizationId() : 0, searchTerms.getKeywords(), templateFileNo, 0);
-						} catch(Exception e){
-							
-						}
-
-						total = totalCount;
-						results = dossierFiles;
+					List<DossierFile> dossierFiles = new ArrayList<DossierFile>();
+					int totalCount = 0;
+					try {
+						dossierFiles = DossierFileLocalServiceUtil.searchDossierFile(scopeGroupId, citizen != null ? citizen.getMappingUserId() : 0, business != null ? business.getMappingOrganizationId() : 0, searchTerms.getKeywords(), templateFileNo, 0, searchContainer.getStart(), searchContainer.getEnd(), searchContainer.getOrderByComparator());
+						totalCount = DossierFileLocalServiceUtil.countDossierFile(scopeGroupId, citizen != null ? citizen.getMappingUserId() : 0, business != null ? business.getMappingOrganizationId() : 0, searchTerms.getKeywords(), templateFileNo, 0);
+					} catch(Exception e){
 						
-						pageContext.setAttribute("results", results);
-						pageContext.setAttribute("total", total);				
+					}
+
+					total = totalCount;
+					results = dossierFiles;
+					
+					pageContext.setAttribute("results", results);
+					pageContext.setAttribute("total", total);				
 				%>
 			</liferay-ui:search-container-results>	
 				<liferay-ui:search-container-row 
@@ -263,43 +263,52 @@
 					<%
 						String templateFileURL = StringPool.BLANK;
 						String dossierFileURL = StringPool.BLANK;
-							try {
-								if(Validator.isNotNull(dossierFile.getTemplateFileNo())) {
-									String tempNo = dossierFile.getTemplateFileNo();
-									TemplateFile templateFile = TemplateFileLocalServiceUtil
-											.getTemplateFileByNo(scopeGroupId, tempNo);
-										long templateFileEntryId = 0;
-										
-										if(Validator.isNotNull(templateFile)) {
-											templateFileEntryId = templateFile.getFileEntryId();
-											if(templateFileEntryId > 0) {
-												FileEntry templateFileEntry =
-														DLFileEntryUtil.getFileEntry(templateFileEntryId);
-												templateFileURL = DLUtil.getPreviewURL(
-														templateFileEntry, templateFileEntry.getFileVersion(),
-														themeDisplay, StringPool.BLANK);
-											}
-									}
+						
+						try {
+							if(Validator.isNotNull(dossierFile.getTemplateFileNo())) {
+								String tempNo = dossierFile.getTemplateFileNo();
+								TemplateFile templateFile = TemplateFileLocalServiceUtil
+										.getTemplateFileByNo(scopeGroupId, tempNo);
+									long templateFileEntryId = 0;
+									
+									if(Validator.isNotNull(templateFile)) {
+										templateFileEntryId = templateFile.getFileEntryId();
+										if(templateFileEntryId > 0) {
+											FileEntry templateFileEntry =
+													DLFileEntryUtil.getFileEntry(templateFileEntryId);
+											templateFileURL = DLUtil.getPreviewURL(
+													templateFileEntry, templateFileEntry.getFileVersion(),
+													themeDisplay, StringPool.BLANK);
+										}
 								}
-							} catch (Exception e) {}
-							
-							try {
-								long dossierFileEntryId = dossierFile.getFileEntryId();
-								
-								if(dossierFileEntryId > 0) {
-									FileEntry dossierFileEntry =
-											DLFileEntryUtil.getFileEntry(dossierFileEntryId);
-									dossierFileURL = DLUtil.getPreviewURL(
-											dossierFileEntry, dossierFileEntry.getFileVersion(),
-											themeDisplay, StringPool.BLANK);
-								}
-							} catch(Exception e) {} 
-							
-							String viewDossierUrlNomal = viewDossierURL.toString();
-							if(viewDossierUrlNomal.contains("p_p_state=pop_up"))  {
-								viewDossierUrlNomal = StringUtil.replace(viewDossierUrlNomal, "p_p_state=pop_up", "p_p_state=nomal");
 							}
+						} catch (Exception e) {}
+						
+						try {
+							long dossierFileEntryId = dossierFile.getFileEntryId();
 							
+							if(dossierFileEntryId > 0) {
+								FileEntry dossierFileEntry =
+										DLFileEntryUtil.getFileEntry(dossierFileEntryId);
+								dossierFileURL = DLUtil.getPreviewURL(
+										dossierFileEntry, dossierFileEntry.getFileVersion(),
+										themeDisplay, StringPool.BLANK);
+							}
+						} catch(Exception e) {} 
+						
+						String viewDossierUrlNomal = viewDossierURL.toString();
+						if(viewDossierUrlNomal.contains("p_p_state=pop_up"))  {
+							viewDossierUrlNomal = StringUtil.replace(viewDossierUrlNomal, "p_p_state=pop_up", "p_p_state=nomal");
+						}
+						
+						Dossier dossierSearch = null;
+						String receptionNo = StringPool.DASH;
+						
+						try {
+							dossierSearch = DossierLocalServiceUtil.getDossier(dossierFile.getDossierId());
+							
+							receptionNo = Validator.isNotNull(dossierSearch.getReceptionNo()) ? dossierSearch.getReceptionNo() : String.valueOf(dossierSearch.getDossierId());
+						} catch(Exception e) {}
 					%>
 									
 					<liferay-util:buffer var="rowTicker">
@@ -329,7 +338,7 @@
 					
 					
 					<liferay-util:buffer var="boundCol4">
-						<%=Validator.isNotNull(dossier) ? dossier.getReceptionNo() : StringPool.DASH %>
+						<%= receptionNo %>
 					</liferay-util:buffer>
 					
 					<liferay-util:buffer var="boundCol5">
