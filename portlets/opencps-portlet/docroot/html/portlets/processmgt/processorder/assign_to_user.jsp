@@ -433,10 +433,16 @@
 									<td class="signature-status" width="10%">
 										<c:choose>
 											<c:when test="<%=dossierFileInUse.isSigned() %>">
-												<i class="fa fa-check-square-o" aria-hidden="true" title="signed"></i>
+												<!-- <i class="fa fa-check-square-o" aria-hidden="true" title="signed"></i> -->
+												<label class="request-signed-number-label">
+												<liferay-ui:message key="request-signed-number"/>
+												</label>
 											</c:when>
 											<c:otherwise>
-												<i class="fa fa-square-o" aria-hidden="true" ></i>
+												<!-- <i class="fa fa-square-o" aria-hidden="true" ></i> -->
+												<label class="request-signed-number">
+												<liferay-ui:message key="request-signed-number"/>
+												</label>
 											</c:otherwise>
 										</c:choose>
 									</td>
