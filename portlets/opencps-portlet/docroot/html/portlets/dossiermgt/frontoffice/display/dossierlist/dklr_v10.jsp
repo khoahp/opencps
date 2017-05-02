@@ -119,131 +119,180 @@
 	
 %>
 
-<aui:row>
-	<aui:col width="100" >
-		<div class="opencps-searchcontainer-wrapper default-box-shadow radius8">
-			<div class="opcs-serviceinfo-list-label">
-				<div class="title_box">
-					<p class="file_manage_title ds"><liferay-ui:message key="title-danh-sach-ho-so" /></p>
-					<p class="count"></p>
+<aui:form action="" method="post" name="fm">
+	<aui:row>
+		<aui:col width="100">
+			<h4><liferay-ui:message key="tim-kiem-ho-so" /></h4>
+			
+			<aui:row>
+				<aui:col width="100" >
+					<aui:input type="text" name="receptionNo" value="" label="so-dkkt"/>
+				</aui:col>
+			</aui:row>
+			
+			<aui:row>
+				<aui:col width="100" >
+					<aui:select name="serviceInfoNo" label="service-info" showEmptyOption="<%= true %>">
+					</aui:select>
+				</aui:col>
+			</aui:row>
+			
+			<aui:row>
+				<aui:col width="50" >
+					<aui:select name="vehicleClass" label="doi-tuong" showEmptyOption="<%= true %>">
+					</aui:select>
+				</aui:col>
+				
+				<aui:col width="50" >
+					<aui:select name="dossierStatus" showEmptyOption="<%= true %>">
+					</aui:select>
+				</aui:col>
+			</aui:row>
+			
+			<aui:row>
+				<aui:col width="50" >
+					<aui:input type="date" name="submitDateTimeFrom" label="ngay-nop-ho-so" />
+				</aui:col>
+				
+				<aui:col width="50" >
+					<aui:input type="date" name="submitDateTimeTo" label="den-ngay" />
+				</aui:col>
+			</aui:row>
+			
+			<aui:button-row>
+				<aui:button type="submit" name="search" value="search" />
+				
+				<aui:button type="button" name="add-new" value="add-new" />
+			</aui:button-row>
+		</aui:col>
+	</aui:row>
+	
+	<aui:row>
+		<aui:col width="100" >
+			<div class="opencps-searchcontainer-wrapper default-box-shadow radius8">
+				<div class="opcs-serviceinfo-list-label">
+					<div class="title_box">
+						<p class="file_manage_title ds"><liferay-ui:message key="title-danh-sach-ho-so" /></p>
+						<p class="count"></p>
+					</div>
 				</div>
-			</div>
-			
-			<liferay-ui:search-container searchContainer="<%= new DossierSearch(renderRequest, SearchContainer.DEFAULT_DELTA, iteratorURL, headerNames) %>">
-			
-				<liferay-ui:search-container-results>
-					<%
-						DossierSearchTerms searchTerms = (DossierSearchTerms)searchContainer.getSearchTerms();
-						
-						searchTerms.setDossierStatus(dossierStatus);
-						
-						DictItem domainItem = null;
-					
-
-						try{
-							if(serviceDomainId > 0){
-								domainItem = DictItemLocalServiceUtil.getDictItem(serviceDomainId);
-							}
-			
-							if(domainItem != null){
-								searchTerms.setServiceDomainIndex(domainItem.getTreeIndex());
-							}
+				
+				<liferay-ui:search-container searchContainer="<%= new DossierSearch(renderRequest, SearchContainer.DEFAULT_DELTA, iteratorURL, headerNames) %>">
+				
+					<liferay-ui:search-container-results>
+						<%
+							DossierSearchTerms searchTerms = (DossierSearchTerms)searchContainer.getSearchTerms();
 							
-							%>
-									<%@include file="/html/portlets/dossiermgt/frontoffice/dosier_search_results.jspf" %>
-							<%
-						}catch(Exception e){
-							_log.error(e);
-						}
-					
-						total = totalCount;
-						results = dossiers;
+							searchTerms.setDossierStatus(dossierStatus);
+							
+							DictItem domainItem = null;
 						
-						pageContext.setAttribute("results", results);
-						pageContext.setAttribute("total", total);
-					%>
-				</liferay-ui:search-container-results>	
-					<liferay-ui:search-container-row 
-						className="org.opencps.dossiermgt.bean.DossierBean" 
-						modelVar="dossierBean" 
-						keyProperty="dossierId"
-					>
-					
-					<%
-						Dossier dossier = dossierBean.getDossier();
-						String cssStatusColor = "status-color-" + dossier.getDossierStatus();
-						List<DossierLog> dossierLogs = new ArrayList<DossierLog>();
-						String noteContent = StringPool.BLANK;
-						try {
-							dossierLogs = DossierLogLocalServiceUtil.findDossierLog(1, dossier.getDossierId(), 0, 1);
-							if(dossierLogs.size() > 0) {
-								noteContent = DossierMgtUtil.getDossierLogs(StringPool.BLANK, dossierLogs.get(0).getMessageInfo()).replaceAll("update-version-file", LanguageUtil.get(pageContext, "update-version-file"));
+	
+							try{
+								if(serviceDomainId > 0){
+									domainItem = DictItemLocalServiceUtil.getDictItem(serviceDomainId);
+								}
+				
+								if(domainItem != null){
+									searchTerms.setServiceDomainIndex(domainItem.getTreeIndex());
+								}
+								
+								%>
+										<%@include file="/html/portlets/dossiermgt/frontoffice/dosier_search_results.jspf" %>
+								<%
+							}catch(Exception e){
+								_log.error(e);
 							}
-						} catch(Exception e) {
-							_log.error(e);
-						}
-					%>
-					<liferay-util:buffer var="col1">
-						<div class="dossier-list-stt">
-							<%=(searchContainer.getCur() - 1) * searchContainer.getDelta() + index + 1 %>
-						</div>
-					</liferay-util:buffer>
-					
-					<liferay-util:buffer var="col2">
-						<%=dossier.getReceptionNo() %>
-					</liferay-util:buffer>
-					
-					<liferay-util:buffer var="col2">
-						<liferay-ui:message key="<%=vehicleClass %>"/>
-					</liferay-util:buffer>
-					
-					<liferay-util:buffer var="col4">
-						<div class="dossier-list-service-name">
-							<%=dossierBean.getServiceName() %>
-						</div>
-					</liferay-util:buffer>
-					
-					<liferay-util:buffer var="col5">
-						<div class="dossier-list-col-date">
-							<div class="row-fluid"> 
-									<%=
-										Validator.isNotNull(dossier.getSubmitDatetime()) ? 
-										DateTimeUtil.convertDateToString(dossier.getSubmitDatetime(), DateTimeUtil._VN_DATE_TIME_FORMAT) : 
-										StringPool.DASH 
-									%>
+						
+							total = totalCount;
+							results = dossiers;
+							
+							pageContext.setAttribute("results", results);
+							pageContext.setAttribute("total", total);
+						%>
+					</liferay-ui:search-container-results>	
+						<liferay-ui:search-container-row 
+							className="org.opencps.dossiermgt.bean.DossierBean" 
+							modelVar="dossierBean" 
+							keyProperty="dossierId"
+						>
+						
+						<%
+							Dossier dossier = dossierBean.getDossier();
+							String cssStatusColor = "status-color-" + dossier.getDossierStatus();
+							List<DossierLog> dossierLogs = new ArrayList<DossierLog>();
+							String noteContent = StringPool.BLANK;
+							try {
+								dossierLogs = DossierLogLocalServiceUtil.findDossierLog(1, dossier.getDossierId(), 0, 1);
+								if(dossierLogs.size() > 0) {
+									noteContent = DossierMgtUtil.getDossierLogs(StringPool.BLANK, dossierLogs.get(0).getMessageInfo()).replaceAll("update-version-file", LanguageUtil.get(pageContext, "update-version-file"));
+								}
+							} catch(Exception e) {
+								_log.error(e);
+							}
+						%>
+						<liferay-util:buffer var="col1">
+							<div class="dossier-list-stt">
+								<%=(searchContainer.getCur() - 1) * searchContainer.getDelta() + index + 1 %>
+							</div>
+						</liferay-util:buffer>
+						
+						<liferay-util:buffer var="col2">
+							<%=dossier.getReceptionNo() %>
+						</liferay-util:buffer>
+						
+						<liferay-util:buffer var="col2">
+							<liferay-ui:message key="<%=vehicleClass %>"/>
+						</liferay-util:buffer>
+						
+						<liferay-util:buffer var="col4">
+							<div class="dossier-list-service-name">
+								<%=dossierBean.getServiceName() %>
+							</div>
+						</liferay-util:buffer>
+						
+						<liferay-util:buffer var="col5">
+							<div class="dossier-list-col-date">
+								<div class="row-fluid"> 
+										<%=
+											Validator.isNotNull(dossier.getSubmitDatetime()) ? 
+											DateTimeUtil.convertDateToString(dossier.getSubmitDatetime(), DateTimeUtil._VN_DATE_TIME_FORMAT) : 
+											StringPool.DASH 
+										%>
+									</div>
 								</div>
 							</div>
-						</div>
-					</liferay-util:buffer>
+						</liferay-util:buffer>
+						
+						<liferay-util:buffer var="col6">
+							<div class="row-fluid dossier-list-note">
+								<liferay-ui:message key="<%= noteContent  %>"/>
+							</div>
+						</liferay-util:buffer>
+							
+						<%
+							row.setClassName("opencps-searchcontainer-row " + cssStatusColor);
+							row.addText(col1);
+							row.addText(col2);
+							row.addText(col3);
+							row.addText(col4);
+							row.addText(col5);
+							row.addText(col6);
+							row.addJSP("center", SearchEntry.DEFAULT_VALIGN,"/html/portlets/dossiermgt/frontoffice/dossier_actions.jsp", 
+										config.getServletContext(), request, response);
+							
+						%>	
+						</liferay-ui:search-container-row> 
 					
-					<liferay-util:buffer var="col6">
-						<div class="row-fluid dossier-list-note">
-							<liferay-ui:message key="<%= noteContent  %>"/>
-						</div>
-					</liferay-util:buffer>
-						
-					<%
-						row.setClassName("opencps-searchcontainer-row " + cssStatusColor);
-						row.addText(col1);
-						row.addText(col2);
-						row.addText(col3);
-						row.addText(col4);
-						row.addText(col5);
-						row.addText(col6);
-						row.addJSP("center", SearchEntry.DEFAULT_VALIGN,"/html/portlets/dossiermgt/frontoffice/dossier_actions.jsp", 
-									config.getServletContext(), request, response);
-						
-					%>	
-					</liferay-ui:search-container-row> 
-				
-				<liferay-ui:search-iterator type="opencs_page_iterator"/>
-				
-			</liferay-ui:search-container>
-		</div>
-		
-	</aui:col>
-</aui:row>
+					<liferay-ui:search-iterator type="opencs_page_iterator"/>
+					
+				</liferay-ui:search-container>
+			</div>
+			
+		</aui:col>
+	</aui:row>
+</aui:form>
 
 <%!
-	private Log _log = LogFactoryUtil.getLog("html.portlets.dossiermgt.frontoffice.display.default.jsp");
+	private Log _log = LogFactoryUtil.getLog("html_portlets_dossiermgt_frontoffice_display_dklr_10_jsp");
 %>
