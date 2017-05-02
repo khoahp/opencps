@@ -151,6 +151,10 @@
 							<aui:option selected="<%= dossierListDisplayStyle.equals(\"treemenu_left_table\") %>" value="treemenu_left_table">
 								<liferay-ui:message key="treemenu-left-table"/>
 							</aui:option>
+							
+							<aui:option selected="<%= dossierListDisplayStyle.equals(\"dklr_v10\") %>" value="treemenu_left_table">
+								<liferay-ui:message key="dklr_v10"/>
+							</aui:option>
 						</aui:select>
 					</aui:fieldset>
 					
