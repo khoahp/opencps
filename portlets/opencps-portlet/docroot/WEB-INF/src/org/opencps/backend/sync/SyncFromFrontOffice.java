@@ -18,6 +18,7 @@
 package org.opencps.backend.sync;
 
 import java.util.Date;
+import java.util.Locale;
 
 import org.opencps.backend.message.SendToEngineMsg;
 import org.opencps.backend.message.UserActionMsg;
@@ -33,6 +34,8 @@ import org.opencps.processmgt.service.ProcessOrderLocalServiceUtil;
 import org.opencps.util.PortletConstants;
 import org.opencps.util.WebKeys;
 
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.messaging.Message;
@@ -58,18 +61,50 @@ public class SyncFromFrontOffice implements MessageListener {
 
 		try {
 			_doReceiveDossier(message);
+			
+			//exeMessage(message);
 		}
 		catch (Exception e) {
-			_log.error("Unable to process message " + message, e);
+			_log.error("Messages: " + message, e);
 		}
 	}
-
+	
 	/**
 	 * @param message
 	 */
 	private void _doReceiveDossier(Message message) {
-
-		UserActionMsg userActionMgs = (UserActionMsg) message.get("msgToEngine");
+		
+		UserActionMsg userActionMgs = null;
+		
+		String msgFrom  = message.getString("msgFrom");
+		
+		if (msgFrom.contentEquals("outside")) {
+			try {
+				String mgs =  message.getString("jsonMsg");
+				
+				userActionMgs = new UserActionMsg(); 
+				
+				JSONObject msgJson = JSONFactoryUtil.createJSONObject(mgs);
+				
+				System.out.println("MESSAGE: " + msgJson.toString());
+				
+				userActionMgs.setAction(msgJson.getString("action"));
+				userActionMgs.setDossierId(msgJson.getLong("dossierId"));
+				userActionMgs.setLocale(new Locale("vi", "VN"));
+				userActionMgs.setFileGroupId(msgJson.getLong("fileGroupId"));
+				userActionMgs.setUserId(msgJson.getLong("userId"));
+				userActionMgs.setCompanyId(msgJson.getLong("companyId"));
+				userActionMgs.setGroupId(msgJson.getLong("groupId"));
+				userActionMgs.setDossierOId(msgJson.getString("dossierOId"));
+				userActionMgs.setGovAgencyCode(msgJson.getString("govAgencyCode"));
+				userActionMgs.setDossierStatus(msgJson.getString("dossierStatus"));
+				
+			} catch (Exception e) {
+				_log.error("Can not cast JSON msg!");
+			}
+		} else {
+			userActionMgs = (UserActionMsg) message.get("msgToEngine");
+		}
 
 		String action = userActionMgs.getAction();
 
