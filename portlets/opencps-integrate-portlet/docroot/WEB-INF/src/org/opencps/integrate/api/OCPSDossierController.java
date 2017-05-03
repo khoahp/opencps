@@ -65,7 +65,6 @@ public class OCPSDossierController {
 
 		IntegrateAPI api = auth.auth(apikey);
 		
-
 		boolean isPermit = permit.isDossierPermission(apikey)
 				&& permit.isSendValidatorDossier(dossierid)
 				&& permit.isDossierDetailPermission(apikey, dossierid);
