@@ -29,7 +29,7 @@
 
 <%
 	PortletURL iteratorURL = renderResponse.createRenderURL();
-	iteratorURL.setParameter("mvcPath", templatePath + "templatefileserviceinfo.jsp");
+	iteratorURL.setParameter("mvcPath", templatePath + "sevicedomainlist.jsp");
 	iteratorURL.setParameter("tabs1", ServiceUtil.TOP_TABS_DOMAIN);
 	List<DictItem> dictItems = new ArrayList<DictItem>();
 	
