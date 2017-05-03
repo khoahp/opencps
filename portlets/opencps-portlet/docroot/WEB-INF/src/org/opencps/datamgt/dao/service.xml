@@ -182,6 +182,7 @@
 		<!-- Other fields -->
 		<column name="dictCollectionId" type="long" />
 		<column name="dictCollectionLinkedId" type="long" />
+		<column name="dictCollectionLinkedName" type="String" />
 		<column name="sequenceNo" type="long" />
 		
 		<!-- Order -->
@@ -210,6 +211,7 @@
 		<!-- Other fields -->
 		<column name="dictItemId" type="long" />
 		<column name="dictItemLinkedId" type="long" />
+		<column name="dictItemLinkedName" type="String" />
 		<column name="sequenceNo" type="long" />
 		
 		<!-- Order -->
