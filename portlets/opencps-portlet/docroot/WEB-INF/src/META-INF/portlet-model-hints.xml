@@ -396,6 +396,9 @@
 		<field name="processName" type="String" />
 		<field name="description" type="String" />
 		<field name="dossierTemplateId" type="long" />
+		<field name="paymentConfigId" type="long" />
+		<field name="paymentFee" type="String" />
+		<field name="isRequestPayment" type="boolean" />
 	</model>
 	<model name="org.opencps.processmgt.model.StepAllowance">
 		<field name="stepAllowanceId" type="long" />
@@ -411,6 +414,19 @@
 		<field name="esign" type="boolean" />
 		<field name="postback" type="boolean" />
 		<field name="pattern" type="String" />
+	</model>
+	<model name="org.opencps.dossiermgt.model.BusinessRegister">
+		<field name="businessRegisterId" type="long" />
+		<field name="companyId" type="long" />
+		<field name="groupId" type="long" />
+		<field name="userId" type="long" />
+		<field name="createDate" type="Date" />
+		<field name="modifiedDate" type="Date" />
+		<field name="ownerOrganizationId" type="long" />
+		<field name="dossierTemplateId" type="String" />
+		<field name="serviceProcessId" type="String" />
+		<field name="dossierId" type="int" />
+		<field name="validStatus" type="String" />
 	</model>
 	<model name="org.opencps.dossiermgt.model.Dossier">
 		<field name="dossierId" type="long" />
@@ -519,6 +535,8 @@
 		<field name="signInfo" type="String" />
 		<field name="formSchema" type="String" />
 		<field name="formType" type="String" />
+		<field name="formScript" type="String" />
+		<field name="formReport" type="String" />
 	</model>
 	<model name="org.opencps.dossiermgt.model.DossierFileLog">
 		<field name="dossierFileLogId" type="long" />
@@ -722,6 +740,7 @@
 		<field name="paymentGateType" type="long" />
 		<field name="status" type="boolean" />
 		<field name="returnUrl" type="String" />
+		<field name="paymentConfigNo" type="String" />
 	</model>
 	<model name="org.opencps.paymentmgt.model.PaymentFile">
 		<field name="uuid" type="String" />
@@ -886,6 +905,9 @@
 		<field name="eventName" type="String" />
 		<field name="description" type="String" />
 		<field name="pattern" type="String" />
+		<field name="userExcept" type="String" />
+		<field name="plId" type="String" />
+		<field name="jspRedirect" type="String" />
 		<field name="active" type="boolean" />
 	</model>
 	<model name="org.opencps.notificationmgt.model.NotificationRedirectConfig">
@@ -911,7 +933,7 @@
 		<field name="modifiedDate" type="Date" />
 		<field name="dossierCurrentStatus" type="String" />
 		<field name="dossierNextStatus" type="String" />
-		<field name="isSendNotification" type="boolean" />
+		<field name="active" type="boolean" />
 	</model>
 	<model name="org.opencps.postal.model.PostalConfig">
 		<field name="postalConfigId" type="long" />
@@ -983,5 +1005,16 @@
 		<field name="donHangNoiHuyen" type="boolean" />
 		<field name="maTinhNhan" type="int" />
 		<field name="emailNguoiNhan" type="String" />
+	</model>
+	<model name="org.opencps.lucenequery.model.LuceneQueryPattern">
+		<field name="patternId" type="long" />
+		<field name="companyId" type="long" />
+		<field name="groupId" type="long" />
+		<field name="userId" type="long" />
+		<field name="createdDate" type="Date" />
+		<field name="modifiedDate" type="Date" />
+		<field name="name" type="String" />
+		<field name="pattern" type="String" />
+		<field name="url" type="String" />
 	</model>
 </model-hints>

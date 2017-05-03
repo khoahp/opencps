@@ -322,4 +322,13 @@ public class PortletPropsValues {
 	public static final String DM_POSTAL_GATE = PortletProps
 			.get(PortletPropsKeys.DM_POSTAL_GATE);
 
+	public static final String NOTIFICATION_INBOX_TITLE = PortletProps
+			.get(PortletPropsKeys.NOTIFICATION_INBOX_TITLE);
+	
+	public static final String NOTIFICATION_INBOX_BODY = PortletProps
+			.get(PortletPropsKeys.NOTIFICATION_INBOX_BODY);
+
+	public static final String DM_PAYMENT_GATE = PortletProps
+			.get(PortletPropsKeys.DM_PAYMENT_GATE);
+
 }

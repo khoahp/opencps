@@ -1,3 +1,6 @@
+<%@page import="org.opencps.dossiermgt.model.impl.ServiceOptionImpl"%>
+<%@page import="org.opencps.dossiermgt.service.ServiceOptionLocalServiceUtil"%>
+<%@page import="org.opencps.dossiermgt.model.ServiceOption"%>
 <%@page import="com.liferay.portal.kernel.util.UnicodeFormatter"%>
 <%
 /**
@@ -213,16 +216,6 @@
 		<aui:model-context bean="<%=serviceConfig%>" model="<%=ServiceConfig.class%>" />
 		
 		<aui:row>
-			<%-- <aui:col>
-				<datamgt:ddr
-					cssClass="input100"
-					depthLevel="1" 
-					dictCollectionCode="<%=PortletPropsValues.DATAMGT_MASTERDATA_SERVICE_DOMAIN %>"
-					itemNames="<%=ServiceConfigDisplayTerms.SERVICE_CONFIG_DOMAINCODE %>"
-					itemsEmptyOption="true"	
-					selectedItems="<%=dictItemServiceDomainId%>"
-				/>	
-			</aui:col> --%>
 			
 			<aui:select name="<%=ServiceConfigDisplayTerms.SERVICE_CONFIG_DOMAINCODE %>" 
 						label="<%=ServiceConfigDisplayTerms.SERVICE_CONFIG_DOMAINCODE %>" 
@@ -255,7 +248,7 @@
 		
 		<div id = "<portlet:namespace />responseServiceConfig"></div>
 		
-		<!-- govAgenci -->
+		<!-- govAgency -->
 		<aui:row>
 			<aui:col width="100">
 				<datamgt:ddr
@@ -265,6 +258,7 @@
 					itemNames="<%=ServiceConfigDisplayTerms.SERVICE_CONFIG_GOVAGENCYCODE %>"
 					itemsEmptyOption="true"
 					selectedItems="<%=dictItemGovAgencyId%>"
+					showLabel="<%= true %>"
 				/>
 			</aui:col>
 		</aui:row>
@@ -333,7 +327,6 @@
 		
 		<aui:row>
 			<aui:col width="100">
-				<%-- <aui:input name="<%= ServiceConfigDisplayTerms.SERVICE_INSTRUCTION%>" cssClass="input100"/> --%>
 				<liferay-ui:input-editor name="<%= ServiceConfigDisplayTerms.SERVICE_INSTRUCTION %>" 
 					initMethod="initInstructions"/>
 			</aui:col>
@@ -365,13 +358,38 @@
 			</aui:col>
 		</aui:row>
 		
-		
-		<!-- comment this, choose in datatitem, no find by service info -->
-		<%-- <div id = "<portlet:namespace />serviceConfigGovNameCode">
+		<%
+			ServiceOption so = new ServiceOptionImpl();
 			
-		</div> --%>
+			try {
+				so = ServiceOptionLocalServiceUtil.getServiceOptionByG_SCID_DTID
+						(themeDisplay.getScopeGroupId(), serviceConfig.getServiceConfigId(), 
+								serviceConfig.getDossierTemplateId());
+				
+			} catch (Exception e) {}
+		%>
 		
-	
+		<aui:row>
+			<aui:col width="100">
+				<aui:input name="optionName" type="text" value="<%= so.getOptionName() %>"/>
+			</aui:col>
+		</aui:row>
+		
+		<aui:row>
+			<aui:col width="100">
+				<aui:input name="optionCode" type="text" value="<%= so.getOptionCode() %>"/>
+			</aui:col>
+		</aui:row>
+		<aui:row>
+			<aui:col width="100">
+				<aui:input name="optionOrder" type="text" value="<%= so.getOptionCode() %>"/>
+			</aui:col>
+		</aui:row>
+		<aui:row>
+			<aui:col width="100">
+				<aui:input name="autoSelect" type="text" value="<%= so.getOptionCode() %>"/>
+			</aui:col>
+		</aui:row>
 		
 		<aui:row>
 			<aui:button name="submit" type="submit" value="submit"/>
@@ -388,7 +406,6 @@
 	}
 </script>
 <aui:script use = "aui-base">
-
 	
 AUI().ready(function(A) {
 		
@@ -397,8 +414,9 @@ AUI().ready(function(A) {
 		var serviceInfoId = "<%= serviceInfoId %>";
 		
 		if(selectDomainCode){
-			/* <portlet:namespace />sentServiceInfoId(serviceInfoId); */
+			
 			<portlet:namespace />sentDomainCode(selectDomainCode.val());
+
 			selectDomainCode.on('change', function() {
 				<portlet:namespace />sentDomainCode(selectDomainCode.val());
 			});
@@ -428,7 +446,6 @@ AUI().ready(function(A) {
 							var responseServiceConfig = A.one("#<portlet:namespace/>responseServiceConfig");
 							
 							if(responseServiceConfig){
-								
 								responseServiceConfig.empty();
 								responseServiceConfig.html(res);
 							}
@@ -442,45 +459,6 @@ AUI().ready(function(A) {
 	
 		
 </aui:script>
-
-<%-- <aui:script use = "aui-base">
-	Liferay.provide(window, '<portlet:namespace/>getval', function(e) {	
-		var A = AUI();		
-		var instance = A.one(e);
-		var selectServiceInfo = instance.val();
-			<portlet:namespace />sentServiceInfoId(selectServiceInfo);
-	});
-	Liferay.provide(window, '<portlet:namespace />sentServiceInfoId', function(serviceInfoId){
-		
-		var A = AUI();
-		
-		A.io.request(
-				'<%= renderToDictItemServiceAdmin.toString() %>',
-				{
-					dataType : 'text/html',
-					method : 'GET',
-				    data:{    	
-				    	"<portlet:namespace />serviceinfoId" : serviceInfoId
-				    },   
-				    on: {
-				    	success: function(event, id, obj) {
-							var instance = this;
-							var res = instance.get('responseData');
-							
-							var serviceConfigGovNameCode = A.one("#<portlet:namespace/>serviceConfigGovNameCode");
-							
-							if(serviceConfigGovNameCode){
-								serviceConfigGovNameCode.empty();
-								serviceConfigGovNameCode.html(res);
-							}
-								
-						},
-				    	error: function(){}
-					}
-				}
-			);
-	},['aui-base','aui-io']);
-</aui:script> --%>
 
 <%!
 	private Log _log = LogFactoryUtil.getLog("html.portlets.dossiermgt.admin.edit_service_config.jsp");

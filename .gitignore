@@ -334,6 +334,8 @@ portlets/opencps-portlet/docroot/WEB-INF/src/org/opencps/postal/service/base/*
 portlets/opencps-portlet/docroot/WEB-INF/src/org/opencps/postal/service/persistence/*
 portlets/opencps-portlet/docroot/WEB-INF/src/META-INF/portlet-model-hints.xml
 
+
+portlets/opencps-integrate-portlet/*
 themes/opencps-ux-theme/docroot/WEB-INF/lib/util-bridges.jar
 themes/opencps-ux-theme/docroot/WEB-INF/lib/util-java.jar
 themes/opencps-ux-theme/docroot/WEB-INF/lib/util-taglib.jar

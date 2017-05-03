@@ -20,13 +20,15 @@ package org.opencps.dossiermgt.util;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Stack;
 
 import org.apache.commons.io.IOUtils;
-import org.opencps.accountmgt.model.Business;
-import org.opencps.accountmgt.model.Citizen;
+import org.opencps.backend.util.PaymentRequestGenerator;
+import org.opencps.backend.util.PaymentUrlGenerator;
+import org.opencps.dossiermgt.PaymentFileUnfinishedException;
 import org.opencps.dossiermgt.comparator.DossierSubmitDateComparator;
 import org.opencps.dossiermgt.comparator.DossierTemplateNameComparator;
 import org.opencps.dossiermgt.comparator.DossierTemplateNoComparator;
@@ -42,6 +44,10 @@ import org.opencps.dossiermgt.service.DossierFileLogLocalServiceUtil;
 import org.opencps.dossiermgt.service.DossierLocalServiceUtil;
 import org.opencps.dossiermgt.service.DossierPartLocalServiceUtil;
 import org.opencps.dossiermgt.service.ServiceConfigLocalServiceUtil;
+import org.opencps.paymentmgt.model.PaymentFile;
+import org.opencps.paymentmgt.model.impl.PaymentFileImpl;
+import org.opencps.paymentmgt.service.PaymentFileLocalServiceUtil;
+import org.opencps.paymentmgt.util.PaymentMgtUtil;
 import org.opencps.processmgt.model.ProcessOrder;
 import org.opencps.processmgt.model.impl.ProcessOrderImpl;
 import org.opencps.processmgt.service.ProcessOrderLocalServiceUtil;
@@ -54,6 +60,7 @@ import org.opencps.util.WebKeys;
 
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.language.LanguageUtil;
@@ -61,7 +68,6 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.Base64;
 import com.liferay.portal.kernel.util.OrderByComparator;
-import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
@@ -718,7 +724,92 @@ public class DossierMgtUtil {
 
 		return output;
 	}
+	
+	public static boolean validatePaymentFile(long dossierId) {
 
+		boolean valid = false;
+
+		try {
+
+			List<PaymentFile> paymentFiles = new ArrayList<PaymentFile>();
+
+			if (dossierId > 0) {
+				paymentFiles = PaymentFileLocalServiceUtil
+						.getPaymentFileByD_(dossierId);
+
+				if (paymentFiles.size() <= 0) {
+					valid = true;
+				} else {
+
+					PaymentFile paymentFile = paymentFiles.get(0);
+
+					if (paymentFile.getPaymentStatus() == PaymentMgtUtil.PAYMENT_STATUS_APPROVED) {
+						valid = true;
+					} else {
+						valid = false;
+					}
+
+				}
+			}
+		} catch (Exception e) {
+			_log.error(e);
+		}
+		return valid;
+	}
+	
+	public static void validatePaymentFileException (long dossierId) throws PaymentFileUnfinishedException{
+			
+		boolean valid = validatePaymentFile(dossierId);
+
+		if (!valid) {
+			throw new PaymentFileUnfinishedException();
+		}
+
+	}
+	
+	public static PaymentFile generatePaymentFile(String paymentFee,
+			long dossierId, long ownerUserId, long ownerOrganizationId,
+			long govAgencyOrganizationId, long fileGroupId,
+			long serviceProcessId) {
+
+		PaymentFile paymentFile = new PaymentFileImpl();
+
+		int totalPayment;
+		try {
+			totalPayment = PaymentRequestGenerator.getTotalPayment(paymentFee,
+					dossierId);
+
+			List<String> paymentMethods = PaymentRequestGenerator
+					.getPaymentMethod(paymentFee);
+
+			String paymentOptions = StringUtil.merge(paymentMethods);
+
+			List<String> paymentMessages = PaymentRequestGenerator
+					.getMessagePayment(paymentFee);
+
+			String paymentName = (paymentMessages.size() != 0) ? paymentMessages
+					.get(0) : StringPool.BLANK;
+
+			paymentFile = PaymentFileLocalServiceUtil.addPaymentFile(dossierId,
+					fileGroupId, ownerUserId, ownerOrganizationId,
+					govAgencyOrganizationId, paymentName, new Date(),
+					(double) totalPayment, paymentName, StringPool.BLANK,
+					paymentOptions);
+
+			if (paymentFile.getPaymentOptions().contains(
+					PaymentRequestGenerator.PAY_METHOD_KEYPAY)) {
+
+				PaymentUrlGenerator.generatorPayURLwithServiceProcess(0,
+						serviceProcessId, paymentFile.getPaymentFileId(),
+						paymentFile.getPaymentOptions(), dossierId);
+
+			}
+		} catch (SystemException | JSONException | IOException e) {
+			_log.error(e);
+		}
+
+		return paymentFile;
+	}
 	private static Log _log =
 		LogFactoryUtil.getLog(DossierMgtUtil.class.getName());
 

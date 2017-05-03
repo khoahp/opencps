@@ -19,7 +19,7 @@ package org.opencps.util;
 
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
-import com.sun.corba.se.spi.orb.StringPair;
+//import com.sun.corba.se.spi.orb.StringPair;
 
 /**
  * @author trungnt

@@ -1,8 +1,3 @@
-<%@page import="org.opencps.dossiermgt.search.DossierDisplayTerms"%>
-<%@page import="org.opencps.util.WebKeys"%>
-<%@page import="org.opencps.processmgt.search.ProcessOrderDisplayTerms"%>
-<%@page import="com.liferay.portal.kernel.util.GroupThreadLocal"%>
-<%@page import="org.opencps.processmgt.util.ProcessOrderUtils"%>
 <%
 /**
  * OpenCPS is the open source Core Public Services software
@@ -21,6 +16,11 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  */
 %>
+<%@page import="org.opencps.dossiermgt.search.DossierDisplayTerms"%>
+<%@page import="org.opencps.util.WebKeys"%>
+<%@page import="org.opencps.processmgt.search.ProcessOrderDisplayTerms"%>
+<%@page import="com.liferay.portal.kernel.util.GroupThreadLocal"%>
+<%@page import="org.opencps.processmgt.util.ProcessOrderUtils"%>
 
 <%@ include file="../init.jsp" %>
 
@@ -32,58 +32,62 @@
 <liferay-portlet:renderURL var="renderURL" portletName="<%=WebKeys.DOSSIER_MGT_PORTLET %>">
 	<portlet:param name="mvcPath" value="/html/portlets/dossiermgt/frontoffice/frontofficedossierlist.jsp"/>
 </liferay-portlet:renderURL>
-<liferay-portlet:actionURL  var="menuCounterUrl" name="menuCounterAction" >
-</liferay-portlet:actionURL>
-<%=ProcessOrderUtils.generateMenuTrangThaiHoSo(renderRequest, roleIds, active, counter, renderURL.toString())  %>
+
+<liferay-portlet:actionURL  var="menuCounterUrl" name="menuCounterAction"/>
+
+<%-- <%=ProcessOrderUtils.generateMenuTrangThaiHoSo(renderRequest, roleIds, active, counter, renderURL.toString())  %> --%>
+
 <aui:script use="io,aui-loading-mask">
 	menu_left_count('<%=menuCounterUrl.toString() %>');
 </aui:script>
-<script type="text/javascript">
-function openCPS_menu_submit(renderURL, stepId) {
-	var A = AUI();
-	window.location = renderURL + '&<%="_"+WebKeys.DOSSIER_MGT_PORTLET+"_"+DossierDisplayTerms.DOSSIER_STATUS %>=' + stepId;
-}
-function menu_left_count(url) {
-	var A = AUI();
-	var allBadge = A.all(".badge");
-    AUI().io(
-    		url,
-            {
-                on: {
-                	start: function() {
-                        // Set HMTL
-                        allBadge.each(function (taskNode) {
-                        	if (taskNode.loadingmask == null) {
-                        		taskNode.plug(A.LoadingMask, {background: '#000'});
-                           	 	taskNode.loadingmask.show();
-                        	}
-                        });
-                		console.log("menu js sleep start!");
-                    },
 
-                    success: function(id, xhr) {
-                        // Grab the elements
-                    	var json = JSON.parse(xhr.responseText);
-                    	for(j in json){
-                            var sub_key = j;
-                            var sub_val = json[j];
-                            A.one('#'+sub_key).setHTML(sub_val);
-                        }
-                    },
-                    
-                    end: function() {
-                    	allBadge.each(function (taskNode) {
-                       	 taskNode.loadingmask.hide();
-                       	 taskNode.unplug();
-                        });
-                        console.log("menu js sleep end!");
-                    }
-                }
-            }
-    );
-}
+<script type="text/javascript">
+	function openCPS_menu_submit(renderURL, stepId) {
+		var A = AUI();
+		window.location = renderURL + '&<%="_"+WebKeys.DOSSIER_MGT_PORTLET+"_"+DossierDisplayTerms.DOSSIER_STATUS %>=' + stepId;
+	}
+	function menu_left_count(url) {
+		var A = AUI();
+		var allBadge = A.all(".badge");
+	    AUI().io(
+	    		url,
+	            {
+	                on: {
+	                	start: function() {
+	                        // Set HMTL
+	                        allBadge.each(function (taskNode) {
+	                        	if (taskNode.loadingmask == null) {
+	                        		taskNode.plug(A.LoadingMask, {background: '#000'});
+	                           	 	taskNode.loadingmask.show();
+	                        	}
+	                        });
+	                		console.log("menu js sleep start!");
+	                    },
+	
+	                    success: function(id, xhr) {
+	                        // Grab the elements
+	                    	var json = JSON.parse(xhr.responseText);
+	                    	for(j in json){
+	                            var sub_key = j;
+	                            var sub_val = json[j];
+	                            A.one('#'+sub_key).setHTML(sub_val);
+	                        }
+	                    },
+	                    
+	                    end: function() {
+	                    	allBadge.each(function (taskNode) {
+	                       	 taskNode.loadingmask.hide();
+	                       	 taskNode.unplug();
+	                        });
+	                        console.log("menu js sleep end!");
+	                    }
+	                }
+	            }
+	    );
+	}
 
 </script>
+
 <style>
 .menu-opencps{
 	list-style: outside none none; 

@@ -1,4 +1,3 @@
-
 <%
 	/**
 	 * OpenCPS is the open source Core Public Services software
@@ -17,4 +16,4 @@
 	 * along with this program. If not, see <http://www.gnu.org/licenses/>
 	 */
 %>
-<%@ include file="/html/portlets/notificationmgt/backoffice/status/notification_status_config_list.jsp"%>
+<%@ include file="../init.jsp"%>

@@ -7,3 +7,5 @@
 /FileGroupPersistenceImpl.java
 /ServiceConfigPersistenceImpl.java
 /DossierFileLogPersistenceImpl.java
+/BusinessRegisterPersistenceImpl.java
+/ServiceOptionPersistenceImpl.java

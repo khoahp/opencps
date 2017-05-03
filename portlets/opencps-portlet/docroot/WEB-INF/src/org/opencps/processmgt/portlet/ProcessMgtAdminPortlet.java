@@ -78,91 +78,98 @@ import com.liferay.util.bridges.mvc.MVCPortlet;
  * @author khoavd
  */
 public class ProcessMgtAdminPortlet extends MVCPortlet {
-	
+
 	/**
 	 * @param actionRequest
 	 * @param actionResponse
 	 * @throws SystemException
 	 * @throws IOException
 	 */
-	public void deteleRelaSeInfoAndProcess (ActionRequest actionRequest, ActionResponse actionResponse) 
-					throws SystemException, IOException {
-		long serviceProcessId = ParamUtil.getLong(actionRequest, "serviceProcessId");
-		long serviceConfigId = ParamUtil.getLong(actionRequest, "serviceConfigId");
+	public void deteleRelaSeInfoAndProcess(ActionRequest actionRequest,
+			ActionResponse actionResponse) throws SystemException, IOException {
+		long serviceProcessId = ParamUtil.getLong(actionRequest,
+				"serviceProcessId");
+		long serviceConfigId = ParamUtil.getLong(actionRequest,
+				"serviceConfigId");
 		String backURL = ParamUtil.getString(actionRequest, "backURL");
-		
+
 		ServiceConfig serviceConfig = null;
-		
+
 		try {
-			serviceConfig = ServiceConfigLocalServiceUtil.getServiceConfig(serviceConfigId);
-			//remove process id from serviceconfig
+			serviceConfig = ServiceConfigLocalServiceUtil
+					.getServiceConfig(serviceConfigId);
+			// remove process id from serviceconfig
 			serviceConfig.setServiceProcessId(0);
 			ServiceConfigLocalServiceUtil.updateServiceConfig(serviceConfig);
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			// TODO: handle exception
 		}
-		
-		ServiceInfoProcessLocalServiceUtil.deleteServiceInfoProcess(serviceProcessId, serviceConfigId);
-		
-		if(Validator.isNotNull(backURL)) {
+
+		ServiceInfoProcessLocalServiceUtil.deleteServiceInfoProcess(
+				serviceProcessId, serviceConfigId);
+
+		if (Validator.isNotNull(backURL)) {
 			actionResponse.sendRedirect(backURL);
 		}
 	}
+
 	/**
 	 * @param actionRequest
 	 * @param actionResponse
 	 * @throws SystemException
 	 * @throws IOException
 	 */
-	public void chooseServiceInfoFromProcess(ActionRequest actionRequest, ActionResponse actionResponse) throws SystemException, IOException {
-		long serviceProcessId = ParamUtil.getLong(actionRequest, "serviceProcessId");
-		long [] serviceConfigIds = ParamUtil
-					    .getLongValues(actionRequest, "rowIds");
+	public void chooseServiceInfoFromProcess(ActionRequest actionRequest,
+			ActionResponse actionResponse) throws SystemException, IOException {
+		long serviceProcessId = ParamUtil.getLong(actionRequest,
+				"serviceProcessId");
+		long[] serviceConfigIds = ParamUtil.getLongValues(actionRequest,
+				"rowIds");
 		String backURL = ParamUtil.getString(actionRequest, "backURL");
-		
-		
-		if(serviceConfigIds.length > 0) {
-			for(int index = 0; index < serviceConfigIds.length; index ++) {
+
+		if (serviceConfigIds.length > 0) {
+			for (int index = 0; index < serviceConfigIds.length; index++) {
 				try {
 					ServiceConfig serviceConfig = new ServiceConfigImpl();
-					serviceConfig = ServiceConfigLocalServiceUtil.getServiceConfig(serviceConfigIds[index]);
+					serviceConfig = ServiceConfigLocalServiceUtil
+							.getServiceConfig(serviceConfigIds[index]);
 					serviceConfig.setServiceProcessId(serviceProcessId);
-					ServiceConfigLocalServiceUtil.updateServiceConfig(serviceConfig);
-				}
-				catch (Exception e) {
+					ServiceConfigLocalServiceUtil
+							.updateServiceConfig(serviceConfig);
+				} catch (Exception e) {
 					_log.error(e);
 				}
 			}
 		}
-		
-		ServiceInfoProcessLocalServiceUtil.addProcessServiceInfos(serviceProcessId, serviceConfigIds);
-	
-		if(Validator.isNotNull(backURL)) {
+
+		ServiceInfoProcessLocalServiceUtil.addProcessServiceInfos(
+				serviceProcessId, serviceConfigIds);
+
+		if (Validator.isNotNull(backURL)) {
 			actionResponse.sendRedirect(backURL);
 		}
 	}
-	
+
 	/**
 	 * @param actionRequest
 	 * @param actionResponse
 	 */
-	public void sendMessage(
-	    ActionRequest actionRequest, ActionResponse actionResponse) throws IOException, PortletException{
-		
+	public void sendMessage(ActionRequest actionRequest,
+			ActionResponse actionResponse) throws IOException, PortletException {
+
 		Message message = new Message();
-		
+
 		message.put("curTime", new Date());
-		
+
 		try {
-	        MessageBusUtil.sendMessage("opencps/backoffice/out/destination", message);
-        }
-        catch (Exception e) {
-		    _log.error(e);
-        }
-		
+			MessageBusUtil.sendMessage("opencps/backoffice/out/destination",
+					message);
+		} catch (Exception e) {
+			_log.error(e);
+		}
+
 	}
-	
+
 	/**
 	 * Update action
 	 * 
@@ -170,118 +177,118 @@ public class ProcessMgtAdminPortlet extends MVCPortlet {
 	 * @param actionResponse
 	 * @throws IOException
 	 */
-	public void updateAction(
-	    ActionRequest actionRequest, ActionResponse actionResponse)
-	    throws IOException {
+	public void updateAction(ActionRequest actionRequest,
+			ActionResponse actionResponse) throws IOException {
 
 		String redirectURL = ParamUtil.getString(actionRequest, "redirectURL");
 
 		String returnURL = ParamUtil.getString(actionRequest, "returnURL");
 
-		SessionMessages.add(
-		    actionRequest, PortalUtil.getPortletId(actionRequest) +
-		        SessionMessages.KEY_SUFFIX_HIDE_DEFAULT_ERROR_MESSAGE);
+		SessionMessages
+				.add(actionRequest, PortalUtil.getPortletId(actionRequest)
+						+ SessionMessages.KEY_SUFFIX_HIDE_DEFAULT_ERROR_MESSAGE);
 
-		long processWorkflowId =
-		    ParamUtil.getLong(actionRequest, "processWorkflowId");
+		long processWorkflowId = ParamUtil.getLong(actionRequest,
+				"processWorkflowId");
 
-		long serviceProcessId =
-		    ParamUtil.getLong(actionRequest, "serviceProcessId");
+		long serviceProcessId = ParamUtil.getLong(actionRequest,
+				"serviceProcessId");
 
-		long preProcessStepId =
-		    ParamUtil.getLong(actionRequest, "preProcessStepId");
+		long preProcessStepId = ParamUtil.getLong(actionRequest,
+				"preProcessStepId");
 
-		long postProcessStepId =
-		    ParamUtil.getLong(actionRequest, "postProcessStepId");
+		long postProcessStepId = ParamUtil.getLong(actionRequest,
+				"postProcessStepId");
 
 		String autoEvent = ParamUtil.getString(actionRequest, "autoEvent");
 
 		String actionName = ParamUtil.getString(actionRequest, "actionName");
 
 		boolean assignUser = ParamUtil.getBoolean(actionRequest, "assignUser");
-		
+
 		long actionUserId = ParamUtil.getLong(actionRequest, "actionUserId");
 
-		boolean requestPayment =
-		    ParamUtil.getBoolean(actionRequest, "requestPaymentCheckbox");
+		boolean requestPayment = ParamUtil.getBoolean(actionRequest,
+				"requestPaymentCheckbox");
 
 		String paymentFee = ParamUtil.getString(actionRequest, "paymentFee");
 
-		boolean generateReceptionNo =
-		    ParamUtil.getBoolean(actionRequest, "generateReceptionNoCheckbox");
+		boolean generateReceptionNo = ParamUtil.getBoolean(actionRequest,
+				"generateReceptionNoCheckbox");
 
-		String receptionNoPattern =
-		    ParamUtil.getString(actionRequest, "receptionNoPattern");
+		String receptionNoPattern = ParamUtil.getString(actionRequest,
+				"receptionNoPattern");
 
-		boolean generateDeadline =
-		    ParamUtil.getBoolean(actionRequest, "generateDeadlineCheckbox");
+		boolean generateDeadline = ParamUtil.getBoolean(actionRequest,
+				"generateDeadlineCheckbox");
 
-		String deadlinePattern =
-					    ParamUtil.getString(actionRequest, "deadlinePattern");
-		String actionCode =
-					    ParamUtil.getString(actionRequest, "actionCode");
-		
-		boolean isFinishStep =
-					    ParamUtil.getBoolean(actionRequest, "isFinishStepCheckbox");
-		
-		String preCondition = ParamUtil.getString(actionRequest, "preCondition");
-		
-		boolean isMultipled = ParamUtil.getBoolean(actionRequest, "isMultipledCheckbox");
-		
-		
+		String deadlinePattern = ParamUtil.getString(actionRequest,
+				"deadlinePattern");
+		String actionCode = ParamUtil.getString(actionRequest, "actionCode");
+
+		boolean isFinishStep = ParamUtil.getBoolean(actionRequest,
+				"isFinishStepCheckbox");
+
+		String preCondition = ParamUtil
+				.getString(actionRequest, "preCondition");
+
+		boolean isMultipled = ParamUtil.getBoolean(actionRequest,
+				"isMultipledCheckbox");
+
 		try {
-			ServiceContext serviceContext =
-			    ServiceContextFactory.getInstance(actionRequest);
+			ServiceContext serviceContext = ServiceContextFactory
+					.getInstance(actionRequest);
 
 			if (processWorkflowId <= 0) {
 
 				// Add Workflow
 
-				ProcessWorkflow workflow =
-				    ProcessWorkflowLocalServiceUtil.addWorkflow(
-				        serviceProcessId, preProcessStepId, postProcessStepId,
-				        autoEvent, actionName, assignUser, actionUserId,
-				        requestPayment, paymentFee, generateReceptionNo,
-				        receptionNoPattern, generateDeadline, deadlinePattern, isFinishStep, preCondition, isMultipled,
-				        serviceContext);
+				ProcessWorkflow workflow = ProcessWorkflowLocalServiceUtil
+						.addWorkflow(serviceProcessId, preProcessStepId,
+								postProcessStepId, autoEvent, actionName,
+								assignUser, actionUserId, requestPayment,
+								paymentFee, generateReceptionNo,
+								receptionNoPattern, generateDeadline,
+								deadlinePattern, isFinishStep, preCondition,
+								isMultipled, serviceContext);
 
 				// Add WorkflowOutput
 
-				List<WorkflowOutput> workflowOutputs =
-				    ProcessUtils.getWorkflowOutput(
-				        actionRequest, workflow.getProcessWorkflowId());
+				List<WorkflowOutput> workflowOutputs = ProcessUtils
+						.getWorkflowOutput(actionRequest,
+								workflow.getProcessWorkflowId());
 
 				for (WorkflowOutput output : workflowOutputs) {
 					WorkflowOutputLocalServiceUtil.addWorkflowOutput(
-					    output.getDossierPartId(),
-					    output.getProcessWorkflowId(), output.getRequired(),
-					    output.getEsign(), output.getPostback(), output.getPattern());
+							output.getDossierPartId(),
+							output.getProcessWorkflowId(),
+							output.getRequired(), output.getEsign(),
+							output.getPostback(), output.getPattern());
 				}
 
-			}
-			else {
+			} else {
 				// Update Workflow
 
-				ProcessWorkflow workflow =
-				    ProcessWorkflowLocalServiceUtil.updateWorkflow(
-				        processWorkflowId, preProcessStepId, postProcessStepId,
-				        autoEvent, actionName, assignUser, actionUserId,
-				        requestPayment, paymentFee, generateReceptionNo,
-				        receptionNoPattern, generateDeadline, deadlinePattern,
-				        isFinishStep, preCondition, isMultipled, actionCode, serviceContext);
+				ProcessWorkflow workflow = ProcessWorkflowLocalServiceUtil
+						.updateWorkflow(processWorkflowId, preProcessStepId,
+								postProcessStepId, autoEvent, actionName,
+								assignUser, actionUserId, requestPayment,
+								paymentFee, generateReceptionNo,
+								receptionNoPattern, generateDeadline,
+								deadlinePattern, isFinishStep, preCondition,
+								isMultipled, actionCode, serviceContext);
 
 				// Add WorkflowOutput
 
-				List<WorkflowOutput> workflowOutputs =
-				    ProcessUtils.getWorkflowOutput(
-				        actionRequest, workflow.getProcessWorkflowId());
+				List<WorkflowOutput> workflowOutputs = ProcessUtils
+						.getWorkflowOutput(actionRequest,
+								workflow.getProcessWorkflowId());
 
-				List<WorkflowOutput> beforeList =
-				    WorkflowOutputLocalServiceUtil.getByProcessWF(workflow.getProcessWorkflowId());
+				List<WorkflowOutput> beforeList = WorkflowOutputLocalServiceUtil
+						.getByProcessWF(workflow.getProcessWorkflowId());
 
-				List<WorkflowOutput> removeWorkflow =
-				    ProcessUtils.getWorkflowOutputRemove(
-				        beforeList, workflowOutputs);
+				List<WorkflowOutput> removeWorkflow = ProcessUtils
+						.getWorkflowOutputRemove(beforeList, workflowOutputs);
 
 				for (WorkflowOutput output : removeWorkflow) {
 					WorkflowOutputLocalServiceUtil.deleteWorkflowOutput(output);
@@ -290,82 +297,80 @@ public class ProcessMgtAdminPortlet extends MVCPortlet {
 				for (WorkflowOutput output : workflowOutputs) {
 					if (output.getWorkflowOutputId() > 0) {
 						WorkflowOutputLocalServiceUtil.updateWorkflowOutput(
-						    output.getWorkflowOutputId(),
-						    output.getDossierPartId(),
-						    output.getProcessWorkflowId(),
-						    output.getRequired(), output.getEsign(),
-						    output.getPostback(),
-						    output.getPattern());
-					}
-					else {
+								output.getWorkflowOutputId(),
+								output.getDossierPartId(),
+								output.getProcessWorkflowId(),
+								output.getRequired(), output.getEsign(),
+								output.getPostback(), output.getPattern());
+					} else {
 						WorkflowOutputLocalServiceUtil.addWorkflowOutput(
-						    output.getDossierPartId(),
-						    output.getProcessWorkflowId(),
-						    output.getRequired(), output.getEsign(),
-						    output.getPostback(),
-							output.getPattern());
+								output.getDossierPartId(),
+								output.getProcessWorkflowId(),
+								output.getRequired(), output.getEsign(),
+								output.getPostback(), output.getPattern());
 					}
 				}
 
 			}
 
 			if (Validator.isNotNull(redirectURL)) {
-				actionResponse.sendRedirect(redirectURL +
-				    "#_15_WAR_opencpsportlet_tab=_15_WAR_opencpsportlet_action");
+				actionResponse
+						.sendRedirect(redirectURL
+								+ "#_15_WAR_opencpsportlet_tab=_15_WAR_opencpsportlet_action");
 			}
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			if (Validator.isNotNull(returnURL)) {
 				actionResponse.sendRedirect(returnURL);
 			}
 		}
 	}
-	
+
 	/**
 	 * @param actionRequest
 	 * @param actionResponse
 	 * @throws IOException
 	 */
-	public void deleteAction( ActionRequest actionRequest, ActionResponse actionResponse)
-	    throws IOException {
+	public void deleteAction(ActionRequest actionRequest,
+			ActionResponse actionResponse) throws IOException {
 
 		String redirectURL = ParamUtil.getString(actionRequest, "redirectURL");
 
 		String returnURL = ParamUtil.getString(actionRequest, "returnURL");
 
-		long processWorkflowId = ParamUtil.getLong(actionRequest, "processWorkflowId");
+		long processWorkflowId = ParamUtil.getLong(actionRequest,
+				"processWorkflowId");
 
 		try {
 
 			if (isRemoveProcessWorkflow(processWorkflowId)) {
-				ProcessWorkflowLocalServiceUtil.deleteWorkflow(processWorkflowId);
+				ProcessWorkflowLocalServiceUtil
+						.deleteWorkflow(processWorkflowId);
 			}
 
 			// Redirect page
 			if (Validator.isNotNull(redirectURL)) {
-				actionResponse.sendRedirect(redirectURL +
-				    "#_15_WAR_opencpsportlet_tab=_15_WAR_opencpsportlet_action");
+				actionResponse
+						.sendRedirect(redirectURL
+								+ "#_15_WAR_opencpsportlet_tab=_15_WAR_opencpsportlet_action");
 			}
 
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			if (Validator.isNotNull(returnURL)) {
-				actionResponse.sendRedirect(returnURL +
-				    "#_15_WAR_opencpsportlet_tab=_15_WAR_opencpsportlet_action");
+				actionResponse
+						.sendRedirect(returnURL
+								+ "#_15_WAR_opencpsportlet_tab=_15_WAR_opencpsportlet_action");
 			}
 		}
 
 	}
 
-	
 	/**
 	 * @param actionRequest
 	 * @param actionResponse
 	 * @throws IOException
 	 */
-	public void deleteStep(
-	    ActionRequest actionRequest, ActionResponse actionResponse)
-	    throws IOException {
+	public void deleteStep(ActionRequest actionRequest,
+			ActionResponse actionResponse) throws IOException {
 
 		String redirectURL = ParamUtil.getString(actionRequest, "redirectURL");
 
@@ -381,15 +386,16 @@ public class ProcessMgtAdminPortlet extends MVCPortlet {
 
 			// Redirect page
 			if (Validator.isNotNull(redirectURL)) {
-				actionResponse.sendRedirect(redirectURL +
-				    "#_15_WAR_opencpsportlet_tab=_15_WAR_opencpsportlet_step");
+				actionResponse
+						.sendRedirect(redirectURL
+								+ "#_15_WAR_opencpsportlet_tab=_15_WAR_opencpsportlet_step");
 			}
 
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			if (Validator.isNotNull(returnURL)) {
-				actionResponse.sendRedirect(returnURL +
-				    "#_15_WAR_opencpsportlet_tab=_15_WAR_opencpsportlet_step");
+				actionResponse
+						.sendRedirect(returnURL
+								+ "#_15_WAR_opencpsportlet_tab=_15_WAR_opencpsportlet_step");
 			}
 		}
 
@@ -400,64 +406,64 @@ public class ProcessMgtAdminPortlet extends MVCPortlet {
 	 * @param actionResponse
 	 * @throws IOException
 	 */
-	public void updateProcessStep(
-	    ActionRequest actionRequest, ActionResponse actionResponse)
-	    throws IOException {
-
+	public void updateProcessStep(ActionRequest actionRequest,
+			ActionResponse actionResponse) throws IOException {
 
 		String redirectURL = ParamUtil.getString(actionRequest, "redirectURL");
 
 		String returnURL = ParamUtil.getString(actionRequest, "returnURL");
 
-		SessionMessages.add(
-		    actionRequest, PortalUtil.getPortletId(actionRequest) +
-		        SessionMessages.KEY_SUFFIX_HIDE_DEFAULT_ERROR_MESSAGE);
-		
+		SessionMessages
+				.add(actionRequest, PortalUtil.getPortletId(actionRequest)
+						+ SessionMessages.KEY_SUFFIX_HIDE_DEFAULT_ERROR_MESSAGE);
+
 		long processStepId = ParamUtil.getLong(actionRequest, "processStepId");
 
 		String stepName = ParamUtil.getString(actionRequest, "stepName");
 
 		int sequenceNo = ParamUtil.getInteger(actionRequest, "sequenceNo");
 
-		String dossierStatus =
-					    ParamUtil.getString(actionRequest, "dossierStatus");
-		
-		String dossierSubStatus =
-					    ParamUtil.getString(actionRequest, "dossierSubStatus");
+		String dossierStatus = ParamUtil.getString(actionRequest,
+				"dossierStatus");
 
-		String daysDuration = ParamUtil.getString(actionRequest, "daysDuration");
-		int processStepNo = ParamUtil.getInteger(actionRequest, "processStepNo");
+		String dossierSubStatus = ParamUtil.getString(actionRequest,
+				"dossierSubStatus");
 
-		long referenceDossierPartId =
-		    ParamUtil.getLong(actionRequest, "referenceDossierPartId");
-		
-		String externalAppUrl =
-		    ParamUtil.getString(actionRequest, "externalAppUrl");
+		String daysDuration = ParamUtil
+				.getString(actionRequest, "daysDuration");
+		int processStepNo = ParamUtil
+				.getInteger(actionRequest, "processStepNo");
 
-		long serviceProcessId =
-		    ParamUtil.getLong(actionRequest, "serviceProcessId");
+		long referenceDossierPartId = ParamUtil.getLong(actionRequest,
+				"referenceDossierPartId");
+
+		String externalAppUrl = ParamUtil.getString(actionRequest,
+				"externalAppUrl");
+
+		long serviceProcessId = ParamUtil.getLong(actionRequest,
+				"serviceProcessId");
 
 		try {
-			ServiceContext serviceContext =
-			    ServiceContextFactory.getInstance(actionRequest);
+			ServiceContext serviceContext = ServiceContextFactory
+					.getInstance(actionRequest);
 			if (processStepId <= 0) {
 				// TODO: Update validator here
-				
+
 				// Add ProcessStep
 
 				ProcessStep step = ProcessStepLocalServiceUtil.addStep(
-				    serviceProcessId, stepName, sequenceNo, dossierStatus,dossierSubStatus,
-				    daysDuration, referenceDossierPartId, externalAppUrl, processStepNo, 
-				    serviceContext);
-				
-				if (Validator.isNotNull(step)) {
-					List<StepAllowance> stepAllowances =
-					    ProcessUtils.getStepAllowance(
-					        actionRequest, step.getProcessStepId());
+						serviceProcessId, stepName, sequenceNo, dossierStatus,
+						dossierSubStatus, daysDuration, referenceDossierPartId,
+						externalAppUrl, processStepNo, serviceContext);
 
-					List<ProcessStepDossierPart> stepDossiers =
-					    ProcessUtils.getStepDossiers(
-					        actionRequest, step.getProcessStepId());
+				if (Validator.isNotNull(step)) {
+					List<StepAllowance> stepAllowances = ProcessUtils
+							.getStepAllowance(actionRequest,
+									step.getProcessStepId());
+
+					List<ProcessStepDossierPart> stepDossiers = ProcessUtils
+							.getStepDossiers(actionRequest,
+									step.getProcessStepId());
 
 					// Add StepAllowane
 					for (StepAllowance stepAllowance : stepAllowances) {
@@ -468,15 +474,14 @@ public class ProcessMgtAdminPortlet extends MVCPortlet {
 
 						if (stepAllowance.getStepAllowanceId() == 0) {
 							StepAllowanceLocalServiceUtil.addAllowance(
-							    step.getProcessStepId(),
-							    stepAllowance.getRoleId(),
-							    stepAllowance.getReadOnly());
-						}
-						else {
+									step.getProcessStepId(),
+									stepAllowance.getRoleId(),
+									stepAllowance.getReadOnly());
+						} else {
 							StepAllowanceLocalServiceUtil.updateAllowance(
-							    stepAllowance.getStepAllowanceId(),
-							    stepAllowance.getRoleId(),
-							    stepAllowance.getReadOnly());
+									stepAllowance.getStepAllowanceId(),
+									stepAllowance.getRoleId(),
+									stepAllowance.getReadOnly());
 						}
 					}
 
@@ -488,55 +493,57 @@ public class ProcessMgtAdminPortlet extends MVCPortlet {
 					 */
 					for (ProcessStepDossierPart stepDossierPart : stepDossiers) {
 						ProcessStepDossierPartLocalServiceUtil.addPSDP(
-						    stepDossierPart.getProcessStepId(),
-						    stepDossierPart.getDossierPartId(),
-						    stepDossierPart.getReadOnly());
+								stepDossierPart.getProcessStepId(),
+								stepDossierPart.getDossierPartId(),
+								stepDossierPart.getReadOnly());
 					}
 				}
 
 				// Redirect page
 				if (Validator.isNotNull(redirectURL)) {
-					actionResponse.sendRedirect(redirectURL +
-					    "#_15_WAR_opencpsportlet_tab=_15_WAR_opencpsportlet_step");
+					actionResponse
+							.sendRedirect(redirectURL
+									+ "#_15_WAR_opencpsportlet_tab=_15_WAR_opencpsportlet_step");
 				}
-			}
-			else {
+			} else {
 				// TODO: Update validator here
 
 				// Update ProcessStep
-				ProcessStep step =
-				    ProcessStepLocalServiceUtil.updateStep(
-				        processStepId, serviceProcessId, stepName, sequenceNo,
-				        dossierStatus, dossierSubStatus, daysDuration, referenceDossierPartId,
-				        externalAppUrl,processStepNo , serviceContext);
+				ProcessStep step = ProcessStepLocalServiceUtil.updateStep(
+						processStepId, serviceProcessId, stepName, sequenceNo,
+						dossierStatus, dossierSubStatus, daysDuration,
+						referenceDossierPartId, externalAppUrl, processStepNo,
+						serviceContext);
 
+				// StepAllowanceLocalServiceUtil.removeProcessStepByProcessId(step.getProcessStepId());
 
-				//StepAllowanceLocalServiceUtil.removeProcessStepByProcessId(step.getProcessStepId());
+				List<StepAllowance> stepAllowances = ProcessUtils
+						.getStepAllowance(actionRequest,
+								step.getProcessStepId());
 
-				List<StepAllowance> stepAllowances =
-				    ProcessUtils.getStepAllowance(
-				        actionRequest, step.getProcessStepId());
+				List<ProcessStepDossierPart> stepDossiers = ProcessUtils
+						.getStepDossiers(actionRequest, step.getProcessStepId());
 
-				List<ProcessStepDossierPart> stepDossiers =
-							    ProcessUtils.getStepDossiers(
-							        actionRequest, step.getProcessStepId());
+				List<StepAllowance> before = StepAllowanceLocalServiceUtil
+						.getByProcessStep(step.getProcessStepId());
 
-				List<StepAllowance> before = StepAllowanceLocalServiceUtil.getByProcessStep(step.getProcessStepId());
-				
-				List<ProcessStepDossierPart> beforeStepDossier = ProcessStepDossierPartLocalServiceUtil.getByStep(step.getProcessStepId());
-				
-				//Remove ProcessStepDossier
-				
-				List<ProcessStepDossierPart> removeDossier = ProcessUtils.getStepDossierRemove(beforeStepDossier, stepDossiers);
-				
-				ProcessStepDossierPartLocalServiceUtil.removeStepDossier(removeDossier);
-				
-				
+				List<ProcessStepDossierPart> beforeStepDossier = ProcessStepDossierPartLocalServiceUtil
+						.getByStep(step.getProcessStepId());
+
+				// Remove ProcessStepDossier
+
+				List<ProcessStepDossierPart> removeDossier = ProcessUtils
+						.getStepDossierRemove(beforeStepDossier, stepDossiers);
+
+				ProcessStepDossierPartLocalServiceUtil
+						.removeStepDossier(removeDossier);
+
 				// Remove StepAllowance
-				List<StepAllowance> removeStep = ProcessUtils.getStepAllowanceRemove(before, stepAllowances);
-				
-				
-				StepAllowanceLocalServiceUtil.removeProcessStepByProcessId(removeStep);
+				List<StepAllowance> removeStep = ProcessUtils
+						.getStepAllowanceRemove(before, stepAllowances);
+
+				StepAllowanceLocalServiceUtil
+						.removeProcessStepByProcessId(removeStep);
 
 				for (StepAllowance stepAllowance : stepAllowances) {
 
@@ -546,72 +553,70 @@ public class ProcessMgtAdminPortlet extends MVCPortlet {
 
 					if (stepAllowance.getStepAllowanceId() == 0) {
 						StepAllowanceLocalServiceUtil.addAllowance(
-						    step.getProcessStepId(), stepAllowance.getRoleId(),
-						    stepAllowance.getReadOnly());
-					}
-					else {
+								step.getProcessStepId(),
+								stepAllowance.getRoleId(),
+								stepAllowance.getReadOnly());
+					} else {
 						StepAllowanceLocalServiceUtil.updateAllowance(
-						    stepAllowance.getStepAllowanceId(),
-						    stepAllowance.getRoleId(),
-						    stepAllowance.getReadOnly());
+								stepAllowance.getStepAllowanceId(),
+								stepAllowance.getRoleId(),
+								stepAllowance.getReadOnly());
 					}
 				}
-				
-				//Add dossierPart
+
+				// Add dossierPart
 				for (ProcessStepDossierPart stepDossierPart : stepDossiers) {
 					ProcessStepDossierPartLocalServiceUtil.addPSDP(
-					    stepDossierPart.getProcessStepId(),
-					    stepDossierPart.getDossierPartId(),
-					    stepDossierPart.getReadOnly());
+							stepDossierPart.getProcessStepId(),
+							stepDossierPart.getDossierPartId(),
+							stepDossierPart.getReadOnly());
 				}
 
 				// Redirect page
 				if (Validator.isNotNull(redirectURL)) {
-					actionResponse.sendRedirect(redirectURL +
-					    "#_15_WAR_opencpsportlet_tab=_15_WAR_opencpsportlet_step");
+					actionResponse
+							.sendRedirect(redirectURL
+									+ "#_15_WAR_opencpsportlet_tab=_15_WAR_opencpsportlet_step");
 				}
-				
+
 			}
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			if (Validator.isNotNull(returnURL)) {
 				actionResponse.sendRedirect(returnURL);
 			}
 		}
 
 	}
-	
+
 	/**
 	 * @param processId
 	 * @return
 	 */
 	private boolean isRemoveProcessStep(long processId) {
-		//TODO: implement in here
-		
+		// TODO: implement in here
+
 		return true;
 	}
-	
+
 	/**
 	 * @param processWorkflowId
 	 * @return
 	 */
 	private boolean isRemoveProcessWorkflow(long processWorkflowId) {
-		//TODO: implement in here
+		// TODO: implement in here
 		return true;
 	}
-
 
 	/**
 	 * @param actionRequest
 	 * @param actionResponse
 	 * @throws IOException
 	 */
-	public void updateProcess(
-	    ActionRequest actionRequest, ActionResponse actionResponse)
-	    throws IOException {
+	public void updateProcess(ActionRequest actionRequest,
+			ActionResponse actionResponse) throws IOException {
 
-		long serviceProcessId =
-		    ParamUtil.getLong(actionRequest, "serviceProcessId");
+		long serviceProcessId = ParamUtil.getLong(actionRequest,
+				"serviceProcessId");
 
 		String processNo = ParamUtil.getString(actionRequest, "processNo");
 
@@ -622,38 +627,48 @@ public class ProcessMgtAdminPortlet extends MVCPortlet {
 		String redirectURL = ParamUtil.getString(actionRequest, "redirectURL");
 
 		String returnURL = ParamUtil.getString(actionRequest, "returnURL");
-		
-		long dossierTemplateId = ParamUtil.getLong(actionRequest, "dossierTemplateId");
-		
-		SessionMessages.add(
-		    actionRequest, PortalUtil.getPortletId(actionRequest) +
-		        SessionMessages.KEY_SUFFIX_HIDE_DEFAULT_ERROR_MESSAGE);
-		
+
+		long dossierTemplateId = ParamUtil.getLong(actionRequest,
+				"dossierTemplateId");
+
+		long paymentConfigId = ParamUtil.getLong(actionRequest,
+				"paymentConfigId");
+
+		boolean isRequestPayment = ParamUtil.getBoolean(actionRequest,
+				"isRequestPayment");
+
+		String paymentFee = ParamUtil.getString(actionRequest, "paymentFee");
+
+		SessionMessages
+				.add(actionRequest, PortalUtil.getPortletId(actionRequest)
+						+ SessionMessages.KEY_SUFFIX_HIDE_DEFAULT_ERROR_MESSAGE);
+
 		try {
-			ServiceContext serviceContext =
-			    ServiceContextFactory.getInstance(actionRequest);
+			ServiceContext serviceContext = ServiceContextFactory
+					.getInstance(actionRequest);
 
 			if (serviceProcessId <= 0) {
 				// TODO: Update validator
 
 				// Add ServiceProcess
-				ServiceProcessLocalServiceUtil.addProcess(
-				    processNo, processName, description, dossierTemplateId, serviceContext);
+				ServiceProcessLocalServiceUtil.addProcess(processNo,
+						processName, description, dossierTemplateId,
+						paymentConfigId, paymentFee, isRequestPayment,
+						serviceContext);
 				// Redirect page
 
 				if (Validator.isNotNull(redirectURL)) {
 					actionResponse.sendRedirect(redirectURL);
 				}
 
-			}
-			else {
+			} else {
 				// TODO: Update validator here
-
 
 				// Update ServiceProcess
 
-				ServiceProcessLocalServiceUtil.updateProcess(
-				    serviceProcessId, processNo, processName, dossierTemplateId, description);
+				ServiceProcessLocalServiceUtil.updateProcess(serviceProcessId,
+						processNo, processName, dossierTemplateId, description,
+						paymentConfigId, paymentFee, isRequestPayment);
 
 				// Redirect page
 				if (Validator.isNotNull(redirectURL)) {
@@ -661,15 +676,14 @@ public class ProcessMgtAdminPortlet extends MVCPortlet {
 				}
 			}
 
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			if (Validator.isNotNull(returnURL)) {
 				actionResponse.sendRedirect(returnURL);
 			}
 		}
 
 	}
-	
+
 	/**
 	 * @param actionRequest
 	 * @param actionResponse
@@ -677,202 +691,199 @@ public class ProcessMgtAdminPortlet extends MVCPortlet {
 	 * @throws SystemException
 	 * @throws IOException
 	 */
-	public void deleteProcess(ActionRequest actionRequest, ActionResponse actionResponse)
-					throws NoSuchServiceProcessException, SystemException, IOException {
-		long serviceProcessId = ParamUtil.getLong(actionRequest, "serviceProcessId");
+	public void deleteProcess(ActionRequest actionRequest,
+			ActionResponse actionResponse)
+			throws NoSuchServiceProcessException, SystemException, IOException {
+		long serviceProcessId = ParamUtil.getLong(actionRequest,
+				"serviceProcessId");
 		String redirectURL = ParamUtil.getString(actionRequest, "redirectURL");
-		
+
 		List<ProcessStep> processSteps = new ArrayList<ProcessStep>();
 		List<ServiceInfoProcess> infoProcesses = new ArrayList<ServiceInfoProcess>();
 		List<ProcessWorkflow> processWorkflows = new ArrayList<ProcessWorkflow>();
-		
+
 		try {
-			processSteps = ProcessStepLocalServiceUtil.getStepByProcess(serviceProcessId);
+			processSteps = ProcessStepLocalServiceUtil
+					.getStepByProcess(serviceProcessId);
+		} catch (Exception e) {
 		}
-		catch (Exception e) {
-		}
-		
+
 		try {
 			infoProcesses = ServiceInfoProcessLocalServiceUtil
-							.getServiceInfoProcessByProcessId(serviceProcessId); 
+					.getServiceInfoProcessByProcessId(serviceProcessId);
+		} catch (Exception e) {
 		}
-		catch (Exception e) {
-		}
-		
+
 		try {
 			processWorkflows = ProcessWorkflowLocalServiceUtil
-							.getWorkFlowByProcess(serviceProcessId);
+					.getWorkFlowByProcess(serviceProcessId);
+		} catch (Exception e) {
 		}
-		catch (Exception e) {
-		}
-		
-		if(processSteps.isEmpty() && infoProcesses.isEmpty() && processWorkflows.isEmpty()) {
+
+		if (processSteps.isEmpty() && infoProcesses.isEmpty()
+				&& processWorkflows.isEmpty()) {
 			ServiceProcessLocalServiceUtil.deleteProcess(serviceProcessId);
-			
+
 			SessionMessages.add(actionRequest, ProcessMgtUtil.DEL_PROCESS_SUCC);
-		} 
-		
-		else if(!processSteps.isEmpty()) {
+		}
+
+		else if (!processSteps.isEmpty()) {
 			SessionErrors.add(actionRequest, ProcessMgtUtil.DELERR_EXIST_STEP);
-		} 
-		
-		else if(!infoProcesses.isEmpty()) {
-			SessionErrors.add(actionRequest, ProcessMgtUtil.DELERR_EXIST_SERVICE_CONFIG);
 		}
-		
-		else if(!processWorkflows.isEmpty()) {
-			SessionErrors.add(actionRequest, ProcessMgtUtil.DELERR_EXIST_WORKFLOW);
+
+		else if (!infoProcesses.isEmpty()) {
+			SessionErrors.add(actionRequest,
+					ProcessMgtUtil.DELERR_EXIST_SERVICE_CONFIG);
 		}
-		
-		if(Validator.isNotNull(redirectURL)) {
+
+		else if (!processWorkflows.isEmpty()) {
+			SessionErrors.add(actionRequest,
+					ProcessMgtUtil.DELERR_EXIST_WORKFLOW);
+		}
+
+		if (Validator.isNotNull(redirectURL)) {
 			actionResponse.sendRedirect(redirectURL);
 		}
 	}
 
 	@Override
-	public void render(
-	    RenderRequest renderRequest, RenderResponse renderResponse)
-	    throws PortletException, IOException {
-		
+	public void render(RenderRequest renderRequest,
+			RenderResponse renderResponse) throws PortletException, IOException {
 
-		long serviceProcessId =
-		    ParamUtil.getLong(renderRequest, "serviceProcessId");
-		
-		long stepAllowanceId = ParamUtil.getLong(renderRequest, "stepAllowanceId");
-		
+		long serviceProcessId = ParamUtil.getLong(renderRequest,
+				"serviceProcessId");
+
+		long stepAllowanceId = ParamUtil.getLong(renderRequest,
+				"stepAllowanceId");
+
 		long processStepId = ParamUtil.getLong(renderRequest, "processStepId");
-		
-		long processWorkflowId = ParamUtil.getLong(renderRequest, "processWorkflowId");
+
+		long processWorkflowId = ParamUtil.getLong(renderRequest,
+				"processWorkflowId");
 
 		ServiceProcess serviceProcess = null;
-		
+
 		StepAllowance stepAllowance = null;
-		
+
 		ProcessStep processStep = null;
-		
+
 		ProcessWorkflow processWorkflow = null;
 
 		try {
-			serviceProcess =
-			    ServiceProcessLocalServiceUtil.fetchServiceProcess(serviceProcessId);
-			
-			stepAllowance = StepAllowanceLocalServiceUtil.fetchStepAllowance(stepAllowanceId);
-			
-			processStep = ProcessStepLocalServiceUtil.fetchProcessStep(processStepId);
-			
-			processWorkflow = ProcessWorkflowLocalServiceUtil.fetchProcessWorkflow(processWorkflowId);
-		}
-		catch (Exception e) {
+			serviceProcess = ServiceProcessLocalServiceUtil
+					.fetchServiceProcess(serviceProcessId);
+
+			stepAllowance = StepAllowanceLocalServiceUtil
+					.fetchStepAllowance(stepAllowanceId);
+
+			processStep = ProcessStepLocalServiceUtil
+					.fetchProcessStep(processStepId);
+
+			processWorkflow = ProcessWorkflowLocalServiceUtil
+					.fetchProcessWorkflow(processWorkflowId);
+		} catch (Exception e) {
 			_log.error(e);
 		}
 
-		renderRequest.setAttribute(
-		    WebKeys.SERVICE_PROCESS_ENTRY, serviceProcess);
-		
+		renderRequest.setAttribute(WebKeys.SERVICE_PROCESS_ENTRY,
+				serviceProcess);
+
 		renderRequest.setAttribute(WebKeys.STEP_ALLOWANCE_ENTRY, stepAllowance);
-		
+
 		renderRequest.setAttribute(WebKeys.PROCESS_STEP_ENTRY, processStep);
-		
+
 		renderRequest.setAttribute(WebKeys.WORKFLOW_ENTRY, processWorkflow);
-		
+
 		super.render(renderRequest, renderResponse);
 
 	}
-	
-	public void updateRequiedActionNote(
-			ActionRequest actionRequest, ActionResponse actionResponse)
-			throws IOException {
-		
-		ThemeDisplay themeDisplay = (ThemeDisplay) actionRequest.
-				getAttribute(WebKeys.THEME_DISPLAY);
-		
+
+	public void updateRequiedActionNote(ActionRequest actionRequest,
+			ActionResponse actionResponse) throws IOException {
+
+		ThemeDisplay themeDisplay = (ThemeDisplay) actionRequest
+				.getAttribute(WebKeys.THEME_DISPLAY);
+
 		String returnURL = ParamUtil.getString(actionRequest, "returnURL");
-		
-		long processWorkflowId = ParamUtil.getLong(actionRequest, "processWorkflowId");
-		boolean requiedActionNote = ParamUtil.getBoolean(actionRequest, "requiedActionNote");
-		
+
+		long processWorkflowId = ParamUtil.getLong(actionRequest,
+				"processWorkflowId");
+		boolean requiedActionNote = ParamUtil.getBoolean(actionRequest,
+				"requiedActionNote");
+
 		ProcessWorkflow processWorkflow = null;
-		
+
 		try {
-			processWorkflow = ProcessWorkflowLocalServiceUtil.
-					getProcessWorkflow(processWorkflowId);
+			processWorkflow = ProcessWorkflowLocalServiceUtil
+					.getProcessWorkflow(processWorkflowId);
 		} catch (Exception e) {
 			//
 		}
-		
-		if (Validator.isNotNull(processWorkflow)){
+
+		if (Validator.isNotNull(processWorkflow)) {
 			boolean isAutoEvent = false;
-			if (Validator.isNotNull(processWorkflow.getAutoEvent())){
+			if (Validator.isNotNull(processWorkflow.getAutoEvent())) {
 				isAutoEvent = true;
 			}
-			
-			if (!isAutoEvent){
+
+			if (!isAutoEvent) {
 				try {
-					addExpandoProcessWorkFlow(themeDisplay, 
-							processWorkflowId, requiedActionNote);
-					
+					addExpandoProcessWorkFlow(themeDisplay, processWorkflowId,
+							requiedActionNote);
+
 					actionResponse.sendRedirect(returnURL);
 				} catch (Exception e) {
-					SessionErrors.add(actionRequest, "yeu-cau-thuc-hien-khong-thanh-cong");
+					SessionErrors.add(actionRequest,
+							"yeu-cau-thuc-hien-khong-thanh-cong");
 					actionResponse.sendRedirect(returnURL);
 				}
 			} else {
-				SessionErrors.add(actionRequest, "hanh-dong-duoc-kich-hoat-tu-dong");
+				SessionErrors.add(actionRequest,
+						"hanh-dong-duoc-kich-hoat-tu-dong");
 				actionResponse.sendRedirect(returnURL);
 			}
 		}
 	}
-	
+
 	private void addExpandoProcessWorkFlow(ThemeDisplay themeDisplay,
-			long processWorkflowId, boolean requiedActionNote) 
+			long processWorkflowId, boolean requiedActionNote)
 			throws PortalException, SystemException {
-		
-		long classNameId = ClassNameLocalServiceUtil.getClassNameId(ProcessStep.class.getName());
-		
+
+		long classNameId = ClassNameLocalServiceUtil
+				.getClassNameId(ProcessStep.class.getName());
+
 		ExpandoTable expandoTable = null;
 		ExpandoColumn expandoColumn = null;
-		
+
 		try {
-			expandoTable = 
-					ExpandoTableLocalServiceUtil.getTable(
-							themeDisplay.getCompanyId(), 
-							classNameId, 
-							ProcessStep.class.getName());
+			expandoTable = ExpandoTableLocalServiceUtil.getTable(
+					themeDisplay.getCompanyId(), classNameId,
+					ProcessStep.class.getName());
 		} catch (Exception e) {
 			//
 		}
 		try {
-			expandoColumn = 
-					ExpandoColumnLocalServiceUtil.getColumn(
-							expandoTable.getTableId(), 
-							"requiedProcessActionNote");
+			expandoColumn = ExpandoColumnLocalServiceUtil.getColumn(
+					expandoTable.getTableId(), "requiedProcessActionNote");
 		} catch (Exception e) {
 			//
 		}
-		
-		if (Validator.isNull(expandoTable)){
-			expandoTable = 
-					ExpandoTableLocalServiceUtil.addTable(
-							themeDisplay.getCompanyId(), 
-							classNameId, 
-							ProcessStep.class.getName());
+
+		if (Validator.isNull(expandoTable)) {
+			expandoTable = ExpandoTableLocalServiceUtil.addTable(
+					themeDisplay.getCompanyId(), classNameId,
+					ProcessStep.class.getName());
 		}
-		if (Validator.isNull(expandoColumn)){
-			expandoColumn = 
-					ExpandoColumnLocalServiceUtil.addColumn(
-							expandoTable.getTableId(), 
-							"requiedProcessActionNote", 
-							ExpandoColumnConstants.BOOLEAN);
+		if (Validator.isNull(expandoColumn)) {
+			expandoColumn = ExpandoColumnLocalServiceUtil.addColumn(
+					expandoTable.getTableId(), "requiedProcessActionNote",
+					ExpandoColumnConstants.BOOLEAN);
 		}
-		
-		ExpandoValueLocalServiceUtil.addValue(
-				themeDisplay.getCompanyId(), 
-				ProcessStep.class.getName(), 
-				expandoTable.getName(), 
-				expandoColumn.getName(), 
-				processWorkflowId, 
-				requiedActionNote);
-		
+
+		ExpandoValueLocalServiceUtil.addValue(themeDisplay.getCompanyId(),
+				ProcessStep.class.getName(), expandoTable.getName(),
+				expandoColumn.getName(), processWorkflowId, requiedActionNote);
+
 	}
 
 	private Log _log = LogFactoryUtil.getLog(ProcessMgtAdminPortlet.class);

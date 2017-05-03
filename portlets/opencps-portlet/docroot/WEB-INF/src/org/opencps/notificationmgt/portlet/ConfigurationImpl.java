@@ -78,7 +78,7 @@ public class ConfigurationImpl implements ConfigurationAction {
 	public String render(PortletConfig portletConfig,
 			RenderRequest renderRequest, RenderResponse renderResponse)
 			throws Exception {
-		return "/html/portlets/notificationmgt/configuration.jsp";
+		return "/html/portlets/notificationmgt/backoffice/configuration.jsp";
 	}
 
 }

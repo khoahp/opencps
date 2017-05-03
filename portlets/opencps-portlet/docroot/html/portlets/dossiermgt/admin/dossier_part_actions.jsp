@@ -54,9 +54,6 @@
 	
 	PortletURL updateDossierPartChildsURL = renderResponse.createRenderURL();
 	updateDossierPartChildsURL = updateDossierPartURL;
-	
-	
-
 %>
 
 <%-- <liferay-ui:icon-menu> --%>

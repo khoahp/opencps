@@ -28,7 +28,6 @@
 <%@page import="com.liferay.portal.kernel.util.Constants"%>
 <%@page import="org.opencps.servicemgt.model.TemplateFile"%>
 <%@page import="com.liferay.portal.kernel.util.HtmlUtil"%>
-<%@page import="com.liferay.util.dao.orm.CustomSQLUtil"%>
 <%@page import="com.liferay.portal.kernel.log.LogFactoryUtil"%>
 <%@page import="com.liferay.portal.kernel.log.Log"%>
 <%@page import="com.liferay.portal.kernel.portlet.LiferayWindowState"%>
@@ -44,11 +43,6 @@
 <%@page import="org.opencps.util.PortletPropsValues"%>
 <%@page import="org.opencps.util.DataMgtUtils"%>
 <%
-	PortletPreferences preferences = renderRequest.getPreferences();
 	
-	long rootGroupId = GetterUtil.getLong(preferences.getValue(PortletKeys.PREFER__ROOTGROUPID__,StringPool.BLANK),0);
-	
-	boolean isPermisson = false;
-	 
 %>
 

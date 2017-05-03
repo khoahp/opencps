@@ -18,3 +18,23 @@
 %>
 
 <%@ include file="../init.jsp"%>
+
+<%
+	String[] names = new String[] { PortletKeys.PAYMENTCONFIG_TAB };
+	String tabValue = ParamUtil.getString(request, "tabs1",
+			PortletKeys.PAYMENTCONFIG_TAB);
+
+	List<String> urls = new ArrayList<String>();
+
+	PortletURL tabURL = null;
+
+	tabURL = PortletURLFactoryUtil.create(request, themeDisplay
+			.getPortletDisplay().getId(), themeDisplay.getPlid(),
+			PortletRequest.RENDER_PHASE);
+%>
+<liferay-ui:tabs names="<%= StringUtil.merge(names) %>" url="<%=tabURL.toString()%>" tabsValues="<%= StringUtil.merge(names) %>" value="<%=tabValue %>">
+
+	<c:if test='<%= tabValue.equalsIgnoreCase(PortletKeys.PAYMENTCONFIG_TAB)%>' >
+		<jsp:include page="/html/portlets/paymentmgt/paymentconfig/paymentconfig_list.jsp" flush="true" />
+	</c:if>
+</liferay-ui:tabs>	

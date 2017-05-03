@@ -1,4 +1,5 @@
 
+<%@page import="org.opencps.dossiermgt.PaymentFileUnfinishedException"%>
 <%@page import="com.liferay.portal.kernel.dao.orm.QueryUtil"%>
 <%@page import="org.opencps.dossiermgt.service.DossierLogLocalServiceUtil"%>
 <%@page import="org.opencps.dossiermgt.model.DossierLog"%>
@@ -69,6 +70,10 @@
 <liferay-ui:error 
 	exception="<%= RequiredDossierPartException.class %>" 
 	message="<%=RequiredDossierPartException.class.getName() %>"
+/>
+<liferay-ui:error 
+	exception="<%= PaymentFileUnfinishedException.class %>" 
+	message="<%=PaymentFileUnfinishedException.class.getName() %>"
 />
 
 <%

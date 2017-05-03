@@ -50,12 +50,14 @@ import org.opencps.dossiermgt.ServiceUrlHasExistedException;
 import org.opencps.dossiermgt.model.DossierPart;
 import org.opencps.dossiermgt.model.DossierTemplate;
 import org.opencps.dossiermgt.model.ServiceConfig;
+import org.opencps.dossiermgt.model.ServiceOption;
 import org.opencps.dossiermgt.search.DossierPartDisplayTerms;
 import org.opencps.dossiermgt.search.DossierTemplateDisplayTerms;
 import org.opencps.dossiermgt.search.ServiceConfigDisplayTerms;
 import org.opencps.dossiermgt.service.DossierPartLocalServiceUtil;
 import org.opencps.dossiermgt.service.DossierTemplateLocalServiceUtil;
 import org.opencps.dossiermgt.service.ServiceConfigLocalServiceUtil;
+import org.opencps.dossiermgt.service.ServiceOptionLocalServiceUtil;
 import org.opencps.dossiermgt.util.DossierMgtUtil;
 import org.opencps.servicemgt.model.ServiceInfo;
 import org.opencps.servicemgt.service.ServiceInfoLocalServiceUtil;
@@ -455,7 +457,14 @@ public class DossierMgtAdminPortlet extends MVCPortlet {
 		String govAgencyCode = StringPool.BLANK;
 		String govAgencyIndex = StringPool.BLANK;
 		String govAgencyName = StringPool.BLANK;
-
+		
+		String optionName = ParamUtil.getString(actionRequest, "optionName");
+		String optionCode = ParamUtil.getString(actionRequest, "optionCode");
+		int optionOrder = ParamUtil.getInteger(actionRequest, "optionOrder");
+		String autoSelect = ParamUtil.getString(actionRequest, "autoSelect");
+		long serviceOptionId = ParamUtil.getLong(actionRequest, "serviceOptionId");
+		
+		
 		ServiceInfo serviceInfo = null;
 		DictItem dictItemGov = null;
 
@@ -499,6 +508,10 @@ public class DossierMgtAdminPortlet extends MVCPortlet {
 						servicePortal, serviceOnegate, serviceBackoffice,
 						serviceCitizen, serviceBusinees, govAgencyIndex,
 						serviceUrl, serviceContext);
+				
+				ServiceOptionLocalServiceUtil.addServiceOption(serviceConfigId,
+						optionCode, optionName, optionOrder, autoSelect,
+						dossierTemplateId, 0l, serviceContext);
 			} else {
 				ServiceConfigLocalServiceUtil.updateServiceConfig(
 						serviceConfigId, serviceInfoId,
@@ -509,6 +522,11 @@ public class DossierMgtAdminPortlet extends MVCPortlet {
 						servicePortal, serviceOnegate, serviceBackoffice,
 						serviceCitizen, serviceBusinees, govAgencyIndex,
 						serviceUrl, serviceContext);
+				
+				ServiceOptionLocalServiceUtil.updateServiceOption(
+						serviceOptionId, serviceConfigId, dossierTemplateId,
+						optionCode, optionName, optionOrder, autoSelect,
+						serviceContext);
 
 				if (Validator.isNotNull(backURL)) {
 					actionResponse.sendRedirect(backURL);
@@ -618,10 +636,10 @@ public class DossierMgtAdminPortlet extends MVCPortlet {
 			throw new InvalidServiceDomainException();
 		}
 		// add new
-		else if (serviceConfigId == 0 && Validator.isNotNull(serviceConfig)) {
+/*		else if (serviceConfigId == 0 && Validator.isNotNull(serviceConfig)) {
 			_log.info("go here add");
 			throw new DuplicateServiceConfigGovCodeAndServiceInFoException();
-		}
+		}*/
 		// update
 		else if (serviceConfigId != 0 && Validator.isNotNull(serviceConfig)
 				&& serviceConfigId != serviceConfig.getServiceConfigId()) {

@@ -35,20 +35,23 @@ import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.service.ServiceContext;
 
 /**
- * The implementation of the service process local service. <p> All custom
- * service methods should be put in this class. Whenever methods are added,
- * rerun ServiceBuilder to copy their definitions into the
+ * The implementation of the service process local service.
+ * <p>
+ * All custom service methods should be put in this class. Whenever methods are
+ * added, rerun ServiceBuilder to copy their definitions into the
  * {@link org.opencps.processmgt.service.ServiceProcessLocalService} interface.
- * <p> This is a local service. Methods of this service will not have security
+ * <p>
+ * This is a local service. Methods of this service will not have security
  * checks based on the propagated JAAS credentials because this service can only
- * be accessed from within the same VM. </p>
+ * be accessed from within the same VM.
+ * </p>
  *
  * @author khoavd
  * @see org.opencps.processmgt.service.base.ServiceProcessLocalServiceBaseImpl
  * @see org.opencps.processmgt.service.ServiceProcessLocalServiceUtil
  */
-public class ServiceProcessLocalServiceImpl
-    extends ServiceProcessLocalServiceBaseImpl {
+public class ServiceProcessLocalServiceImpl extends
+		ServiceProcessLocalServiceBaseImpl {
 
 	/*
 	 * NOTE FOR DEVELOPERS: Never reference this interface directly. Always use
@@ -65,10 +68,11 @@ public class ServiceProcessLocalServiceImpl
 	 * @param end
 	 * @return
 	 */
-	public List<ServiceProcess> searchProcess(
-	    long groupId, String keywords, int start, int end) {
+	public List<ServiceProcess> searchProcess(long groupId, String keywords,
+			int start, int end) {
 
-		return serviceProcessFinder.searchProcess(groupId, keywords, start, end);
+		return serviceProcessFinder
+				.searchProcess(groupId, keywords, start, end);
 	}
 
 	/**
@@ -94,13 +98,13 @@ public class ServiceProcessLocalServiceImpl
 	 * @throws PortalException
 	 * @throws SystemException
 	 */
-	public ServiceProcess updateProcess(
-	    long serviceProcessId, String processNo, String processName,
-	    long dossierTemplateId, String description)
-	    throws PortalException, SystemException {
+	public ServiceProcess updateProcess(long serviceProcessId,
+			String processNo, String processName, long dossierTemplateId,
+			String description, long paymentConfigId, String paymentFee,
+			boolean isRequestPayment) throws PortalException, SystemException {
 
-		ServiceProcess serviceProcess =
-		    ServiceProcessLocalServiceUtil.fetchServiceProcess(serviceProcessId);
+		ServiceProcess serviceProcess = ServiceProcessLocalServiceUtil
+				.fetchServiceProcess(serviceProcessId);
 
 		if (Validator.isNotNull(serviceProcess)) {
 			serviceProcess.setModifiedDate(new Date());
@@ -108,6 +112,9 @@ public class ServiceProcessLocalServiceImpl
 			serviceProcess.setProcessName(processName);
 			serviceProcess.setDescription(description);
 			serviceProcess.setDossierTemplateId(dossierTemplateId);
+			serviceProcess.setPaymentConfigId(paymentConfigId);
+			serviceProcess.setPaymentFee(paymentFee);
+			serviceProcess.setIsRequestPayment(isRequestPayment);
 
 			serviceProcessPersistence.update(serviceProcess);
 		}
@@ -127,16 +134,16 @@ public class ServiceProcessLocalServiceImpl
 	 * @throws PortalException
 	 * @throws SystemException
 	 */
-	public ServiceProcess addProcess(
-	    String processNo, String processName, String description,
-	    long dossierTemplateId, ServiceContext context)
-	    throws PortalException, SystemException {
+	public ServiceProcess addProcess(String processNo, String processName,
+			String description, long dossierTemplateId, long paymentConfigId,
+			String paymentFee, boolean isRequestPayment, ServiceContext context)
+			throws PortalException, SystemException {
 
-		long serviceProcessId =
-		    counterLocalService.increment(ServiceProcess.class.getName());
+		long serviceProcessId = counterLocalService
+				.increment(ServiceProcess.class.getName());
 
-		ServiceProcess serviceProcess =
-		    serviceProcessPersistence.create(serviceProcessId);
+		ServiceProcess serviceProcess = serviceProcessPersistence
+				.create(serviceProcessId);
 
 		Date now = new Date();
 
@@ -151,50 +158,60 @@ public class ServiceProcessLocalServiceImpl
 			serviceProcess.setProcessName(processName);
 			serviceProcess.setDescription(description);
 			serviceProcess.setDossierTemplateId(dossierTemplateId);
-			
+			serviceProcess.setPaymentConfigId(paymentConfigId);
+			serviceProcess.setPaymentFee(paymentFee);
+			serviceProcess.setIsRequestPayment(isRequestPayment);
+
 			serviceProcessPersistence.update(serviceProcess);
 		}
 
 		return serviceProcess;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.opencps.processmgt.service.ServiceProcessLocalService#deleteProcess(long)
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.opencps.processmgt.service.ServiceProcessLocalService#deleteProcess
+	 * (long)
 	 */
-	public void deleteProcess(long serviceProcessId) throws NoSuchServiceProcessException, SystemException {
+	public void deleteProcess(long serviceProcessId)
+			throws NoSuchServiceProcessException, SystemException {
 		List<ProcessStep> processSteps = new ArrayList<ProcessStep>();
 		List<ServiceInfoProcess> infoProcesses = new ArrayList<ServiceInfoProcess>();
 		List<ProcessWorkflow> processWorkflows = new ArrayList<ProcessWorkflow>();
-		
+
 		try {
-			processSteps = processStepPersistence.findByS_P_ID(serviceProcessId);
+			processSteps = processStepPersistence
+					.findByS_P_ID(serviceProcessId);
+		} catch (Exception e) {
 		}
-		catch (Exception e) {
-		}
-		
+
 		try {
-			infoProcesses = serviceInfoProcessPersistence.findByServiceProcessId(serviceProcessId); 
+			infoProcesses = serviceInfoProcessPersistence
+					.findByServiceProcessId(serviceProcessId);
+		} catch (Exception e) {
 		}
-		catch (Exception e) {
-		}
-		
+
 		try {
-			processWorkflows = processWorkflowPersistence.findByS_P_ID(serviceProcessId);
+			processWorkflows = processWorkflowPersistence
+					.findByS_P_ID(serviceProcessId);
+		} catch (Exception e) {
 		}
-		catch (Exception e) {
-		}
-		
-		if(processSteps.isEmpty() && infoProcesses.isEmpty() && processWorkflows.isEmpty()) {
+
+		if (processSteps.isEmpty() && infoProcesses.isEmpty()
+				&& processWorkflows.isEmpty()) {
 			serviceProcessPersistence.remove(serviceProcessId);
 		}
 	}
 
-	public List<ServiceProcess> getServiceProcesses(long groupId, long dossierTemplateId) 
-					throws SystemException {
+	public List<ServiceProcess> getServiceProcesses(long groupId,
+			long dossierTemplateId) throws SystemException {
 		return serviceProcessPersistence.findByG_T(groupId, dossierTemplateId);
 	}
-	
-	public int countByG_T(long groupId ,long dossierTemplateId) throws SystemException {
+
+	public int countByG_T(long groupId, long dossierTemplateId)
+			throws SystemException {
 		return serviceProcessPersistence.countByG_T(groupId, dossierTemplateId);
 	}
 
@@ -202,15 +219,17 @@ public class ServiceProcessLocalServiceImpl
 			throws SystemException, NoSuchServiceProcessException {
 		return serviceProcessPersistence.findByG_P(groupId, processNo);
 	}
-	
-	public List<ServiceProcess> searchServiceProcess(long groupId,String keyword,int start,int end){
-		
-		return serviceProcessFinder.searchServiceProcess(groupId, keyword, start, end);
+
+	public List<ServiceProcess> searchServiceProcess(long groupId,
+			String keyword, int start, int end) {
+
+		return serviceProcessFinder.searchServiceProcess(groupId, keyword,
+				start, end);
 	}
-	
-	public int countServiceProcess(long groupId,String keyword){
-		
+
+	public int countServiceProcess(long groupId, String keyword) {
+
 		return serviceProcessFinder.countServiceProcess(groupId, keyword);
 	}
-	
+
 }

@@ -246,6 +246,9 @@
 		<portlet-name>12</portlet-name>
 		<icon>/icon.png</icon>
 		<header-portlet-css>/css/main.css</header-portlet-css>
+		<header-portlet-css>/css/dossiermgt.css</header-portlet-css>
+		<header-portlet-css>/css/alpacajs-icon.css</header-portlet-css>
+		<header-portlet-css>/css/alpacajs.css</header-portlet-css>
 		<footer-portlet-javascript>
 			/js/main.js
 		</footer-portlet-javascript>
@@ -476,6 +479,16 @@
 			/js/main.js
 		</footer-portlet-javascript>
 		<css-class-wrapper>37-portlet</css-class-wrapper>
+	</portlet>
+	<portlet>
+		<portlet-name>38</portlet-name>
+		<icon>/icon.png</icon>
+		<configuration-action-class>org.opencps.lucenequery.portlet.ConfigurationActionImpl</configuration-action-class>
+		<header-portlet-css>/css/main.css</header-portlet-css>
+		<footer-portlet-javascript>
+			/js/main.js
+		</footer-portlet-javascript>
+		<css-class-wrapper>38-portlet</css-class-wrapper>
 	</portlet>
 	<role-mapper>
 		<role-name>administrator</role-name>

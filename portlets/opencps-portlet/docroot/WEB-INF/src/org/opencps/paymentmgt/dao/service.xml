@@ -45,6 +45,11 @@
 		<column name="paymentGateResponseData" type="String" />
 		<column name="paymentGateCheckCode" type="int" />
 		<column name="paymentGateCheckResponseData" type="String" />
+		
+		<order by="desc">
+			<order-column name="createDate" />
+			<order-column name="paymentFileId" />
+		</order>
 
 		<finder name="GoodCode" return-type="PaymentFile">
 			<finder-column name="groupId"></finder-column>
@@ -111,6 +116,7 @@
 		<column name="paymentGateType" type="long"></column>
 		<column name="status" type="boolean"></column>
 		<column name="returnUrl" type="String"></column>
+		<column name="paymentConfigNo" type="String"></column>
 
 		<finder name="GovAgencyPaymentType" return-type="PaymentConfig">
 			<finder-column name="groupId"></finder-column>
@@ -132,6 +138,15 @@
 		<finder name="GovAgencyAndStatusList" return-type="Collection">
 			<finder-column name="groupId"></finder-column>
 			<finder-column name="govAgencyOrganizationId"></finder-column>
+			<finder-column name="status"></finder-column>
+		</finder>
+		
+		<finder name="P_S" return-type="PaymentConfig">
+			<finder-column name="paymentConfigId"></finder-column>
+			<finder-column name="status"></finder-column>
+		</finder>
+		
+		<finder name="Status" return-type="Collection">
 			<finder-column name="status"></finder-column>
 		</finder>
 

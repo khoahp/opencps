@@ -1,9 +1,3 @@
-
-<%@page import="org.opencps.paymentmgt.service.PaymentGateConfigLocalServiceUtil"%>
-<%@page import="org.opencps.paymentmgt.model.PaymentGateConfig"%>
-<%@page import="com.liferay.portal.kernel.log.Log"%>
-<%@page import="com.liferay.portal.kernel.log.LogFactoryUtil"%>
-<%@page import="org.opencps.paymentmgt.service.persistence.PaymentFileUtil"%>
 <%
 /**
  * OpenCPS is the open source Core Public Services software
@@ -22,8 +16,6 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 %>
-
-
 <%@ include file="../init.jsp"%>
 
 <%
@@ -33,11 +25,11 @@
 	long dossierId = ParamUtil.getLong(originalRequest, "dossierId",0);
 	long serviceInfoId = ParamUtil.getLong(originalRequest, "serviceInfoId",0);
 	
-	PaymentFile paymentFile = null;
-	Dossier dossier = null;
-	ServiceInfo serviceInfo = null;
-	PaymentConfig paymentConfig = null;
-	PaymentGateConfig paymentGateConfig = null;
+	PaymentFile paymentFile = new PaymentFileImpl();
+	Dossier dossier = new DossierImpl();
+	ServiceInfo serviceInfo = new ServiceInfoImpl();
+	PaymentConfig paymentConfig = new PaymentConfigImpl();
+	DictItem dictItem = new DictItemImpl();
 	
 	try{
 	
@@ -45,14 +37,14 @@
 			paymentFile = PaymentFileLocalServiceUtil.getPaymentFile(paymentFileId);
 	
 			if (Validator.isNotNull(paymentFile) && paymentFile.getPaymentConfig() > 0) {
+				
 				paymentConfig =
 					PaymentConfigLocalServiceUtil.getPaymentConfig(paymentFile.getPaymentConfig());
-	
-				if (Validator.isNotNull(paymentConfig) &&
-					paymentConfig.getPaymentConfigId() > 0) {
-					paymentGateConfig =
-						PaymentGateConfigLocalServiceUtil.getPaymentGateConfig(paymentConfig.getPaymentGateType());
+				
+				if(Validator.isNotNull(paymentConfig) && paymentConfig.getPaymentGateType() > 0){
+					dictItem =  DictItemLocalServiceUtil.getDictItem(paymentConfig.getPaymentGateType());
 				}
+	
 			}
 	
 		}
@@ -120,7 +112,7 @@
 						<tr>
 							<td class="col-left"><liferay-ui:message key="paygate_name"></liferay-ui:message></td>
 							<td class="col-right">
-								<%=Validator.isNotNull(paymentGateConfig)?paymentGateConfig.getPaymentGateName():StringPool.BLANK %>
+								<%=dictItem.getItemCode()%>
 							</td>
 						</tr>
 					</table>	
