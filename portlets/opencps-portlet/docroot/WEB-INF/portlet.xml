@@ -9,7 +9,7 @@
 		</portlet-class>
 		<init-param>
 			<name>view-template</name>
-			<value>/html/portlets/data_management/admin/dictitems.jsp</value>
+			<value>/html/portlets/data_management/admin/display/dictcollection.jsp</value>
 		</init-param>
 		<init-param>
 			<name>template-path</name>
