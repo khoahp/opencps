@@ -42,6 +42,9 @@
 <%@page import="org.opencps.dossiermgt.OutOfLengthDossierContactTelNoException"%>
 <%@page import="org.opencps.dossiermgt.EmptyDossierContactNameException"%>
 <%@page import="org.opencps.dossiermgt.OutOfLengthDossierAddressException"%>
+<%@page import="com.liferay.portal.kernel.util.HtmlUtil"%>
+<%@page import="org.opencps.datamgt.model.DictItem"%>
+<%@page import="org.opencps.util.PortletUtil"%>
 
 <%@ include file="../../init.jsp"%>
 
@@ -56,6 +59,10 @@
 	String itemSelected = GetterUtil.getString(request.getAttribute(WebKeys.DICT_ITEM_SELECTED), StringPool.BLANK);
 	
 	String cmd = ParamUtil.getString(request, Constants.CMD);
+	
+	DictItem adminAction = PortletUtil.getDictItem(PortletPropsValues.DATAMGT_MASTERDATA_GOVERNMENT_AGENCY, 
+			serviceConfig.getGovAgencyCode(), 
+			scopeGroupId);
 %>
 
 <aui:model-context bean="<%=dossier%>" model="<%=Dossier.class%>" />
@@ -156,6 +163,22 @@
 				</aui:row>
 			</aui:col>
 	</aui:row>
+	<div class="opencps dossiermgt dossier-part-row r-0 mb-10">
+					
+		<div class="level-0 opencps dossiermgt dossier-part dossier-part-title-left">
+			<div class="">
+				<div class="span3 bold-label"><liferay-ui:message key="service-name"/></div>
+				<div class="span9"><%=HtmlUtil.escape(serviceInfo.getServiceName()) %></div>
+			</div>
+		</div>
+				
+		<div class="opencps dossiermgt dossier-part-control border-left dossier-part-title-right">
+			<div class="">
+				<div class="span3 bold-label"><liferay-ui:message key="service-administration-action"/></div>
+				<div class="span9"><%=Validator.isNotNull(adminAction) ? adminAction.getItemName(locale,true) : StringPool.BLANK %></div>
+			</div>
+		</div>
+	</div>
 	
 <aui:row cssClass="nav-content-row hidden">
 	<aui:col width="100">
