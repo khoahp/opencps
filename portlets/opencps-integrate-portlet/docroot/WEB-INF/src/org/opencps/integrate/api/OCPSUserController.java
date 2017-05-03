@@ -269,7 +269,7 @@ public class OCPSUserController {
 
 			if (Validator.isNull(user)) {
 
-				resp.put("message", "NoUserExistWithThisEmail "+email);
+				resp.put("Result", "NoUserExistWithThisEmail "+email);
 
 				return Response.status(401).entity(resp.toString()).build();
 			} else {
@@ -292,11 +292,11 @@ public class OCPSUserController {
 							user.getEmailAddress(), fromName, fromAddress,
 							StringPool.BLANK, StringPool.BLANK, context);
 
-					resp.put("message", "Success");
+					resp.put("Result", "Success");
 
 					return Response.status(200).entity(resp.toString()).build();
 				} else {
-					resp.put("message", "NoUserExistIsBussinessOrCitizenWithEmail "+email);
+					resp.put("Result", "NoUserExistIsBussinessOrCitizenWithEmail "+email);
 
 					return Response.status(401).entity(resp.toString()).build();
 				}
@@ -304,7 +304,7 @@ public class OCPSUserController {
 			}
 		} catch (PortalException | SystemException e) {
 
-			resp.put("message", "SystemError");
+			resp.put("Result", "SystemError");
 			return Response.status(404).entity(resp.toString()).build();
 		}
 	}
