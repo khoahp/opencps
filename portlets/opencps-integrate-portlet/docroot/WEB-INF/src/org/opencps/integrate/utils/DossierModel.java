@@ -1,6 +1,28 @@
 package org.opencps.integrate.utils;
 
+import java.util.Date;
+
 public class DossierModel {
+	
+	public static final int DOSSIER_SOURCE_DIRECT = 0;
+	public static final int DOSSIER_SOURCE_INDIRECT = 1;
+
+	public static final String DOSSIER_STATUS_NEW = "new";
+	public static final String DOSSIER_STATUS_RECEIVING = "receiving";
+	public static final String DOSSIER_STATUS_WAITING = "waiting";
+	public static final String DOSSIER_STATUS_PAYING = "paying";
+	public static final String DOSSIER_STATUS_DENIED = "denied";
+	public static final String DOSSIER_STATUS_RECEIVED = "received";
+	public static final String DOSSIER_STATUS_PROCESSING = "processing";
+	public static final String DOSSIER_STATUS_CANCELED = "canceled";
+	public static final String DOSSIER_STATUS_DONE = "done";
+	public static final String DOSSIER_STATUS_ARCHIVED = "archived";
+	public static final String DOSSIER_STATUS_SYSTEM = "system";
+	public static final String DOSSIER_STATUS_ENDED = "ended";
+	public static final String DOSSIER_STATUS_ERROR = "error";
+	public static final String ACTION_SUBMIT_VALUE = "submit";
+
+
 	public String getReferenceUid() {
 		return referenceUid;
 	}
@@ -109,23 +131,23 @@ public class DossierModel {
 	public void setDossierNote(String dossierNote) {
 		this.dossierNote = dossierNote;
 	}
-	public String getSubmitDate() {
+	public Date getSubmitDate() {
 		return submitDate;
 	}
-	public void setSubmitDate(String submitDate) {
+	public void setSubmitDate(Date submitDate) {
 		this.submitDate = submitDate;
 	}
-	public String getReceiveDate() {
+	public Date getReceiveDate() {
 		return receiveDate;
 	}
-	public void setReceiveDate(String receiveDate) {
+	public void setReceiveDate(Date receiveDate) {
 		this.receiveDate = receiveDate;
 	}
-	public String getdDossierNo() {
-		return dDossierNo;
+	public String getDossierNo() {
+		return dossierNo;
 	}
-	public void setdDossierNo(String dDossierNo) {
-		this.dDossierNo = dDossierNo;
+	public void setdDossierNo(String dossierNo) {
+		this.dossierNo = dossierNo;
 	}
 	public String getDueDate() {
 		return dueDate;
@@ -133,22 +155,22 @@ public class DossierModel {
 	public void setDueDate(String dueDate) {
 		this.dueDate = dueDate;
 	}
-	public String getFinishDate() {
+	public Date getFinishDate() {
 		return finishDate;
 	}
-	public void setFinishDate(String finishDate) {
+	public void setFinishDate(Date finishDate) {
 		this.finishDate = finishDate;
 	}
-	public String getCreateDate() {
+	public Date getCreateDate() {
 		return createDate;
 	}
-	public void setCreateDate(String createDate) {
+	public void setCreateDate(Date createDate) {
 		this.createDate = createDate;
 	}
-	public String getModifiedDate() {
+	public Date getModifiedDate() {
 		return modifiedDate;
 	}
-	public void setModifiedDate(String modifiedDate) {
+	public void setModifiedDate(Date modifiedDate) {
 		this.modifiedDate = modifiedDate;
 	}
 	public String getDossierStatus() {
@@ -181,13 +203,13 @@ public class DossierModel {
 	public String contactTelNo;
 	public String contactEmail;
 	public String dossierNote;
-	public String submitDate;
-	public String receiveDate;
-	public String dDossierNo;
+	public Date submitDate;
+	public Date receiveDate;
+	public String dossierNo;
 	public String dueDate;
-	public String finishDate;
-	public String createDate;
-	public String modifiedDate;
+	public Date finishDate;
+	public Date createDate;
+	public Date modifiedDate;
 	public String dossierStatus;
 	public String statusText;
 }

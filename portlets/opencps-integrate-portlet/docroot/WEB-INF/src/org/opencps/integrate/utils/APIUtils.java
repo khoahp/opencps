@@ -468,6 +468,21 @@ public class APIUtils {
 			return StringPool.BLANK;
 		}
 	}
+	
+	public static Date convertDateTime(String strDate) {
+
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+
+		Date date = null;
+
+		try {
+			date = sdf.parse(strDate);
+
+		} catch (Exception e) {
+			_log.error(e);
+		}
+		return date;
+	}
 
 	public static Log _log = LogFactoryUtil.getLog(APIUtils.class);
 }
