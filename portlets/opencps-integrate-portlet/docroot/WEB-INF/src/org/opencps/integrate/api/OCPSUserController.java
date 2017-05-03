@@ -248,7 +248,7 @@ public class OCPSUserController {
 	}
 	
 	@GET
-	@Path("/forgot/{email}")
+	@Path("/forgot/user/{email}")
 	public Response forgotPassword(@Context HttpServletRequest request,
 			@PathParam("email") String email) {
 
