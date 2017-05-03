@@ -18,6 +18,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.opencps.datamgt.NoSuchDictCollectionLinkException;
+import org.opencps.datamgt.model.DictCollection;
 import org.opencps.datamgt.model.DictCollectionLink;
 import org.opencps.datamgt.service.base.DictCollectionLinkLocalServiceBaseImpl;
 
@@ -53,6 +54,9 @@ public class DictCollectionLinkLocalServiceImpl extends
 		DictCollectionLink dictCollectionLink = dictCollectionLinkPersistence
 				.create(dictCollectionLinkId);
 
+		DictCollection collection = dictCollectionPersistence
+				.fetchByPrimaryKey(dictCollectionId);
+
 		dictCollectionLink.setCompanyId(serviceContext.getCompanyId());
 		dictCollectionLink.setGroupId(serviceContext.getScopeGroupId());
 		dictCollectionLink.setUserId(serviceContext.getUserId());
@@ -62,6 +66,8 @@ public class DictCollectionLinkLocalServiceImpl extends
 		dictCollectionLink.setDictCollectionId(dictCollectionId);
 		dictCollectionLink.setDictCollectionLinkedId(dictCollectionLinkedId);
 		dictCollectionLink.setSequenceNo(sequenceNo);
+		dictCollectionLink.setDictCollectionLinkedName(collection
+				.getCollectionName());
 
 		return dictCollectionLinkPersistence.update(dictCollectionLink);
 	}

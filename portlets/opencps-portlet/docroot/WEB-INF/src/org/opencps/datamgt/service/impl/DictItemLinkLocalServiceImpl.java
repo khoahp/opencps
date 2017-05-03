@@ -18,6 +18,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.opencps.datamgt.NoSuchDictItemLinkException;
+import org.opencps.datamgt.model.DictItem;
 import org.opencps.datamgt.model.DictItemLink;
 import org.opencps.datamgt.service.base.DictItemLinkLocalServiceBaseImpl;
 
@@ -54,6 +55,8 @@ public class DictItemLinkLocalServiceImpl extends
 		DictItemLink dictItemLink = dictItemLinkPersistence
 				.create(dictItemLinkId);
 
+		DictItem dictItem = dictItemPersistence.fetchByPrimaryKey(dictItemId);
+
 		dictItemLink.setCompanyId(serviceContext.getCompanyId());
 		dictItemLink.setGroupId(serviceContext.getScopeGroupId());
 		dictItemLink.setUserId(serviceContext.getUserId());
@@ -63,6 +66,7 @@ public class DictItemLinkLocalServiceImpl extends
 		dictItemLink.setDictItemId(dictItemId);
 		dictItemLink.setDictItemLinkedId(dictItemLinkedId);
 		dictItemLink.setSequenceNo(sequenceNo);
+		dictItemLink.setDictItemLinkedName(dictItem.getItemName());
 
 		return dictItemLinkPersistence.update(dictItemLink);
 	}
