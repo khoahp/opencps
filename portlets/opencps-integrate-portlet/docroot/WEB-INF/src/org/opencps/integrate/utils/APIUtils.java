@@ -479,7 +479,6 @@ public class APIUtils {
 			date = sdf.parse(strDate);
 
 		} catch (Exception e) {
-			_log.error(e);
 		}
 		return date;
 	}

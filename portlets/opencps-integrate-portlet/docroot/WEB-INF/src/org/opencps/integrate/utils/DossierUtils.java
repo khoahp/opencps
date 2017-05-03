@@ -4,7 +4,9 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.opencps.dossiermgt.model.Dossier;
 import org.opencps.dossiermgt.service.DossierLocalServiceUtil;
+import org.opencps.integrate.dao.InvalidMessageContentException;
 
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -13,6 +15,37 @@ import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.util.PortalUtil;
 
 public class DossierUtils {
+	
+	/**
+	 * @param input
+	 * @return
+	 * @throws InvalidMessageContentException
+	 */
+	public static ActionModel getActionModel(String input)
+			throws InvalidMessageContentException {
+		ActionModel am = new ActionModel();
+
+		try {
+			JSONObject jsInput = JSONFactoryUtil.createJSONObject(input);
+
+			am.setActionCode(jsInput.getString("ActionCode"));
+			am.setActionName(jsInput.getString("ActionName"));
+			am.setActionNote(jsInput.getString("ActionNote"));
+			am.setModifiedDate(APIUtils.convertDateTime(jsInput
+					.getString("ModifiedDate")));
+			am.setReceviceDate(APIUtils.convertDateTime(jsInput
+					.getString("ReceiveDate")));
+			am.setDossierNo(jsInput.getString("DossierNo"));
+			am.setDueDate(APIUtils.convertDateTime(jsInput.getString("DueDate")));
+			am.setFinishedDate(APIUtils.convertDateTime(jsInput
+					.getString("FinishDate")));
+
+		} catch (Exception e) {
+			throw new InvalidMessageContentException();
+		}
+
+		return am;
+	}
 	
 	public static Dossier getDossierIdByOid(String oid) {
 		Dossier dossier = null;
