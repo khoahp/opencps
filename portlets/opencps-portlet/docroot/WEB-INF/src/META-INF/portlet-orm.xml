@@ -1,0 +1,1387 @@
+<?xml version="1.0"?>
+
+<entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.0" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_1_0.xsd">
+	<persistence-unit-metadata>
+		<xml-mapping-metadata-complete/>
+		<persistence-unit-defaults>
+			<access>PROPERTY</access>
+		</persistence-unit-defaults>
+	</persistence-unit-metadata>
+	<mapped-superclass class="org.opencps.accountmgt.model.impl.BusinessModelImpl">
+		<attributes>
+			<id name="businessId" />
+			<basic name="companyId" />
+			<basic name="groupId" />
+			<basic name="userId" />
+			<basic name="createDate">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="modifiedDate">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="uuid">
+				<column name="UUID_" />
+			</basic>
+			<basic name="name" />
+			<basic name="enName" />
+			<basic name="shortName" />
+			<basic name="businessType" />
+			<basic name="idNumber" />
+			<basic name="dateOfIdNumber">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="address" />
+			<basic name="cityCode" />
+			<basic name="districtCode" />
+			<basic name="wardCode" />
+			<basic name="telNo" />
+			<basic name="email" />
+			<basic name="representativeName" />
+			<basic name="representativeRole" />
+			<basic name="attachFile" />
+			<basic name="mappingOrganizationId" />
+			<basic name="mappingUserId" />
+			<basic name="accountStatus" />
+			<transient name="mappingUserUuid" />
+			<transient name="modelAttributes" />
+			<transient name="primaryKey" />
+			<transient name="primaryKeyObj" />
+			<transient name="userUuid" />
+		</attributes>
+	</mapped-superclass>
+	<mapped-superclass class="org.opencps.accountmgt.model.impl.BusinessAccountModelImpl">
+		<attributes>
+			<id name="businessAccountId" />
+			<basic name="companyId" />
+			<basic name="groupId" />
+			<basic name="userId" />
+			<basic name="createDate">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="modifiedDate">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="businessId" />
+			<basic name="fullName" />
+			<basic name="workingRole" />
+			<basic name="telNo" />
+			<basic name="email" />
+			<basic name="mappingUserId" />
+			<basic name="hasPermissions" />
+			<basic name="accountStatus" />
+			<transient name="mappingUserUuid" />
+			<transient name="modelAttributes" />
+			<transient name="primaryKey" />
+			<transient name="primaryKeyObj" />
+			<transient name="userUuid" />
+		</attributes>
+	</mapped-superclass>
+	<mapped-superclass class="org.opencps.accountmgt.model.impl.BusinessDomainModelImpl">
+		<attributes>
+			<id name="domainId" />
+			<basic name="businessId" />
+			<basic name="businessDomainCode" />
+			<transient name="modelAttributes" />
+			<transient name="primaryKey" />
+			<transient name="primaryKeyObj" />
+		</attributes>
+	</mapped-superclass>
+	<mapped-superclass class="org.opencps.accountmgt.model.impl.CitizenModelImpl">
+		<attributes>
+			<id name="citizenId" />
+			<basic name="companyId" />
+			<basic name="groupId" />
+			<basic name="userId" />
+			<basic name="createDate">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="modifiedDate">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="uuid">
+				<column name="UUID_" />
+			</basic>
+			<basic name="fullName" />
+			<basic name="personalId" />
+			<basic name="gender" />
+			<basic name="birthdate">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="address" />
+			<basic name="cityCode" />
+			<basic name="districtCode" />
+			<basic name="wardCode" />
+			<basic name="telNo" />
+			<basic name="email" />
+			<basic name="attachFile" />
+			<basic name="mappingUserId" />
+			<basic name="accountStatus" />
+			<transient name="mappingUserUuid" />
+			<transient name="modelAttributes" />
+			<transient name="primaryKey" />
+			<transient name="primaryKeyObj" />
+			<transient name="userUuid" />
+		</attributes>
+	</mapped-superclass>
+	<mapped-superclass class="org.opencps.datamgt.model.impl.AdministrationServicedomainModelImpl">
+		<id-class class="org.opencps.datamgt.service.persistence.AdministrationServicedomainPK" />
+		<attributes>
+			<id name="administrationCode" />
+			<id name="administrationCollectionCode" />
+			<id name="serviceDomainCode" />
+			<id name="serviceDomainCollectionCode" />
+			<basic name="groupId" />
+			<transient name="modelAttributes" />
+			<transient name="primaryKey" />
+			<transient name="primaryKeyObj" />
+		</attributes>
+	</mapped-superclass>
+	<mapped-superclass class="org.opencps.datamgt.model.impl.DictCollectionModelImpl">
+		<attributes>
+			<id name="dictCollectionId" />
+			<basic name="companyId" />
+			<basic name="groupId" />
+			<basic name="userId" />
+			<basic name="createDate">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="modifiedDate">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="collectionCode" />
+			<basic name="collectionName" />
+			<basic name="description" />
+			<transient name="collectionNameCurrentLanguageId" />
+			<transient name="collectionNameMap" />
+			<transient name="modelAttributes" />
+			<transient name="primaryKey" />
+			<transient name="primaryKeyObj" />
+			<transient name="userUuid" />
+		</attributes>
+	</mapped-superclass>
+	<mapped-superclass class="org.opencps.datamgt.model.impl.DictItemModelImpl">
+		<attributes>
+			<id name="dictItemId" />
+			<basic name="companyId" />
+			<basic name="groupId" />
+			<basic name="userId" />
+			<basic name="createDate">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="modifiedDate">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="dictCollectionId" />
+			<basic name="itemCode" />
+			<basic name="itemName" />
+			<basic name="itemDescription" />
+			<basic name="parentItemId" />
+			<basic name="treeIndex" />
+			<basic name="issueStatus" />
+			<basic name="dictVersionId" />
+			<transient name="itemDescriptionCurrentLanguageId" />
+			<transient name="itemDescriptionMap" />
+			<transient name="itemNameCurrentLanguageId" />
+			<transient name="itemNameMap" />
+			<transient name="modelAttributes" />
+			<transient name="primaryKey" />
+			<transient name="primaryKeyObj" />
+			<transient name="userUuid" />
+		</attributes>
+	</mapped-superclass>
+	<mapped-superclass class="org.opencps.datamgt.model.impl.DictVersionModelImpl">
+		<attributes>
+			<id name="dictVersionId" />
+			<basic name="companyId" />
+			<basic name="groupId" />
+			<basic name="userId" />
+			<basic name="createDate">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="modifiedDate">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="dictCollectionId" />
+			<basic name="version" />
+			<basic name="description" />
+			<basic name="validatedFrom">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="validatedTo">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="issueStatus" />
+			<transient name="modelAttributes" />
+			<transient name="primaryKey" />
+			<transient name="primaryKeyObj" />
+			<transient name="userUuid" />
+		</attributes>
+	</mapped-superclass>
+	<mapped-superclass class="org.opencps.usermgt.model.impl.EmployeeModelImpl">
+		<attributes>
+			<id name="employeeId" />
+			<basic name="companyId" />
+			<basic name="groupId" />
+			<basic name="userId" />
+			<basic name="createDate">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="modifiedDate">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="workingUnitId" />
+			<basic name="employeeNo" />
+			<basic name="fullName" />
+			<basic name="gender" />
+			<basic name="birthdate">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="telNo" />
+			<basic name="mobile" />
+			<basic name="email" />
+			<basic name="workingStatus" />
+			<basic name="mainJobPosId" />
+			<basic name="mappingUserId" />
+			<transient name="mappingUserUuid" />
+			<transient name="modelAttributes" />
+			<transient name="primaryKey" />
+			<transient name="primaryKeyObj" />
+			<transient name="userUuid" />
+		</attributes>
+	</mapped-superclass>
+	<mapped-superclass class="org.opencps.usermgt.model.impl.JobPosModelImpl">
+		<attributes>
+			<id name="jobPosId" />
+			<basic name="companyId" />
+			<basic name="groupId" />
+			<basic name="userId" />
+			<basic name="createDate">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="modifiedDate">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="title" />
+			<basic name="description" />
+			<basic name="workingUnitId" />
+			<basic name="directWorkingUnitId" />
+			<basic name="leader" />
+			<basic name="mappingRoleId" />
+			<transient name="modelAttributes" />
+			<transient name="primaryKey" />
+			<transient name="primaryKeyObj" />
+			<transient name="userUuid" />
+		</attributes>
+	</mapped-superclass>
+	<mapped-superclass class="org.opencps.usermgt.model.impl.WorkingUnitModelImpl">
+		<attributes>
+			<id name="workingunitId" />
+			<basic name="companyId" />
+			<basic name="groupId" />
+			<basic name="userId" />
+			<basic name="createDate">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="modifiedDate">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="name" />
+			<basic name="enName" />
+			<basic name="govAgencyCode" />
+			<basic name="managerWorkingUnitId" />
+			<basic name="parentWorkingUnitId" />
+			<basic name="sibling" />
+			<basic name="treeIndex" />
+			<basic name="address" />
+			<basic name="cityCode" />
+			<basic name="districtCode" />
+			<basic name="wardCode" />
+			<basic name="telNo" />
+			<basic name="faxNo" />
+			<basic name="email" />
+			<basic name="website" />
+			<basic name="isEmployer" />
+			<basic name="mappingOrganisationId" />
+			<transient name="modelAttributes" />
+			<transient name="primaryKey" />
+			<transient name="primaryKeyObj" />
+			<transient name="userUuid" />
+		</attributes>
+	</mapped-superclass>
+	<mapped-superclass class="org.opencps.statisticsmgt.model.impl.DossiersStatisticsModelImpl">
+		<attributes>
+			<id name="dossierStatisticId" />
+			<basic name="companyId" />
+			<basic name="groupId" />
+			<basic name="userId" />
+			<basic name="createDate">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="modifiedDate">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="remainingNumber" />
+			<basic name="receivedNumber" />
+			<basic name="ontimeNumber" />
+			<basic name="overtimeNumber" />
+			<basic name="processingNumber" />
+			<basic name="delayingNumber" />
+			<basic name="month" />
+			<basic name="year" />
+			<basic name="govAgencyCode" />
+			<basic name="domainCode" />
+			<basic name="administrationLevel" />
+			<basic name="source" />
+			<transient name="modelAttributes" />
+			<transient name="primaryKey" />
+			<transient name="primaryKeyObj" />
+			<transient name="userUuid" />
+		</attributes>
+	</mapped-superclass>
+	<mapped-superclass class="org.opencps.statisticsmgt.model.impl.GovagencyLevelModelImpl">
+		<attributes>
+			<id name="govagencyId" />
+			<basic name="companyId" />
+			<basic name="groupId" />
+			<basic name="userId" />
+			<basic name="createDate">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="modifiedDate">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="govAgencyCode" />
+			<basic name="administrationLevel" />
+			<transient name="modelAttributes" />
+			<transient name="primaryKey" />
+			<transient name="primaryKeyObj" />
+			<transient name="userUuid" />
+		</attributes>
+	</mapped-superclass>
+	<mapped-superclass class="org.opencps.servicemgt.model.impl.ServiceFileTemplateModelImpl">
+		<id-class class="org.opencps.servicemgt.service.persistence.ServiceFileTemplatePK" />
+		<attributes>
+			<id name="serviceinfoId" />
+			<id name="templatefileId" />
+			<transient name="modelAttributes" />
+			<transient name="primaryKey" />
+			<transient name="primaryKeyObj" />
+		</attributes>
+	</mapped-superclass>
+	<mapped-superclass class="org.opencps.servicemgt.model.impl.ServiceInfoModelImpl">
+		<attributes>
+			<id name="serviceinfoId" />
+			<basic name="uuid">
+				<column name="UUID_" />
+			</basic>
+			<basic name="companyId" />
+			<basic name="groupId" />
+			<basic name="userId" />
+			<basic name="createDate">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="modifiedDate">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="serviceNo" />
+			<basic name="serviceName" />
+			<basic name="fullName" />
+			<basic name="serviceProcess" />
+			<basic name="serviceMethod" />
+			<basic name="serviceDossier" />
+			<basic name="serviceCondition" />
+			<basic name="serviceDuration" />
+			<basic name="serviceActors" />
+			<basic name="serviceResults" />
+			<basic name="serviceRecords" />
+			<basic name="serviceFee" />
+			<basic name="serviceInstructions" />
+			<basic name="administrationCode" />
+			<basic name="administrationIndex" />
+			<basic name="domainCode" />
+			<basic name="domainIndex" />
+			<basic name="activeStatus" />
+			<basic name="hasTemplateFiles" />
+			<basic name="onlineUrl" />
+			<transient name="modelAttributes" />
+			<transient name="primaryKey" />
+			<transient name="primaryKeyObj" />
+			<transient name="userUuid" />
+		</attributes>
+	</mapped-superclass>
+	<mapped-superclass class="org.opencps.servicemgt.model.impl.TemplateFileModelImpl">
+		<attributes>
+			<id name="templatefileId" />
+			<basic name="companyId" />
+			<basic name="groupId" />
+			<basic name="userId" />
+			<basic name="createDate">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="modifiedDate">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="fileName" />
+			<basic name="fileNo" />
+			<basic name="fileEntryId" />
+			<transient name="modelAttributes" />
+			<transient name="primaryKey" />
+			<transient name="primaryKeyObj" />
+			<transient name="userUuid" />
+		</attributes>
+	</mapped-superclass>
+	<mapped-superclass class="org.opencps.processmgt.model.impl.ActionHistoryModelImpl">
+		<attributes>
+			<id name="actionHistoryId" />
+			<basic name="companyId" />
+			<basic name="groupId" />
+			<basic name="userId" />
+			<basic name="createDate">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="modifiedDate">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="processOrderId" />
+			<basic name="processWorkflowId" />
+			<basic name="actionDatetime">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="stepName" />
+			<basic name="actionName" />
+			<basic name="actionNote" />
+			<basic name="actionUserId" />
+			<basic name="daysDoing" />
+			<basic name="daysDelay" />
+			<basic name="oId" />
+			<basic name="logId" />
+			<transient name="OId" />
+			<transient name="actionUserUuid" />
+			<transient name="modelAttributes" />
+			<transient name="primaryKey" />
+			<transient name="primaryKeyObj" />
+			<transient name="userUuid" />
+		</attributes>
+	</mapped-superclass>
+	<mapped-superclass class="org.opencps.processmgt.model.impl.ProcessOrderModelImpl">
+		<attributes>
+			<id name="processOrderId" />
+			<basic name="companyId" />
+			<basic name="groupId" />
+			<basic name="userId" />
+			<basic name="createDate">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="modifiedDate">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="serviceInfoId" />
+			<basic name="dossierTemplateId" />
+			<basic name="govAgencyCode" />
+			<basic name="govAgencyName" />
+			<basic name="govAgencyOrganizationId" />
+			<basic name="serviceProcessId" />
+			<basic name="dossierId" />
+			<basic name="fileGroupId" />
+			<basic name="processStepId" />
+			<basic name="actionUserId" />
+			<basic name="actionDatetime">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="actionNote" />
+			<basic name="assignToUserId" />
+			<basic name="processWorkflowId" />
+			<basic name="dossierStatus" />
+			<basic name="errorInfo" />
+			<transient name="actionUserUuid" />
+			<transient name="assignToUserUuid" />
+			<transient name="modelAttributes" />
+			<transient name="primaryKey" />
+			<transient name="primaryKeyObj" />
+			<transient name="userUuid" />
+		</attributes>
+	</mapped-superclass>
+	<mapped-superclass class="org.opencps.processmgt.model.impl.ProcessStepModelImpl">
+		<attributes>
+			<id name="processStepId" />
+			<basic name="companyId" />
+			<basic name="groupId" />
+			<basic name="userId" />
+			<basic name="createDate">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="modifiedDate">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="serviceProcessId" />
+			<basic name="stepName" />
+			<basic name="sequenceNo" />
+			<basic name="dossierStatus" />
+			<basic name="dossierSubStatus" />
+			<basic name="daysDuration" />
+			<basic name="referenceDossierPartId" />
+			<basic name="externalAppUrl" />
+			<basic name="processStepNo" />
+			<transient name="modelAttributes" />
+			<transient name="primaryKey" />
+			<transient name="primaryKeyObj" />
+			<transient name="userUuid" />
+		</attributes>
+	</mapped-superclass>
+	<mapped-superclass class="org.opencps.processmgt.model.impl.ProcessStepDossierPartModelImpl">
+		<id-class class="org.opencps.processmgt.service.persistence.ProcessStepDossierPartPK" />
+		<attributes>
+			<id name="processStepId" />
+			<id name="dossierPartId" />
+			<basic name="readOnly" />
+			<transient name="modelAttributes" />
+			<transient name="primaryKey" />
+			<transient name="primaryKeyObj" />
+		</attributes>
+	</mapped-superclass>
+	<mapped-superclass class="org.opencps.processmgt.model.impl.ProcessWorkflowModelImpl">
+		<attributes>
+			<id name="processWorkflowId" />
+			<basic name="companyId" />
+			<basic name="groupId" />
+			<basic name="userId" />
+			<basic name="createDate">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="modifiedDate">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="serviceProcessId" />
+			<basic name="preProcessStepId" />
+			<basic name="postProcessStepId" />
+			<basic name="autoEvent" />
+			<basic name="actionName" />
+			<basic name="assignUser" />
+			<basic name="actionUserId" />
+			<basic name="requestPayment" />
+			<basic name="paymentFee" />
+			<basic name="generateReceptionNo" />
+			<basic name="receptionNoPattern" />
+			<basic name="generateDeadline" />
+			<basic name="deadlinePattern" />
+			<basic name="isFinishStep" />
+			<basic name="preCondition" />
+			<basic name="isMultipled" />
+			<basic name="actionCode" />
+			<transient name="actionUserUuid" />
+			<transient name="modelAttributes" />
+			<transient name="primaryKey" />
+			<transient name="primaryKeyObj" />
+			<transient name="userUuid" />
+		</attributes>
+	</mapped-superclass>
+	<mapped-superclass class="org.opencps.processmgt.model.impl.SchedulerJobsModelImpl">
+		<attributes>
+			<id name="schedulerJobsId" />
+			<basic name="createDate">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="modifiedDate">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="dossierId" />
+			<basic name="fileGroupId" />
+			<basic name="processWorkflowId" />
+			<basic name="schedulerType" />
+			<basic name="shedulerPattern" />
+			<basic name="status" />
+			<transient name="modelAttributes" />
+			<transient name="primaryKey" />
+			<transient name="primaryKeyObj" />
+		</attributes>
+	</mapped-superclass>
+	<mapped-superclass class="org.opencps.processmgt.model.impl.ServiceInfoProcessModelImpl">
+		<id-class class="org.opencps.processmgt.service.persistence.ServiceInfoProcessPK" />
+		<attributes>
+			<id name="serviceProcessId" />
+			<id name="serviceinfoId" />
+			<transient name="modelAttributes" />
+			<transient name="primaryKey" />
+			<transient name="primaryKeyObj" />
+		</attributes>
+	</mapped-superclass>
+	<mapped-superclass class="org.opencps.processmgt.model.impl.ServiceProcessModelImpl">
+		<attributes>
+			<id name="serviceProcessId" />
+			<basic name="companyId" />
+			<basic name="groupId" />
+			<basic name="userId" />
+			<basic name="createDate">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="modifiedDate">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="processNo" />
+			<basic name="processName" />
+			<basic name="description" />
+			<basic name="dossierTemplateId" />
+			<transient name="modelAttributes" />
+			<transient name="primaryKey" />
+			<transient name="primaryKeyObj" />
+			<transient name="userUuid" />
+		</attributes>
+	</mapped-superclass>
+	<mapped-superclass class="org.opencps.processmgt.model.impl.StepAllowanceModelImpl">
+		<attributes>
+			<id name="stepAllowanceId" />
+			<basic name="processStepId" />
+			<basic name="roleId" />
+			<basic name="readOnly" />
+			<transient name="modelAttributes" />
+			<transient name="primaryKey" />
+			<transient name="primaryKeyObj" />
+		</attributes>
+	</mapped-superclass>
+	<mapped-superclass class="org.opencps.processmgt.model.impl.WorkflowOutputModelImpl">
+		<attributes>
+			<id name="workflowOutputId" />
+			<basic name="processWorkflowId" />
+			<basic name="dossierPartId" />
+			<basic name="required" />
+			<basic name="esign" />
+			<basic name="postback" />
+			<basic name="pattern" />
+			<transient name="modelAttributes" />
+			<transient name="primaryKey" />
+			<transient name="primaryKeyObj" />
+		</attributes>
+	</mapped-superclass>
+	<mapped-superclass class="org.opencps.paymentmgt.model.impl.PaymentConfigModelImpl">
+		<attributes>
+			<id name="paymentConfigId" />
+			<basic name="companyId" />
+			<basic name="groupId" />
+			<basic name="userId" />
+			<basic name="createDate">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="modifiedDate">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="govAgencyOrganizationId" />
+			<basic name="govAgencyName" />
+			<basic name="govAgencyTaxNo" />
+			<basic name="invoiceTemplateNo" />
+			<basic name="invoiceIssueNo" />
+			<basic name="invoiceLastNo" />
+			<basic name="bankInfo" />
+			<basic name="placeInfo" />
+			<basic name="keypayDomain" />
+			<basic name="keypayVersion" />
+			<basic name="keypayMerchantCode" />
+			<basic name="keypaySecureKey" />
+			<basic name="reportTemplate" />
+			<basic name="paymentGateType" />
+			<basic name="status" />
+			<basic name="returnUrl" />
+			<transient name="modelAttributes" />
+			<transient name="primaryKey" />
+			<transient name="primaryKeyObj" />
+			<transient name="userUuid" />
+		</attributes>
+	</mapped-superclass>
+	<mapped-superclass class="org.opencps.paymentmgt.model.impl.PaymentFileModelImpl">
+		<attributes>
+			<id name="paymentFileId" />
+			<basic name="uuid">
+				<column name="UUID_" />
+			</basic>
+			<basic name="companyId" />
+			<basic name="groupId" />
+			<basic name="userId" />
+			<basic name="createDate">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="modifiedDate">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="dossierId" />
+			<basic name="fileGroupId" />
+			<basic name="ownerUserId" />
+			<basic name="ownerOrganizationId" />
+			<basic name="govAgencyOrganizationId" />
+			<basic name="paymentName" />
+			<basic name="requestDatetime">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="amount" />
+			<basic name="requestNote" />
+			<basic name="paymentOptions" />
+			<basic name="keypayUrl" />
+			<basic name="keypayTransactionId" />
+			<basic name="keypayGoodCode" />
+			<basic name="keypayMerchantCode" />
+			<basic name="bankInfo" />
+			<basic name="placeInfo" />
+			<basic name="paymentStatus" />
+			<basic name="paymentMethod" />
+			<basic name="confirmDatetime">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="confirmFileEntryId" />
+			<basic name="approveDatetime">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="accountUserName" />
+			<basic name="approveNote" />
+			<basic name="govAgencyTaxNo" />
+			<basic name="invoiceTemplateNo" />
+			<basic name="invoiceIssueNo" />
+			<basic name="invoiceNo" />
+			<basic name="syncStatus" />
+			<basic name="oid" />
+			<basic name="paymentConfig" />
+			<basic name="paymentGateStatusCode" />
+			<basic name="paymentGateResponseData" />
+			<basic name="paymentGateCheckCode" />
+			<basic name="paymentGateCheckResponseData" />
+			<transient name="modelAttributes" />
+			<transient name="ownerUserUuid" />
+			<transient name="primaryKey" />
+			<transient name="primaryKeyObj" />
+			<transient name="userUuid" />
+		</attributes>
+	</mapped-superclass>
+	<mapped-superclass class="org.opencps.paymentmgt.model.impl.PaymentGateConfigModelImpl">
+		<attributes>
+			<id name="paymentGateId" />
+			<basic name="paymentGateName" />
+			<transient name="modelAttributes" />
+			<transient name="primaryKey" />
+			<transient name="primaryKeyObj" />
+		</attributes>
+	</mapped-superclass>
+	<mapped-superclass class="org.opencps.notificationmgt.model.impl.NotificationEventConfigModelImpl">
+		<attributes>
+			<id name="notiEventConfigId" />
+			<basic name="companyId" />
+			<basic name="groupId" />
+			<basic name="userId" />
+			<basic name="createDate">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="modifiedDate">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="notiStatusConfigId" />
+			<basic name="eventName" />
+			<basic name="description" />
+			<basic name="pattern" />
+			<basic name="active">
+				<column name="ACTIVE_" />
+			</basic>
+			<transient name="modelAttributes" />
+			<transient name="primaryKey" />
+			<transient name="primaryKeyObj" />
+			<transient name="userUuid" />
+		</attributes>
+	</mapped-superclass>
+	<mapped-superclass class="org.opencps.notificationmgt.model.impl.NotificationRedirectConfigModelImpl">
+		<attributes>
+			<id name="notiRedirectConfigId" />
+			<basic name="companyId" />
+			<basic name="groupId" />
+			<basic name="userId" />
+			<basic name="createDate">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="modifiedDate">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="notiEventConfigId" />
+			<basic name="dictItemId" />
+			<basic name="userGroupName" />
+			<basic name="plId" />
+			<basic name="jspRedirect" />
+			<basic name="active">
+				<column name="ACTIVE_" />
+			</basic>
+			<transient name="modelAttributes" />
+			<transient name="primaryKey" />
+			<transient name="primaryKeyObj" />
+			<transient name="userUuid" />
+		</attributes>
+	</mapped-superclass>
+	<mapped-superclass class="org.opencps.notificationmgt.model.impl.NotificationStatusConfigModelImpl">
+		<attributes>
+			<id name="notiStatusConfigId" />
+			<basic name="companyId" />
+			<basic name="groupId" />
+			<basic name="userId" />
+			<basic name="createDate">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="modifiedDate">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="dossierCurrentStatus" />
+			<basic name="dossierNextStatus" />
+			<basic name="isSendNotification" />
+			<transient name="modelAttributes" />
+			<transient name="primaryKey" />
+			<transient name="primaryKeyObj" />
+			<transient name="userUuid" />
+		</attributes>
+	</mapped-superclass>
+	<mapped-superclass class="org.opencps.holidayconfig.model.impl.HolidayConfigModelImpl">
+		<attributes>
+			<id name="holidayId" />
+			<basic name="holiday">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="companyId" />
+			<basic name="groupId" />
+			<basic name="userId" />
+			<basic name="description" />
+			<basic name="createdDate">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="modifiedDate">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="status" />
+			<transient name="modelAttributes" />
+			<transient name="primaryKey" />
+			<transient name="primaryKeyObj" />
+			<transient name="userUuid" />
+		</attributes>
+	</mapped-superclass>
+	<mapped-superclass class="org.opencps.holidayconfig.model.impl.HolidayConfigExtendModelImpl">
+		<attributes>
+			<id name="holidayExtendId" />
+			<basic name="key">
+				<column name="KEY_" />
+			</basic>
+			<basic name="description" />
+			<basic name="status" />
+			<basic name="companyId" />
+			<basic name="groupId" />
+			<basic name="userId" />
+			<transient name="modelAttributes" />
+			<transient name="primaryKey" />
+			<transient name="primaryKeyObj" />
+			<transient name="userUuid" />
+		</attributes>
+	</mapped-superclass>
+	<mapped-superclass class="org.opencps.dossiermgt.model.impl.DossierModelImpl">
+		<attributes>
+			<id name="dossierId" />
+			<basic name="companyId" />
+			<basic name="groupId" />
+			<basic name="userId" />
+			<basic name="createDate">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="modifiedDate">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="oid" />
+			<basic name="externalRefNo" />
+			<basic name="externalRefUrl" />
+			<basic name="ownerOrganizationId" />
+			<basic name="serviceConfigId" />
+			<basic name="serviceInfoId" />
+			<basic name="serviceDomainIndex" />
+			<basic name="serviceAdministrationIndex" />
+			<basic name="dossierTemplateId" />
+			<basic name="govAgencyCode" />
+			<basic name="govAgencyName" />
+			<basic name="govAgencyOrganizationId" />
+			<basic name="serviceMode" />
+			<basic name="counter" />
+			<basic name="subjectId" />
+			<basic name="subjectName" />
+			<basic name="address" />
+			<basic name="cityCode" />
+			<basic name="cityName" />
+			<basic name="districtCode" />
+			<basic name="districtName" />
+			<basic name="wardCode" />
+			<basic name="wardName" />
+			<basic name="contactName" />
+			<basic name="contactTelNo" />
+			<basic name="contactEmail" />
+			<basic name="note" />
+			<basic name="submitDatetime">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="receiveDatetime">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="receptionNo" />
+			<basic name="estimateDatetime">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="finishDatetime">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="dossierStatus" />
+			<basic name="dossierSubStatus" />
+			<basic name="dossierSource" />
+			<basic name="keypayRedirectUrl" />
+			<basic name="delayStatus" />
+			<basic name="folderId" />
+			<transient name="modelAttributes" />
+			<transient name="primaryKey" />
+			<transient name="primaryKeyObj" />
+			<transient name="userUuid" />
+		</attributes>
+	</mapped-superclass>
+	<mapped-superclass class="org.opencps.dossiermgt.model.impl.DossierFileModelImpl">
+		<attributes>
+			<id name="dossierFileId" />
+			<basic name="companyId" />
+			<basic name="groupId" />
+			<basic name="userId" />
+			<basic name="createDate">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="modifiedDate">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="dossierId" />
+			<basic name="oid" />
+			<basic name="dossierPartId" />
+			<basic name="templateFileNo" />
+			<basic name="groupFileId" />
+			<basic name="ownerUserId" />
+			<basic name="ownerOrganizationId" />
+			<basic name="govAgencyOrganizationId" />
+			<basic name="displayName" />
+			<basic name="formData" />
+			<basic name="fileEntryId" />
+			<basic name="dossierFileMark" />
+			<basic name="dossierFileType" />
+			<basic name="dossierFileNo" />
+			<basic name="dossierFileDate">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="removed" />
+			<basic name="original" />
+			<basic name="syncStatus" />
+			<basic name="version" />
+			<basic name="signed" />
+			<basic name="signCheck" />
+			<basic name="signInfo" />
+			<transient name="modelAttributes" />
+			<transient name="ownerUserUuid" />
+			<transient name="primaryKey" />
+			<transient name="primaryKeyObj" />
+			<transient name="userUuid" />
+		</attributes>
+	</mapped-superclass>
+	<mapped-superclass class="org.opencps.dossiermgt.model.impl.DossierFileLogModelImpl">
+		<attributes>
+			<id name="dossierFileLogId" />
+			<basic name="modifiedDate">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="userId" />
+			<basic name="userName" />
+			<basic name="dossierId" />
+			<basic name="fileGroupId" />
+			<basic name="stepId" />
+			<basic name="isUpdate" />
+			<basic name="actor" />
+			<basic name="logId" />
+			<basic name="fileName" />
+			<basic name="fileVersion" />
+			<basic name="fileLink" />
+			<basic name="actionCode" />
+			<basic name="count_" />
+			<basic name="oId" />
+			<basic name="fileEntryId" />
+			<transient name="OId" />
+			<transient name="modelAttributes" />
+			<transient name="primaryKey" />
+			<transient name="primaryKeyObj" />
+			<transient name="userUuid" />
+		</attributes>
+	</mapped-superclass>
+	<mapped-superclass class="org.opencps.dossiermgt.model.impl.DossierLogModelImpl">
+		<attributes>
+			<id name="dossierLogId" />
+			<basic name="companyId" />
+			<basic name="groupId" />
+			<basic name="userId" />
+			<basic name="createDate">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="modifiedDate">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="dossierId" />
+			<basic name="fileGroupId" />
+			<basic name="requestCommand" />
+			<basic name="dossierStatus" />
+			<basic name="actionInfo" />
+			<basic name="messageInfo" />
+			<basic name="updateDatetime">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="level" />
+			<basic name="actor" />
+			<basic name="className" />
+			<basic name="actorId" />
+			<basic name="actorName" />
+			<basic name="syncStatus" />
+			<basic name="oId" />
+			<basic name="stepId" />
+			<basic name="stepName" />
+			<basic name="processOrderId" />
+			<basic name="processWorkflowId" />
+			<transient name="OId" />
+			<transient name="modelAttributes" />
+			<transient name="primaryKey" />
+			<transient name="primaryKeyObj" />
+			<transient name="userUuid" />
+		</attributes>
+	</mapped-superclass>
+	<mapped-superclass class="org.opencps.dossiermgt.model.impl.DossierPartModelImpl">
+		<attributes>
+			<id name="dossierpartId" />
+			<basic name="companyId" />
+			<basic name="groupId" />
+			<basic name="userId" />
+			<basic name="createDate">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="modifiedDate">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="dossierTemplateId" />
+			<basic name="partNo" />
+			<basic name="partName" />
+			<basic name="partTip" />
+			<basic name="partType" />
+			<basic name="parentId" />
+			<basic name="sibling" />
+			<basic name="treeIndex" />
+			<basic name="formScript" />
+			<basic name="formReport" />
+			<basic name="sampleData" />
+			<basic name="required" />
+			<basic name="templateFileNo" />
+			<transient name="modelAttributes" />
+			<transient name="primaryKey" />
+			<transient name="primaryKeyObj" />
+			<transient name="userUuid" />
+		</attributes>
+	</mapped-superclass>
+	<mapped-superclass class="org.opencps.dossiermgt.model.impl.DossierStatusModelImpl">
+		<attributes>
+			<id name="dossierStatusId" />
+			<basic name="companyId" />
+			<basic name="groupId" />
+			<basic name="userId" />
+			<basic name="createDate">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="modifiedDate">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="dossierId" />
+			<basic name="fileGroupId" />
+			<basic name="dossierStatus" />
+			<basic name="actionInfo" />
+			<basic name="messageInfo" />
+			<basic name="updateDatetime">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="syncStatus" />
+			<transient name="modelAttributes" />
+			<transient name="primaryKey" />
+			<transient name="primaryKeyObj" />
+			<transient name="userUuid" />
+		</attributes>
+	</mapped-superclass>
+	<mapped-superclass class="org.opencps.dossiermgt.model.impl.DossierTemplateModelImpl">
+		<attributes>
+			<id name="dossierTemplateId" />
+			<basic name="companyId" />
+			<basic name="groupId" />
+			<basic name="userId" />
+			<basic name="createDate">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="modifiedDate">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="templateName" />
+			<basic name="description" />
+			<basic name="templateNo" />
+			<transient name="modelAttributes" />
+			<transient name="primaryKey" />
+			<transient name="primaryKeyObj" />
+			<transient name="userUuid" />
+		</attributes>
+	</mapped-superclass>
+	<mapped-superclass class="org.opencps.dossiermgt.model.impl.FileGroupModelImpl">
+		<attributes>
+			<id name="fileGroupId" />
+			<basic name="companyId" />
+			<basic name="groupId" />
+			<basic name="userId" />
+			<basic name="createDate">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="modifiedDate">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="oId" />
+			<basic name="dossierId" />
+			<basic name="dossierPartId" />
+			<basic name="displayName" />
+			<basic name="removed" />
+			<basic name="syncStatus" />
+			<transient name="OId" />
+			<transient name="modelAttributes" />
+			<transient name="primaryKey" />
+			<transient name="primaryKeyObj" />
+			<transient name="userUuid" />
+		</attributes>
+	</mapped-superclass>
+	<mapped-superclass class="org.opencps.dossiermgt.model.impl.ServiceConfigModelImpl">
+		<attributes>
+			<id name="serviceConfigId" />
+			<basic name="companyId" />
+			<basic name="groupId" />
+			<basic name="userId" />
+			<basic name="createDate">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="modifiedDate">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="serviceInfoId" />
+			<basic name="serviceDomainIndex" />
+			<basic name="serviceAdministrationIndex" />
+			<basic name="dossierTemplateId" />
+			<basic name="govAgencyCode" />
+			<basic name="govAgencyName" />
+			<basic name="serviceInstruction" />
+			<basic name="serviceLevel" />
+			<basic name="servicePortal" />
+			<basic name="serviceOnegate" />
+			<basic name="serviceBackoffice" />
+			<basic name="govAgencyOrganizationId" />
+			<basic name="serviceCitizen" />
+			<basic name="serviceBusinees" />
+			<basic name="serviceProcessId" />
+			<basic name="domainCode" />
+			<basic name="serviceMode" />
+			<basic name="govAgencyIndex" />
+			<basic name="serviceUrl" />
+			<transient name="modelAttributes" />
+			<transient name="primaryKey" />
+			<transient name="primaryKeyObj" />
+			<transient name="userUuid" />
+		</attributes>
+	</mapped-superclass>
+	<mapped-superclass class="org.opencps.api.model.impl.ApiServiceModelImpl">
+		<attributes>
+			<id name="apiLogId" />
+			<basic name="companyId" />
+			<basic name="groupId" />
+			<basic name="userId" />
+			<basic name="createDate">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="modifiedDate">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="oid" />
+			<basic name="apiCode" />
+			<basic name="ipAddress" />
+			<basic name="httpAgent" />
+			<basic name="params" />
+			<basic name="status" />
+			<transient name="modelAttributes" />
+			<transient name="primaryKey" />
+			<transient name="primaryKeyObj" />
+			<transient name="userUuid" />
+		</attributes>
+	</mapped-superclass>
+	<entity class="org.opencps.accountmgt.model.impl.BusinessImpl" name="Business">
+		<table name="opencps_acc_business" />
+		<attributes />
+	</entity>
+	<entity class="org.opencps.accountmgt.model.impl.BusinessAccountImpl" name="BusinessAccount">
+		<table name="opencps_acc_business_account" />
+		<attributes />
+	</entity>
+	<entity class="org.opencps.accountmgt.model.impl.BusinessDomainImpl" name="BusinessDomain">
+		<table name="opencps_acc_businessdomain" />
+		<attributes />
+	</entity>
+	<entity class="org.opencps.accountmgt.model.impl.CitizenImpl" name="Citizen">
+		<table name="opencps_acc_citizen" />
+		<attributes />
+	</entity>
+	<entity class="org.opencps.datamgt.model.impl.AdministrationServicedomainImpl" name="AdministrationServicedomain">
+		<table name="opencps_administration_servicedomain" />
+		<attributes />
+	</entity>
+	<entity class="org.opencps.datamgt.model.impl.DictCollectionImpl" name="DictCollection">
+		<table name="opencps_dictcollection" />
+		<attributes />
+	</entity>
+	<entity class="org.opencps.datamgt.model.impl.DictItemImpl" name="DictItem">
+		<table name="opencps_dictitem" />
+		<attributes />
+	</entity>
+	<entity class="org.opencps.datamgt.model.impl.DictVersionImpl" name="DictVersion">
+		<table name="opencps_dictversion" />
+		<attributes />
+	</entity>
+	<entity class="org.opencps.usermgt.model.impl.EmployeeImpl" name="Employee">
+		<table name="opencps_employee" />
+		<attributes />
+	</entity>
+	<entity class="org.opencps.usermgt.model.impl.JobPosImpl" name="JobPos">
+		<table name="opencps_jobpos" />
+		<attributes />
+	</entity>
+	<entity class="org.opencps.usermgt.model.impl.WorkingUnitImpl" name="WorkingUnit">
+		<table name="opencps_workingunit" />
+		<attributes />
+	</entity>
+	<entity class="org.opencps.statisticsmgt.model.impl.DossiersStatisticsImpl" name="DossiersStatistics">
+		<table name="opencps_dossierstatistics" />
+		<attributes />
+	</entity>
+	<entity class="org.opencps.statisticsmgt.model.impl.GovagencyLevelImpl" name="GovagencyLevel">
+		<table name="opencps_govagencylevel" />
+		<attributes />
+	</entity>
+	<entity class="org.opencps.servicemgt.model.impl.ServiceFileTemplateImpl" name="ServiceFileTemplate">
+		<table name="opencps_service_templatefile" />
+		<attributes />
+	</entity>
+	<entity class="org.opencps.servicemgt.model.impl.ServiceInfoImpl" name="ServiceInfo">
+		<table name="opencps_serviceinfo" />
+		<attributes />
+	</entity>
+	<entity class="org.opencps.servicemgt.model.impl.TemplateFileImpl" name="TemplateFile">
+		<table name="opencps_templatefile" />
+		<attributes />
+	</entity>
+	<entity class="org.opencps.processmgt.model.impl.ActionHistoryImpl" name="ActionHistory">
+		<table name="opencps_actionhistory" />
+		<attributes />
+	</entity>
+	<entity class="org.opencps.processmgt.model.impl.ProcessOrderImpl" name="ProcessOrder">
+		<table name="opencps_processorder" />
+		<attributes />
+	</entity>
+	<entity class="org.opencps.processmgt.model.impl.ProcessStepImpl" name="ProcessStep">
+		<table name="opencps_processstep" />
+		<attributes />
+	</entity>
+	<entity class="org.opencps.processmgt.model.impl.ProcessStepDossierPartImpl" name="ProcessStepDossierPart">
+		<table name="opencps_processstep_dossierpart" />
+		<attributes />
+	</entity>
+	<entity class="org.opencps.processmgt.model.impl.ProcessWorkflowImpl" name="ProcessWorkflow">
+		<table name="opencps_processworkflow" />
+		<attributes />
+	</entity>
+	<entity class="org.opencps.processmgt.model.impl.SchedulerJobsImpl" name="SchedulerJobs">
+		<table name="opencps_scheduler_jobs" />
+		<attributes />
+	</entity>
+	<entity class="org.opencps.processmgt.model.impl.ServiceInfoProcessImpl" name="ServiceInfoProcess">
+		<table name="opencps_serviceinfoprocess" />
+		<attributes />
+	</entity>
+	<entity class="org.opencps.processmgt.model.impl.ServiceProcessImpl" name="ServiceProcess">
+		<table name="opencps_serviceprocess" />
+		<attributes />
+	</entity>
+	<entity class="org.opencps.processmgt.model.impl.StepAllowanceImpl" name="StepAllowance">
+		<table name="opencps_stepallowance" />
+		<attributes />
+	</entity>
+	<entity class="org.opencps.processmgt.model.impl.WorkflowOutputImpl" name="WorkflowOutput">
+		<table name="opencps_workflowoutput" />
+		<attributes />
+	</entity>
+	<entity class="org.opencps.paymentmgt.model.impl.PaymentConfigImpl" name="PaymentConfig">
+		<table name="opencps_payment_config" />
+		<attributes />
+	</entity>
+	<entity class="org.opencps.paymentmgt.model.impl.PaymentFileImpl" name="PaymentFile">
+		<table name="opencps_payment_file" />
+		<attributes />
+	</entity>
+	<entity class="org.opencps.paymentmgt.model.impl.PaymentGateConfigImpl" name="PaymentGateConfig">
+		<table name="opencps_paymentgate_config" />
+		<attributes />
+	</entity>
+	<entity class="org.opencps.notificationmgt.model.impl.NotificationEventConfigImpl" name="NotificationEventConfig">
+		<table name="opencps_config_notification_event" />
+		<attributes />
+	</entity>
+	<entity class="org.opencps.notificationmgt.model.impl.NotificationRedirectConfigImpl" name="NotificationRedirectConfig">
+		<table name="opencps_config_notification_redirect" />
+		<attributes />
+	</entity>
+	<entity class="org.opencps.notificationmgt.model.impl.NotificationStatusConfigImpl" name="NotificationStatusConfig">
+		<table name="opencps_config_notification_status" />
+		<attributes />
+	</entity>
+	<entity class="org.opencps.holidayconfig.model.impl.HolidayConfigImpl" name="HolidayConfig">
+		<table name="opencps_holidayconfig" />
+		<attributes />
+	</entity>
+	<entity class="org.opencps.holidayconfig.model.impl.HolidayConfigExtendImpl" name="HolidayConfigExtend">
+		<table name="opencps_holidayconfig_extend" />
+		<attributes />
+	</entity>
+	<entity class="org.opencps.dossiermgt.model.impl.DossierImpl" name="Dossier">
+		<table name="opencps_dossier" />
+		<attributes />
+	</entity>
+	<entity class="org.opencps.dossiermgt.model.impl.DossierFileImpl" name="DossierFile">
+		<table name="opencps_dossier_file" />
+		<attributes />
+	</entity>
+	<entity class="org.opencps.dossiermgt.model.impl.DossierFileLogImpl" name="DossierFileLog">
+		<table name="opencps_dossier_file_log" />
+		<attributes />
+	</entity>
+	<entity class="org.opencps.dossiermgt.model.impl.DossierLogImpl" name="DossierLog">
+		<table name="opencps_dossier_log" />
+		<attributes />
+	</entity>
+	<entity class="org.opencps.dossiermgt.model.impl.DossierPartImpl" name="DossierPart">
+		<table name="opencps_dossierpart" />
+		<attributes />
+	</entity>
+	<entity class="org.opencps.dossiermgt.model.impl.DossierStatusImpl" name="DossierStatus">
+		<table name="opencps_dossier_status" />
+		<attributes />
+	</entity>
+	<entity class="org.opencps.dossiermgt.model.impl.DossierTemplateImpl" name="DossierTemplate">
+		<table name="opencps_dossiertemplate" />
+		<attributes />
+	</entity>
+	<entity class="org.opencps.dossiermgt.model.impl.FileGroupImpl" name="FileGroup">
+		<table name="opencps_file_group" />
+		<attributes />
+	</entity>
+	<entity class="org.opencps.dossiermgt.model.impl.ServiceConfigImpl" name="ServiceConfig">
+		<table name="opencps_service_config" />
+		<attributes />
+	</entity>
+	<entity class="org.opencps.api.model.impl.ApiServiceImpl" name="ApiService">
+		<table name="opencps_api_log" />
+		<attributes />
+	</entity>
+</entity-mappings>

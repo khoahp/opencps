@@ -12,7 +12,7 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.service.ServiceContext;
-import com.liferay.portal.util.PortalUtil;
+import com.liferay.portal.service.ServiceContextFactory;
 
 public class DossierUtils {
 	
@@ -83,8 +83,12 @@ public class DossierUtils {
 		ServiceContext context = new ServiceContext();
 
 		try {
-			context.setScopeGroupId(PortalUtil.getScopeGroupId(req));
+			/*context.setScopeGroupId(PortalUtil.getScopeGroupId(req));
 			context.setCompanyId(PortalUtil.getCompanyId(req));
+			*/
+
+			context = ServiceContextFactory.getInstance(req);
+			
 		} catch (Exception e) {
 
 		}

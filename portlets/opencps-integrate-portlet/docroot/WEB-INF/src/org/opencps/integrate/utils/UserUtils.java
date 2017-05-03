@@ -5,6 +5,8 @@ import org.opencps.accountmgt.model.Citizen;
 import org.opencps.accountmgt.service.BusinessLocalServiceUtil;
 import org.opencps.accountmgt.service.CitizenLocalServiceUtil;
 
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.User;
 import com.liferay.portal.service.UserLocalServiceUtil;
@@ -13,7 +15,7 @@ public class UserUtils {
 
 	public static final String APPLICANT_TYPE_CITY = "CMT";
 	public static final String APPLICANT_TYPE_BUSINESS = "MST";
-	
+	private static Log _log = LogFactoryUtil.getLog(UserUtils.class);
 	
 	/**
 	 * @param companyId
@@ -47,6 +49,7 @@ public class UserUtils {
 			am.setScreenName(user.getScreenName());
 
 			if (Validator.isNotNull(ctz)) {
+				
 				am.setApplicantName(ctz.getFullName());
 				am.setApplicantIdType(APPLICANT_TYPE_CITY);
 				am.setApplicantIdNo(ctz.getPersonalId());
@@ -61,9 +64,8 @@ public class UserUtils {
 				am.setWardName(APIUtils.getDictItemName(ctz.getWardCode()));
 				am.setContactTelNo(ctz.getTelNo());
 				am.setContactEmail(ctz.getEmail());
-			}
-
-			if (Validator.isNotNull(bsn)) {
+				
+			}else if (Validator.isNotNull(bsn)) {
 				am.setApplicantName(bsn.getName());
 				am.setApplicantIdType(APPLICANT_TYPE_BUSINESS);
 				am.setApplicantIdNo(bsn.getIdNumber());
@@ -78,9 +80,7 @@ public class UserUtils {
 				am.setWardName(APIUtils.getDictItemName(bsn.getWardCode()));
 				am.setContactTelNo(bsn.getTelNo());
 				am.setContactEmail(bsn.getEmail());
-			}
-
-			if (Validator.isNull(ctz) && Validator.isNull(bsn)) {
+			}else {
 				am = null;
 			}
 
@@ -118,7 +118,7 @@ public class UserUtils {
 
 	private Business getBusiness(long userId) {
 		Business bsn = null;
-
+		
 		try {
 			bsn = BusinessLocalServiceUtil.getBusiness(userId);
 		} catch (Exception e) {
