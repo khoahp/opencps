@@ -779,7 +779,7 @@
 		<init-param>
 			<name>view-template</name>
 			<value>
-				/html/portlets/paymentmgt/paymentconfig/edit_paymentconfig.jsp
+				/html/portlets/paymentmgt/paymentconfig/view.jsp
 			</value>
 		</init-param>
 		<init-param>
@@ -1006,15 +1006,15 @@
 		<portlet-name>28</portlet-name>
 		<display-name>Notifications</display-name>
 		<portlet-class>
-			org.opencps.notificationmgt.portlet.NotificationPortlet
+			org.opencps.notificationmgt.portlet.NotificationConfigPortlet
 		</portlet-class>
 		<init-param>
 			<name>view-template</name>
-			<value>/html/portlets/notificationmgt/view.jsp</value>
+			<value>/html/portlets/notificationmgt/backoffice/view.jsp</value>
 		</init-param>
 		<init-param>
 			<name>template-path</name>
-			<value>/html/portlets/notificationmgt/</value>
+			<value>/html/portlets/notificationmgt/backoffice/</value>
 		</init-param>
 		<expiration-cache>0</expiration-cache>
 		<supports>
@@ -1026,6 +1026,44 @@
 			<title>Notifications</title>
 			<short-title>Notifications</short-title>
 			<keywords>Notifications</keywords>
+		</portlet-info>
+		<security-role-ref>
+			<role-name>administrator</role-name>
+		</security-role-ref>
+		<security-role-ref>
+			<role-name>guest</role-name>
+		</security-role-ref>
+		<security-role-ref>
+			<role-name>power-user</role-name>
+		</security-role-ref>
+		<security-role-ref>
+			<role-name>user</role-name>
+		</security-role-ref>
+	</portlet>
+	<portlet>
+		<portlet-name>29</portlet-name>
+		<display-name>NotificationsFrontend</display-name>
+		<portlet-class>
+			org.opencps.notificationmgt.portlet.NotificationFrontendPortlet
+		</portlet-class>
+		<init-param>
+			<name>view-template</name>
+			<value>/html/portlets/notificationmgt/frontend/view.jsp</value>
+		</init-param>
+		<init-param>
+			<name>template-path</name>
+			<value>/html/portlets/notificationmgt/frontend/</value>
+		</init-param>
+		<expiration-cache>0</expiration-cache>
+		<supports>
+			<mime-type>text/html</mime-type>
+			<portlet-mode>view</portlet-mode>
+		</supports>
+		<resource-bundle>content.Language_29</resource-bundle>
+		<portlet-info>
+			<title>NotificationsFrontend</title>
+			<short-title>NotificationsFrontend</short-title>
+			<keywords>NotificationsFrontend</keywords>
 		</portlet-info>
 		<security-role-ref>
 			<role-name>administrator</role-name>
@@ -1361,6 +1399,10 @@
 			<name>view-template</name>
 			<value>/html/portlets/lucenequery/admin/lucenequerylist.jsp</value>
 		</init-param>
+		<init-param>
+			<name>template-path</name>
+			<value>/html/portlets/lucenequery/admin/</value>
+		</init-param>
 		<expiration-cache>0</expiration-cache>
 		<supports>
 			<mime-type>text/html</mime-type>
@@ -1385,9 +1427,52 @@
 			<role-name>user</role-name>
 		</security-role-ref>
 	</portlet>
+	<portlet>
+		<portlet-name>38</portlet-name>
+		<display-name>Lucene Menu</display-name>
+		<portlet-class>
+			org.opencps.lucenequery.portlet.LuceneMenuPortlet
+		</portlet-class>
+		<init-param>
+			<name>view-template</name>
+			<value>/html/portlets/lucenequery/menu/view.jsp</value>
+		</init-param>
+		<init-param>
+			<name>template-path</name>
+			<value>/html/portlets/lucenequery/menu/</value>
+		</init-param>
+		<init-param>
+			<name>config-template</name>
+			<value>/html/portlets/lucenequery/menu/configuration.jsp</value>
+		</init-param>
+		<expiration-cache>0</expiration-cache>
+		<supports>
+			<mime-type>text/html</mime-type>
+			<portlet-mode>view</portlet-mode>
+		</supports>
+		<resource-bundle>content.Language_38</resource-bundle>
+		<portlet-info>
+			<title>Lucene Menu</title>
+			<short-title>38</short-title>
+			<keywords></keywords>
+		</portlet-info>
+		<security-role-ref>
+			<role-name>administrator</role-name>
+		</security-role-ref>
+		<security-role-ref>
+			<role-name>guest</role-name>
+		</security-role-ref>
+		<security-role-ref>
+			<role-name>power-user</role-name>
+		</security-role-ref>
+		<security-role-ref>
+			<role-name>user</role-name>
+		</security-role-ref>
+	</portlet>
 	<public-render-parameter>
 		<identifier>active</identifier>
 		<qname>active</qname>
 	</public-render-parameter>
 	
+
 </portlet-app>

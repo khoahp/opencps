@@ -55,7 +55,7 @@
 		plidSubmit = Long.valueOf(plidRes);
 	}
 	
-	
+	long serviceConfigId = ParamUtil.getLong(request, "serviceConfigId");
 %>
 
 <aui:row cssClass="serice-des">

@@ -1,4 +1,5 @@
 
+<%@page import="org.opencps.dossiermgt.PaymentFileUnfinishedException"%>
 <%
 /**
  * OpenCPS is the open source Core Public Services software
@@ -61,6 +62,10 @@
 <liferay-ui:error 
 	exception="<%= RequiredDossierPartException.class %>" 
 	message="<%=RequiredDossierPartException.class.getName() %>"
+/>
+<liferay-ui:error 
+	exception="<%= PaymentFileUnfinishedException.class %>" 
+	message="<%=PaymentFileUnfinishedException.class.getName() %>"
 />
 
 <liferay-util:include page='<%=templatePath + "toolbar.jsp" %>' servletContext="<%=application %>" />

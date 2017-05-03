@@ -208,6 +208,9 @@
 							%>
 							<c:if test="<%=dossier.getDossierStatus().equals(PortletConstants.DOSSIER_STATUS_NEW) %>">
 							
+								<aui:input id="paymentFileValid" name="paymentFileValid" 
+								type="hidden" value="<%=DossierMgtUtil.validatePaymentFile(dossier.getDossierId()) %>"/>
+							
 								<c:choose>
 									<c:when test="<%= dossierFiles.size() == 0 && showDossierSuggestionButton%>">
 										<aui:button 
@@ -483,6 +486,8 @@
 					
 					var requiredDossierParts = A.all('#<portlet:namespace/>requiredDossierPart');
 					
+					var requiredPaymentFile = A.one('#<portlet:namespace/>paymentFileValid').val();
+					
 					if(requiredDossierParts) {
 						
 						requiredDossierParts.each(function(requiredDossierPart){
@@ -503,14 +508,16 @@
 							}
 						});
 						
-						
-						if(required === true) {
-							alert('<%= LanguageUtil.get(themeDisplay.getLocale(), "please-upload-dossier-part-required-before-send") %>');
-						} else {
-						
-							showConfirm('<%= updateDossierStatusURL %>');
-						}
 					}
+					
+					if(required === true) {
+						alert('<%= LanguageUtil.get(themeDisplay.getLocale(), "please-upload-dossier-part-required-before-send")%>');
+					} else if(requiredPaymentFile == "false"){
+						alert('<%= LanguageUtil.get(themeDisplay.getLocale(), "please-pay-bill-before-send")%>');
+					}else{
+						showConfirm('<%= updateDossierStatusURL %>');
+					}
+					
 				},
 			['aui-base']
 	);

@@ -50,6 +50,7 @@ public class DossierFileDisplayTerms extends DisplayTerms {
 	public static final String FILE_TITLE = "fileTitle";
 	public static final String FOLDE_ID = "folderId";
 	public static final String FORM_DATA = "formData";
+	public static final String FORM_DATA_ATERNATIVE = "formDataAlternative";
 	public static final String FORM_TYPE = "formType";
 	public static final String FORM_SCHEMA = "formSchema";
 	public static final String GROUP_NAME = "groupName";

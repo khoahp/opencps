@@ -133,6 +133,7 @@ public class PortletPropsKeys {
 	public static final String OPENCPS_KEYPAY_CURRENT_LOCATE = "opencps.keypay.current.locale";
 	public static final String OPENCPS_KEYPAY_COUNTRY_CODE = "opencps.keypay.country.code";
 	public static final String OPENCPS_KEYPAY_INTERNAL_BANK = "opencps.keypay.internal.bank";
+	public static final String DM_PAYMENT_GATE = "opencps.paymentmgt.paymentgate";
 
 	
 	public static final String OPENCPS_KEYPAY_SERVICE_CODE = "opencps.keypay.service.code";
@@ -148,6 +149,9 @@ public class PortletPropsKeys {
 	public static final String CONTENT_TO_CUSTOMER = "content.email.to.customer";
 	public static final String CONTENT_TO_CUSTOMER_WITHOUT_RECEPTION_NO = "content.email.to.customer.without.receptionNo";
 	public static final String HOLIDAYCONFIG_DESCRIPTION_LENGTH = "opencps.holidayconfig.description.lengths";
+	
+	public static final String NOTIFICATION_INBOX_TITLE = "opencps.notificationmgt.title";
+	public static final String NOTIFICATION_INBOX_BODY = "opencps.notificationmgt.body";
 	
 	public static final String DM_USER_GROUP_NOTIFY = "opencps.datamgt.masterdata.notification.user.group";
 	public static final String DM_POSTAL_GATE = "opencps.datamgt.masterdata.postalgate";

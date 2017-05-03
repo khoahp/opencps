@@ -25,6 +25,9 @@
 		<column name="processName" type="String"/>
 		<column name="description" type="String" />
 		<column name="dossierTemplateId" type="long" />
+		<column name="paymentConfigId" type="long" />
+		<column name="paymentFee" type="String" />
+		<column name="isRequestPayment" type="boolean" />
 
 		<!-- Order -->
 		<order by="asc">

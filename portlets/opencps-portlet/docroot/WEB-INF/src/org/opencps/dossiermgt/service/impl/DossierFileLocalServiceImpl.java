@@ -117,6 +117,9 @@ public class DossierFileLocalServiceImpl extends
 				.getName());
 		DossierFile dossierFile = dossierFilePersistence.create(dossierFileId);
 
+		DossierPart dossierPart = dossierPartLocalService
+				.getDossierPart(dossierPartId);
+
 		Date now = new Date();
 
 		int version = 0;
@@ -151,6 +154,14 @@ public class DossierFileLocalServiceImpl extends
 		dossierFile.setOwnerOrganizationId(ownerOrganizationId);
 
 		dossierFile.setTemplateFileNo(templateFileNo);
+
+		dossierFile.setFormScript(Validator.isNotNull(dossierPart
+				.getFormScript()) ? dossierPart.getFormScript()
+				: StringPool.BLANK);
+
+		dossierFile.setFormReport(Validator.isNotNull(dossierPart
+				.getFormReport()) ? dossierPart.getFormReport()
+				: StringPool.BLANK);
 
 		if (fileGroupId > 0) {
 			version = DossierFileLocalServiceUtil.countDossierFileByDID_DP_GF(
@@ -229,10 +240,13 @@ public class DossierFileLocalServiceImpl extends
 			Date dossierFileDate, int original, int syncStatus,
 			ServiceContext serviceContext) throws SystemException,
 			PortalException {
-		_log.info("STARTTTTTT ADDD DOSSIER FILE");
+
 		long dossierFileId = counterLocalService.increment(DossierFile.class
 				.getName());
 		DossierFile dossierFile = dossierFilePersistence.create(dossierFileId);
+
+		DossierPart dossierPart = dossierPartLocalService
+				.getDossierPart(dossierPartId);
 
 		Date now = new Date();
 
@@ -268,6 +282,13 @@ public class DossierFileLocalServiceImpl extends
 		dossierFile.setOwnerOrganizationId(ownerOrganizationId);
 		dossierFile.setFormType(formType);
 		dossierFile.setFormSchema(formSchema);
+		dossierFile.setFormScript(Validator.isNotNull(dossierPart
+				.getFormScript()) ? dossierPart.getFormScript()
+				: StringPool.BLANK);
+
+		dossierFile.setFormReport(Validator.isNotNull(dossierPart
+				.getFormReport()) ? dossierPart.getFormReport()
+				: StringPool.BLANK);
 
 		dossierFile.setTemplateFileNo(templateFileNo);
 
@@ -587,6 +608,14 @@ public class DossierFileLocalServiceImpl extends
 							dossierId, dossierPartId);
 				}
 			}
+
+			dossierFile.setFormScript(Validator.isNotNull(dossierPart
+					.getFormScript()) ? dossierPart.getFormScript()
+					: StringPool.BLANK);
+
+			dossierFile.setFormReport(Validator.isNotNull(dossierPart
+					.getFormReport()) ? dossierPart.getFormReport()
+					: StringPool.BLANK);
 
 		} catch (Exception e) {
 		}

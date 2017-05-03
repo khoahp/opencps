@@ -137,8 +137,6 @@ public class VTCPay {
 		PaymentFile paymentFile = null;
 		PaymentConfig paymentConfig = null;
 
-		_log.info("=====vtcPay.getReference_number():" + vtcPay.getReference_number());
-
 		try {
 
 			if (vtcPay.getReference_number().trim().length() > 0) {
@@ -224,7 +222,6 @@ public class VTCPay {
 
 		merchantSign = VTCPay.sha256(merchantSign);
 		merchantSign = merchantSign.toUpperCase();
-		_log.info("merchantSign:"+merchantSign);
 		
 		return merchantSign;
 		

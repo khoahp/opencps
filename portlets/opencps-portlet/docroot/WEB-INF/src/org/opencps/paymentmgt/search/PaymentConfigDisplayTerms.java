@@ -21,7 +21,6 @@ import org.opencps.util.DateTimeUtil;
 import com.liferay.portal.kernel.dao.search.DisplayTerms;
 import com.liferay.portal.kernel.util.ParamUtil;
 
-
 public class PaymentConfigDisplayTerms extends DisplayTerms {
 	public static final String COMPANY_ID = "companyId";
 	public static final String CREATE_DATE = "createDate";
@@ -43,37 +42,38 @@ public class PaymentConfigDisplayTerms extends DisplayTerms {
 	public static final String KEYPAY_MERCHANT_CODE = "keypayMerchantCode";
 	public static final String KEYPAY_SECURE_KEY = "keypaySecureKey";
 	public static final String REPORT_TEMPLATE = "reportTemplate";
-	public static final String PAYMENT_GATE_TYPE= "paymentGateType";
-	public static final String PAYMENT_STATUS = "paymentStatus";
+	public static final String PAYMENT_GATE_TYPE = "paymentGateType";
+	public static final String PAYMENT_STATUS = "status";
 	public static final String RETURN_URL = "returnFromPaymentGateUrl";
 	public static final String ACTIVE = "1";
 	public static final String DISABLE = "0";
 	public static final String CHECKBOX = "Checkbox";
-	
+	public static final String PAYMENT_CONFIG_NO = "paymentConfigNo";
+
 	public PaymentConfigDisplayTerms(PortletRequest portletRequest) {
 
 		super(portletRequest);
 
-		createDate =
-		    ParamUtil.getDate(
-		        portletRequest,
-		        CREATE_DATE,
-		        DateTimeUtil.getDateTimeFormat(DateTimeUtil._VN_DATE_TIME_FORMAT));
+		createDate = ParamUtil.getDate(portletRequest, CREATE_DATE,
+				DateTimeUtil
+						.getDateTimeFormat(DateTimeUtil._VN_DATE_TIME_FORMAT));
 
-		modifiedDate =
-		    ParamUtil.getDate(
-		        portletRequest,
-		        MODIFIED_DATE,
-		        DateTimeUtil.getDateTimeFormat(DateTimeUtil._VN_DATE_TIME_FORMAT));
-		userId = ParamUtil
-					    .getLong(portletRequest, USER_ID);
+		modifiedDate = ParamUtil.getDate(portletRequest, MODIFIED_DATE,
+				DateTimeUtil
+						.getDateTimeFormat(DateTimeUtil._VN_DATE_TIME_FORMAT));
+		userId = ParamUtil.getLong(portletRequest, USER_ID);
+		
+		paymentConfigId = ParamUtil.getLong(portletRequest, PAYMENT_CONFIG_ID);
+		paymentConfigNo = ParamUtil.getString(portletRequest, PAYMENT_CONFIG_NO);
+		paymentGateTypes = ParamUtil.getString(portletRequest, PAYMENT_GATE_TYPE);
+		status = ParamUtil.getBoolean(portletRequest, PAYMENT_STATUS);
 
 	}
-	
+
 	protected long userId;
 	protected Date createDate;
 	protected Date modifiedDate;
-	
+
 	protected long govAgencyOrganizationId;
 	protected String govAgencyName;
 	protected String govAgencyTaxNo;
@@ -88,7 +88,44 @@ public class PaymentConfigDisplayTerms extends DisplayTerms {
 	protected String keypaySecureKey;
 	protected String reportTemplate;
 	
-    public String getReportTemplate() {
+	protected String paymentConfigNo;
+	protected long paymentConfigId;
+	protected String paymentGateTypes;
+	protected boolean status;
+
+	public boolean getStatus() {
+		return status;
+	}
+
+	public void setStatus(boolean status) {
+		this.status = status;
+	}
+
+	public String getPaymentGateTypes() {
+		return paymentGateTypes;
+	}
+
+	public void setPaymentGateTypes(String paymentGateTypes) {
+		this.paymentGateTypes = paymentGateTypes;
+	}
+
+	public String getPaymentConfigNo() {
+		return paymentConfigNo;
+	}
+
+	public void setPaymentConfigNo(String paymentConfigNo) {
+		this.paymentConfigNo = paymentConfigNo;
+	}
+
+	public long getPaymentConfigId() {
+		return paymentConfigId;
+	}
+
+	public void setPaymentConfigId(long paymentConfigId) {
+		this.paymentConfigId = paymentConfigId;
+	}
+
+	public String getReportTemplate() {
 		return reportTemplate;
 	}
 
@@ -97,152 +134,152 @@ public class PaymentConfigDisplayTerms extends DisplayTerms {
 	}
 
 	public long getUserId() {
-    
-    	return userId;
-    }
-	
-    public void setUserId(long userId) {
-    
-    	this.userId = userId;
-    }
-	
-    public Date getCreateDate() {
-    
-    	return createDate;
-    }
-	
-    public void setCreateDate(Date createDate) {
-    
-    	this.createDate = createDate;
-    }
-	
-    public Date getModifiedDate() {
-    
-    	return modifiedDate;
-    }
-	
-    public void setModifiedDate(Date modifiedDate) {
-    
-    	this.modifiedDate = modifiedDate;
-    }
-	
-    public long getGovAgencyOrganizationId() {
-    
-    	return govAgencyOrganizationId;
-    }
-	
-    public void setGovAgencyOrganizationId(long govAgencyOrganizationId) {
-    
-    	this.govAgencyOrganizationId = govAgencyOrganizationId;
-    }
-	
-    public String getGovAgencyName() {
-    
-    	return govAgencyName;
-    }
-	
-    public void setGovAgencyName(String govAgencyName) {
-    
-    	this.govAgencyName = govAgencyName;
-    }
-	
-    public String getGovAgencyTaxNo() {
-    
-    	return govAgencyTaxNo;
-    }
-	
-    public void setGovAgencyTaxNo(String govAgencyTaxNo) {
-    
-    	this.govAgencyTaxNo = govAgencyTaxNo;
-    }
-	
-    public String getInvoiceTemplateNo() {
-    
-    	return invoiceTemplateNo;
-    }
-	
-    public void setInvoiceTemplateNo(String invoiceTemplateNo) {
-    
-    	this.invoiceTemplateNo = invoiceTemplateNo;
-    }
-	
-    public String getInvoiceIssueNo() {
-    
-    	return invoiceIssueNo;
-    }
-	
-    public void setInvoiceIssueNo(String invoiceIssueNo) {
-    
-    	this.invoiceIssueNo = invoiceIssueNo;
-    }
-	
-    public String getInvoiceLastNo() {
-    
-    	return invoiceLastNo;
-    }
-	
-    public void setInvoiceLastNo(String invoiceLastNo) {
-    
-    	this.invoiceLastNo = invoiceLastNo;
-    }
-	
-    public String getBankInfo() {
-    
-    	return bankInfo;
-    }
-	
-    public void setBankInfo(String bankInfo) {
-    
-    	this.bankInfo = bankInfo;
-    }
-	
-    public String getPlaceInfo() {
-    
-    	return placeInfo;
-    }
-	
-    public void setPlaceInfo(String placeInfo) {
-    
-    	this.placeInfo = placeInfo;
-    }
-	
-    public String getKeypayDomain() {
-    
-    	return keypayDomain;
-    }
-	
-    public void setKeypayDomain(String keypayDomain) {
-    
-    	this.keypayDomain = keypayDomain;
-    }
-	
-    public String getKeypayVersion() {
-    
-    	return keypayVersion;
-    }
-	
-    public void setKeypayVersion(String keypayVersion) {
-    
-    	this.keypayVersion = keypayVersion;
-    }
-	
-    public String getKeypayMerchantCode() {
-    
-    	return keypayMerchantCode;
-    }
-	
-    public void setKeypayMerchantCode(String keypayMerchantCode) {
-    
-    	this.keypayMerchantCode = keypayMerchantCode;
-    }
-	
-    public String getKeypaySecureKey() {
-    
-    	return keypaySecureKey;
-    }
-	
-    public void setKeypaySecureKey(String keypaySecureKey) {
-    
-    	this.keypaySecureKey = keypaySecureKey;
-    }
+
+		return userId;
+	}
+
+	public void setUserId(long userId) {
+
+		this.userId = userId;
+	}
+
+	public Date getCreateDate() {
+
+		return createDate;
+	}
+
+	public void setCreateDate(Date createDate) {
+
+		this.createDate = createDate;
+	}
+
+	public Date getModifiedDate() {
+
+		return modifiedDate;
+	}
+
+	public void setModifiedDate(Date modifiedDate) {
+
+		this.modifiedDate = modifiedDate;
+	}
+
+	public long getGovAgencyOrganizationId() {
+
+		return govAgencyOrganizationId;
+	}
+
+	public void setGovAgencyOrganizationId(long govAgencyOrganizationId) {
+
+		this.govAgencyOrganizationId = govAgencyOrganizationId;
+	}
+
+	public String getGovAgencyName() {
+
+		return govAgencyName;
+	}
+
+	public void setGovAgencyName(String govAgencyName) {
+
+		this.govAgencyName = govAgencyName;
+	}
+
+	public String getGovAgencyTaxNo() {
+
+		return govAgencyTaxNo;
+	}
+
+	public void setGovAgencyTaxNo(String govAgencyTaxNo) {
+
+		this.govAgencyTaxNo = govAgencyTaxNo;
+	}
+
+	public String getInvoiceTemplateNo() {
+
+		return invoiceTemplateNo;
+	}
+
+	public void setInvoiceTemplateNo(String invoiceTemplateNo) {
+
+		this.invoiceTemplateNo = invoiceTemplateNo;
+	}
+
+	public String getInvoiceIssueNo() {
+
+		return invoiceIssueNo;
+	}
+
+	public void setInvoiceIssueNo(String invoiceIssueNo) {
+
+		this.invoiceIssueNo = invoiceIssueNo;
+	}
+
+	public String getInvoiceLastNo() {
+
+		return invoiceLastNo;
+	}
+
+	public void setInvoiceLastNo(String invoiceLastNo) {
+
+		this.invoiceLastNo = invoiceLastNo;
+	}
+
+	public String getBankInfo() {
+
+		return bankInfo;
+	}
+
+	public void setBankInfo(String bankInfo) {
+
+		this.bankInfo = bankInfo;
+	}
+
+	public String getPlaceInfo() {
+
+		return placeInfo;
+	}
+
+	public void setPlaceInfo(String placeInfo) {
+
+		this.placeInfo = placeInfo;
+	}
+
+	public String getKeypayDomain() {
+
+		return keypayDomain;
+	}
+
+	public void setKeypayDomain(String keypayDomain) {
+
+		this.keypayDomain = keypayDomain;
+	}
+
+	public String getKeypayVersion() {
+
+		return keypayVersion;
+	}
+
+	public void setKeypayVersion(String keypayVersion) {
+
+		this.keypayVersion = keypayVersion;
+	}
+
+	public String getKeypayMerchantCode() {
+
+		return keypayMerchantCode;
+	}
+
+	public void setKeypayMerchantCode(String keypayMerchantCode) {
+
+		this.keypayMerchantCode = keypayMerchantCode;
+	}
+
+	public String getKeypaySecureKey() {
+
+		return keypaySecureKey;
+	}
+
+	public void setKeypaySecureKey(String keypaySecureKey) {
+
+		this.keypaySecureKey = keypaySecureKey;
+	}
 }

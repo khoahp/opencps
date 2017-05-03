@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:element name="SendNotificationMessage">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="ProcessOrderId" type="xs:string"></xs:element>
+				<xs:element name="DossierId" type="xs:string"></xs:element>
+				<xs:element name="PaymentFileId" type="xs:string"></xs:element>
+				<xs:element name="EventName" type="xs:string"></xs:element>
+				<xs:element name="PatternConfig" type="xs:string"></xs:element>
+				<xs:element name="PlId" type="xs:string"></xs:element>
+				<xs:element name="JspRedirect" type="xs:string"></xs:element>
+				<xs:element name="Infomations">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="Infomation"  maxOccurs="unbounded">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="UserId" type="xs:string"></xs:element>
+										<xs:element name="EmailAddress" type="xs:string"></xs:element>
+										<xs:element name="FullName" type="xs:string"></xs:element>
+										<xs:element name="PhoneNumber" type="xs:string"></xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

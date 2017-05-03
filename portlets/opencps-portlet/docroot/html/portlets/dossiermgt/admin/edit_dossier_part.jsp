@@ -135,6 +135,11 @@
 	<portlet:param name="backURL" value="<%=backURL %>"/>
 </portlet:actionURL>
 
+<portlet:renderURL var="previewFormURL" windowState="<%=LiferayWindowState.POP_UP.toString() %>">
+	<portlet:param name="mvcPath" value="/html/portlets/dossiermgt/admin/preview_form.jsp"/>
+	<portlet:param name="<%=DossierPartDisplayTerms.DOSSIERPART_DOSSIERPARTID %>" value="<%=String.valueOf(dossierPartId)%>"/>
+</portlet:renderURL>
+
 <aui:form 
 	action="<%=updateDossierPartURL.toString() %>"
 	method="post"
@@ -305,18 +310,21 @@
 		</aui:col>
 	</aui:row>
 	
-	
 	<aui:input 
 		name="<%=DossierPartDisplayTerms.DOSSIERPART_DOSSIERTEMPLATEID %>"
 		type="hidden"
 		value= "<%= String.valueOf(dossierTemplateId) %>"
 	/>
-			
 
 	<aui:row>
 			<aui:button name="submit" value="submit" type="submit"/>
 		
 			<aui:button type="reset" value="clear"/>
+			
+			<aui:button cssClass="btn-default" icon="icon-eye-open" value="preview"
+			useDialog="true"
+			href="<%=previewFormURL.toString()%>" />
+			
 	</aui:row>
 </aui:form>
 

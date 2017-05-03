@@ -1137,5 +1137,21 @@
 			AND opencps_dossier.govAgencyCode = ?
 		]]>
 	</sql>
+
+	<sql id="org.opencps.dossiermgt.service.persistence.ServiceOptionFinder.searchServiceOption">	
+		<![CDATA[
+			SELECT 
+				opencps_service_option.*
+			FROM
+				opencps_service_config
+				LEFT JOIN
+				opencps_service_option ON opencps_service_config.serviceConfigId = opencps_service_option.serviceConfigId
+			WHERE
+				1
+				AND serviceInfoId = ?
+				AND govAgencyCode = ?
+			ORDER BY opencps_service_option.optionOrder ASC
+		]]>
+	</sql>
 	
 </custom-sql>

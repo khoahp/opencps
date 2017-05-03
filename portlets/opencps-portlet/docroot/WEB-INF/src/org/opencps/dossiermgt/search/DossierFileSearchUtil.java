@@ -16,8 +16,6 @@
  */
 package org.opencps.dossiermgt.search;
 
-import org.opencps.dossiermgt.portlet.DossierMgtFrontOfficePortlet;
-
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.search.BooleanQuery;

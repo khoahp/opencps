@@ -1,4 +1,9 @@
 
+<%@page import="org.opencps.paymentmgt.service.PaymentConfigLocalServiceUtil"%>
+<%@page import="org.opencps.paymentmgt.model.PaymentConfig"%>
+<%@page import="com.liferay.portal.kernel.dao.orm.QueryUtil"%>
+<%@page import="org.opencps.dossiermgt.service.ServiceConfigLocalServiceUtil"%>
+<%@page import="org.opencps.dossiermgt.model.ServiceConfig"%>
 <%
 /**
  * OpenCPS is the open source Core Public Services software
@@ -27,6 +32,9 @@
 <%
 	ServiceProcess serviceProcess = (ServiceProcess) request.getAttribute(WebKeys.SERVICE_PROCESS_ENTRY);
 	List<DossierTemplate> dossierTemplates = ProcessUtils.getDossierTemplate(renderRequest);
+	
+	List<PaymentConfig> paymentConfigs = new ArrayList<PaymentConfig>();
+	paymentConfigs = PaymentConfigLocalServiceUtil.getPaymentConfigListStatus(true);
 %>
 
 <aui:model-context bean="<%= serviceProcess %>" model="<%= ServiceProcess.class %>"/>
@@ -65,5 +73,43 @@
 				}
 			%>
 		</aui:select>
+	</aui:col>
+</aui:row>
+
+<aui:row cssClass="nav-content-row">
+	<aui:col width="100">
+		<aui:select name="paymentConfigId" showEmptyOption="true" label="payment-config-no">
+			<%
+				for (PaymentConfig paymentConfig : paymentConfigs) {
+
+					boolean selected = false;
+
+					if (paymentConfig.getPaymentConfigId() == serviceProcess
+							.getPaymentConfigId()) {
+
+						selected = true;
+
+					}
+			%>
+				<aui:option selected="<%=selected %>" value="<%= paymentConfig.getPaymentConfigId() %>"><%= paymentConfig.getPaymentConfigNo() %></aui:option>
+			<%
+				}
+			%>
+		</aui:select>
+	</aui:col>
+</aui:row>
+<aui:row cssClass="nav-content-row">
+	<aui:col width="100">
+		<aui:input name="paymentFee" label="payment-fee" cssClass="input100">
+			
+		</aui:input>
+	</aui:col>
+</aui:row>
+<aui:row>
+	<aui:col>
+		<aui:input name="isRequestPayment" label="create-payment-file" type="checkbox" 
+			value="<%=serviceProcess.getIsRequestPayment() %>">
+			
+		</aui:input>
 	</aui:col>
 </aui:row>

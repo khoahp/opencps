@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE service-builder PUBLIC "-//Liferay//DTD Service Builder 6.2.0//EN" "http://www.liferay.com/dtd/liferay-service-builder_6_2_0.dtd">
+<service-builder package-path="org.opencps.lucenequery">
+	<author>trungnt</author>
+	<namespace>lucenequery</namespace>
+
+	<entity name="LuceneQueryPattern" table="opencps_lucenequery_pattern" local-service="true" remote-service="true">
+
+		<!-- PK fields -->
+
+		<column name="patternId" type="long" primary="true" />
+
+		<!-- Group instance -->
+		<column name="companyId" type="long" />
+		<column name="groupId" type="long" />
+		<column name="userId" type="long" />
+		<column name="createdDate"  type="Date" />
+		<column name="modifiedDate"  type="Date" />
+		<column name="name"  type="String" />
+
+
+		<!-- Order -->
+        <column name="pattern" type="String"></column>
+        <column name="url" type="String"></column>
+
+		<order by="desc">
+			<order-column name="modifiedDate" order-by="desc"/>
+		</order>
+        <finder name="GroupId" return-type="Collection">
+            <finder-column name="groupId"></finder-column>
+        </finder>
+	</entity>
+    <exceptions>
+        <exception>LuceneQueryFormat</exception>
+        <exception>LuceneQuerySyntax</exception>
+    </exceptions>
+</service-builder>

@@ -25,18 +25,24 @@ import java.util.Map;
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
 import javax.portlet.PortletException;
+import javax.portlet.PortletRequest;
 import javax.portlet.PortletSession;
+import javax.portlet.PortletURL;
 import javax.portlet.ResourceRequest;
 import javax.portlet.ResourceResponse;
+import javax.portlet.WindowState;
+import javax.portlet.WindowStateException;
 
 import org.opencps.accountmgt.model.Citizen;
 import org.opencps.jasperreport.util.JRReportUtil;
+import org.opencps.paymentmgt.NoSuchPaymentConfigException;
 import org.opencps.paymentmgt.model.PaymentConfig;
 import org.opencps.paymentmgt.search.PaymentConfigDisplayTerms;
 import org.opencps.paymentmgt.service.PaymentConfigLocalServiceUtil;
 import org.opencps.util.DLFolderUtil;
 import org.opencps.util.PortletPropsValues;
 import org.opencps.util.PortletUtil;
+import org.opencps.util.WebKeys;
 
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.json.JSONArray;
@@ -44,6 +50,8 @@ import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.portlet.LiferayWindowState;
+import com.liferay.portal.kernel.portlet.WindowStateFactory;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.servlet.SessionMessages;
@@ -51,11 +59,11 @@ import com.liferay.portal.kernel.util.MimeTypesUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.ServiceContextFactory;
 import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.portal.util.PortalUtil;
+import com.liferay.portlet.PortletURLFactoryUtil;
 import com.liferay.portlet.documentlibrary.model.DLFolder;
 import com.liferay.portlet.documentlibrary.service.DLAppServiceUtil;
 import com.liferay.util.bridges.mvc.MVCPortlet;
@@ -104,9 +112,9 @@ public class PaymentMgtPaymentConfigPortlet extends MVCPortlet {
 			serviceContext.setAddGroupPermissions(true);
 			serviceContext.setAddGuestPermissions(true);
 			// Get PaymentFile
-			long govAgencyOrganizationId = -1;
+			
 			long userId = themeDisplay.getUserId();
-			long paymentConfigId =
+			
 				ParamUtil.getLong(actionRequest, PaymentConfigDisplayTerms.PAYMENT_CONFIG_ID);
 			// Get account folder
 			String dossierDestinationFolder =
@@ -124,7 +132,6 @@ public class PaymentMgtPaymentConfigPortlet extends MVCPortlet {
 					themeDisplay.getScopeGroupId(), false, accountForlder.getFolderId(),
 					String.valueOf(userId), StringPool.BLANK, false, serviceContext);
 
-			// TODO
 			String formData = StringPool.BLANK;
 			JSONObject payloadJSON = JSONFactoryUtil.createJSONObject();
 			JSONObject resultJSON = JSONFactoryUtil.createJSONObject();
@@ -133,9 +140,7 @@ public class PaymentMgtPaymentConfigPortlet extends MVCPortlet {
 			payloadJSON.put("fileGroupId", "");
 			payloadJSON.put("ownerUserId", "");
 			payloadJSON.put("ownerOrganizationId", "");
-			// TODO
 
-			Citizen citizen = null;
 			payloadJSON.put("ownerOrganizationName", "");
 			payloadJSON.put("ownerOrganizationAddress", "");
 
@@ -143,7 +148,6 @@ public class PaymentMgtPaymentConfigPortlet extends MVCPortlet {
 			payloadJSON.put("paymentName", "");
 			payloadJSON.put("requestDatetime", "");
 			payloadJSON.put("amount", "");
-			// TODO
 			payloadJSON.put("amountNumber", "");
 			payloadJSON.put("amountString", "");
 
@@ -156,7 +160,6 @@ public class PaymentMgtPaymentConfigPortlet extends MVCPortlet {
 			payloadJSON.put("placeInfo", "");
 			payloadJSON.put("paymentStatus", "");
 			payloadJSON.put("paymentMethod", "");
-			// TODO
 
 			payloadJSON.put("confirmDatetime", "");
 			payloadJSON.put("confirmFileEntryId", "");
@@ -214,7 +217,7 @@ public class PaymentMgtPaymentConfigPortlet extends MVCPortlet {
 							sourceFileName, mimeType, fileName, StringPool.BLANK, StringPool.BLANK,
 							inputStream, file.length(), serviceContext);
 					fileExportDir = getURL(fileEntry);
-					String tenFileExport = "defaultPDF.pdfs";
+					//String tenFileExport = "defaultPDF.pdfs";
 					if (fileExportDir.contains(".pdfs")) {
 						urlFileDowLoad =
 							fileExportDir.replace(".pdfs", ".pdf") +
@@ -268,8 +271,7 @@ public class PaymentMgtPaymentConfigPortlet extends MVCPortlet {
 
 		long govAgencyOrganizationId =
 			ParamUtil.getLong(resourceRequest, PaymentConfigDisplayTerms.GOV_AGENCY_ORGANIZATION_ID);
-		boolean paymentStatus =
-			ParamUtil.getBoolean(resourceRequest, PaymentConfigDisplayTerms.PAYMENT_STATUS, true);
+		
 		long paymentGateType =
 			ParamUtil.getLong(resourceRequest, PaymentConfigDisplayTerms.PAYMENT_GATE_TYPE, 0);
 		PaymentConfig pc = null;
@@ -284,7 +286,7 @@ public class PaymentMgtPaymentConfigPortlet extends MVCPortlet {
 					groupId, govAgencyOrganizationId, paymentGateType);
 		}
 		catch (SystemException e) {
-			// TODO Auto-generated catch block
+			
 			_log.error(e);
 		}
 
@@ -374,10 +376,6 @@ public class PaymentMgtPaymentConfigPortlet extends MVCPortlet {
 		boolean paymentStatus =
 			ParamUtil.getBoolean(actionRequest, PaymentConfigDisplayTerms.PAYMENT_STATUS, false);
 
-		String returnURL = ParamUtil.getString(actionRequest, "returnURL");
-		String currentURL = ParamUtil.getString(actionRequest, "currentURL");
-		String backURL = ParamUtil.getString(actionRequest, "backURL");
-
 		List<PaymentConfig> paymentConfiglist = new ArrayList<PaymentConfig>();
 
 		try {
@@ -399,21 +397,21 @@ public class PaymentMgtPaymentConfigPortlet extends MVCPortlet {
 				}
 			}
 			if (paymentConfigId == 0) {
-				PaymentConfig c =
-					PaymentConfigLocalServiceUtil.addPaymentConfig(
-						govAgencyOrganizationId, govAgencyName, govAgencyTaxNo, invoiceTemplateNo,
-						invoiceIssueNo, invoiceLastNo, bankInfo, placeInfo, keypayDomain,
-						keypayVersion, keypayMerchantCode, keypaySecureKey, reportTemplate,
-						paymentGateType, paymentStatus, serviceContext.getUserId(),returnFromPaymentGateUrl, serviceContext);
-				paymentConfigId = c.getPaymentConfigId();
+//				PaymentConfig c =
+//					PaymentConfigLocalServiceUtil.addPaymentConfig(
+//						govAgencyOrganizationId, govAgencyName, govAgencyTaxNo, invoiceTemplateNo,
+//						invoiceIssueNo, invoiceLastNo, bankInfo, placeInfo, keypayDomain,
+//						keypayVersion, keypayMerchantCode, keypaySecureKey, reportTemplate,
+//						paymentGateType, paymentStatus, serviceContext.getUserId(),returnFromPaymentGateUrl, serviceContext);
+//				paymentConfigId = c.getPaymentConfigId();
 			}
 			else {
-				PaymentConfigLocalServiceUtil.updatePaymentConfig(
-					paymentConfigId, govAgencyOrganizationId, govAgencyName, govAgencyTaxNo,
-					invoiceTemplateNo, invoiceIssueNo, invoiceLastNo, bankInfo, placeInfo,
-					keypayDomain, keypayVersion, keypayMerchantCode, keypaySecureKey,
-					reportTemplate, paymentGateType, paymentStatus, serviceContext.getUserId(),returnFromPaymentGateUrl,
-					serviceContext);
+//				PaymentConfigLocalServiceUtil.updatePaymentConfig(
+//					paymentConfigId, govAgencyOrganizationId, govAgencyName, govAgencyTaxNo,
+//					invoiceTemplateNo, invoiceIssueNo, invoiceLastNo, bankInfo, placeInfo,
+//					keypayDomain, keypayVersion, keypayMerchantCode, keypaySecureKey,
+//					reportTemplate, paymentGateType, paymentStatus, serviceContext.getUserId(),returnFromPaymentGateUrl,
+//					serviceContext);
 			}
 
 			addProcessActionSuccessMessage = false;
@@ -423,6 +421,182 @@ public class PaymentMgtPaymentConfigPortlet extends MVCPortlet {
 		}
 		catch (Exception e) {
 			SessionErrors.add(actionRequest, "update-payment-config-error");
+		}
+
+	}
+	
+	public void changePaymentStatusConfig(ActionRequest actionRequest,
+			ActionResponse actionResponse) throws IOException {
+
+		long paymentConfigId = ParamUtil.getLong(actionRequest,
+				PaymentConfigDisplayTerms.PAYMENT_CONFIG_ID, 0);
+		boolean paymentStatus = ParamUtil.getBoolean(actionRequest,
+				PaymentConfigDisplayTerms.PAYMENT_STATUS, false);
+		
+		
+		String redirectUrl = ParamUtil.getString(actionRequest,
+				WebKeys.REDIRECT_URL, StringPool.BLANK);
+
+		PaymentConfig paymentConfig = null;
+
+		try {
+			if (paymentConfigId > 0) {
+
+				try {
+					paymentConfig = PaymentConfigLocalServiceUtil
+							.getPaymentConfig(paymentConfigId);
+				} catch (NoSuchPaymentConfigException e) {
+
+				}
+
+				paymentConfig.setStatus(paymentStatus);
+
+				PaymentConfigLocalServiceUtil
+						.updatePaymentConfig(paymentConfig);
+
+				SessionMessages.add(actionRequest,
+						"update-payment-config-success");
+			}
+
+		} catch (Exception e) {
+			SessionErrors.add(actionRequest, "update-payment-config-error");
+		}finally{
+			
+			actionResponse.sendRedirect(redirectUrl);
+		}
+
+	}
+	
+	/**
+	 * @param actionRequest
+	 * @param actionResponse
+	 * @throws IOException
+	 * @throws WindowStateException 
+	 */
+	public void updatePaymentConfigWithServiceProcess(ActionRequest actionRequest, ActionResponse actionResponse)
+		throws IOException, WindowStateException {
+
+		long paymentConfigId =
+			ParamUtil.getLong(actionRequest, PaymentConfigDisplayTerms.PAYMENT_CONFIG_ID);
+		long govAgencyOrganizationId =
+			ParamUtil.getLong(actionRequest, PaymentConfigDisplayTerms.GOV_AGENCY_ORGANIZATION_ID);
+		String govAgencyName =
+			ParamUtil.getString(actionRequest, PaymentConfigDisplayTerms.GOV_AGENCY_NAME);
+		String govAgencyTaxNo =
+			ParamUtil.getString(actionRequest, PaymentConfigDisplayTerms.GOV_AGENCY_TAX_NO);
+		String invoiceTemplateNo =
+			ParamUtil.getString(actionRequest, PaymentConfigDisplayTerms.INVOICE_TEMPLATE_NO);
+		String invoiceIssueNo =
+			ParamUtil.getString(actionRequest, PaymentConfigDisplayTerms.INVOICE_ISSUE_NO);
+		String invoiceLastNo =
+			ParamUtil.getString(actionRequest, PaymentConfigDisplayTerms.INVOICE_LAST_NO);
+		String bankInfo = ParamUtil.getString(actionRequest, PaymentConfigDisplayTerms.BANK_INFO);
+		String placeInfo = ParamUtil.getString(actionRequest, PaymentConfigDisplayTerms.PLACE_INFO);
+		String keypayDomain =
+			ParamUtil.getString(actionRequest, PaymentConfigDisplayTerms.KEYPAY_DOMAIN);
+		String keypayVersion =
+			ParamUtil.getString(actionRequest, PaymentConfigDisplayTerms.KEYPAY_VERSION);
+		String keypayMerchantCode =
+			ParamUtil.getString(actionRequest, PaymentConfigDisplayTerms.KEYPAY_MERCHANT_CODE);
+		String keypaySecureKey =
+			ParamUtil.getString(actionRequest, PaymentConfigDisplayTerms.KEYPAY_SECURE_KEY);
+		String reportTemplate =
+			ParamUtil.getString(actionRequest, PaymentConfigDisplayTerms.REPORT_TEMPLATE);
+		String returnFromPaymentGateUrl =
+						ParamUtil.getString(actionRequest, PaymentConfigDisplayTerms.RETURN_URL);
+		long paymentGateType =
+			ParamUtil.getLong(actionRequest, PaymentConfigDisplayTerms.PAYMENT_GATE_TYPE);
+		boolean paymentStatus =
+			ParamUtil.getBoolean(actionRequest, PaymentConfigDisplayTerms.PAYMENT_STATUS, false);
+		String paymentConfigNo =
+				ParamUtil.getString(actionRequest, PaymentConfigDisplayTerms.PAYMENT_CONFIG_NO);
+		
+		ThemeDisplay themeDisplay = (ThemeDisplay) actionRequest
+				.getAttribute(WebKeys.THEME_DISPLAY);
+
+		PaymentConfig paymentConfig = null;
+		try {
+
+			ServiceContext serviceContext = ServiceContextFactory.getInstance(actionRequest);
+			
+
+			if (paymentConfigId <= 0) {
+				paymentConfig =
+					PaymentConfigLocalServiceUtil.addPaymentConfig(
+						govAgencyOrganizationId, govAgencyName, govAgencyTaxNo, invoiceTemplateNo,
+						invoiceIssueNo, invoiceLastNo, bankInfo, placeInfo, keypayDomain,
+						keypayVersion, keypayMerchantCode, keypaySecureKey, reportTemplate,
+						paymentGateType, paymentStatus, serviceContext.getUserId(),returnFromPaymentGateUrl,paymentConfigNo, serviceContext);
+				paymentConfigId = paymentConfig.getPaymentConfigId();
+			}
+			else {
+				paymentConfig = PaymentConfigLocalServiceUtil.updatePaymentConfig(
+					paymentConfigId, govAgencyOrganizationId, govAgencyName, govAgencyTaxNo,
+					invoiceTemplateNo, invoiceIssueNo, invoiceLastNo, bankInfo, placeInfo,
+					keypayDomain, keypayVersion, keypayMerchantCode, keypaySecureKey,
+					reportTemplate, paymentGateType, paymentStatus, serviceContext.getUserId(),returnFromPaymentGateUrl,paymentConfigNo,
+					serviceContext);
+			}
+
+			addProcessActionSuccessMessage = false;
+			SessionMessages.add(actionRequest, "update-payment-config-success");
+		}
+		catch (Exception e) {
+			SessionErrors.add(actionRequest, "update-payment-config-error");
+		}finally{
+			
+			PortletURL redirectURL = PortletURLFactoryUtil.create(
+					PortalUtil.getHttpServletRequest(actionRequest),
+					(String) actionRequest.getAttribute(WebKeys.PORTLET_ID),
+					themeDisplay.getLayout().getPlid(),
+					PortletRequest.RENDER_PHASE);
+			
+			redirectURL.setParameter(
+					PaymentConfigDisplayTerms.PAYMENT_CONFIG_ID,
+					String.valueOf(paymentConfig.getPaymentConfigId()));
+			
+			WindowState state = WindowStateFactory
+					.getWindowState(LiferayWindowState.POP_UP.toString());
+			
+			redirectURL.setWindowState(state);
+
+			redirectURL
+					.setParameter(
+							"mvcPath",
+							"/html/portlets/paymentmgt/paymentconfig/paymentconfig_edit.jsp");
+			actionResponse.sendRedirect(redirectURL.toString());
+		}
+
+	}
+	
+	/**
+	 * @param actionRequest
+	 * @param actionResponse
+	 * @throws IOException
+	 * @throws WindowStateException 
+	 */
+	public void removePaymentConfig(ActionRequest actionRequest,
+			ActionResponse actionResponse) throws IOException {
+
+		long paymentConfigId = ParamUtil.getLong(actionRequest,
+				PaymentConfigDisplayTerms.PAYMENT_CONFIG_ID);
+
+		String redirectURL = ParamUtil.getString(actionRequest,
+				WebKeys.REDIRECT_URL);
+
+		try {
+
+			if (paymentConfigId > 0) {
+				PaymentConfigLocalServiceUtil
+						.deletePaymentConfig(paymentConfigId);
+			}
+
+			SessionMessages.add(actionRequest, "update-payment-config-success");
+		} catch (Exception e) {
+			SessionErrors.add(actionRequest, "update-payment-config-error");
+		} finally {
+
+			actionResponse.sendRedirect(redirectURL.toString());
 		}
 
 	}

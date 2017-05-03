@@ -1,10 +1,3 @@
-<%@page import="org.opencps.backend.util.PaymentRequestGenerator"%>
-<%@page import="com.liferay.portal.kernel.util.ListUtil"%>
-<%@page import="java.util.List"%>
-<%@page import="org.opencps.paymentmgt.search.PaymentFileDisplayTerms"%>
-<%@page import="org.opencps.paymentmgt.model.PaymentFile"%>
-<%@page import="org.opencps.util.WebKeys"%>
-<%@page import="com.liferay.portal.kernel.dao.search.ResultRow"%>
 <%
 /**
  * OpenCPS is the open source Core Public Services software

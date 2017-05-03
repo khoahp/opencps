@@ -48,11 +48,11 @@ public class DefineObjectsTag extends IncludeTag {
 	@Override
 	public int doStartTag() {
 
-		HttpServletRequest request =
-			(HttpServletRequest) pageContext.getRequest();
+		HttpServletRequest request = (HttpServletRequest) pageContext
+				.getRequest();
 
-		ThemeDisplay themeDisplay =
-			(ThemeDisplay) request.getAttribute(WebKeys.THEME_DISPLAY);
+		ThemeDisplay themeDisplay = (ThemeDisplay) request
+				.getAttribute(WebKeys.THEME_DISPLAY);
 
 		if (themeDisplay == null) {
 			return SKIP_BODY;
@@ -62,36 +62,47 @@ public class DefineObjectsTag extends IncludeTag {
 
 		Object accountInstance = null;
 
-		AccountBean accountBean =
-			(AccountBean) session.getAttribute(org.opencps.util.WebKeys.ACCOUNT_BEAN);
+		AccountBean accountBean = null;
 
-		String accountType =
-			GetterUtil.getString(session.getAttribute(org.opencps.util.WebKeys.ACCOUNT_TYPE));
+		Citizen citizen = null;
 
-		Citizen citizen =
-			(Citizen) session.getAttribute(org.opencps.util.WebKeys.CITIZEN_ENTRY);
+		Business business = null;
 
-		Business business =
-			(Business) session.getAttribute(org.opencps.util.WebKeys.BUSINESS_ENTRY);
+		Employee employee = null;
 
-		Employee employee =
-			(Employee) session.getAttribute(org.opencps.util.WebKeys.EMPLOYEE_ENTRY);
+		try {
+			accountBean = (AccountBean) session
+					.getAttribute(org.opencps.util.WebKeys.ACCOUNT_BEAN);
 
-		ArrayList<Role> accountRoles =
-			(ArrayList<Role>) session.getAttribute(org.opencps.util.WebKeys.ACCOUNT_ROLES);
+			citizen = (Citizen) session
+					.getAttribute(org.opencps.util.WebKeys.CITIZEN_ENTRY);
 
-		ArrayList<Organization> accountOrgs =
-			(ArrayList<Organization>) session.getAttribute(org.opencps.util.WebKeys.ACCOUNT_ORGANIZATION);
+			business = (Business) session
+					.getAttribute(org.opencps.util.WebKeys.BUSINESS_ENTRY);
 
-		long ownerUserId =
-			GetterUtil.getLong(
-				session.getAttribute(org.opencps.util.WebKeys.ACCOUNT_OWNERUSERID),
-				0L);
+			employee = (Employee) session
+					.getAttribute(org.opencps.util.WebKeys.EMPLOYEE_ENTRY);
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
 
-		long ownerOrganizationId =
-			GetterUtil.getLong(
-				session.getAttribute(org.opencps.util.WebKeys.ACCOUNT_OWNERORGANIZATIONID),
-				0L);
+		String accountType = GetterUtil.getString(session
+				.getAttribute(org.opencps.util.WebKeys.ACCOUNT_TYPE));
+		ArrayList<Role> accountRoles = (ArrayList<Role>) session
+				.getAttribute(org.opencps.util.WebKeys.ACCOUNT_ROLES);
+
+		ArrayList<Organization> accountOrgs = (ArrayList<Organization>) session
+				.getAttribute(org.opencps.util.WebKeys.ACCOUNT_ORGANIZATION);
+
+		long ownerUserId = GetterUtil
+				.getLong(
+						session.getAttribute(org.opencps.util.WebKeys.ACCOUNT_OWNERUSERID),
+						0L);
+
+		long ownerOrganizationId = GetterUtil
+				.getLong(
+						session.getAttribute(org.opencps.util.WebKeys.ACCOUNT_OWNERORGANIZATIONID),
+						0L);
 
 		if (themeDisplay.isSignedIn() && Validator.isNull(accountBean)) {
 
@@ -100,11 +111,10 @@ public class DefineObjectsTag extends IncludeTag {
 				// Clean account bean
 				AccountUtil.destroy(request, false);
 
-				ServiceContext serviceContext =
-					ServiceContextFactory.getInstance(request);
+				ServiceContext serviceContext = ServiceContextFactory
+						.getInstance(request);
 
-				accountBean =
-					AccountUtil.getAccountBean(
+				accountBean = AccountUtil.getAccountBean(
 						themeDisplay.getUserId(),
 						themeDisplay.getScopeGroupId(), serviceContext);
 
@@ -113,12 +123,10 @@ public class DefineObjectsTag extends IncludeTag {
 					if (accountBean.isBusiness()) {
 						business = (Business) accountBean.getAccountInstance();
 						accountInstance = business;
-					}
-					else if (accountBean.isCitizen()) {
+					} else if (accountBean.isCitizen()) {
 						citizen = (Citizen) accountBean.getAccountInstance();
 						accountInstance = citizen;
-					}
-					else if (accountBean.isEmployee()) {
+					} else if (accountBean.isEmployee()) {
 						employee = (Employee) accountBean.getAccountInstance();
 						accountInstance = employee;
 					}
@@ -129,75 +137,73 @@ public class DefineObjectsTag extends IncludeTag {
 					accountOrgs = accountBean.getAccountOrgs();
 					accountRoles = accountBean.getAccountRoles();
 
+					request.setAttribute(org.opencps.util.WebKeys.ACCOUNT_TYPE,
+							accountType);
 					request.setAttribute(
-						org.opencps.util.WebKeys.ACCOUNT_TYPE, accountType);
+							org.opencps.util.WebKeys.CITIZEN_ENTRY, citizen);
 					request.setAttribute(
-						org.opencps.util.WebKeys.CITIZEN_ENTRY, citizen);
-					request.setAttribute(
-						org.opencps.util.WebKeys.BUSINESS_ENTRY, business);
+							org.opencps.util.WebKeys.BUSINESS_ENTRY, business);
 
 					request.setAttribute(
-						org.opencps.util.WebKeys.EMPLOYEE_ENTRY, employee);
+							org.opencps.util.WebKeys.EMPLOYEE_ENTRY, employee);
 
 					request.setAttribute(
-						org.opencps.util.WebKeys.ACCOUNT_OWNERORGANIZATIONID,
-						ownerOrganizationId);
+							org.opencps.util.WebKeys.ACCOUNT_OWNERORGANIZATIONID,
+							ownerOrganizationId);
 
 					request.setAttribute(
-						org.opencps.util.WebKeys.ACCOUNT_OWNERUSERID,
-						ownerUserId);
+							org.opencps.util.WebKeys.ACCOUNT_OWNERUSERID,
+							ownerUserId);
 
 					request.setAttribute(
-						org.opencps.util.WebKeys.ACCOUNT_ROLES, accountRoles);
+							org.opencps.util.WebKeys.ACCOUNT_ROLES,
+							accountRoles);
 
 					request.setAttribute(
-						org.opencps.util.WebKeys.ACCOUNT_ORGANIZATION,
-						accountOrgs);
+							org.opencps.util.WebKeys.ACCOUNT_ORGANIZATION,
+							accountOrgs);
 
 					// Store session
 
+					session.setAttribute(org.opencps.util.WebKeys.ACCOUNT_TYPE,
+							accountType);
 					session.setAttribute(
-						org.opencps.util.WebKeys.ACCOUNT_TYPE, accountType);
+							org.opencps.util.WebKeys.CITIZEN_ENTRY, citizen);
 					session.setAttribute(
-						org.opencps.util.WebKeys.CITIZEN_ENTRY, citizen);
-					session.setAttribute(
-						org.opencps.util.WebKeys.BUSINESS_ENTRY, business);
+							org.opencps.util.WebKeys.BUSINESS_ENTRY, business);
 
 					session.setAttribute(
-						org.opencps.util.WebKeys.EMPLOYEE_ENTRY, employee);
+							org.opencps.util.WebKeys.EMPLOYEE_ENTRY, employee);
 
 					session.setAttribute(
-						org.opencps.util.WebKeys.ACCOUNT_OWNERORGANIZATIONID,
-						ownerOrganizationId);
+							org.opencps.util.WebKeys.ACCOUNT_OWNERORGANIZATIONID,
+							ownerOrganizationId);
 
 					session.setAttribute(
-						org.opencps.util.WebKeys.ACCOUNT_OWNERUSERID,
-						ownerUserId);
+							org.opencps.util.WebKeys.ACCOUNT_OWNERUSERID,
+							ownerUserId);
 
 					session.setAttribute(
-						org.opencps.util.WebKeys.ACCOUNT_ROLES, accountRoles);
+							org.opencps.util.WebKeys.ACCOUNT_ROLES,
+							accountRoles);
 
 					session.setAttribute(
-						org.opencps.util.WebKeys.ACCOUNT_ORGANIZATION,
-						accountOrgs);
+							org.opencps.util.WebKeys.ACCOUNT_ORGANIZATION,
+							accountOrgs);
 
+				} else {
+					_log.info(DefineObjectsTag.class.getName()
+							+ ": ##########################: AccountBean is null");
 				}
-				else {
-					_log.info(DefineObjectsTag.class.getName() +
-						": ##########################: AccountBean is null");
-				}
 
-			}
-			catch (Exception e) {
+			} catch (Exception e) {
 				_log.error(e);
-			}
-			finally {
-				accountBean =
-					new AccountBean(
-						accountInstance, accountType, accountRoles,
-						accountOrgs, ownerUserId, ownerOrganizationId);
-				session.setAttribute(
-					org.opencps.util.WebKeys.ACCOUNT_BEAN, accountBean);
+			} finally {
+				accountBean = new AccountBean(accountInstance, accountType,
+						accountRoles, accountOrgs, ownerUserId,
+						ownerOrganizationId);
+				session.setAttribute(org.opencps.util.WebKeys.ACCOUNT_BEAN,
+						accountBean);
 			}
 
 		}

@@ -30,14 +30,16 @@ import org.json.JSONObject;
 import org.opencps.dossiermgt.model.Dossier;
 import org.opencps.dossiermgt.model.DossierFile;
 import org.opencps.dossiermgt.model.FileGroup;
+import org.opencps.dossiermgt.model.ServiceConfig;
 import org.opencps.dossiermgt.permissions.DossierPermission;
 import org.opencps.dossiermgt.service.DossierFileLocalServiceUtil;
 import org.opencps.dossiermgt.service.DossierLocalServiceUtil;
 import org.opencps.dossiermgt.service.FileGroupLocalServiceUtil;
+import org.opencps.dossiermgt.service.ServiceConfigLocalServiceUtil;
 import org.opencps.dossiermgt.service.persistence.DossierActionableDynamicQuery;
 import org.opencps.dossiermgt.util.PortletKeys;
-import org.opencps.processmgt.model.ProcessOrder;
-import org.opencps.processmgt.service.ProcessOrderLocalServiceUtil;
+import org.opencps.servicemgt.model.ServiceInfo;
+import org.opencps.servicemgt.service.ServiceInfoLocalServiceUtil;
 import org.opencps.util.ActionKeys;
 
 import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
@@ -109,6 +111,7 @@ public class DossierIndexer extends BaseIndexer {
 		}
 		if (dossier.getModifiedDate() != null) {
 			document.addDate(Field.MODIFIED_DATE, dossier.getModifiedDate());
+			document.addDate(DossierDisplayTerms.MODIFIED_DATE, dossier.getModifiedDate());
 		}
 		if (dossier.getCityName() != null
 				&& !Validator.isBlank(dossier.getCityName())) {
@@ -194,11 +197,12 @@ public class DossierIndexer extends BaseIndexer {
 		// add by trungnt
 		document.addDate(DossierDisplayTerms.SUBMIT_DATETIME,
 				dossier.getSubmitDatetime());
+		document.addDate(DossierDisplayTerms.RECEIVE_DATETIME,
+				dossier.getReceiveDatetime());
 		document.addDate(DossierDisplayTerms.ESTIMATE_DATETIME,
 				dossier.getEstimateDatetime());
 		document.addDate(DossierDisplayTerms.FINISH_DATETIME,
 				dossier.getFinishDatetime());
-
 		document.addNumber(DossierDisplayTerms.OWNERORGANIZATION_ID,
 				dossier.getOwnerOrganizationId());
 
@@ -206,6 +210,44 @@ public class DossierIndexer extends BaseIndexer {
 
 		document.addKeyword(DossierDisplayTerms.DOSSIER_STATUS,
 				dossier.getDossierStatus());
+
+		if (Validator.isNotNull(dossier.getGovAgencyCode())) {
+			document.addKeyword(DossierDisplayTerms.GOVAGENCY_CODE,
+					dossier.getGovAgencyCode());
+			document.addKeyword(DossierDisplayTerms.GOVAGENCY_NAME,
+					dossier.getGovAgencyName());
+		}
+
+		if (dossier.getServiceConfigId() > 0) {
+			try {
+				ServiceConfig serviceConfig = ServiceConfigLocalServiceUtil
+						.getServiceConfig(dossier.getServiceConfigId());
+				if (Validator.isNotNull(serviceConfig.getDomainCode())) {
+					document.addKeyword(
+							DossierDisplayTerms.SERVICE_DOMAIN_CODE,
+							serviceConfig.getDomainCode());
+				}
+			} catch (Exception e) {
+				_log.info("No found serviceConfig width dossier.getServiceConfigId() = "
+						+ dossier.getServiceConfigId()
+						+ " : Cause "
+						+ e.getCause());
+			}
+		}
+
+		if (dossier.getServiceInfoId() > 0) {
+			try {
+				ServiceInfo serviceInfo = ServiceInfoLocalServiceUtil
+						.getServiceInfo(dossier.getServiceInfoId());
+				document.addKeyword(DossierDisplayTerms.SERVICE_NAME,
+						serviceInfo.getServiceName());
+			} catch (Exception e) {
+				_log.info("No found serviceInfo width dossier.getServiceInfoId() = "
+						+ dossier.getServiceInfoId()
+						+ " : Cause "
+						+ e.getCause());
+			}
+		}
 
 		// Thanh phan ho so chinh dang su dung (fileGroupId = 0, removed = 0)
 
