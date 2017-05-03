@@ -1,4 +1,5 @@
 
+<%@page import="com.liferay.portal.kernel.util.Constants"%>
 <%@page import="org.opencps.jasperreport.util.JRReportUtil.DocType"%>
 <%@page import="org.opencps.util.PortletUtil"%>
 <%
@@ -122,7 +123,7 @@
 />
 
 <aui:form action="<%= configurationActionURL %>" method="post" name="configurationForm">
-
+	<aui:input type="hidden" name="<%= Constants.CMD %>" value="<%= Constants.UPDATE %>" />
 	<c:choose>
 		<c:when test='<%=tabs2.equalsIgnoreCase("dossier-list") %>'>
 			<liferay-ui:panel-container 
@@ -152,7 +153,7 @@
 								<liferay-ui:message key="treemenu-left-table"/>
 							</aui:option>
 							
-							<aui:option selected="<%= dossierListDisplayStyle.equals(\"dklr_v10\") %>" value="treemenu_left_table">
+							<aui:option selected="<%= dossierListDisplayStyle.equals(\"dklr_v10\") %>" value="dklr_v10">
 								<liferay-ui:message key="dklr_v10"/>
 							</aui:option>
 						</aui:select>
@@ -290,6 +291,20 @@
 							%>
 						</optgroup>
 					</aui:select>
+				</liferay-ui:panel>
+				
+				<liferay-ui:panel 
+					collapsible="<%= true %>" 
+					extended="<%= true %>" 
+					id="dklrV10DisplayPanel" 
+					persistState="<%= true %>" 
+					title="dklr-v10-style"
+				>
+					<aui:input 
+						type="text" 
+						name="preferences--dklr_v10_administrationCode--"
+						value='<%= dklr_v10_administrationCode %>'
+					/>
 				</liferay-ui:panel>
 			</liferay-ui:panel-container>
 		</c:when>

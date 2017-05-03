@@ -29,7 +29,7 @@ import javax.portlet.RenderResponse;
 
 import org.opencps.util.WebKeys;
 
-import com.liferay.portal.kernel.portlet.ConfigurationAction;
+import com.liferay.portal.kernel.portlet.DefaultConfigurationAction;
 import com.liferay.portal.kernel.servlet.SessionMessages;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.StringUtil;
@@ -41,7 +41,7 @@ import com.liferay.portlet.PortletURLFactoryUtil;
  * @author trungnt
  *
  */
-public class ConfigurationImpl implements ConfigurationAction {
+public class ConfigurationImpl extends DefaultConfigurationAction {
 
 	/*
 	 * (non-Javadoc)
@@ -74,6 +74,8 @@ public class ConfigurationImpl implements ConfigurationAction {
 		}
 
 		preferences.store();
+		
+		super.processAction(portletConfig, actionRequest, actionResponse);
 
 		SessionMessages.add(actionRequest, "potlet-config-saved");
 

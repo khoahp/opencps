@@ -1,4 +1,6 @@
 
+<%@page import="org.opencps.servicemgt.model.ServiceInfo"%>
+<%@page import="org.opencps.servicemgt.service.ServiceInfoLocalServiceUtil"%>
 <%@page import="com.liferay.portal.kernel.dao.orm.QueryUtil"%>
 <%@page import="org.opencps.dossiermgt.service.DossierLogLocalServiceUtil"%>
 <%@page import="org.opencps.dossiermgt.model.DossierLog"%>
@@ -72,9 +74,7 @@
 />
 
 <%
-	String dossierStatusCHKInit = ParamUtil.getString(request, DossierDisplayTerms.DOSSIER_STATUS, "-1");
 	String dossierStatus = ParamUtil.getString(request, DossierDisplayTerms.DOSSIER_STATUS, StringPool.BLANK);
-	int itemsToDisplay_cfg = GetterUtil.getInteger(portletPreferences.getValue("itemsToDisplay", "2"));
 	
 	String dossierType = ParamUtil.getString(request, "dossierType", "");
 	String vehicleClass = ParamUtil.getString(request, "vehicleClass", "");
@@ -103,11 +103,6 @@
 	
 	int totalCount = 0;
 
-	JSONObject arrayParam = JSONFactoryUtil
-		    .createJSONObject();
-	arrayParam.put(DossierDisplayTerms.SERVICE_DOMAIN_ID, (serviceDomainId > 0) ? String.valueOf(serviceDomainId):StringPool.BLANK);
-	arrayParam.put(DossierDisplayTerms.DOSSIER_STATUS, String.valueOf(dossierStatus));
-	
 	List<String> headerNames = new ArrayList<String>();
 	headerNames.add("stt");
 	headerNames.add("reception-no");
@@ -117,9 +112,15 @@
 	headerNames.add("note");
 	headerNames.add("action");
 	
+	List<DictItem> listDossierStatus = DictItemLocalServiceUtil.findDictItemsByG_DC_S(scopeGroupId, "DOSSIER_STATUS");
+	List<DictItem> listVehicleClass = DictItemLocalServiceUtil.findDictItemsByG_DC_S(scopeGroupId, "VEHICLE_CLASS");
+	
+	List<ServiceInfo> listServiceInfo = ServiceInfoLocalServiceUtil.searchService(scopeGroupId, StringPool.BLANK, 
+			dklr_v10_administrationCode, StringPool.BLANK, null, -1, -1);
+	
 %>
 
-<aui:form action="" method="post" name="fm">
+<aui:form action="<%= iteratorURL %>" method="get" name="fm">
 	<aui:row>
 		<aui:col width="100">
 			<h4><liferay-ui:message key="tim-kiem-ho-so" /></h4>
@@ -133,6 +134,9 @@
 			<aui:row>
 				<aui:col width="100" >
 					<aui:select name="serviceInfoNo" label="service-info" showEmptyOption="<%= true %>">
+						<% for(ServiceInfo serviceInfoTmp : listServiceInfo) { %>
+							<aui:option value="<%= serviceInfoTmp.getServiceNo() %>" label="<%= serviceInfoTmp.getServiceName() %>" />
+						<% } %>
 					</aui:select>
 				</aui:col>
 			</aui:row>
@@ -140,22 +144,28 @@
 			<aui:row>
 				<aui:col width="50" >
 					<aui:select name="vehicleClass" label="doi-tuong" showEmptyOption="<%= true %>">
+						<% for(DictItem itemTmp : listVehicleClass) { %>
+							<aui:option value="<%= itemTmp.getItemCode() %>" label="<%= itemTmp.getItemName(themeDisplay.getLocale()) %>" />
+						<% } %>
 					</aui:select>
 				</aui:col>
 				
 				<aui:col width="50" >
 					<aui:select name="dossierStatus" showEmptyOption="<%= true %>">
+						<% for(DictItem itemTmp : listDossierStatus) { %>
+							<aui:option value="<%= itemTmp.getItemCode() %>" label="<%= itemTmp.getItemName(themeDisplay.getLocale()) %>" />
+						<% } %>
 					</aui:select>
 				</aui:col>
 			</aui:row>
 			
 			<aui:row>
 				<aui:col width="50" >
-					<aui:input type="date" name="submitDateTimeFrom" label="ngay-nop-ho-so" />
+					<aui:input type="text" name="submitDateTimeFrom" label="ngay-nop-ho-so" />
 				</aui:col>
 				
 				<aui:col width="50" >
-					<aui:input type="date" name="submitDateTimeTo" label="den-ngay" />
+					<aui:input type="text" name="submitDateTimeTo" label="den-ngay" />
 				</aui:col>
 			</aui:row>
 			
@@ -170,13 +180,6 @@
 	<aui:row>
 		<aui:col width="100" >
 			<div class="opencps-searchcontainer-wrapper default-box-shadow radius8">
-				<div class="opcs-serviceinfo-list-label">
-					<div class="title_box">
-						<p class="file_manage_title ds"><liferay-ui:message key="title-danh-sach-ho-so" /></p>
-						<p class="count"></p>
-					</div>
-				</div>
-				
 				<liferay-ui:search-container searchContainer="<%= new DossierSearch(renderRequest, SearchContainer.DEFAULT_DELTA, iteratorURL, headerNames) %>">
 				
 					<liferay-ui:search-container-results>
@@ -198,17 +201,11 @@
 								}
 								
 								%>
-										<%@include file="/html/portlets/dossiermgt/frontoffice/dosier_search_results.jspf" %>
+										<%@include file="/html/portlets/dossiermgt/frontoffice/dosier_search_results_index.jspf" %>
 								<%
 							}catch(Exception e){
 								_log.error(e);
 							}
-						
-							total = totalCount;
-							results = dossiers;
-							
-							pageContext.setAttribute("results", results);
-							pageContext.setAttribute("total", total);
 						%>
 					</liferay-ui:search-container-results>	
 						<liferay-ui:search-container-row 
@@ -241,7 +238,7 @@
 							<%=dossier.getReceptionNo() %>
 						</liferay-util:buffer>
 						
-						<liferay-util:buffer var="col2">
+						<liferay-util:buffer var="col3">
 							<liferay-ui:message key="<%=vehicleClass %>"/>
 						</liferay-util:buffer>
 						
@@ -292,6 +289,24 @@
 		</aui:col>
 	</aui:row>
 </aui:form>
+
+ <aui:script>
+AUI().use('aui-datepicker', function(A) {
+	new A.DatePicker({
+		trigger : '#<portlet:namespace/>submitDateTimeFrom',
+		popover : {
+			zIndex : 1
+		}
+	});
+	
+	new A.DatePicker({
+		trigger : '#<portlet:namespace/>submitDateTimeTo',
+		popover : {
+			zIndex : 1
+		}
+	});
+});
+</aui:script>
 
 <%!
 	private Log _log = LogFactoryUtil.getLog("html_portlets_dossiermgt_frontoffice_display_dklr_10_jsp");

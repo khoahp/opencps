@@ -1,3 +1,4 @@
+<%@page import="com.liferay.portal.kernel.search.Hits"%>
 <%
 /**
  * OpenCPS is the open source Core Public Services software
@@ -16,17 +17,18 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 %>
-<%@page import="com.liferay.portal.kernel.log.Log"%>
-<%@page import="com.liferay.portal.kernel.log.LogFactoryUtil"%>
 
-<%@ include file="../init.jsp"%>
+<%
 
-<liferay-util:include page='<%=templatePath + "toptabs.jsp" %>' servletContext="<%=application %>" />
+Hits hits = null;
 
-<div class="dossierListStyle_<%= dossierListDisplayStyle %>">
-	<liferay-util:include page='<%=templatePath + "display/dossierlist/" + dossierListDisplayStyle + ".jsp" %>' servletContext="<%=application %>" />
-</div>
+String pa = "(dossierStatus=?) [and] (serviceInfoNo = ?)";
+List<Object> params = new ArrayList<Object>();
+params.add("");
+params.add("");
 
-<%!
-	private Log _log = LogFactoryUtil.getLog("html.portlets.dossiermgt.frontoffice.frontofficedossierlist.jsp");
+//LuceneQuery luceneQuery = new LuceneQuery(pattern, luceneMenuSchema.getParams(), searchContext);
+
+searchContainer.setResults(new ArrayList<Dossier>());
+searchContainer.setTotal(0);
 %>
