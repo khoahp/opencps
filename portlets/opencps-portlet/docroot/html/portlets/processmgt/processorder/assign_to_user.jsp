@@ -434,7 +434,7 @@
 										<c:choose>
 											<c:when test="<%=dossierFileInUse.isSigned() %>">
 												<aui:a href="javascript:void(0);" onClick='<%="javavscript:" + renderResponse.getNamespace() + "verifySign(this)" %>' title="" dossier-file="<%=dossierFileInUse.getDossierFileId() %>">
-												<i class="fa fa fa-info-circle" aria-hidden="true" title="signed"></i>
+												<i class="fa fa fa-info-circle" aria-hidden="true" title='<%= LanguageUtil.get(locale, "signed") %>'></i>
 												</aui:a>
 											</c:when>
 											<c:otherwise>
