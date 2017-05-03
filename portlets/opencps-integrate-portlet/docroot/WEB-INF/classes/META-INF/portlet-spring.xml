@@ -1,7 +1,0 @@
-<?xml version="1.0"?>
-
-<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" default-destroy-method="destroy" default-init-method="afterPropertiesSet" xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
-	<bean id="org.opencps.integrate.dao.service.IntegrateAPILocalService" class="org.opencps.integrate.dao.service.impl.IntegrateAPILocalServiceImpl" />
-	<bean id="org.opencps.integrate.dao.service.IntegrateAPIService" class="org.opencps.integrate.dao.service.impl.IntegrateAPIServiceImpl" />
-	<bean id="org.opencps.integrate.dao.service.persistence.IntegrateAPIPersistence" class="org.opencps.integrate.dao.service.persistence.IntegrateAPIPersistenceImpl" parent="basePersistence" />
-</beans>

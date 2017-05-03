@@ -76,7 +76,6 @@ portlets/opencps-portlet/docroot/WEB-INF/service/
 portlets/opencps-portlet/docroot/WEB-INF/sql/
 portlets/opencps-portlet/docroot/WEB-INF/lib/
 portlets/opencps-portlet/docroot/css/.sass-cache/
-portlets/opencps-portlet/docroot/WEB-INF/src/META-INF
 portlets/opencps-portlet/docroot/WEB-INF/src/service.properties
 
 portlets/opencps-portlet/docroot/WEB-INF/src/org/opencps/datamgt/model/
@@ -129,7 +128,6 @@ hooks/opencps-hook/docroot/WEB-INF/classes/content/Language_vi.properties
 
 portlets/opencps-portlet/docroot/WEB-INF/src/org/opencps/servicemgt/service/base/
 
-portlets/opencps-portlet/docroot/WEB-INF/src/META-INF/
 portlets/opencps-portlet/docroot/WEB-INF/src/org/opencps/accountmgt/model/
 
 portlets/opencps-portlet/docroot/WEB-INF/src/org/opencps/usermgt/model/impl/
@@ -332,3 +330,33 @@ portlets/opencps-portlet/docroot/WEB-INF/src/org/opencps/mobile/standalone.xml
 portlets/opencps-integrate-portlet/docroot/css/.*
 *.DS_Store
 portlets/opencps-portlet/docroot/WEB-INF/src/org/opencps/mobile/
+
+portlets/opencps-integrate-portlet/docroot/WEB-INF/classes/
+
+portlets/opencps-integrate-portlet/docroot/WEB-INF/src/org/opencps/integrate/dao/model/impl/
+
+portlets/opencps-integrate-portlet/docroot/WEB-INF/src/org/opencps/integrate/dao/service/base/
+
+portlets/opencps-integrate-portlet/docroot/WEB-INF/src/org/opencps/integrate/dao/service/http/
+
+portlets/opencps-integrate-portlet/docroot/WEB-INF/src/org/opencps/integrate/dao/service/persistence/IntegrateAPIPersistenceImpl.java
+
+portlets/opencps-integrate-portlet/docroot/WEB-INF/src/service\.properties
+
+portlets/opencps-integrate-portlet/docroot/WEB-INF/service/org/opencps/integrate/dao/service/messaging/
+
+portlets/opencps-integrate-portlet/docroot/WEB-INF/service/org/opencps/integrate/dao/model/
+
+portlets/opencps-integrate-portlet/docroot/WEB-INF/service/org/opencps/integrate/dao/service/persistence/IntegrateAPIUtil.java
+
+portlets/opencps-integrate-portlet/docroot/WEB-INF/service/org/opencps/integrate/dao/service/persistence/IntegrateAPIPersistence.java
+
+portlets/opencps-integrate-portlet/docroot/WEB-INF/service/org/opencps/integrate/dao/service/persistence/IntegrateAPIActionableDynamicQuery.java
+
+portlets/opencps-integrate-portlet/docroot/WEB-INF/service/org/opencps/integrate/dao/service/
+
+portlets/opencps-integrate-portlet/docroot/WEB-INF/service/org/opencps/integrate/dao/DossierStatusException.java
+
+portlets/opencps-integrate-portlet/docroot/WEB-INF/service/org/opencps/integrate/dao/NoMessageContentException.java
+
+portlets/opencps-integrate-portlet/docroot/WEB-INF/service/org/opencps/integrate/dao/NoSuchIntegrateAPIException.java
