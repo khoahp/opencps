@@ -27,9 +27,14 @@ import org.opencps.dossiermgt.service.ServiceConfigLocalServiceUtil;
 import org.opencps.integrate.dao.model.IntegrateAPI;
 import org.opencps.integrate.utils.APIUtils;
 import org.opencps.integrate.utils.AccountModel;
+import org.opencps.integrate.utils.ActionModel;
 import org.opencps.integrate.utils.DLFolderUtil;
 import org.opencps.integrate.utils.DossierModel;
 import org.opencps.integrate.utils.DossierUtils;
+import org.opencps.processmgt.model.ProcessOrder;
+import org.opencps.processmgt.model.ProcessWorkflow;
+import org.opencps.processmgt.service.ProcessOrderLocalServiceUtil;
+import org.opencps.processmgt.service.ProcessWorkflowLocalServiceUtil;
 import org.opencps.servicemgt.model.ServiceInfo;
 import org.opencps.servicemgt.service.ServiceInfoLocalServiceUtil;
 
@@ -40,6 +45,7 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.messaging.Message;
 import com.liferay.portal.kernel.messaging.MessageBusUtil;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.User;
@@ -49,9 +55,9 @@ import com.liferay.portlet.documentlibrary.model.DLFolder;
 
 @Path("/api")
 public class OCPSDossierController {
-	
+
 	@POST
-	@Path("/dossiers/{dossierid}/actions")
+	@Path("/dossiers/{dossierid: .*}/actions")
 	@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
 	public Response submitDossier(@HeaderParam("apikey") String apikey,
 			@Context HttpServletRequest request,
@@ -64,42 +70,106 @@ public class OCPSDossierController {
 		OCPSAuth auth = new OCPSAuth();
 
 		IntegrateAPI api = auth.auth(apikey);
-		
+
 		boolean isPermit = permit.isDossierPermission(apikey)
-				&& permit.isSendValidatorDossier(dossierid)
-				&& permit.isDossierDetailPermission(apikey, dossierid);
+
+		&& permit.isDossierDetailPermission(apikey, dossierid);
 
 		if (Validator.isNotNull(api)) {
 			if (isPermit) {
-				
+
 				try {
-					
+					ActionModel am = DossierUtils.getActionModel(body);
+
 					User user = UserLocalServiceUtil.getUser(api.getUserId());
-					
+
 					JSONObject jsonMgs = JSONFactoryUtil.createJSONObject();
-					
-					Dossier dossier = DossierLocalServiceUtil.getDossier(dossierid);
 
-					jsonMgs.put("action", DossierModel.ACTION_SUBMIT_VALUE);
-					jsonMgs.put("dossierId", dossier.getDossierId());
-					jsonMgs.put("fileGroupId", 0);
-					jsonMgs.put("userId", user.getUserId());
-					jsonMgs.put("companyId", user.getCompanyId());
-					jsonMgs.put("groupId", APIUtils.GROUPID);
-					jsonMgs.put("dossierOId", dossier.getOid());
-					jsonMgs.put("govAgencyCode", dossier.getGovAgencyCode());
-					jsonMgs.put("dossierStatus", DossierModel.DOSSIER_STATUS_NEW);
+					Dossier dossier = DossierLocalServiceUtil
+							.getDossier(dossierid);
 
-					Message message = new Message();
-					
-					message.put("jsonMsg", jsonMgs.toString());
-					message.put("msgFrom", "outside");
-					
-					MessageBusUtil.sendMessage(
-							"opencps/frontoffice/out/destination", message);
+					if (am.getActionCode().contentEquals("1000")) {
+
+						if (permit.isSendValidatorDossier(dossierid)) {
+							jsonMgs.put("action",
+									DossierModel.ACTION_SUBMIT_VALUE);
+							jsonMgs.put("dossierId", dossier.getDossierId());
+							jsonMgs.put("fileGroupId", 0);
+							jsonMgs.put("userId", user.getUserId());
+							jsonMgs.put("companyId", user.getCompanyId());
+							jsonMgs.put("groupId", APIUtils.GROUPID);
+							jsonMgs.put("dossierOId", dossier.getOid());
+							jsonMgs.put("govAgencyCode",
+									dossier.getGovAgencyCode());
+							jsonMgs.put("dossierStatus",
+									DossierModel.DOSSIER_STATUS_NEW);
+
+							Message message = new Message();
+
+							message.put("jsonMsg", jsonMgs.toString());
+							message.put("msgFrom", "outside");
+
+							MessageBusUtil.sendMessage(
+									"opencps/frontoffice/out/destination",
+									message);
+
+						} else {
+							// Not access resources
+							return Response.status(403).entity(resp.toString())
+									.build();
+						}
+
+					} else {
+
+						dossier = DossierLocalServiceUtil.getDossier(dossierid);
+
+						ProcessOrder processOrder = ProcessOrderLocalServiceUtil
+								.findBy_Dossier(dossierid);
+
+						ProcessWorkflow processWorkflow = ProcessWorkflowLocalServiceUtil
+								.findByActionCode(am.getActionCode());
+
+						Message msg = new Message();
+
+						JSONObject msgJSON = JSONFactoryUtil.createJSONObject();
+
+						msgJSON.put("companyId", user.getUserId());
+						msgJSON.put("groupId", APIUtils.GROUPID);
+						msgJSON.put("actionNote", am.getActionNote());
+						msgJSON.put("assignToUserId", 0l);
+						msgJSON.put("actionUserId", user.getUserId());
+						msgJSON.put("dossierId", dossierid);
+						msgJSON.put("fileGroupId", 0l);
+						msgJSON.put("paymentValue", GetterUtil.getDouble(0));
+						msgJSON.put("processOrderId",
+								processOrder.getProcessOrderId());
+
+						msgJSON.put("receptionNo", am.getDossierNo());
+						msgJSON.put("signature", 0);
+						msgJSON.put("dossierStatus", dossier.getDossierStatus());
+						msgJSON.put("actionDatetime", am.getModifiedDate());
+						msgJSON.put("receiveDate", am.getReceviceDate());
+						msgJSON.put("finishedDate", am.getFinishedDate());
+						msgJSON.put("estimateDatetime", am.getFinishedDate());
+
+						if (Validator.isNotNull(processWorkflow.getAutoEvent())) {
+							msgJSON.put("event", processWorkflow.getAutoEvent());
+						} else {
+							msgJSON.put("processWorkflowId",
+									processWorkflow.getProcessWorkflowId());
+						}
+
+						msg.put("jsonMsg", msgJSON.toString());
+						msg.put("msgFrom", "outside");
+
+						MessageBusUtil.sendMessage(
+								"opencps/backoffice/engine/destination", msg);
+					}
 
 					return Response.status(200).entity(resp.toString()).build();
+
 				} catch (Exception e) {
+
 					return Response.status(404).entity(resp.toString()).build();
 				}
 			} else {
@@ -252,8 +322,6 @@ public class OCPSDossierController {
 
 		return jsDossierParts;
 	}
-	
-	
 
 	@POST
 	@Path("/dossiers")
@@ -409,10 +477,11 @@ public class OCPSDossierController {
 							dossierDestinationFolder, StringPool.BLANK, false,
 							context);
 
-					Dossier dossier = DossierUtils.getDossierIdByOid(dm.getReferenceUid());
+					Dossier dossier = DossierUtils.getDossierIdByOid(dm
+							.getReferenceUid());
 
 					if (Validator.isNull(dossier)) {
-						
+
 						dossier = DossierLocalServiceUtil.addDossier(
 								context.getUserId(), ownerOrganizationId,
 								dossierTemplateId, templateFileNo,
@@ -431,11 +500,11 @@ public class OCPSDossierController {
 								DossierModel.DOSSIER_STATUS_NEW,
 								dossierFolder.getFolderId(), StringPool.BLANK,
 								context);
-						
+
 						dossier.setOid(dm.getReferenceUid());
-						
+
 						DossierLocalServiceUtil.updateDossier(dossier);
-						
+
 						resp.put("Result", "New");
 						resp.put("DossierId", dossier.getDossierId());
 						resp.put("ReferenceId", dossier.getOid());
@@ -462,9 +531,9 @@ public class OCPSDossierController {
 
 					resp.put("ErrorMessage",
 							APIUtils.getLanguageValue("create-dossier-error"));
-					
+
 					_log.error(e);
-					
+
 					return Response.status(404).entity(resp.toString()).build();
 				}
 
