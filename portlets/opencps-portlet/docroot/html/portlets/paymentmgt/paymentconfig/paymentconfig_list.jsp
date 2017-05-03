@@ -23,7 +23,7 @@
 	servletContext="<%=application%>" />
 
 <%
-	_log.info("test");
+	
 	PortletURL iteratorURL = renderResponse.createRenderURL();
 	iteratorURL.setParameter("tabs1", PortletKeys.PAYMENTCONFIG_TAB);
  %>

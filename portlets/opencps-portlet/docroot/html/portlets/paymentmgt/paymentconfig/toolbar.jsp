@@ -22,7 +22,7 @@
 <%@ include file="../init.jsp"%>
 
 <%
-	System.out.println("test1");
+	
 %>
 
 
