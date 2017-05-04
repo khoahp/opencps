@@ -1,4 +1,4 @@
-
+<%@page import="com.liferay.portal.kernel.search.Hits"%>
 <%
 /**
  * OpenCPS is the open source Core Public Services software
@@ -18,14 +18,17 @@
  */
 %>
 
-<%@ include file="/init.jsp" %>
-<%@page import="com.liferay.portal.security.permission.PermissionThreadLocal"%>
-<%@page import="com.liferay.portal.security.permission.PermissionCheckerFactoryUtil"%>
-<%@page import="com.liferay.portal.security.permission.PermissionChecker"%>
-<%@page import="com.liferay.portal.security.auth.PrincipalThreadLocal"%>
-<%@page import="java.util.ArrayList"%>
-<%@page import="java.util.List"%>
-<%@page import="javax.portlet.PortletURL"%>
+<%
 
-<%@page import="com.liferay.portal.kernel.dao.orm.QueryUtil"%>
+Hits hits = null;
 
+String pa = "(dossierStatus=?) [and] (serviceInfoNo = ?)";
+List<Object> params = new ArrayList<Object>();
+params.add("");
+params.add("");
+
+//LuceneQuery luceneQuery = new LuceneQuery(pattern, luceneMenuSchema.getParams(), searchContext);
+
+searchContainer.setResults(new ArrayList<Dossier>());
+searchContainer.setTotal(0);
+%>

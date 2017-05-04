@@ -154,6 +154,5 @@ public class PortletPropsKeys {
 	public static final String NOTIFICATION_INBOX_BODY = "opencps.notificationmgt.body";
 	
 	public static final String DM_USER_GROUP_NOTIFY = "opencps.datamgt.masterdata.notification.user.group";
-	public static final String DM_POSTAL_GATE = "opencps.datamgt.masterdata.postalgate";
 	
 }

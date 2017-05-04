@@ -154,6 +154,8 @@ public class WebKeys implements com.liferay.portal.kernel.util.WebKeys {
 
 	public static final String ACTION_SUBMIT_VALUE = "submit";
 
+	public static final String ACTION_ONEGATE_VALUE = "onegate";
+
 	public static final String ACTION_RESUBMIT_VALUE = "resubmit";
 
 	public static final String ACTION_CHANGE_VALUE = "change";
@@ -209,6 +211,7 @@ public class WebKeys implements com.liferay.portal.kernel.util.WebKeys {
 
 	public static final int PAYMENT_METHOD_BANK = 3;
 	
+	public static final int PAYMENT_METHOD_VTCPAY = 4;
 
 	public static final String REQUEST_COMMAND_CANCEL = "cancel";
 
@@ -257,7 +260,7 @@ public class WebKeys implements com.liferay.portal.kernel.util.WebKeys {
 	public static final String SYNC_PAY_SEND_CONFIRM = "SYNC_PAY_SEND_CONFIRM";
 	public static final String SYNC_PAY_CONFIRM = "SYNC_PAY_CONFIRM";
 	
-	public static final int DISABLE = 2;
+	public static final int DISABLE = 0;
 	public static final int ACTIVE = 1;
 	
 	public static final String BACK_URL= "backURL";

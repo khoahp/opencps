@@ -66,15 +66,31 @@
 	String cmd =
 		ParamUtil.getString(request, Constants.CMD, Constants.UPDATE);
 
-	String[] dossierSections = dossier != null ? new String[] {
-		"dossier_part", "result", "history", "dossier_info"
-	} : new String[] {
-		"dossier_info"
-	};
+	String[] dossierSections = null;
+	
+	if(dossier == null){
+		dossierSections = new String[] {
+			"dossier_info"
+		};
+	} else if(dossier != null && dossier.getDossierStatus() != PortletConstants.DOSSIER_STATUS_NEW) {
+		dossierSections = new String[] {
+			"dossier_part", "result", "history", "dossier_info"
+		};
+	} else if(dossier != null && dossier.getDossierStatus() == PortletConstants.DOSSIER_STATUS_NEW){
+		dossierSections = new String[] {
+			"dossier_part", "dossier_info"
+		};
+	}
 
 	String[][] categorySections = {
 		dossierSections
 	};
+	
+	String dossierDisplayTabPath = templatePath + "dossier/";
+	
+	if(Validator.isNotNull(dossierDisplayStyle) && !dossierDisplayStyle.equalsIgnoreCase("default")) {
+		dossierDisplayTabPath = templatePath + "dossier/" + dossierDisplayStyle + "/";
+	}
 
 	boolean isEditDossier =
 		ParamUtil.getBoolean(request, "isEditDossier");
@@ -420,7 +436,7 @@
 					categorySections="<%= categorySections %>"
 					htmlBottom="<%= htmlBottom %>" 
 					htmlTop="<%= htmlTop %>"
-					jspPath='<%=templatePath + "dossier/" %>' 
+					jspPath='<%=dossierDisplayTabPath %>' 
 					showButtons="<%=false %>"
 				/>
 			</div>

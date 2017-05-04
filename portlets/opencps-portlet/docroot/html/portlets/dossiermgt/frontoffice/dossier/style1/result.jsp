@@ -1,0 +1,357 @@
+<%@page import="com.liferay.portal.kernel.util.HtmlUtil"%>
+<%@page import="org.opencps.datamgt.model.DictItem"%>
+<%@page import="org.opencps.util.PortletPropsValues"%>
+<%@page import="org.opencps.dossiermgt.model.ServiceConfig"%>
+<%@page import="com.liferay.portal.kernel.repository.model.FileEntry"%>
+<%@page import="com.liferay.portlet.documentlibrary.util.DLUtil"%>
+<%@page import="org.opencps.util.DLFileEntryUtil"%>
+<%@page import="com.liferay.portal.kernel.dao.orm.QueryUtil"%>
+<%@page import="org.opencps.dossiermgt.search.DossierSearchUtil"%>
+<%@page import="org.opencps.dossiermgt.service.DossierFileLocalServiceUtil"%>
+<%@page import="org.opencps.dossiermgt.model.DossierFile"%>
+<%
+/**
+ * OpenCPS is the open source Core Public Services software
+ * Copyright (C) 2016-present OpenCPS community
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+%>
+<%@page import="org.opencps.servicemgt.service.ServiceInfoLocalServiceUtil"%>
+<%@page import="org.opencps.servicemgt.model.ServiceInfo"%>
+<%@page import="org.opencps.dossiermgt.util.DossierMgtUtil"%>
+<%@page import="org.opencps.dossiermgt.service.DossierPartLocalServiceUtil"%>
+<%@page import="java.util.ArrayList"%>
+<%@page import="org.opencps.dossiermgt.model.DossierPart"%>
+<%@page import="org.opencps.dossiermgt.model.DossierTemplate"%>
+<%@page import="org.opencps.util.WebKeys"%>
+<%@page import="org.opencps.dossiermgt.model.Dossier"%>
+<%@page import="org.opencps.dossiermgt.service.DossierLogLocalServiceUtil"%>
+<%@page import="org.opencps.dossiermgt.model.DossierLog"%>
+<%@page import="java.util.List"%>
+<%@page import="org.opencps.util.DateTimeUtil"%>
+<%@page import="org.opencps.util.PortletConstants"%>
+<%@page import="org.opencps.util.PortletUtil"%>
+
+
+<%@ include file="../../../init.jsp"%>
+
+<%
+	Dossier dossier = (Dossier) request.getAttribute(WebKeys.DOSSIER_ENTRY);
+	DossierTemplate dossierTemplate = (DossierTemplate) request.getAttribute(WebKeys.DOSSIER_TEMPLATE_ENTRY);
+	
+	ServiceConfig serviceConfig = (ServiceConfig) request.getAttribute(WebKeys.SERVICE_CONFIG_ENTRY);
+	
+	boolean isEditDossier = ParamUtil.getBoolean(request, "isEditDossier");
+	
+	DictItem adminAction = PortletUtil.getDictItem(PortletPropsValues.DATAMGT_MASTERDATA_GOVERNMENT_AGENCY, 
+			serviceConfig.getGovAgencyCode(), 
+			scopeGroupId);
+%>
+<div class="ocps-dossier-process">
+
+	<aui:row cssClass="header-title custom-title">
+		<aui:col width="100">
+			<c:choose>
+				<c:when test="<%= (dossier == null) || (dossier != null && dossier.getDossierStatus().equalsIgnoreCase(PortletConstants.DOSSIER_STATUS_NEW) ) %>">
+					<liferay-ui:message key="add-dossier"/>
+				</c:when>
+				
+				<c:when test="<%= (dossier != null) && (dossier.getDossierStatus().equalsIgnoreCase(PortletConstants.DOSSIER_STATUS_PROCESSING)
+						|| dossier.getDossierStatus().equalsIgnoreCase(PortletConstants.DOSSIER_STATUS_SYSTEM)) %>">
+					<liferay-ui:message key="dossier"/>
+				</c:when>
+				
+				<c:otherwise>
+					<liferay-ui:message key="update-dossier"/>
+				</c:otherwise>
+			</c:choose>
+		</aui:col>
+	</aui:row>
+	
+	<c:choose>
+		<c:when test="<%=dossier != null %>">
+			<%
+				String[] actors = new String[]{};
+				String[] requestCommands = new String[]{StringPool.APOSTROPHE + WebKeys.DOSSIER_LOG_RESUBMIT_REQUEST + StringPool.APOSTROPHE, 
+														StringPool.APOSTROPHE + WebKeys.DOSSIER_LOG_PAYMENT_REQUEST + StringPool.APOSTROPHE};
+				List<DossierLog> dossierLogs = DossierLogLocalServiceUtil.findRequiredProcessDossier(dossier.getDossierId(), actors, requestCommands);
+				List<DossierPart> dossierPartsLevel1 = new ArrayList<DossierPart>();
+				
+				ServiceInfo info = null;
+				String serviceInfoName = StringPool.BLANK;
+				
+				try {
+					
+					info = ServiceInfoLocalServiceUtil.getServiceInfo(dossier.getServiceInfoId());
+					serviceInfoName = info.getServiceName();
+					
+				} catch (Exception e) {}
+					
+				if(dossierTemplate != null){
+					
+					try{
+						List<DossierPart> lstTmp1 = DossierPartLocalServiceUtil.getDossierPartsByT_P_PT(dossierTemplate.getDossierTemplateId(), 0, PortletConstants.DOSSIER_PART_TYPE_RESULT);
+						if(lstTmp1 != null){
+							dossierPartsLevel1.addAll(lstTmp1);
+						}
+					}catch(Exception e){}
+					
+					try{
+						List<DossierPart> lstTmp2 = DossierPartLocalServiceUtil.getDossierPartsByT_P_PT(dossierTemplate.getDossierTemplateId(), 0, PortletConstants.DOSSIER_PART_TYPE_MULTIPLE_RESULT);
+						if(lstTmp2 != null){
+							dossierPartsLevel1.addAll(lstTmp2);
+						}
+					}catch(Exception e){}
+					
+					
+				}
+				
+				request.setAttribute("dossierPartsLevel1", dossierPartsLevel1);
+				request.setAttribute("dossier", dossier);
+			
+			%>
+			
+			<div class="dossier-info-header">
+				<div class="row-fluid">
+					<label class="span3"><liferay-ui:message key="service-name"/>:</label>
+					<p class="span9"><%=HtmlUtil.escape(serviceInfoName) %></p>
+				</div>
+				
+				<div class="row-fluid">
+					<label class="span3"><liferay-ui:message key="service-administration-action"/>:</label>
+					<p class="span9"><%=Validator.isNotNull(adminAction) ? adminAction.getItemName(locale,true) : StringPool.BLANK %></p>
+				</div>
+				
+				<div class="row-fluid">
+					<label class="span3"><liferay-ui:message key="dossier-no"/>:</label>
+					<p class="span3"><%=dossier != null ? dossier.getDossierId() : StringPool.DASH %></p>
+					<label class="span3"><liferay-ui:message key="dossier-reception-no"/>:</label>
+					<p class="span3"><%=dossier != null && Validator.isNotNull(dossier.getReceptionNo()) ? dossier.getReceptionNo() : StringPool.DASH %></p>
+				</div>
+				
+				<div class="row-fluid">
+					<label class="span3"><liferay-ui:message key="dossier-status"/>:</label>
+					<p class="span9"><span class="red"><%=dossier != null ? PortletUtil.getDossierStatusLabel(dossier.getDossierStatus(), locale) : "" %></span></p>
+				</div>
+				
+				<div class="row-fluid">
+					<label class="span3"><liferay-ui:message key="dossier-create-date"/>:</label>
+					<p class="span3">
+						<%=
+							Validator.isNotNull(dossier.getCreateDate()) ?
+							DateTimeUtil.convertDateToString(dossier.getCreateDate(), DateTimeUtil._VN_DATE_TIME_FORMAT) : 
+							DateTimeUtil._EMPTY_DATE_TIME 
+						%>
+					</p>
+					<label class="span3"><liferay-ui:message key="dossier-receive-date"/>:</label>
+					<p class="span3">
+						<%=
+							Validator.isNotNull(dossier.getReceiveDatetime()) ?
+							DateTimeUtil.convertDateToString(dossier.getReceiveDatetime(), DateTimeUtil._VN_DATE_TIME_FORMAT) : 
+							DateTimeUtil._EMPTY_DATE_TIME 
+						%>
+					</p>
+				</div>
+				
+				<div class="row-fluid">
+					<label class="span3"><liferay-ui:message key="dossier-estimate-date"/>:</label>
+					<p class="span3">
+						<%=
+							Validator.isNotNull(dossier.getEstimateDatetime()) ? 
+							DateTimeUtil.convertDateToString(dossier.getEstimateDatetime(), DateTimeUtil._VN_DATE_TIME_FORMAT) : 
+							DateTimeUtil._EMPTY_DATE_TIME
+						%>
+					</p>
+					<label class="span3"><liferay-ui:message key="dossier-update-date"/>:</label>
+					<p class="span3">
+						<%=
+							Validator.isNotNull(dossier.getModifiedDate()) ? 
+							DateTimeUtil.convertDateToString(dossier.getModifiedDate(), DateTimeUtil._VN_DATE_TIME_FORMAT) : 
+							DateTimeUtil._EMPTY_DATE_TIME
+						%>
+					</p>
+				</div>
+				
+				<div class="row-fluid">
+					<label class="span3"><liferay-ui:message key="dossier-submit-date"/>:</label>
+					<p class="span3">
+						<%=
+							Validator.isNotNull(dossier.getSubmitDatetime()) ? 
+							DateTimeUtil.convertDateToString(dossier.getSubmitDatetime(), DateTimeUtil._VN_DATE_TIME_FORMAT) : 
+							DateTimeUtil._EMPTY_DATE_TIME
+						%>
+					</p>
+					<label class="span3"><liferay-ui:message key="dossier-finish-date"/>:</label>
+					<p class="span3">
+						<%=
+							Validator.isNotNull(dossier.getFinishDatetime()) ? 
+							DateTimeUtil.convertDateToString(dossier.getFinishDatetime(), DateTimeUtil._VN_DATE_TIME_FORMAT) : 
+							DateTimeUtil._EMPTY_DATE_TIME
+						%>
+					</p>
+				</div>
+			</div>
+	
+			<c:if test="<%=dossierLogs != null && !dossierLogs.isEmpty() %>">
+			
+				<aui:row cssClass="bottom-line mg-l-30 pd_b20 pd_t20 pd-r60"></aui:row>
+			
+				<aui:row cssClass="pd_t20">
+					<label class="bold uppercase">
+						<liferay-ui:message key="required-process"/>
+					</label>
+				
+						<%
+							int count = 1;
+							for(DossierLog dossierLog : dossierLogs){
+								
+								%>
+									<aui:row cssClass='<%=count <  dossierLogs.size() ? "bottom-line pd_b20 pd_t20" : "pd_t20" %>'>
+										<aui:col width="30">
+											<span class="span1">
+												<i class="fa fa-circle blue sx10"></i>
+											</span>
+											
+											<span class="span2 bold">
+												<%=count %>
+											</span>
+											
+											<span class="span9">
+												<%=
+													Validator.isNotNull(dossierLog.getUpdateDatetime()) ? 
+													DateTimeUtil.convertDateToString(dossierLog.getUpdateDatetime(), DateTimeUtil._VN_DATE_TIME_FORMAT) : 
+													DateTimeUtil._EMPTY_DATE_TIME
+												%>
+											</span>
+										</aui:col>
+										<aui:col width="30">
+											<span class="span4 bold">
+												<liferay-ui:message key="request-command"/>
+											</span>
+											<span class="span8">
+												<liferay-ui:message key="<%=dossierLog.getRequestCommand() %>"/>
+											</span>
+										</aui:col>
+										<aui:col width="30">
+											<span class="span4 bold status-color-denied">
+												<liferay-ui:message key="message-info"/>
+											</span>
+											<span class="span8">
+												<%= DossierMgtUtil.getDossierLogs(PortletConstants.REQUEST_COMMAND_PAYMENT, dossierLog.getMessageInfo()) %>
+											</span>
+										</aui:col>
+									</aui:row>
+									
+								<%
+								count ++;
+							}
+						%>
+					
+				</aui:row>
+			</c:if>
+			
+			<c:if test="<%= dossierPartsLevel1 != null && !dossierPartsLevel1.isEmpty() %>">
+			
+				<aui:row cssClass="bottom-line mg-l-30 pd_b20 pd_t20 pd-r60"></aui:row>
+				
+				<aui:row cssClass="pd_t20">
+					<label class="bold uppercase">
+						<liferay-ui:message key="dossier-file-result"/>
+					</label>
+					<%
+						List<DossierFile> dossierFiles = new ArrayList<DossierFile>();
+						int count = 0;
+						try {
+							if(Validator.isNotNull(dossier)) {
+								dossierFiles = DossierFileLocalServiceUtil
+												.getDossierFileResult(dossier.getDossierId(), QueryUtil.ALL_POS, QueryUtil.ALL_POS,
+													DossierSearchUtil.getDossierFileOrderByComparator(dossierFileListOrderByField, dossierFileListOrderByType));
+							}
+						} catch (Exception e) {
+							
+						}
+						
+						for(DossierFile dossierFile : dossierFiles){
+								String fileURL = StringPool.BLANK;
+								
+								try{
+									FileEntry fileEntry = DLFileEntryUtil.getFileEntry(dossierFile.getFileEntryId());
+									if(fileEntry != null){
+										fileURL = DLUtil.getPreviewURL(fileEntry, fileEntry.getFileVersion(), 
+												themeDisplay, StringPool.BLANK);
+									}
+								}catch(Exception e){
+									continue;
+									
+								}
+							%>
+								<aui:row cssClass='<%=count > 1 ? "top-line pd_b20 pd_t20" : "pd_b20 pd_t20" %>'>
+									<aui:col width="50">
+										<aui:row>
+											<aui:col width="50">
+												<span class="span1">
+													<i class="fa fa-circle blue sx10"></i>
+												</span>
+												<span class="span2">
+													<%=count %>
+												</span>
+												<span class="span9">
+													<%=
+														Validator.isNotNull(dossierFile.getDossierFileDate()) ? 
+														DateTimeUtil.convertDateToString(dossierFile.getDossierFileDate(), DateTimeUtil._VN_DATE_TIME_FORMAT) : 
+														DateTimeUtil._EMPTY_DATE_TIME
+													%>
+												</span>
+											</aui:col>
+											<aui:col width="50">
+												<span class="span5 bold">
+													<liferay-ui:message key="dossier-file-no"/>
+												</span>
+												<span class="span7">
+													<%=Validator.isNotNull(dossierFile.getDossierFileNo()) ? dossierFile.getDossierFileNo() : StringPool.DASH %>
+												</span>
+											</aui:col>
+										</aui:row>
+									</aui:col>
+									<aui:col width="50">
+										<span class="span3 bold status-color-denied">
+											<liferay-ui:message key="dossier-file-name"/>
+										</span>
+										<span class="span6">
+											<a class="blue" href="<%=fileURL%>" target="_blank">
+												<%=Validator.isNotNull(dossierFile.getDisplayName()) ? dossierFile.getDisplayName() : StringPool.BLANK  %>
+											</a>
+										</span>
+										<span class="span3">
+											
+										</span>
+									</aui:col>
+								</aui:row>
+							<%
+							count ++;
+						}
+					%>
+				</aui:row>
+			</c:if>
+	
+		</c:when>
+		
+		<c:otherwise>
+			<div class="portlet-msg-info">
+				<liferay-ui:message key="no-dossier-result-info"/>
+			</div>
+		</c:otherwise>
+		
+	</c:choose>
+</div>

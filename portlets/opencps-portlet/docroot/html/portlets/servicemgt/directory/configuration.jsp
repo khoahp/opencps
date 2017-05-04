@@ -39,16 +39,29 @@
 <liferay-portlet:actionURL var="configurationActionURL" portletConfiguration="true"/>
 
 <aui:form action="<%=configurationActionURL%>" method="post" name="configurationForm">
+	<aui:input name="<%= Constants.CMD %>" type="hidden" value="<%= Constants.UPDATE %>" />
+	
 	<aui:row>
-		<aui:select name="plidServiceDetail" id="plidServiceDetail" label="plid-service-detail">
+		<aui:select name="plidServiceDetail" id="plidServiceDetail" label="plid-service-detail" showEmptyOption="<%= true %>">
 			<%
 				for (Layout lout : allLayout) {
 			%>
-				<aui:option value="<%= lout.getPlid() %>"><%= lout.getName(locale) %></aui:option>
+				<aui:option value="<%= lout.getPlid() %>" selected='<%= lout.getPlid() == plidServiceDetail %>'><%= lout.getName(locale) %></aui:option>
 			<%
 				}
 			%>
 		</aui:select>
+	</aui:row>
+
+	<aui:row>
+		<aui:select name="style">
+			<aui:option value="default" label="default" selected='<%= "default".equals(style) %>'/>
+			<aui:option value="table" label="table" selected='<%= "table".equals(style) %>'/>
+		</aui:select>
+	</aui:row>
+	
+	<aui:row>
+		<aui:input name="showListServiceTemplateFile" value="<%= showListServiceTemplateFile %>" type="checkbox"/>
 	</aui:row>
 
 	<aui:button type="submit" name="Save" value="save"></aui:button>
