@@ -360,3 +360,7 @@ portlets/opencps-integrate-portlet/docroot/WEB-INF/service/org/opencps/integrate
 portlets/opencps-integrate-portlet/docroot/WEB-INF/service/org/opencps/integrate/dao/NoMessageContentException.java
 
 portlets/opencps-integrate-portlet/docroot/WEB-INF/service/org/opencps/integrate/dao/NoSuchIntegrateAPIException.java
+
+portlets/opencps-integrate-portlet/docroot/WEB-INF/src/org/opencps/integrate/dao/service/persistence/IntegrateAPILogsPersistenceImpl.java
+
+portlets/opencps-integrate-portlet/docroot/WEB-INF/service/
