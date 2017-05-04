@@ -54,13 +54,16 @@ public class ConfigurationActionImpl implements ConfigurationAction {
 
 		if (fieldsIndexes != null && fieldsIndexes.length > 0) {
 
-			String[] levels = new String[fieldsIndexes.length];
-			String[] names = new String[fieldsIndexes.length];
-			String[] patterns = new String[fieldsIndexes.length];
-			String[] params = new String[fieldsIndexes.length];
-			String[] paramTypes = new String[fieldsIndexes.length];
+			//String[] levels = new String[fieldsIndexes.length];
+			//String[] names = new String[fieldsIndexes.length];
+			//String[] patterns = new String[fieldsIndexes.length];
+			//String[] params = new String[fieldsIndexes.length];
+			//String[] paramTypes = new String[fieldsIndexes.length];
+			String[] luceneMenuGroupIds = new String[fieldsIndexes.length];
+
 			for (int f = 0; f < fieldsIndexes.length; f++) {
 
+				/*
 				String level = ParamUtil.getString(actionRequest, "level"
 						+ fieldsIndexes[f]);
 				String name = ParamUtil.getString(actionRequest, "name"
@@ -77,24 +80,34 @@ public class ConfigurationActionImpl implements ConfigurationAction {
 				patterns[f] = pattern;
 				params[f] = param;
 				paramTypes[f] = paramType;
+				*/
 
+				String luceneMenuGroupId = ParamUtil.getString(actionRequest,
+						"menuGroupId" + fieldsIndexes[f]);
+				luceneMenuGroupIds[f] = luceneMenuGroupId;
 			}
 
-			preferences.setValues("levels", levels);
-			preferences.setValues("names", names);
-			preferences.setValues("patterns", patterns);
-			preferences.setValues("params", params);
-			preferences.setValues("paramTypes", paramTypes);
+			//preferences.setValues("levels", levels);
+			//preferences.setValues("names", names);
+			//preferences.setValues("patterns", patterns);
+			//preferences.setValues("params", params);
+			//preferences.setValues("paramTypes", paramTypes);
+			preferences.setValues("menuGroupIds", luceneMenuGroupIds);
 		}
+
+		String layoutUUID = ParamUtil.getString(actionRequest, "layoutUUID");
+
+		String targetPortletName = ParamUtil.getString(actionRequest,
+				"targetPortletName");
 		
-		String layoutUUID =  ParamUtil.getString(actionRequest, "layoutUUID");
-		
-		String targetPortletName = ParamUtil.getString(actionRequest, "targetPortletName");
-		
+		int startLevel = ParamUtil.getInteger(actionRequest, "startLevel");
+
 		preferences.setValue("layoutUUID", layoutUUID);
-		
+
 		preferences.setValue("targetPortletName", targetPortletName);
 		
+		preferences.setValue("startLevel", String.valueOf(startLevel));
+
 		preferences.store();
 
 		SessionMessages.add(actionRequest, "potlet-config-saved");
