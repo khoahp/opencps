@@ -50,8 +50,6 @@ import org.opencps.accountmgt.model.Business;
 import org.opencps.accountmgt.model.Citizen;
 import org.opencps.backend.message.UserActionMsg;
 import org.opencps.backend.util.BackendUtils;
-import org.opencps.backend.util.PaymentRequestGenerator;
-import org.opencps.backend.util.PaymentUrlGenerator;
 import org.opencps.datamgt.model.DictCollection;
 import org.opencps.datamgt.model.DictItem;
 import org.opencps.datamgt.service.DictCollectionLocalServiceUtil;
@@ -105,8 +103,6 @@ import org.opencps.dossiermgt.util.ActorBean;
 import org.opencps.dossiermgt.util.DossierMgtUtil;
 import org.opencps.jasperreport.util.JRReportUtil;
 import org.opencps.jasperreport.util.JRReportUtil.DocType;
-import org.opencps.paymentmgt.model.PaymentFile;
-import org.opencps.paymentmgt.model.impl.PaymentFileImpl;
 import org.opencps.processmgt.model.ProcessStep;
 import org.opencps.processmgt.model.ServiceProcess;
 import org.opencps.processmgt.model.impl.ServiceProcessImpl;
@@ -153,7 +149,6 @@ import com.liferay.portal.kernel.util.StreamUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.security.auth.AuthTokenUtil;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.ServiceContextFactory;
 import com.liferay.portal.theme.ThemeDisplay;
@@ -3088,8 +3083,8 @@ public class DossierMgtFrontOfficePortlet extends MVCPortlet {
 		long dossierId = ParamUtil.getLong(actionRequest,
 				DossierDisplayTerms.DOSSIER_ID);
 
-		String note = ParamUtil.getString(actionRequest,
-				DossierDisplayTerms.NOTE);
+		//String note = ParamUtil.getString(actionRequest,
+		//		DossierDisplayTerms.NOTE);
 
 		long fileGroupId = ParamUtil.getLong(actionRequest,
 				DossierFileDisplayTerms.DOSSIER_FILE_DATE);
@@ -3319,10 +3314,10 @@ public class DossierMgtFrontOfficePortlet extends MVCPortlet {
 
 		Date dossierFileDate = null;
 
-		HttpServletRequest request = PortalUtil
+		/*HttpServletRequest request = PortalUtil
 				.getHttpServletRequest(actionRequest);
 
-		String auTock = AuthTokenUtil.getToken(request);
+		String auTock = AuthTokenUtil.getToken(request);*/
 
 		try {
 			validateDynamicFormData(dossierId, dossierPartId, accountBean,

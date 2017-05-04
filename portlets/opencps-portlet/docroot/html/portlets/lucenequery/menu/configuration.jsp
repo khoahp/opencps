@@ -1,10 +1,4 @@
 
-<%@page import="com.liferay.portal.model.Layout"%>
-<%@page import="com.liferay.portal.service.LayoutLocalServiceUtil"%>
-<%@page import="com.liferay.portal.kernel.util.Constants"%>
-<%@page import="org.opencps.lucenequery.service.LuceneQueryPatternLocalServiceUtil"%>
-<%@page import="org.opencps.lucenequery.model.LuceneQueryPattern"%>
-<%@page import="java.util.ArrayList"%>
 <%
 	/**
  * OpenCPS is the open source Core Public Services software
@@ -24,6 +18,14 @@
  */
 %>
 
+<%@page import="com.liferay.portal.model.Layout"%>
+<%@page import="com.liferay.portal.service.LayoutLocalServiceUtil"%>
+<%@page import="com.liferay.portal.kernel.util.Constants"%>
+<%@page import="org.opencps.lucenequery.service.LuceneQueryPatternLocalServiceUtil"%>
+<%@page import="org.opencps.lucenequery.model.LuceneQueryPattern"%>
+<%@page import="java.util.ArrayList"%>
+<%@page import="org.opencps.lucenequery.model.impl.LuceneMenuGroupImpl"%>
+
 <%@ include file="../init.jsp"%>
 
 <style>
@@ -35,14 +37,14 @@
 <%
 	int[] fieldsIndexes = null;
 
-	if(luceneMenuSchemas == null || luceneMenuSchemas.isEmpty()){
-		luceneMenuSchemas = new ArrayList<LuceneMenuSchema>();
-		LuceneMenuSchema luceneMenuSchema = new LuceneMenuSchema(0);
-		luceneMenuSchemas.add(luceneMenuSchema);
+	if(luceneMenuGroups == null || luceneMenuGroups.isEmpty()){
+		luceneMenuGroups = new ArrayList<LuceneMenuGroup>();
+		LuceneMenuGroup luceneMenuGroup = new LuceneMenuGroupImpl();
+		luceneMenuGroups.add(luceneMenuGroup);
 		fieldsIndexes = new int[]{0};
 	}else{
-		fieldsIndexes = new int[luceneMenuSchemas.size()];
-		for(int f = 0; f < luceneMenuSchemas.size(); f++){
+		fieldsIndexes = new int[luceneMenuGroups.size()];
+		for(int f = 0; f < luceneMenuGroups.size(); f++){
 			fieldsIndexes[f] = f;
 		}
 	}
@@ -56,7 +58,7 @@
 	
 	<aui:fieldset>
 		<aui:row>
-			<aui:col width="50">
+			<aui:col width="30">
 				<aui:input 
 					name="targetPortletName"
 					type="text" 
@@ -66,8 +68,8 @@
 				/>
 			</aui:col>
 			
-			<aui:col width="50">
-				<aui:select name="layoutUUID" label="linkToPage" cssClass="input100">
+			<aui:col width="30">
+				<aui:select name="layoutUUID" label="link-to-page" cssClass="input100">
 					<c:if test="<%=privateLayouts != null %>">
 					<%
 						for(Layout privateLayout : privateLayouts){
@@ -81,88 +83,54 @@
 					</c:if>
 				</aui:select>
 			</aui:col>
+			
+			<aui:col width="30">
+				<aui:input 
+					name="startLevel"
+					type="text" 
+					label="start-level" 
+					value="<%=startLevel %>" 
+					cssClass="input100"
+				>
+					<aui:validator name="required"/>
+					<aui:validator name="number"/>
+					<aui:validator name="min">0</aui:validator>
+					<aui:validator name="max">10</aui:validator>
+				</aui:input>
+			</aui:col>
 		</aui:row>
 	</aui:fieldset>
 	
 	<aui:fieldset id="dynamicMenu">
-		<%	List<LuceneQueryPattern> luceneQueryPatterns = LuceneQueryPatternLocalServiceUtil.
-					getLuceneQueryPatternsByGroupId(scopeGroupId);
+		<%	
+			List<LuceneMenuGroup> luceneMenuGroupTemps = LuceneMenuGroupLocalServiceUtil.getLuceneMenuGroupsByGroupId(scopeGroupId);
+		
 			if(fieldsIndexes != null){
 				for(int f = 0; f < fieldsIndexes.length; f++){
 					int index = fieldsIndexes[f];
-					LuceneMenuSchema luceneMenuSchema = luceneMenuSchemas.get(f);
+					LuceneMenuGroup luceneMenuGroup = luceneMenuGroups.get(f);
 					%>
 						<div class="lfr-form-row lfr-form-row-inline">
 							<div class="row-fields">
-								<aui:row>
-									<aui:col width="50">
-										<aui:input 
-											name='<%="level" + index %>' 
-											label="menu-item-level" 
-											type="text"
-											value="<%=luceneMenuSchema.getLevel() %>"
-											cssClass="input100"
-										>
-											<aui:validator name="required"/>
-											<aui:validator name="number"/>
-											<aui:validator name="min">0</aui:validator>
-											<aui:validator name="max">10</aui:validator>
-										</aui:input>
-									</aui:col>
-									<aui:col width="50">
-										<aui:input 
-											name='<%="name" + index %>' 
-											label="menu-item-name" 
-											type="text" 
-											cssClass="input100"
-											value="<%=luceneMenuSchema.getName() %>"
-										>
-											<aui:validator name="required"/>
-										</aui:input>
-									</aui:col>
-								</aui:row>
+								
 								<aui:row>
 									<aui:col width="100">
 										
-										<aui:select name='<%="pattern" + index %>' label="pattern" cssClass="input100">
+										<aui:select name='<%="menuGroupId" + index %>' label="lucene-menu-group" cssClass="input100">
 											<%
-												if(luceneQueryPatterns != null){
-													for(LuceneQueryPattern luceneQueryPattern : luceneQueryPatterns){
+												if(luceneMenuGroupTemps != null){
+													for(LuceneMenuGroup luceneMenuGroupTemp : luceneMenuGroupTemps){
 														%>
-															<aui:option value="<%=luceneQueryPattern.getPattern() %>" selected="<%=luceneQueryPattern.getPattern().equals(luceneMenuSchema.getPattern()) %>">
-																<%=luceneQueryPattern.getName() %>
+															<aui:option 
+																value="<%=luceneMenuGroupTemp.getMenuGroupId() %>" 
+																selected="<%=luceneMenuGroupTemp.getMenuGroupId() == luceneMenuGroup.getMenuGroupId() %>">
+																<%=luceneMenuGroupTemp.getName() %>
 															</aui:option>
 														<%
 													}
 												}
 											%>
 										</aui:select>
-									</aui:col>
-								</aui:row>
-				
-								<aui:row>
-									<aui:col width="50">
-										<aui:input 
-											name='<%="param" + index %>' 
-											label="param" 
-											type="text" 
-											cssClass="input100"
-											value="<%=luceneMenuSchema.getStringParam() %>"
-										>
-											<aui:validator name="required"/>
-										</aui:input>
-									</aui:col>
-				
-									<aui:col width="50">
-										<aui:input 
-											name='<%="paramType" + index %>' 
-											label="param-type" 
-											type="text" 
-											cssClass="input100"
-											value="<%=luceneMenuSchema.getStringParamType() %>"	
-										>
-											<aui:validator name="required"/>
-										</aui:input>
 									</aui:col>
 								</aui:row>
 							</div>

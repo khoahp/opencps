@@ -30,6 +30,59 @@
             <finder-column name="groupId"></finder-column>
         </finder>
 	</entity>
+    <entity name="LuceneMenu" local-service="true" table="opencps_lucene_menu">
+        <column name="menuItemId" type="long" primary="true"></column>
+        <!-- Group instance -->
+		<column name="companyId" type="long" />
+		<column name="groupId" type="long" />
+		<column name="userId" type="long" />
+		<column name="createdDate"  type="Date" />
+		<column name="modifiedDate"  type="Date" />
+		<column name="name"  type="String" />
+        <column name="pattern" type="String"></column>
+        <column name="paramValues" type="String"></column>
+        <column name="paramTypes" type="String"></column>
+        <column name="targetPortletName" type="String"></column>
+        <column name="layoutUUID" type="String"></column>
+        <column name="parentId" type="long"></column>
+        <column name="sibling" type="int"></column>
+        <column name="treeIndex" type="String"></column>
+        <column name="menuGroupId" type="long"></column>
+        <column name="level" type="int"></column>
+        <order by="asc">
+            <order-column name="sibling" order-by="asc"></order-column>
+        </order>
+        <finder name="GroupIdAndMenuGroupId" return-type="Collection">
+            <finder-column name="groupId"></finder-column>
+            <finder-column name="menuGroupId"></finder-column>
+        </finder>
+        <finder name="G_MG_L" return-type="Collection">
+            <finder-column name="groupId"></finder-column>
+            <finder-column name="menuGroupId"></finder-column>
+            <finder-column name="level"></finder-column>
+        </finder>
+        <finder name="G_MG_P" return-type="Collection">
+            <finder-column name="groupId"></finder-column>
+            <finder-column name="menuGroupId"></finder-column>
+            <finder-column name="parentId"></finder-column>
+        </finder>
+    </entity>
+    <entity name="LuceneMenuGroup" local-service="true" table="opencps_lucene_menu_group">
+        <column name="menuGroupId" type="long" primary="true"></column>
+        <!-- Group instance -->
+		<column name="companyId" type="long" />
+		<column name="groupId" type="long" />
+		<column name="userId" type="long" />
+		<column name="createdDate"  type="Date" />
+		<column name="modifiedDate"  type="Date" />
+		<column name="name"  type="String" />
+        <order by="desc">
+            <order-column name="name" order-by="asc" case-sensitive="false"></order-column>
+        </order>
+        <finder name="GroupId" return-type="Collection">
+            <finder-column name="groupId"></finder-column>
+        </finder>
+    </entity>
     <exceptions>
         <exception>LuceneQueryFormat</exception>
         <exception>LuceneQuerySyntax</exception>

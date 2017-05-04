@@ -1006,6 +1006,34 @@
 		<field name="maTinhNhan" type="int" />
 		<field name="emailNguoiNhan" type="String" />
 	</model>
+	<model name="org.opencps.lucenequery.model.LuceneMenu">
+		<field name="menuItemId" type="long" />
+		<field name="companyId" type="long" />
+		<field name="groupId" type="long" />
+		<field name="userId" type="long" />
+		<field name="createdDate" type="Date" />
+		<field name="modifiedDate" type="Date" />
+		<field name="name" type="String" />
+		<field name="pattern" type="String" />
+		<field name="paramValues" type="String" />
+		<field name="paramTypes" type="String" />
+		<field name="targetPortletName" type="String" />
+		<field name="layoutUUID" type="String" />
+		<field name="parentId" type="long" />
+		<field name="sibling" type="int" />
+		<field name="treeIndex" type="String" />
+		<field name="menuGroupId" type="long" />
+		<field name="level" type="int" />
+	</model>
+	<model name="org.opencps.lucenequery.model.LuceneMenuGroup">
+		<field name="menuGroupId" type="long" />
+		<field name="companyId" type="long" />
+		<field name="groupId" type="long" />
+		<field name="userId" type="long" />
+		<field name="createdDate" type="Date" />
+		<field name="modifiedDate" type="Date" />
+		<field name="name" type="String" />
+	</model>
 	<model name="org.opencps.lucenequery.model.LuceneQueryPattern">
 		<field name="patternId" type="long" />
 		<field name="companyId" type="long" />
