@@ -77,7 +77,7 @@
 			
 			<aui:fieldset>
 				<aui:row>
-					<aui:col width="80">
+					<aui:col width="70">
 						<aui:input name="<%=DictCollectionDisplayTerms.COLLECTION_NAME %>" cssClass="input100">
 							<aui:validator name="required"/>
 							<aui:validator name="minLength">3</aui:validator>
@@ -85,7 +85,7 @@
 						</aui:input>
 					</aui:col>
 					
-					<aui:col width="20">
+					<aui:col width="30">
 						<aui:input name="<%=DictCollectionDisplayTerms.COLLECTION_CODE %>" type="text" cssClass="input100">
 							<aui:validator name="required"/>
 							<aui:validator name="maxLength">100</aui:validator>

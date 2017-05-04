@@ -209,7 +209,14 @@ public class DataMamagementPortlet extends MVCPortlet {
 				collectionName = entry.getValue();
 			}
 		}
-
+		
+		if (Validator.isNull(collectionName)) {
+			collectionName = ParamUtil.getString(actionRequest,
+					DictCollectionDisplayTerms.COLLECTION_NAME);
+			Locale vnLocale = new Locale("vi", "VN");
+			collectionNameMap.put(vnLocale, collectionName);
+		}
+		
 		String redirectURL = ParamUtil.getString(actionRequest, "redirectURL");
 		String returnURL = ParamUtil.getString(actionRequest, "returnURL");
 		
