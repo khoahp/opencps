@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -17,9 +18,11 @@ import javax.ws.rs.core.Response;
 import org.opencps.accountmgt.model.Citizen;
 import org.opencps.accountmgt.service.CitizenLocalServiceUtil;
 import org.opencps.dossiermgt.model.Dossier;
+import org.opencps.dossiermgt.model.DossierFile;
 import org.opencps.dossiermgt.model.DossierPart;
 import org.opencps.dossiermgt.model.DossierTemplate;
 import org.opencps.dossiermgt.model.ServiceConfig;
+import org.opencps.dossiermgt.service.DossierFileLocalServiceUtil;
 import org.opencps.dossiermgt.service.DossierLocalServiceUtil;
 import org.opencps.dossiermgt.service.DossierPartLocalServiceUtil;
 import org.opencps.dossiermgt.service.DossierTemplateLocalServiceUtil;
@@ -29,8 +32,10 @@ import org.opencps.integrate.utils.APIUtils;
 import org.opencps.integrate.utils.AccountModel;
 import org.opencps.integrate.utils.ActionModel;
 import org.opencps.integrate.utils.DLFolderUtil;
+import org.opencps.integrate.utils.DossierFilesModel;
 import org.opencps.integrate.utils.DossierModel;
 import org.opencps.integrate.utils.DossierUtils;
+import org.opencps.integrate.utils.PortletUtil;
 import org.opencps.processmgt.model.ProcessOrder;
 import org.opencps.processmgt.model.ProcessWorkflow;
 import org.opencps.processmgt.service.ProcessOrderLocalServiceUtil;
@@ -45,7 +50,10 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.messaging.Message;
 import com.liferay.portal.kernel.messaging.MessageBusUtil;
+import com.liferay.portal.kernel.util.Base64;
+import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.MimeTypesUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.User;
@@ -55,6 +63,163 @@ import com.liferay.portlet.documentlibrary.model.DLFolder;
 
 @Path("/api")
 public class OCPSDossierController {
+	
+	@PUT
+	@Path("/dossiers/{dossierid: .*}/dossierfiles/{dossierfileuid: .*}")
+	@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
+	public Response updateDossierFile(@HeaderParam("apikey") String apikey,
+			@Context HttpServletRequest request,
+			@PathParam("dossierid") long dossierid,
+			@PathParam("dossierfileuid") String dossierfileuid, String body) {
+
+		JSONObject resp = JSONFactoryUtil.createJSONObject();
+
+		OCPSPermission permit = new OCPSPermission();
+
+		OCPSAuth auth = new OCPSAuth();
+
+		IntegrateAPI api = auth.auth(apikey);
+
+		boolean isPermit = permit.isDossierPermission(apikey)
+				&& permit.isDossierDetailPermission(apikey, dossierid);
+
+		if (Validator.isNotNull(api)) {
+			if (isPermit) {
+				try {
+
+					DossierFilesModel dfm = DossierUtils.getDossierFiles(body);
+
+					DossierFile dossierFile = DossierUtils
+							.getDossierFileByOid(dossierfileuid);
+
+					Dossier dossier = DossierLocalServiceUtil
+							.getDossier(dossierid);
+
+					DossierPart dossierPart = DossierPartLocalServiceUtil
+							.getDossierPart(dossierFile.getDossierPartId());
+
+					ServiceContext serviceContext = DossierUtils
+							.getServletContext(request);
+
+					if (Validator.isNotNull(dossierFile)) {
+
+						long dossierFileId = dossierFile.getDossierFileId();
+
+						// remove file-older
+
+						if (dossierFileId > 0 && dossierPart.getPartType() != 2) {
+
+							if (dossierFile.getSyncStatus() != 2) {
+								DossierFileLocalServiceUtil.deleteDossierFile(
+										dossierFileId,
+										dossierFile.getFileEntryId());
+							} else {
+								DossierFileLocalServiceUtil
+										.removeDossierFile(dossierFileId);
+							}
+
+						} else {
+
+							DossierFileLocalServiceUtil
+									.deleteDossierFile(dossierFileId,
+											dossierFile.getFileEntryId());
+						}
+
+						// add new dossierFile
+
+						String sourceFileName = dfm.getAttachmentFileName();
+
+						String extension = FileUtil
+								.getExtension(sourceFileName);
+
+						String mimeType = MimeTypesUtil
+								.getExtensionContentType(extension);
+
+						serviceContext.setUserId(dossier.getUserId());
+
+						byte[] bytes = Base64.decode(dfm
+								.getAttachmentFileData());
+
+						DLFolder dossierFileFolder = PortletUtil
+								.getDossierFolder(
+										serviceContext.getScopeGroupId(), null,
+										dossier.getOid(), serviceContext);
+
+						if (!(dfm.getDossierFileContent().contentEquals("") || dfm
+								.getDossierFileContent().contentEquals("{}"))) {
+							mimeType = dfm.getDossierFileContent();
+						}
+
+						dossierFile = DossierFileLocalServiceUtil
+								.addDossierFile(
+										dossier.getUserId(),
+										dossier.getDossierId(),
+										dossierPart.getDossierpartId(),
+										dossierPart.getTemplateFileNo(),
+										StringPool.BLANK,
+										0L,
+										0L,
+										dossier.getUserId(),
+										dossier.getOwnerOrganizationId(),
+										dfm.getAttachmentFileName(),
+										mimeType,
+										PortletUtil.DOSSIER_FILE_MARK_UNKNOW,
+										2,
+										StringPool.BLANK,
+										dfm.getCreateDate(),
+										1,
+										PortletUtil.DOSSIER_FILE_SYNC_STATUS_SYNCSUCCESS,
+										dossierFileFolder.getFolderId(),
+										sourceFileName, mimeType,
+										dfm.getAttachmentFileName(),
+										StringPool.BLANK, StringPool.BLANK,
+										bytes, serviceContext);
+
+						dossierFile.setOid(dfm.getDossierFileUid());
+
+						DossierFileLocalServiceUtil
+								.updateDossierFile(dossierFile);
+
+						resp.put("Result", "Update");
+						resp.put("DossierId", dossier.getDossierId());
+						resp.put("DossierFileUid", dossierFile.getOid());
+
+						return Response.status(200).entity(resp.toString())
+								.build();
+					} else {
+						resp.put("Result", "Error");
+						resp.put("ErrorMessage", APIUtils
+								.getLanguageValue("no-dossier-file-with-oid"));
+
+						return Response.status(409).entity(resp.toString())
+								.build();
+					}
+
+				} catch (Exception e) {
+					resp.put("Result", "Error");
+					resp.put("ErrorMessage",
+							APIUtils.getLanguageValue("invalid-body-input"));
+
+					return Response.status(404).entity(resp.toString()).build();
+				}
+			} else {
+				resp.put("Result", "Error");
+				resp.put(
+						"ErrorMessage",
+						APIUtils.getLanguageValue("you-dont-have-permit-to-accecss-resources"));
+
+				// Not access resources
+				return Response.status(403).entity(resp.toString()).build();
+			}
+		} else {
+			resp.put("Result", "Error");
+			resp.put("ErrorMessage",
+					APIUtils.getLanguageValue("you-dont-have-auth"));
+
+			// Not validate
+			return Response.status(401).entity(resp.toString()).build();
+		}
+	}
 
 	@POST
 	@Path("/dossiers/{dossierid: .*}/actions")
@@ -177,6 +342,143 @@ public class OCPSDossierController {
 				return Response.status(403).entity(resp.toString()).build();
 			}
 		} else {
+			// Not validate
+			return Response.status(401).entity(resp.toString()).build();
+		}
+	}
+
+	@POST
+	@Path("/dossiers/{dossierid: .*}/dossierfiles")
+	@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
+	public Response addDossierFiles(@HeaderParam("apikey") String apikey,
+			@Context HttpServletRequest request,
+			@PathParam("dossierid") long dossierid, String body) {
+
+		JSONObject resp = JSONFactoryUtil.createJSONObject();
+
+		OCPSPermission permit = new OCPSPermission();
+
+		OCPSAuth auth = new OCPSAuth();
+
+		IntegrateAPI api = auth.auth(apikey);
+
+		boolean isPermit = permit.isDossierPermission(apikey)
+				&& permit.isDossierDetailPermission(apikey, dossierid);
+
+		if (Validator.isNotNull(api)) {
+			if (isPermit) {
+				try {
+
+					DossierFilesModel dfm = DossierUtils.getDossierFiles(body);
+
+					DossierFile dossierFile = DossierUtils
+							.getDossierFileByOid(dfm.getDossierFileUid());
+
+					Dossier dossier = DossierLocalServiceUtil
+							.getDossier(dossierid);
+
+					if (Validator.isNull(dossierFile)) {
+						ServiceContext serviceContext = DossierUtils
+								.getServletContext(request);
+
+						String sourceFileName = dfm.getAttachmentFileName();
+
+						String extension = FileUtil
+								.getExtension(sourceFileName);
+
+						String mimeType = MimeTypesUtil
+								.getExtensionContentType(extension);
+
+						serviceContext.setUserId(dossier.getUserId());
+
+						byte[] bytes = Base64.decode(dfm
+								.getAttachmentFileData());
+
+						DLFolder dossierFileFolder = PortletUtil
+								.getDossierFolder(
+										serviceContext.getScopeGroupId(), null,
+										dossier.getOid(), serviceContext);
+
+						DossierPart dossierPart = DossierPartLocalServiceUtil
+								.getDossierPartByT_PN(
+										dossier.getDossierTemplateId(),
+										dfm.getDossierPartNo());
+						
+						if (!(dfm.getDossierFileContent().contentEquals("")
+								|| dfm.getDossierFileContent().contentEquals(
+										"{}"))) {
+							mimeType = dfm.getDossierFileContent();
+						}
+
+						dossierFile = DossierFileLocalServiceUtil
+								.addDossierFile(
+										dossier.getUserId(),
+										dossier.getDossierId(),
+										dossierPart.getDossierpartId(),
+										dossierPart.getTemplateFileNo(),
+										StringPool.BLANK,
+										0L,
+										0L,
+										dossier.getUserId(),
+										dossier.getOwnerOrganizationId(),
+										dfm.getAttachmentFileName(),
+										mimeType,
+										PortletUtil.DOSSIER_FILE_MARK_UNKNOW,
+										2,
+										StringPool.BLANK,
+										dfm.getCreateDate(),
+										1,
+										PortletUtil.DOSSIER_FILE_SYNC_STATUS_SYNCSUCCESS,
+										dossierFileFolder.getFolderId(),
+										sourceFileName, mimeType,
+										dfm.getAttachmentFileName(),
+										StringPool.BLANK, StringPool.BLANK,
+										bytes, serviceContext);
+
+						dossierFile.setOid(dfm.getDossierFileUid());
+
+						DossierFileLocalServiceUtil
+								.updateDossierFile(dossierFile);
+
+						resp.put("Result", "New");
+						resp.put("DossierId", dossier.getDossierId());
+						resp.put("DossierFileUid", dossierFile.getOid());
+
+						return Response.status(200).entity(resp.toString())
+								.build();
+					} else {
+						resp.put("Result", "Exist");
+						resp.put("DossierId", dossier.getDossierId());
+						resp.put("DossierFileUid", dossierFile.getOid());
+						resp.put("ErrorMessage", APIUtils
+								.getLanguageValue("duplicate-dossier-file"));
+
+						return Response.status(408).entity(resp.toString())
+								.build();
+					}
+
+				} catch (Exception e) {
+					resp.put("Result", "Error");
+					resp.put("ErrorMessage",
+							APIUtils.getLanguageValue("invalid-body-input"));
+
+					return Response.status(404).entity(resp.toString()).build();
+				}
+			} else {
+				resp.put("Result", "Error");
+				resp.put(
+						"ErrorMessage",
+						APIUtils.getLanguageValue("you-dont-have-permit-to-accecss-resources"));
+
+				// Not access resources
+				return Response.status(403).entity(resp.toString()).build();
+			}
+		} else {
+			resp.put("Result", "Error");
+			resp.put(
+					"ErrorMessage",
+					APIUtils.getLanguageValue("you-dont-have-auth"));
+
 			// Not validate
 			return Response.status(401).entity(resp.toString()).build();
 		}

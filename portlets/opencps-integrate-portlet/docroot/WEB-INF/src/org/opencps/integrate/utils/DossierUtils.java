@@ -3,6 +3,8 @@ package org.opencps.integrate.utils;
 import javax.servlet.http.HttpServletRequest;
 
 import org.opencps.dossiermgt.model.Dossier;
+import org.opencps.dossiermgt.model.DossierFile;
+import org.opencps.dossiermgt.service.DossierFileLocalServiceUtil;
 import org.opencps.dossiermgt.service.DossierLocalServiceUtil;
 import org.opencps.integrate.dao.InvalidMessageContentException;
 
@@ -16,6 +18,59 @@ import com.liferay.portal.service.ServiceContextFactory;
 
 public class DossierUtils {
 	
+	/** 
+	 * Get DossierFile by OID
+	 * 
+	 * @param oid
+	 * @return
+	 */
+	public static DossierFile getDossierFileByOid(String oid) {
+		
+		DossierFile dossierFile = null;
+		
+		try {
+			dossierFile = DossierFileLocalServiceUtil.getByOid(oid);
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		
+		return dossierFile;
+	}
+	
+	/**
+	 * @param input
+	 * @return
+	 * @throws InvalidMessageContentException
+	 */
+	public static DossierFilesModel getDossierFiles(String input)
+			throws InvalidMessageContentException {
+		DossierFilesModel dfm = new DossierFilesModel();
+
+		try {
+			JSONObject jsInput = JSONFactoryUtil.createJSONObject(input);
+
+			dfm.setDossierFileUid(jsInput.getString("DossierFileUid"));
+			dfm.setDossierPartNo(jsInput.getString("DossierPartNo"));
+			dfm.setDossierFileName(jsInput.getString("DossierFileName"));
+			dfm.setDossierFileContent(jsInput.getString("DossierFileContent"));
+			dfm.setdDossierFileNo(jsInput.getString("DossierFileNo"));
+			dfm.setDossierFileDate(APIUtils.convertDateTime(jsInput
+					.getString("DossierFileDate")));
+			dfm.setDossierFileVersion(jsInput.getString("DossierFileVersion"));
+			dfm.setAttachmentFileName(jsInput.getString("AttachmentFileName"));
+			dfm.setAttachmentFileType(jsInput.getString("AttachmentFileType"));
+			dfm.setAttachmentFileSize(jsInput.getInt("AttachmentFileSize"));
+			dfm.setAttachmentFileData(jsInput.getString("AttachmentFileData"));
+			dfm.setCreateDate(APIUtils.convertDateTime(jsInput
+					.getString("CreateDate")));
+
+		} catch (Exception e) {
+			throw new InvalidMessageContentException();
+		}
+
+		return dfm;
+	}
+
 	/**
 	 * @param input
 	 * @return
