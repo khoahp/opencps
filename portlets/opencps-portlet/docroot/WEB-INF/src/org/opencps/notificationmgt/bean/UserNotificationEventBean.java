@@ -22,6 +22,8 @@ import java.sql.Date;
 import javax.portlet.RenderRequest;
 import javax.portlet.WindowStateException;
 
+import org.opencps.notificationmgt.utils.NotificationUtils;
+
 import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
@@ -59,8 +61,9 @@ public class UserNotificationEventBean {
 
 			userBean.setDelivered(userNotificationEvent.getDelivered());
 			userBean.setArchived(userNotificationEvent.getArchived());
-			// userBean.setUrl(NotificationUtils.getLink(userNotificationEvent,
-			// null,renderRequest));
+			userBean.setUrl(NotificationUtils.getLink(userNotificationEvent,
+			null,renderRequest));
+			
 
 		} catch (JSONException e) {
 			_log.error(e);

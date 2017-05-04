@@ -3,12 +3,12 @@ package org.opencps.notificationmgt.portlet;
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
 
+import org.opencps.notificationmgt.utils.NotificationUtils;
 import org.opencps.util.WebKeys;
 
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
-import com.liferay.portal.service.UserNotificationEventLocalServiceUtil;
 import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.util.bridges.mvc.MVCPortlet;
 
@@ -25,10 +25,20 @@ public class NotificationFrontendPortlet extends MVCPortlet {
 
 		long[] userNotificationEventIds = ParamUtil.getLongValues(
 				actionRequest, "checkboxs", null);
+		
+		long userNotiEventId = ParamUtil.getLong(
+				actionRequest, "userNotificationEventId", 0);
 
 		try {
-			for (long userNotificationEventId : userNotificationEventIds) {
-				updateArchived(userNotificationEventId);
+			
+			if (userNotificationEventIds.length > 0) {
+				for (long userNotificationEventId : userNotificationEventIds) {
+					NotificationUtils.updateArchived(userNotificationEventId);
+				}
+			}
+
+			if (userNotiEventId > 0) {
+				NotificationUtils.updateArchived(userNotiEventId);
 			}
 
 		} catch (Exception e) {
@@ -37,16 +47,6 @@ public class NotificationFrontendPortlet extends MVCPortlet {
 
 	}
 
-	protected void updateArchived(long userNotificationEventId)
-			throws Exception {
 
-		com.liferay.portal.model.UserNotificationEvent userNotificationEvent = UserNotificationEventLocalServiceUtil
-				.getUserNotificationEvent(userNotificationEventId);
-
-		userNotificationEvent.setArchived(true);
-
-		UserNotificationEventLocalServiceUtil
-				.updateUserNotificationEvent(userNotificationEvent);
-	}
 
 }
