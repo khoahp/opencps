@@ -161,26 +161,24 @@ public class DataMamagementPortlet extends MVCPortlet {
 
 		String actionKey = ParamUtil.getString(renderRequest, "actionKey");
 		if (actionKey.equals("ajax-load-dict-items")) {
-			_log.info("8=========================o");
-			
+
 			int cur = ParamUtil.getInteger(renderRequest, "cur", 1);
 			int delta = ParamUtil.getInteger(renderRequest, "delta", 20);
-			
+
 			String itemNames = ParamUtil.getString(renderRequest, "keyword");
 			itemNames = StringPool.PERCENT + itemNames + StringPool.PERCENT;
-			
-			_log.info("cur: " + cur);
-			_log.info("delta: " + delta);
-			_log.info("itemNames: " + itemNames);
+
 			PortletURL iteratorURL = renderResponse.createRenderURL();
-			
+
 			iteratorURL.setWindowState(LiferayWindowState.NORMAL);
 
 			SearchContainer<DictItem> itemsListSearchContainer = new SearchContainer<DictItem>(
-					renderRequest, null, null, SearchContainer.DEFAULT_CUR_PARAM, cur, delta, iteratorURL,
+					renderRequest, null, null,
+					SearchContainer.DEFAULT_CUR_PARAM, cur, delta, iteratorURL,
 					null, DictItemSearch.EMPTY_RESULTS_MESSAGE);
-			
-			renderRequest.setAttribute("itemsListSearchContainer", itemsListSearchContainer);
+
+			renderRequest.setAttribute("itemsListSearchContainer",
+					itemsListSearchContainer);
 		}
 
 		super.render(renderRequest, renderResponse);

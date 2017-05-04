@@ -1,3 +1,5 @@
+<%@page import="org.opencps.datamgt.service.DictCollectionLocalServiceUtil"%>
+<%@page import="org.opencps.datamgt.model.DictCollection"%>
 <%
 /**
  * OpenCPS is the open source Core Public Services software
@@ -37,6 +39,11 @@
 	long dictCollectionId = ParamUtil.getLong(request, DictItemSearchTerms.DICTCOLLECTION_ID);
 	SearchContainer itemsListSearchContainer = (SearchContainer) request.getAttribute("itemsListSearchContainer");
 	
+	DictCollection collection = null;
+	try {
+		collection = DictCollectionLocalServiceUtil.getDictCollection(dictCollectionId);
+	} catch (Exception e) {}
+	
 	if (itemsListSearchContainer != null){
 		_log.info("8=========================o jsp");
 		_log.info("getStart jsp: "+itemsListSearchContainer.getStart());
@@ -55,6 +62,10 @@
 	
 	int totalCount = 0;
 %>
+
+<div>
+	<p><liferay-ui:message key='dictcollection' /> > <%=collection != null ? collection.getCollectionName() : StringPool.BLANK %> > <liferay-ui:message key='list' /></p>
+</div>
 
 <div class="opencps-searchcontainer-wrapper-width-header default-box-shadow radius8 items-container">
 	<liferay-ui:search-container 
@@ -101,9 +112,10 @@
 					row.setClassName("opencps-searchcontainer-row");
 					
 					//id column
-					row.addText(String.valueOf(dictItem.getDictItemId()), editURL);
-				
+					row.addText(String.valueOf((row.getPos() + 1) + (searchContainer.getCur() - 1) * searchContainer.getDelta()));
+					
 					row.addText(dictItem.getItemCode(), editURL);
+					
 					row.addText(dictItem.getItemName(locale), editURL);
 					
 					row.addText(dictItem.getTreeIndex(), editURL);

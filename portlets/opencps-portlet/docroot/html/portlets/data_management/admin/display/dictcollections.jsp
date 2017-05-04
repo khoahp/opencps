@@ -29,10 +29,10 @@
 <%@ include file="../../init.jsp"%>
 
 <div class="row-fluid">
-	<div class="span3">
+	<div class="span3" id="<portlet:namespace/>anchor-scroll">
 		<div class="opencps-searchcontainer-wrapper default-box-shadow radius8">
 			<div class="openCPSTree yui3-widget component tree-view tree-drag-drop">
-				<aui:button value="add"/>
+				<aui:button value="add" onClick="addDictCollection()"/>
 				<aui:input name="collection-name" placeholder='<%= LanguageUtil.get(locale, "name") %>' />
 				<aui:button name="search-button" value="search" />
 				<div id='<%=renderResponse.getNamespace() + "collections-container" %>' ></div>
@@ -49,7 +49,7 @@
 
 <%
 	PortletURL iteratorURL = renderResponse.createRenderURL();
-	iteratorURL.setParameter("mvcPath", "/html/portlets/data_management/admin/display/dictitems.jsp");
+	iteratorURL.setParameter("mvcPath", "/html/portlets/data_management/admin/ajax/_dictitems.jsp");
 	iteratorURL.setWindowState(LiferayWindowState.EXCLUSIVE);
 	iteratorURL.setParameter("actionKey", "ajax-load-dict-items");
 %>
@@ -59,11 +59,6 @@
 		getDictCollections();
 		getDictCollectionDetail();
 		
-		A.one('#<portlet:namespace/>search-button')
-			.on('click', function(){
-				var collectionName = A.one('#<portlet:namespace/>collection-name').attr('value');
-				getDictCollections(collectionName);
-			});
 		A.one('#<portlet:namespace/>collection-name')
 			.on('change', function(){
 				var collectionName = A.one('#<portlet:namespace/>collection-name').attr('value');
@@ -76,7 +71,7 @@
 		var A = AUI();
 		
 		var portletURL = Liferay.PortletURL.createURL('<%= PortletURLFactoryUtil.create(request, WebKeys.DATA_MANAGEMENT_ADMIN_PORTLET, themeDisplay.getPlid(), PortletRequest.RENDER_PHASE) %>');
-		portletURL.setParameter("mvcPath", "/html/portlets/data_management/admin/display/dictcollection_detail.jsp");
+		portletURL.setParameter("mvcPath", "/html/portlets/data_management/admin/ajax/_dictcollection_detail.jsp");
 		portletURL.setWindowState("<%=LiferayWindowState.EXCLUSIVE.toString()%>"); 
 		portletURL.setPortletMode("normal");
 		
@@ -105,7 +100,8 @@
 								getDictItems(selectedDictCollectionId);
 							});
 						}
-							
+						
+						scrollWindow();
 					},
 			    	error: function(){}
 				}
@@ -146,11 +142,12 @@
 								event.preventDefault();
 								
 								var cur = event['target']['_node']['innerText'];
-								console.log('cur: '+cur);
 								
 								getDictItems(selectedDictCollectionId, cur);
 							});
 						});
+						
+						scrollWindow();
 					},
 			    	error: function(){}
 				}
@@ -162,7 +159,7 @@
 		var A = AUI();
 		
 		var portletURL = Liferay.PortletURL.createURL('<%= PortletURLFactoryUtil.create(request, WebKeys.DATA_MANAGEMENT_ADMIN_PORTLET, themeDisplay.getPlid(), PortletRequest.RENDER_PHASE) %>');
-		portletURL.setParameter("mvcPath", "/html/portlets/data_management/admin/get_dictcollections.jsp");
+		portletURL.setParameter("mvcPath", "/html/portlets/data_management/admin/ajax/_get_dictcollections.jsp");
 		portletURL.setWindowState("<%=LiferayWindowState.EXCLUSIVE.toString()%>"); 
 		portletURL.setPortletMode("normal");
 		
@@ -192,15 +189,73 @@
 								getDictCollectionDetail(collectionId);
 							});
 						});
+						
+						scrollWindow();
 					},
 			    	error: function(){}
 				}
 			}
 		);
 	},['aui-base','liferay-portlet-url','aui-io']);
+	
+	Liferay.provide(window, 'addDictCollection', function(){
+		var A = AUI();
+		
+		var portletURL = Liferay.PortletURL.createURL('<%= PortletURLFactoryUtil.create(request, WebKeys.DATA_MANAGEMENT_ADMIN_PORTLET, themeDisplay.getPlid(), PortletRequest.RENDER_PHASE) %>');
+		portletURL.setParameter("mvcPath", "/html/portlets/data_management/admin/ajax/_edit_dictcollection.jsp");
+		portletURL.setWindowState("<%=LiferayWindowState.EXCLUSIVE.toString()%>"); 
+		portletURL.setPortletMode("normal");
+		
+		A.io.request(
+			portletURL.toString(),
+			{
+			    dataType: 'json',
+			    data:{    	
+			                	
+			    },   
+			    on: {
+			        success: function(event, id, obj) {
+						var instance = this;
+						var result = instance.get('responseData');
+						var container = A.one("#<portlet:namespace/>collection-detail");
+						
+						if(container){
+							container.html(result);
+						}
+						
+						// initial value for dictcollection link checkbox
+						var collectionsLinked = '';
+						var linkedArr = collectionsLinked.split(',');
+						var match = false;
+						A.all('#<portlet:namespace/>dictCollectionsLinked').each(function(dictCol){
+							match = false;
+							for (var i = 0; i < linkedArr.length; i++) {
+						        if (linkedArr[i] == dictCol.attr('value')) {
+						        	match = true;
+						        	break;
+						        }
+						    }
+							if (!match){
+								dictCol.attr('value', '0');
+							}
+						});
+						
+						
+					},
+			    	error: function(){}
+				}
+			}
+		);
+	});
+	
+	Liferay.provide(window, 'scrollWindow', function(){
+		var A = AUI();
+		var anchor = A.one('#<portlet:namespace/>anchor-scroll');
+		$("html, body").animate({ scrollTop: anchor.getY() - 60 }, "normal");
+	});
 </aui:script>
 
 <%!
-	private Log _log = LogFactoryUtil.getLog("html.portlets.data_management.admin.display.dictcollection.jsp");
+	private Log _log = LogFactoryUtil.getLog("html.portlets.data_management.admin.display.dictcollections.jsp");
 %>
 
