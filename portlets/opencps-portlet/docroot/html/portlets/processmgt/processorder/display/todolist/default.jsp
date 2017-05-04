@@ -204,7 +204,7 @@
 							</div>
 							
 							<%
-							Dossier dossier = DossierLocalServiceUtil.getDossier(processOrder.getDossierId());
+								Dossier dossier = DossierLocalServiceUtil.getDossierByReceptionNo(processOrder.getReceptionNo());
 							%>
 							
 							<div class="row-fluid">

@@ -29,7 +29,7 @@ import javax.portlet.RenderResponse;
 
 import org.opencps.util.WebKeys;
 
-import com.liferay.portal.kernel.portlet.ConfigurationAction;
+import com.liferay.portal.kernel.portlet.DefaultConfigurationAction;
 import com.liferay.portal.kernel.servlet.SessionMessages;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.StringUtil;
@@ -41,7 +41,7 @@ import com.liferay.portlet.PortletURLFactoryUtil;
  * @author trungnt
  *
  */
-public class ConfigurationImpl implements ConfigurationAction {
+public class ConfigurationImpl extends DefaultConfigurationAction {
 
 	/*
 	 * (non-Javadoc)
@@ -71,35 +71,14 @@ public class ConfigurationImpl implements ConfigurationAction {
 			updateDossier(preferences, actionRequest, actionResponse);
 		} else if (tabs2.equals("dossier-file-list")) {
 			updateDossierFileList(preferences, actionRequest, actionResponse);
-		} else if(tabs2.equals("digital-signature")) {
-			updateSignatureConfig(preferences, actionRequest, actionResponse);
 		}
-		
 
 		preferences.store();
+		
+		super.processAction(portletConfig, actionRequest, actionResponse);
 
 		SessionMessages.add(actionRequest, "potlet-config-saved");
 
-	}
-	
-	protected void updateSignatureConfig(PortletPreferences preferences,
-			ActionRequest actionRequest, ActionResponse actionResponse)
-			throws ReadOnlyException {
-		
-		double offsetX = ParamUtil.getDouble(actionRequest, "offsetX");
-		double offsetY = ParamUtil.getDouble(actionRequest, "offsetY");
-		
-		String signatureType = ParamUtil.getString(actionRequest, "signatureType");
-		String textPositionWithImageSign = ParamUtil.getString(actionRequest, "textPositionWithImageSign", "overlaps");
-		String [] characterAttachs = ParamUtil.getParameterValues(actionRequest, "characterAttach");
-		
-		preferences.setValue("characterAttachs",
-				String.valueOf(StringUtil.merge(characterAttachs)));
-		preferences.setValue("offsetX", String.valueOf(offsetX));
-		preferences.setValue("offsetY", String.valueOf(offsetY));
-		preferences.setValue("signatureType", signatureType);
-		preferences.setValue("textPositionWithImageSign", textPositionWithImageSign);
-		
 	}
 
 	protected void updateDossier(PortletPreferences preferences,
@@ -154,7 +133,7 @@ public class ConfigurationImpl implements ConfigurationAction {
 
 		String maxUploadFileSizeUnit = ParamUtil.getString(actionRequest,
 				"maxUploadFileSizeUnit");
-
+		
 		preferences.setValue("dossierDisplayStyle", dossierDisplayStyle);
 		preferences.setValue("dossierTabFocus", dossierTabFocus);
 		preferences
@@ -186,7 +165,7 @@ public class ConfigurationImpl implements ConfigurationAction {
 	protected void updateDossierList(PortletPreferences preferences,
 			ActionRequest actionRequest, ActionResponse actionResponse)
 			throws ReadOnlyException {
-		
+
 		String itemCode_cfg = ParamUtil
 				.getString(actionRequest, "itemCode_cfg");
 
@@ -195,9 +174,6 @@ public class ConfigurationImpl implements ConfigurationAction {
 
 		String dossierListDisplayStyle = ParamUtil.getString(actionRequest,
 				"dossierListDisplayStyle", "default");
-		
-		String templatesToDisplay = ParamUtil.getString(actionRequest, "templatesToDisplay", "default");
-
 
 		boolean hiddenTreeNodeEqualNone = ParamUtil.getBoolean(actionRequest,
 				"hiddenTreeNodeEqualNone", true);
@@ -216,9 +192,15 @@ public class ConfigurationImpl implements ConfigurationAction {
 		
 		String[] reportTypes = ParamUtil.getParameterValues(actionRequest,
 				"reportType", new String[] { ".pdf" });
-		
+
 		String[] dossierStatusCodes = ParamUtil.getParameterValues(
 				actionRequest, "dossierStatusCodes");
+		
+		String templatesToDisplay = ParamUtil.getString(actionRequest,
+				"templatesToDisplay");
+		
+		long redirectAddDossierPlid = ParamUtil.getInteger(actionRequest,
+				"redirectAddDossierPlid", 0);
 		
 		preferences.setValue("showServiceDomainTree",
 				String.valueOf(showServiceDomainTree));
@@ -234,10 +216,6 @@ public class ConfigurationImpl implements ConfigurationAction {
 				String.valueOf(displayRecentlyResultWhenSearch));
 		preferences.setValue("dossierStatusCodes",
 				String.valueOf(StringUtil.merge(dossierStatusCodes)));
-		
-		preferences.setValue("templatesToDisplay", templatesToDisplay);
-		
-		
 
 		preferences.setValue("war_opencpsportlet_26_cfg",
 				war_opencpsportlet_26_cfg);
@@ -247,6 +225,10 @@ public class ConfigurationImpl implements ConfigurationAction {
 		preferences.setValue("reportTypes",
 				String.valueOf(StringUtil.merge(reportTypes)));
 		
+		preferences.setValue("templatesToDisplay", templatesToDisplay);
+		
+		preferences.setValue("redirectAddDossierPlid", String.valueOf(redirectAddDossierPlid));
+
 	}
 
 	protected void updateDossierFileList(PortletPreferences preferences,

@@ -278,6 +278,14 @@ public class UserActionMsg {
     	this.processWorkflowId = processWorkflowId;
     }
 
+	public String getEvent() {
+		return event;
+	}
+
+	public void setEvent(String event) {
+		this.event = event;
+	}
+
 	protected long paymentFileId;
 	protected String noReceptionNo;
 	protected long groupId;
@@ -293,5 +301,6 @@ public class UserActionMsg {
 	protected String dossierStatus;
 	protected String actionNote;
 	protected long processWorkflowId;
+	protected String event;
 
 }
