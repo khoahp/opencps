@@ -35,7 +35,7 @@ import com.liferay.portlet.documentlibrary.util.DLUtil;
 
 public class APIUtils {
 	
-
+	public static final long GROUPID = 20182;
 
 	/**
 	 * @param dictItemCode
@@ -467,6 +467,20 @@ public class APIUtils {
 		} else {
 			return StringPool.BLANK;
 		}
+	}
+	
+	public static Date convertDateTime(String strDate) {
+
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+
+		Date date = null;
+
+		try {
+			date = sdf.parse(strDate);
+
+		} catch (Exception e) {
+		}
+		return date;
 	}
 
 	public static Log _log = LogFactoryUtil.getLog(APIUtils.class);

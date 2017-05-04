@@ -1,11 +1,32 @@
 package org.opencps.integrate.api;
 
 import org.opencps.dossiermgt.model.Dossier;
+import org.opencps.dossiermgt.service.DossierLocalServiceUtil;
 import org.opencps.integrate.utils.APIUtils;
 
 import com.liferay.portal.kernel.util.Validator;
 
 public class OCPSPermission {
+	
+	public boolean isSendValidatorDossier(long dossierId) {
+
+		boolean isPermit = false;
+
+		Dossier dossier = null;
+
+		try {
+			dossier = DossierLocalServiceUtil.getDossier(dossierId);
+		} catch (Exception e) {
+
+		}
+
+		if (Validator.isNotNull(dossier)
+				&& dossier.getDossierStatus().equals("new")) {
+			isPermit = true;
+		}
+
+		return isPermit;
+	}
 	
 	/** Permission for get all Dossiers
 	 * 

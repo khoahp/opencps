@@ -37,6 +37,8 @@ import org.opencps.processmgt.util.ProcessOrderUtils;
 import org.opencps.util.PortletConstants;
 import org.opencps.util.WebKeys;
 
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.messaging.Message;
@@ -45,6 +47,8 @@ import com.liferay.portal.kernel.messaging.MessageListener;
 import com.liferay.portal.kernel.messaging.MessageListenerException;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.model.User;
+import com.liferay.portal.service.UserLocalServiceUtil;
 
 /**
  * @author khoavd
@@ -61,8 +65,6 @@ public class OneMinute implements MessageListener {
 	public void receive(Message message)
 		throws MessageListenerException {
 
-		_log.info("RUNNING _ONE_MINUTELY XXXXXXXXXXXXXXXX****");
-
 		List<ProcessWorkflow> processWorkflows = new ArrayList<ProcessWorkflow>();
 
 		List<ProcessOrder> processOrders = new ArrayList<ProcessOrder>();
@@ -75,7 +77,6 @@ public class OneMinute implements MessageListener {
 			processWorkflows =
 				ProcessWorkflowLocalServiceUtil.getProcessWorkflowByEvent(SchedulerKeys.ONE_MIUTELY);
 			
-			_log.info("DSDSALDJSAKD SAKLD " + processWorkflows.size());
 
 			for (ProcessWorkflow processWorkflow : processWorkflows) {
 
@@ -90,8 +91,6 @@ public class OneMinute implements MessageListener {
 							BackendUtils.checkPreCondition(
 								processWorkflow.getPreCondition(), processOrder.getDossierId());
 
-						_log.info("Scheduler _ONE_MINUTELY ########" +
-							processWorkflow.getActionName() + "_" + processOrder.getDossierId());
 						if (preCondition) {
 							long processWorkflowId = processWorkflow.getProcessWorkflowId();
 

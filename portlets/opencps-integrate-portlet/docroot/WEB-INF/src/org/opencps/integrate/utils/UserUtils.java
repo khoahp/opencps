@@ -17,7 +17,12 @@ public class UserUtils {
 	public static final String APPLICANT_TYPE_BUSINESS = "MST";
 	private static Log _log = LogFactoryUtil.getLog(UserUtils.class);
 	
-	public User getUser(long companyId, String email) {
+	/**
+	 * @param companyId
+	 * @param email
+	 * @return
+	 */
+	public static User getUser(long companyId, String email) {
 		
 		User user = null;
 		

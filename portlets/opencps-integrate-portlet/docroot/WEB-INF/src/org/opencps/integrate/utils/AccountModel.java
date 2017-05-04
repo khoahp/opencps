@@ -6,6 +6,12 @@ public class AccountModel {
 	public static final int ACCOUNT_STATUS_CONFIRMED = 1;
 	public static final int ACCOUNT_STATUS_APPROVED = 2;
 	public static final int ACCOUNT_STATUS_LOCKED = 3;
+	public static final String ACCOUNT_TYPE_CITIZEN = "CITIZEN";
+	public static final String ACCOUNT_STATUS_BUSINESS = "BUSINESS";
+	public static final String ACCOUNT_REG_TWO_STEP = "2";
+	public static final String ACCOUNT_REG_THREE_STEP = "3";
+	
+	
 	
 	public String getScreenName() {
 		return screenName;

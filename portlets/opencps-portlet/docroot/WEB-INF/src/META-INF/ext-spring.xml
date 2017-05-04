@@ -47,13 +47,13 @@
                 <entry key="opencps/frontoffice/out/destination">
                     <list value-type="com.liferay.portal.kernel.messaging.MessageListener">
                         <ref bean="opencps.listener.syncfromfrontoffice" />
-                        <ref bean="opencps.listener.excoutfrontoffice" />
+<!--                         <ref bean="opencps.listener.excoutfrontoffice" /> -->
                     </list>
                 </entry>
                 <entry key="opencps/backoffice/out/destination">
                     <list value-type="com.liferay.portal.kernel.messaging.MessageListener">
                         <ref bean="opencps.listener.syncfrombackoffice" />
-                        <ref bean="opencps.listener.excoutbackoffice" />
+<!--                         <ref bean="opencps.listener.excoutbackoffice" /> -->
                     </list>
                 </entry>
                 <entry key="opencps/backoffice/engine/destination">

@@ -15,7 +15,9 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.opencps.accountmgt.model.Business;
 import org.opencps.accountmgt.model.Citizen;
+import org.opencps.accountmgt.service.BusinessLocalServiceUtil;
 import org.opencps.accountmgt.service.CitizenLocalServiceUtil;
 import org.opencps.integrate.dao.model.IntegrateAPI;
 import org.opencps.integrate.dao.service.IntegrateAPILocalServiceUtil;
@@ -158,74 +160,123 @@ public class OCPSUserController {
 		JSONObject resp = JSONFactoryUtil.createJSONObject();
 
 		ServiceContext context = DossierUtils.getServletContext(request);
-		
+
 		context.setPortalURL(PORTAL_URL);
-		
+
 		try {
 
 			JSONObject input = JSONFactoryUtil.createJSONObject(body);
-			
-			_log.info(body);
 
 			AccountModel acc = getAccountModelInput(input);
-			
+
 			String regEmail = acc.getContactEmail();
 
-			if (acc.getApplicantIdType().equalsIgnoreCase(
-					UserUtils.APPLICANT_TYPE_CITY)) {
+			User user = UserUtils.getUser(context.getCompanyId(), regEmail);
+
+			if (Validator.isNull(user)) {
 
 				Calendar cal = Calendar.getInstance();
 				int birthDateDay = cal.get(Calendar.DAY_OF_MONTH);
 				int birthDateMonth = cal.get(Calendar.MONTH);
 				int birthDateYear = cal.get(Calendar.YEAR);
 
-				Citizen citizen = CitizenLocalServiceUtil.addCitizen(
-						acc.getApplicantName(), StringPool.BLANK, 0,
-						birthDateDay, birthDateMonth, birthDateYear,
-						acc.getAddress(), acc.getCityCode(),
-						acc.getDistrictCode(), acc.getWardCode(),
-						APIUtils.getDictItemName(acc.getCityCode()),
-						APIUtils.getDictItemName(acc.getDistrictCode()),
-						APIUtils.getDictItemName(acc.getWardCode()),
-						acc.getContactEmail(), StringPool.BLANK, GROUPID,
-						StringPool.BLANK, StringPool.BLANK, StringPool.BLANK,
-						null, 0, context);
+				if (acc.getApplicantIdType().equalsIgnoreCase(
+						UserUtils.APPLICANT_TYPE_CITY)) {
 
-				if (citizen != null) {
-					User mappingUser = UserLocalServiceUtil.getUser(citizen
-							.getMappingUserId());
-					
-					MessageBusUtil.sendEmailAddressVerification(
-							citizen.getUuid(), mappingUser,
-							acc.getContactEmail(), "CITIZEN",
-							"2", "khoavd@gmail.com", context);
+					Citizen citizen = CitizenLocalServiceUtil.addCitizen(
+							acc.getApplicantName(), StringPool.BLANK, 0,
+							birthDateDay, birthDateMonth, birthDateYear,
+							acc.getAddress(), acc.getCityCode(),
+							acc.getDistrictCode(), acc.getWardCode(),
+							APIUtils.getDictItemName(acc.getCityCode()),
+							APIUtils.getDictItemName(acc.getDistrictCode()),
+							APIUtils.getDictItemName(acc.getWardCode()),
+							acc.getContactEmail(), StringPool.BLANK, GROUPID,
+							StringPool.BLANK, StringPool.BLANK,
+							StringPool.BLANK, null, 0, context);
 
-					CitizenLocalServiceUtil.updateStatus(
-							citizen.getCitizenId(), context.getUserId(),
-							AccountModel.ACCOUNT_STATUS_APPROVED);
+					if (citizen != null) {
+						User mappingUser = UserLocalServiceUtil.getUser(citizen
+								.getMappingUserId());
+
+						MessageBusUtil.sendEmailAddressVerification(
+								citizen.getUuid(), mappingUser,
+								acc.getContactEmail(),
+								AccountModel.ACCOUNT_TYPE_CITIZEN,
+								AccountModel.ACCOUNT_REG_TWO_STEP,
+								"khoavd.it@gmail.com", context);
+
+						CitizenLocalServiceUtil.updateStatus(
+								citizen.getCitizenId(), context.getUserId(),
+								AccountModel.ACCOUNT_STATUS_APPROVED);
+					}
+
+					resp.put("UserId", citizen.getMappingUserId());
 				}
-				
+
+				if (acc.getApplicantIdType().equals(
+						UserUtils.APPLICANT_TYPE_BUSINESS)) {
+
+					Business business = BusinessLocalServiceUtil.addBusiness(
+							acc.getApplicantName(), acc.getApplicantName(),
+							acc.getApplicantName(), StringPool.BLANK,
+							acc.getApplicantIdNo(), acc.getAddress(),
+							acc.getCityCode(), acc.getDistrictCode(),
+							acc.getWardCode(),
+							APIUtils.getDictItemName(acc.getCityCode()),
+							APIUtils.getDictItemName(acc.getDistrictCode()),
+							APIUtils.getDictItemName(acc.getWardCode()),
+							acc.getContactTelNo(), acc.getContactEmail(),
+							acc.getApplicantName(), StringPool.BLANK,
+							new String[] {}, birthDateDay, birthDateMonth,
+							birthDateYear, 0, null, StringPool.BLANK,
+							StringPool.BLANK, null, 0, context);
+
+					if (business != null) {
+						User mappingUser = UserLocalServiceUtil
+								.getUser(business.getMappingUserId());
+
+						MessageBusUtil.sendEmailAddressVerification(
+								business.getUuid(), mappingUser,
+								acc.getContactEmail(),
+								AccountModel.ACCOUNT_STATUS_BUSINESS,
+								AccountModel.ACCOUNT_REG_TWO_STEP,
+								"khoavd.it@gmail.com", context);
+
+						BusinessLocalServiceUtil.updateStatus(
+								business.getBusinessId(), context.getUserId(),
+								AccountModel.ACCOUNT_STATUS_APPROVED);
+					}
+
+					resp.put("UserId", business.getMappingUserId());
+
+				}
+
 				resp.put("Result", "New");
-				resp.put("UserId", citizen.getMappingUserId());
-				resp.put("ErrorMessage", APIUtils.getLanguageValue("create-new"));
-			}
 
-			if (acc.getApplicantIdType().equals(
-					UserUtils.APPLICANT_TYPE_BUSINESS)) {
-				
-			}
-			
-			
+				return Response.status(200).entity(resp.toString()).build();
 
-			return Response.status(200).entity(resp.toString()).build();
+			} else {
+
+				resp.put("Result", "Exist");
+				resp.put("UserId", user.getUserId());
+				resp.put("ErrorMessage",
+						APIUtils.getLanguageValue("email-reg-exist"));
+
+				return Response.status(408).entity(resp.toString()).build();
+			}
 
 		} catch (Exception e) {
+
+			resp.put("Result", "Error");
+
+			resp.put("ErrorMessage", APIUtils.getLanguageValue("register-fail"));
 
 			return Response.status(404).entity(resp.toString()).build();
 		}
 
 	}
-	
+
 	private AccountModel getAccountModelInput(JSONObject input) {
 		AccountModel acc = new AccountModel();
 		
@@ -248,7 +299,7 @@ public class OCPSUserController {
 	}
 	
 	@GET
-	@Path("/forgot/{email}")
+	@Path("/forgot/user/{email}")
 	public Response forgotPassword(@Context HttpServletRequest request,
 			@PathParam("email") String email) {
 
@@ -269,7 +320,7 @@ public class OCPSUserController {
 
 			if (Validator.isNull(user)) {
 
-				resp.put("message", "NoUserExistWithThisEmail "+email);
+				resp.put("Result", "NoExist ");
 
 				return Response.status(401).entity(resp.toString()).build();
 			} else {
@@ -292,11 +343,11 @@ public class OCPSUserController {
 							user.getEmailAddress(), fromName, fromAddress,
 							StringPool.BLANK, StringPool.BLANK, context);
 
-					resp.put("message", "Success");
+					resp.put("Result", "Success");
 
 					return Response.status(200).entity(resp.toString()).build();
 				} else {
-					resp.put("message", "NoUserExistIsBussinessOrCitizenWithEmail "+email);
+					resp.put("Result", "NoExist ");
 
 					return Response.status(401).entity(resp.toString()).build();
 				}
@@ -304,7 +355,7 @@ public class OCPSUserController {
 			}
 		} catch (PortalException | SystemException e) {
 
-			resp.put("message", "SystemError");
+			resp.put("Result", "Error");
 			return Response.status(404).entity(resp.toString()).build();
 		}
 	}
