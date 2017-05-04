@@ -197,7 +197,7 @@ public class LuceneQueryUtil {
 		}
 		return booleanQueries;
 	}
-	
+
 	/**
 	 * @param subQueries
 	 * @param params
@@ -208,8 +208,8 @@ public class LuceneQueryUtil {
 	 */
 	public static List<BooleanQuery> createBooleanQueries(
 			List<String> subQueries, List<Object> params,
-			List<String> paramNames,
-			SearchContext searchContext) throws ParseException {
+			List<String> paramNames, SearchContext searchContext)
+			throws ParseException {
 		List<BooleanQuery> booleanQueries = new ArrayList<BooleanQuery>();
 		if (subQueries != null) {
 			for (String subQuery : subQueries) {
@@ -249,8 +249,8 @@ public class LuceneQueryUtil {
 							query = addRangeTerm(query, key,
 									params.get(paramPossition));
 						}
-						
-						if(Validator.isNotNull(key)){
+
+						if (Validator.isNotNull(key)) {
 							paramNames.add(key);
 						}
 

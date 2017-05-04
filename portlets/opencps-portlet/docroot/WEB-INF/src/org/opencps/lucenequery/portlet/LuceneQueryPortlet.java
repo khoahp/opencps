@@ -36,7 +36,7 @@ public class LuceneQueryPortlet extends MVCPortlet {
 		String name = ParamUtil.getString(actionRequest, "name");
 		String pattern = ParamUtil.getString(actionRequest, "pattern");
 		String url = ParamUtil.getString(actionRequest, "url");
-		long plId = ParamUtil.getLong(actionRequest, "plId");
+		//long plId = ParamUtil.getLong(actionRequest, "plId");
 		try {
 			ServiceContext serviceContext = ServiceContextFactory
 					.getInstance(actionRequest);
