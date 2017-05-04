@@ -1,4 +1,3 @@
-
 <%@page import="com.liferay.portal.kernel.portlet.LiferayPortletMode"%>
 <%@page import="javax.portlet.PortletRequest"%>
 <%@page import="com.liferay.portlet.PortletURLFactoryUtil"%>
@@ -23,7 +22,6 @@
 %>
 <%@page import="org.opencps.servicemgt.service.ServiceInfoLocalServiceUtil"%>
 <%@ include file="../../init.jsp" %>
-
 
 <%
 	List<DictItem> serviceAdministrations = DictItemLocalServiceUtil.findDictItemsByG_DC_S(scopeGroupId, ServiceUtil.SERVICE_ADMINISTRATION);
