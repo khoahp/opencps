@@ -443,12 +443,7 @@ public class BackOfficeProcessEngine implements MessageListener {
 
 						toBackOffice.setReceptionNo(DossierNoGenerator.genaratorNoReception(
 							pattern, toEngineMsg.getDossierId()));
-						/*
-						if (currStep.getDossierStatus().contains(
-								PortletConstants.DOSSIER_STATUS_RECEIVING) &&
-								changeStep.getDossierStatus().contains("processing")) {
-								toBackOffice.setReceiveDatetime(new Date());
-							}*/
+
 						
 						toBackOffice.setReceiveDatetime(new Date());
 						// Add log create dossier
@@ -526,13 +521,11 @@ public class BackOfficeProcessEngine implements MessageListener {
 						
 					} else {
 						
-						_log.info(":::: ADD PAYMENT " );
 
 						totalPayment =
 								PaymentRequestGenerator.getTotalPayment(
 									processWorkflow.getPaymentFee(), dossier.getDossierId());
 						
-						_log.info(":::: ADD PAYMENT PaymentValue" + totalPayment );
 
 							List<String> paymentMethods =
 								PaymentRequestGenerator.getPaymentMethod(processWorkflow.getPaymentFee());
@@ -595,7 +588,6 @@ public class BackOfficeProcessEngine implements MessageListener {
 				toBackOffice.setPayment(isPayment);
 				toBackOffice.setResubmit(isResubmit);
 				
-				_log.info("======toEngineMsg.getEstimateDatetime():"+toEngineMsg.getEstimateDatetime());
 				if(Validator.isNotNull(toEngineMsg.getEstimateDatetime())){
 					
 					toBackOffice.setEstimateDatetime(toEngineMsg.getEstimateDatetime());
@@ -608,27 +600,20 @@ public class BackOfficeProcessEngine implements MessageListener {
 					
 					receiveDate = toBackOffice.getReceiveDatetime();
 					
-					_log.info("======receiveDate:"+receiveDate);
 					
 					String deadlinePattern = processWorkflow.getDeadlinePattern();
 					
-					_log.info("======processWorkflow.getGenerateDeadline():"+processWorkflow.getGenerateDeadline());
 					
 					if(processWorkflow != null && processWorkflow.getGenerateDeadline() && Validator.isNotNull(receiveDate) && Validator.isNotNull(deadlinePattern)){
 						
 						estimateDate = HolidayCheckUtils.getEndDate(receiveDate, deadlinePattern);
 						
-						_log.info("======estimateDate:"+estimateDate);
 						
 						toBackOffice.setEstimateDatetime(estimateDate);
 					}
 					
 				}
 				
-			//	toBackOffice.setEstimateDatetime(toEngineMsg.getEstimateDatetime());
-				//TODO 
-				//receiveDateTime alway set???
-//				toBackOffice.setReceiveDatetime(toEngineMsg.getReceiveDate());
 
 				long preProcessStepId = -1;
 				String autoEvent = StringPool.BLANK;
@@ -637,12 +622,6 @@ public class BackOfficeProcessEngine implements MessageListener {
 				preProcessStepId = processWorkflow.getPreProcessStepId();
 				autoEvent = processWorkflow.getAutoEvent();
 
-				_log.info("=====preProcessStepId:" + preProcessStepId);
-				_log.info("=====autoEvent:" + autoEvent);
-				_log.info("=====dossier.getDossierStatus():" + dossier.getDossierStatus());
-				_log.info("=====processWorkflow.getGenerateDeadline():" +
-					processWorkflow.getGenerateDeadline());
-				
 
 				if (preProcessStepId == 0 &&
 					autoEvent.equals(WebKeys.AUTO_EVENT_SUBMIT) &&
@@ -657,10 +636,6 @@ public class BackOfficeProcessEngine implements MessageListener {
 					toBackOffice.setEstimateDatetime(estimateDatetime);
 
 				}
-				_log.info("======estimateDatetime:" + estimateDatetime);
-				_log.info("citizenEvents:" + citizenEvents);
-				_log.info("employEvents:" + employEvents);
-
 				lsNotification =
 					getListNoties(
 						citizenEvents, employEvents, dossier.getUserId(), dossier.getGroupId(),
@@ -862,9 +837,6 @@ public class BackOfficeProcessEngine implements MessageListener {
 					else {
 						infoEmploy.setGroup(NotificationEventKeys.GROUP1);
 					}
-					//processWorkflow --> processStepId
-					// + roleId --> check readyOnly
-					// --> add sendmail if readyOnly = 0
 					boolean flag = false;
 					try {
 						List<Role> listRole = RoleLocalServiceUtil.getUserRoles(employee.getMappingUserId());
