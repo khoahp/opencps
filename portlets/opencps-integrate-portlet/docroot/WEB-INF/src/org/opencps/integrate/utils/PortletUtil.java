@@ -26,6 +26,8 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.service.ServiceContext;
+import com.liferay.portlet.documentlibrary.model.DLFolder;
 
 /**
  * @author trungnt
@@ -33,68 +35,47 @@ import com.liferay.portal.kernel.util.Validator;
  */
 public class PortletUtil {
 
-	public static class SplitName {
+	public static final int DOSSIER_FILE_MARK_UNKNOW = 0;
+	public static final int DOSSIER_FILE_MARK_ORIGINAL = 1;
+	public static final int DOSSIER_FILE_MARK_NOTARIZED = 2;
+	public static final int DOSSIER_FILE_MARK_SCAN = 3;
+	
+	
+	public static final int DOSSIER_FILE_SYNC_STATUS_NOSYNC = 0;
+	public static final int DOSSIER_FILE_SYNC_STATUS_REQUIREDSYNC = 1;
+	public static final int DOSSIER_FILE_SYNC_STATUS_SYNCSUCCESS = 2;
+	public static final int DOSSIER_FILE_SYNC_STATUS_SYNCERROR = 3;
 
-		public SplitName(String fullName) {
 
-			_firstName = StringPool.BLANK;
-			_lastName = StringPool.BLANK;
-			_midName = StringPool.BLANK;
+	public static String getDossierDestinationFolder(long groupId, int year,
+			int month, int day, String oid) {
 
-			if (Validator.isNotNull(fullName)) {
+		return String.valueOf(groupId) + StringPool.SLASH + "Dossiers"
+				+ StringPool.SLASH + String.valueOf(year) + StringPool.SLASH
+				+ String.valueOf(month) + StringPool.SLASH
+				+ String.valueOf(day) + StringPool.SLASH + oid;
+	}
 
-				// Comment by TrungNT. Only set first name equal fullName
+	public static DLFolder getDossierFolder(long groupId, Date date,
+			String oid, ServiceContext serviceContext) {
 
-				/*
-				 * String[] splitNames = StringUtil .split(fullName,
-				 * StringPool.SPACE); if (splitNames != null &&
-				 * splitNames.length > 0) { _lastName = splitNames[0];
-				 * _firstName = splitNames[splitNames.length - 1]; if
-				 * (splitNames.length >= 3) { for (int i = 1; i <
-				 * splitNames.length - 1; i++) { _midName += splitNames[i] +
-				 * StringPool.SPACE; } } this .setLastName(_lastName); this
-				 * .setFirstName(_firstName); this .setMidName(_midName); }
-				 */
+		DLFolder dlFolder = null;
 
-				this.setLastName(StringPool.BLANK);
-				this.setFirstName(fullName);
-				this.setMidName(StringPool.BLANK);
-			}
+		String destination = StringPool.BLANK;
+		SplitDate splitDate = splitDate(new Date());
+
+		destination = PortletUtil.getDossierDestinationFolder(groupId,
+				splitDate.getYear(), splitDate.getMonth(),
+				splitDate.getDayOfMoth(), oid);
+
+		if (Validator.isNotNull(destination)) {
+			dlFolder = DLFolderUtil.getTargetFolder(serviceContext.getUserId(),
+					serviceContext.getScopeGroupId(),
+					serviceContext.getScopeGroupId(), false, 0, destination,
+					StringPool.BLANK, false, serviceContext);
 		}
 
-		public String getFirstName() {
-
-			return _firstName;
-		}
-
-		public void setFirstName(String firstName) {
-
-			this._firstName = firstName;
-		}
-
-		public String getLastName() {
-
-			return _lastName;
-		}
-
-		public void setLastName(String lastName) {
-
-			this._lastName = lastName;
-		}
-
-		public String getMidName() {
-
-			return _midName;
-		}
-
-		public void setMidName(String midName) {
-
-			this._midName = midName;
-		}
-
-		private String _firstName;
-		private String _lastName;
-		private String _midName;
+		return dlFolder;
 	}
 
 	public static class SplitDate {
@@ -233,11 +214,6 @@ public class PortletUtil {
 	public static SplitDate splitDate(Date date) {
 
 		return new SplitDate(date);
-	};
-
-	public static SplitName splitName(String fullName) {
-
-		return new SplitName(fullName);
 	};
 
 	public static String getGender(int value, Locale locale) {
