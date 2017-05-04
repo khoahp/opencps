@@ -54,6 +54,7 @@
 	PortletURL iteratorURL = renderResponse.createRenderURL();
 	iteratorURL.setParameter("mvcPath", "/html/portlets/data_management/admin/dictitems.jsp");
 	iteratorURL.setParameter("tabs1", DataMgtUtil.TOP_TABS_DICTITEM);
+	iteratorURL.setParameter(DictItemDisplayTerms.DICTCOLLECTION_ID, String.valueOf(dictCollectionId));
 	
 	List<DictItem> dictItems = new ArrayList<DictItem>();
 	
