@@ -1964,6 +1964,7 @@ public class DossierMgtFrontOfficePortlet extends MVCPortlet {
 			DossierPart dossierPart = DossierPartLocalServiceUtil
 					.getDossierPart(dossierFile.getDossierPartId());
 			jsonObject = JSONFactoryUtil.createJSONObject();
+			
 			if (dossierFileId > 0
 					&& dossierPart.getPartType() != PortletConstants.DOSSIER_PART_TYPE_OTHER) {
 
