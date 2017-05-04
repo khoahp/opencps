@@ -1,4 +1,3 @@
-
 <%
 /**
  * OpenCPS is the open source Core Public Services software
@@ -36,18 +35,30 @@
 
 <%
 	long dictCollectionId = ParamUtil.getLong(request, DictItemSearchTerms.DICTCOLLECTION_ID);
+	SearchContainer itemsListSearchContainer = (SearchContainer) request.getAttribute("itemsListSearchContainer");
+	
+	if (itemsListSearchContainer != null){
+		_log.info("8=========================o jsp");
+		_log.info("getStart jsp: "+itemsListSearchContainer.getStart());
+		_log.info("getEnd jsp: "+itemsListSearchContainer.getEnd());
+		_log.info("getCur: "+itemsListSearchContainer.getCur());
+		_log.info("getDelta: "+itemsListSearchContainer.getDelta());
+		_log.info("dictCollectionId: "+dictCollectionId);
+	}
 
 	PortletURL iteratorURL = renderResponse.createRenderURL();
 	iteratorURL.setParameter("mvcPath", "/html/portlets/data_management/admin/display/dictitems.jsp");
+	iteratorURL.setParameter(DictItemDisplayTerms.DICTCOLLECTION_ID, String.valueOf(dictCollectionId));
+	iteratorURL.setParameter("actionKey", "ajax-load-dict-items");
 	
 	List<DictItem> dictItems = new ArrayList<DictItem>();
 	
 	int totalCount = 0;
 %>
 
-<div class="opencps-searchcontainer-wrapper-width-header default-box-shadow radius8">
+<div class="opencps-searchcontainer-wrapper-width-header default-box-shadow radius8 items-container">
 	<liferay-ui:search-container 
-		searchContainer="<%= new DictItemSearch(renderRequest, SearchContainer.DEFAULT_DELTA, iteratorURL) %>" 
+		searchContainer="<%=itemsListSearchContainer == null ? new DictItemSearch(renderRequest, SearchContainer.DEFAULT_DELTA, iteratorURL) : itemsListSearchContainer %>" 
 		headerNames="STT,code,name,tree-index,action"
 	>
 	
@@ -57,7 +68,7 @@
 				
 				String[] itemNames = null;
 				
-				if(Validator.isNotNull(searchTerms.getKeywords())){
+				if(Validator.isNotNull(searchTerms) && Validator.isNotNull(searchTerms.getKeywords())){
 					itemNames = CustomSQLUtil.keywords(searchTerms.getKeywords());
 				}
 				
@@ -105,6 +116,7 @@
 		<liferay-ui:search-iterator type="opencs_page_iterator"/>
 	</liferay-ui:search-container>
 </div>
+
 <%!
 	private Log _log = LogFactoryUtil.getLog("html.portlets.data_management.admin.dictitem.jsp");
 %>

@@ -17,6 +17,8 @@
  */
 %>
 
+<%@page import="org.opencps.datamgt.search.DictItemDisplayTerms"%>
+<%@page import="javax.portlet.PortletURL"%>
 <%@page import="javax.portlet.PortletRequest"%>
 <%@page import="org.opencps.util.WebKeys"%>
 <%@page import="com.liferay.portlet.PortletURLFactoryUtil"%>
@@ -26,22 +28,31 @@
 
 <%@ include file="../../init.jsp"%>
 
-<div class="span3">
-	<div class="opencps-searchcontainer-wrapper default-box-shadow radius8">
-		<div class="openCPSTree yui3-widget component tree-view tree-drag-drop">
-			<aui:button value="add"/>
-			<aui:input name="collection-name" placeholder='<%= LanguageUtil.get(locale, "name") %>' />
-			<aui:button name="search-button" value="search" />
-			<div id='<%=renderResponse.getNamespace() + "collections-container" %>' ></div>
+<div class="row-fluid">
+	<div class="span3">
+		<div class="opencps-searchcontainer-wrapper default-box-shadow radius8">
+			<div class="openCPSTree yui3-widget component tree-view tree-drag-drop">
+				<aui:button value="add"/>
+				<aui:input name="collection-name" placeholder='<%= LanguageUtil.get(locale, "name") %>' />
+				<aui:button name="search-button" value="search" />
+				<div id='<%=renderResponse.getNamespace() + "collections-container" %>' ></div>
+			</div>
+		</div>
+	</div>
+	
+	<div class="span9">
+		<div class="opencps-searchcontainer-wrapper default-box-shadow radius8">
+			<div id='<%=renderResponse.getNamespace() + "collection-detail" %>' ></div>
 		</div>
 	</div>
 </div>
 
-<div class="span9">
-	<div class="opencps-searchcontainer-wrapper default-box-shadow radius8">
-		<div id='<%=renderResponse.getNamespace() + "collection-detail" %>' ></div>
-	</div>
-</div>
+<%
+	PortletURL iteratorURL = renderResponse.createRenderURL();
+	iteratorURL.setParameter("mvcPath", "/html/portlets/data_management/admin/display/dictitems.jsp");
+	iteratorURL.setWindowState(LiferayWindowState.EXCLUSIVE);
+	iteratorURL.setParameter("actionKey", "ajax-load-dict-items");
+%>
 
 <aui:script>
 	AUI().ready('aui-base','liferay-portlet-url','aui-io', function(A){
@@ -102,18 +113,19 @@
 		);
 	},['aui-base','liferay-portlet-url','aui-io']);
 	
-	Liferay.provide(window, 'getDictItems', function(dictCollectionId){
+	Liferay.provide(window, 'getDictItems', function(dictCollectionId, cur){
 		var A = AUI();
 		
-		var portletURL = Liferay.PortletURL.createURL('<%= PortletURLFactoryUtil.create(request, WebKeys.DATA_MANAGEMENT_ADMIN_PORTLET, themeDisplay.getPlid(), PortletRequest.RENDER_PHASE) %>');
-		portletURL.setParameter("mvcPath", "/html/portlets/data_management/admin/display/dictitems.jsp");
-		portletURL.setWindowState("<%=LiferayWindowState.EXCLUSIVE.toString()%>"); 
-		portletURL.setPortletMode("normal");
-		
-		portletURL.setParameter("dictCollectionId", dictCollectionId);
+		var iteratorURL = Liferay.PortletURL.createURL('<%=iteratorURL.toString()%>');
+		iteratorURL.setParameter('<%=DictItemDisplayTerms.DICTCOLLECTION_ID %>', selectedDictCollectionId);
+		if (!cur){
+			iteratorURL.setParameter('cur', '1');
+		} else {
+			iteratorURL.setParameter('cur', cur);
+		}
 		
 		A.io.request(
-			portletURL.toString(),
+			iteratorURL.toString(),
 			{
 			    dataType: 'json',
 			    data:{    	
@@ -128,6 +140,17 @@
 						if(itemsContainer){
 							itemsContainer.html(items);
 						}
+						
+						A.all('.items-container').all('.pagination').all('a').each(function(navigation){
+							navigation.on('click', function(event){
+								event.preventDefault();
+								
+								var cur = event['target']['_node']['innerText'];
+								console.log('cur: '+cur);
+								
+								getDictItems(selectedDictCollectionId, cur);
+							});
+						});
 					},
 			    	error: function(){}
 				}

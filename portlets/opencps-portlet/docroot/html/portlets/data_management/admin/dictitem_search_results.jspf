@@ -17,7 +17,7 @@
  */
 %>
 <%
-	if(searchTerms.isAdvancedSearch()){
+	if(searchTerms != null && searchTerms.isAdvancedSearch()){
 		if(itemNames != null){
 			dictItems = DictItemLocalServiceUtil.getDictItems(dictCollectionId, itemNames, searchContainer.getStart(), searchContainer.getEnd(), searchContainer.getOrderByComparator());
 			totalCount = DictItemLocalServiceUtil.countByDictCollectionId(dictCollectionId, itemNames);

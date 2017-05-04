@@ -26,6 +26,7 @@ import java.util.Map;
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
 import javax.portlet.PortletException;
+import javax.portlet.PortletURL;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
 
@@ -48,6 +49,7 @@ import org.opencps.datamgt.model.DictItemLink;
 import org.opencps.datamgt.model.DictVersion;
 import org.opencps.datamgt.search.DictCollectionDisplayTerms;
 import org.opencps.datamgt.search.DictItemDisplayTerms;
+import org.opencps.datamgt.search.DictItemSearch;
 import org.opencps.datamgt.service.DictCollectionLinkLocalServiceUtil;
 import org.opencps.datamgt.service.DictCollectionLocalServiceUtil;
 import org.opencps.datamgt.service.DictItemLinkLocalServiceUtil;
@@ -59,10 +61,12 @@ import org.opencps.util.PortletPropsValues;
 import org.opencps.util.WebKeys;
 
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
+import com.liferay.portal.kernel.dao.search.SearchContainer;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.portlet.LiferayWindowState;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.servlet.SessionMessages;
 import com.liferay.portal.kernel.util.LocalizationUtil;
@@ -123,8 +127,7 @@ public class DataMamagementPortlet extends MVCPortlet {
 
 	@Override
 	public void render(RenderRequest renderRequest,
-			RenderResponse renderResponse)
-			throws PortletException, IOException {
+			RenderResponse renderResponse) throws PortletException, IOException {
 
 		long dictCollectionId = ParamUtil.getLong(renderRequest,
 				DictCollectionDisplayTerms.DICTCOLLECTION_ID);
@@ -154,6 +157,30 @@ public class DataMamagementPortlet extends MVCPortlet {
 			}
 		} catch (Exception e) {
 			_log.error(e);
+		}
+
+		String actionKey = ParamUtil.getString(renderRequest, "actionKey");
+		if (actionKey.equals("ajax-load-dict-items")) {
+			_log.info("8=========================o");
+			
+			int cur = ParamUtil.getInteger(renderRequest, "cur", 1);
+			int delta = ParamUtil.getInteger(renderRequest, "delta", 20);
+			
+			String itemNames = ParamUtil.getString(renderRequest, "keyword");
+			itemNames = StringPool.PERCENT + itemNames + StringPool.PERCENT;
+			
+			_log.info("cur: " + cur);
+			_log.info("delta: " + delta);
+			_log.info("itemNames: " + itemNames);
+			PortletURL iteratorURL = renderResponse.createRenderURL();
+			
+			iteratorURL.setWindowState(LiferayWindowState.NORMAL);
+
+			SearchContainer<DictItem> itemsListSearchContainer = new SearchContainer<DictItem>(
+					renderRequest, null, null, SearchContainer.DEFAULT_CUR_PARAM, cur, delta, iteratorURL,
+					null, DictItemSearch.EMPTY_RESULTS_MESSAGE);
+			
+			renderRequest.setAttribute("itemsListSearchContainer", itemsListSearchContainer);
 		}
 
 		super.render(renderRequest, renderResponse);

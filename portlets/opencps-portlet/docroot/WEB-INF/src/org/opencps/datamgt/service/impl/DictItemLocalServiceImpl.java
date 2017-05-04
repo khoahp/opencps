@@ -710,4 +710,7 @@ public class DictItemLocalServiceImpl extends DictItemLocalServiceBaseImpl {
 				dictCollectionId, parentItemId, start, end, orderBy);
 	}
 
+	public int countAll() throws SystemException {
+		return dictItemLinkPersistence.countAll();
+	}
 }
