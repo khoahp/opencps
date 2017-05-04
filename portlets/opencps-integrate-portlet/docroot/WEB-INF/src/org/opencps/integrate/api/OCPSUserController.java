@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -50,6 +51,102 @@ public class OCPSUserController {
 	public static int GROUPID = 20182;
 	public static final String PORTAL_URL = "http://202.151.168.104:2180";
 
+	@PUT
+	@Path("/users")
+	@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
+	public Response updateUser(@HeaderParam("apikey") String apikey,
+			@Context HttpServletRequest request, String body) {
+
+		JSONObject resp = JSONFactoryUtil.createJSONObject();
+
+		OCPSAuth auth = new OCPSAuth();
+
+		IntegrateAPI api = auth.auth(apikey);
+
+		if (Validator.isNotNull(api)) {
+
+			try {
+				JSONObject jsInput = JSONFactoryUtil.createJSONObject(body);
+				AccountModel acc = getAccountModelInput(jsInput);
+
+				User userLogin = UserLocalServiceUtil.getUser(api.getUserId());
+
+				if (userLogin.getEmailAddress().contentEquals(
+						acc.getContactEmail())) {
+
+					if (acc.getApplicantIdType().equalsIgnoreCase(
+							UserUtils.APPLICANT_TYPE_CITY)) {
+						Citizen citizen = CitizenLocalServiceUtil
+								.getByMappingUserId(api.getUserId());
+
+						citizen.setFullName(acc.getApplicantName());
+						citizen.setPersonalId(acc.getApplicantIdNo());
+						citizen.setAddress(acc.getAddress());
+						citizen.setCityCode(acc.getCityCode());
+						citizen.setDistrictCode(acc.getDistrictCode());
+						citizen.setWardCode(acc.getWardCode());
+						citizen.setTelNo(acc.getContactTelNo());
+						citizen.setModifiedDate(new Date());
+						
+						CitizenLocalServiceUtil.updateCitizen(citizen);
+						
+						
+					} else {
+						Business business = BusinessLocalServiceUtil
+								.getBusiness(api.getUserId());
+						business.setName(acc.getApplicantName());
+						business.setIdNumber(acc.getApplicantIdNo());
+						business.setAddress(acc.getAddress());
+						business.setCityCode(acc.getCityCode());
+						business.setDistrictCode(acc.getDistrictCode());
+						business.setWardCode(acc.getWardCode());
+						business.setTelNo(acc.getContactTelNo());
+						business.setModifiedDate(new Date());
+
+					}
+					
+					resp.put("ApiKey", getAPI(api.getUserId()));
+					resp.put("UserId", api.getUserId());
+					resp.put("ScreenName", acc.getScreenName());
+					resp.put("ApplicantName", acc.getApplicantName());
+					resp.put("ApplicantIdType", acc.getApplicantIdType());
+					resp.put("ApplicantIdNo", acc.getApplicantIdNo());
+					resp.put("ApplicantIdDate", acc.getApplicantIdDate());
+					resp.put("CityCode", acc.getCityCode());
+					resp.put("CityName", acc.getCityName());
+					resp.put("DistrictCode", acc.getDistrictCode());
+					resp.put("DistrictName", acc.getDistrictName());
+					resp.put("WardCode", acc.getWardCode());
+					resp.put("WardName", acc.getWardName());
+					resp.put("ContactTelNo", acc.getContactTelNo());
+					resp.put("ContactEmail", acc.getContactEmail());
+
+					return Response.status(200).entity(resp.toString()).build();
+				} else {
+					
+					resp.put("Result", "Error");
+					resp.put("ErrorMessage",
+							APIUtils.getLanguageValue("you-dont-have-permit"));
+					return Response.status(404).entity(resp.toString()).build();
+				}
+
+			} catch (Exception e) {
+				resp.put("Result", "Error");
+				resp.put("ErrorMessage",
+						APIUtils.getLanguageValue("invalid-body-input"));
+				return Response.status(404).entity(resp.toString()).build();
+			}
+
+		} else {
+			resp.put("Result", "Error");
+			resp.put("ErrorMessage",
+					APIUtils.getLanguageValue("you-dont-have-auth"));
+
+			// Not validate
+			return Response.status(401).entity(resp.toString()).build();
+		}
+	}
+
 	@GET
 	@Path("/login")
 	@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
@@ -72,6 +169,7 @@ public class OCPSUserController {
 			AccountModel am = userUtil.getAccountModel(user.getUserId());
 
 			if (Validator.isNotNull(am)) {
+				
 				resp.put("ApiKey", getAPI(user.getUserId()));
 				resp.put("UserId", user.getUserId());
 				resp.put("ScreenName", am.getScreenName());
