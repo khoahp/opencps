@@ -364,7 +364,13 @@
 						/>
 					</aui:fieldset>
 					
-					
+					<aui:fieldset>
+						<aui:input 
+							type="checkbox"
+							name="showResult" 
+							value="<%=showResult %>"
+						/>
+					</aui:fieldset>
 					
 				</liferay-ui:panel>
 				
