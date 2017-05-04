@@ -341,7 +341,7 @@ portlets/opencps-integrate-portlet/docroot/WEB-INF/src/org/opencps/integrate/dao
 
 portlets/opencps-integrate-portlet/docroot/WEB-INF/src/org/opencps/integrate/dao/service/persistence/IntegrateAPIPersistenceImpl.java
 
-portlets/opencps-integrate-portlet/docroot/WEB-INF/src/service\.properties
+portlets/opencps-integrate-portlet/docroot/WEB-INF/src/service.properties
 
 portlets/opencps-integrate-portlet/docroot/WEB-INF/service/org/opencps/integrate/dao/service/messaging/
 
