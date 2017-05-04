@@ -72,6 +72,7 @@ import com.liferay.portal.kernel.servlet.SessionMessages;
 import com.liferay.portal.kernel.util.LocalizationUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.ServiceContextFactory;
@@ -217,6 +218,19 @@ public class DataMamagementPortlet extends MVCPortlet {
 			collectionNameMap.put(vnLocale, collectionName);
 		}
 		
+		String collectionLinked = StringPool.BLANK;
+		if (dictCollectionsLinked.length == 0) {
+			collectionLinked = ParamUtil.getString(actionRequest,
+					"collectionLinked");
+			String[] strArr = StringUtil.split(collectionLinked);
+			dictCollectionsLinked = new long[strArr.length];
+			for (int i = 0; i < strArr.length; i++) {
+				try {
+					dictCollectionsLinked[i] = Long.parseLong(strArr[i]);
+				} catch (Exception e) {}
+			}
+		}
+		
 		String redirectURL = ParamUtil.getString(actionRequest, "redirectURL");
 		String returnURL = ParamUtil.getString(actionRequest, "returnURL");
 		
@@ -299,7 +313,7 @@ public class DataMamagementPortlet extends MVCPortlet {
 			}
 		}
 
-		// collections linked
+		// add collections linked
 		for (long l : dictCollectionsIdLinked) {
 			if (l > 0) {
 				DictCollectionLinkLocalServiceUtil.addDictCollectionLink(

@@ -63,6 +63,11 @@
 		getDictCollections();
 		getDictCollectionDetail();
 		
+		A.one('#<portlet:namespace/>search-button').on('click', function(){
+			var collectionName = A.one('#<portlet:namespace/>collection-name').attr('value');
+			getDictCollections(collectionName);
+		});
+		
 		A.one('#<portlet:namespace/>collection-name').on('change', function(){
 			var collectionName = A.one('#<portlet:namespace/>collection-name').attr('value');
 			getDictCollections(collectionName);
@@ -299,10 +304,6 @@
 	},['aui-base','liferay-portlet-url','aui-io']);
 	
 	Liferay.provide(window, 'updateDictCollection', function(){
-		console.log('submitFormEditDictCollection()');
-		console.log(A.one('#<portlet:namespace/>collectionName').attr('value'));
-		console.log(A.one('#<portlet:namespace/>collectionCode').attr('value'));
-		console.log(A.one('#<portlet:namespace/>description').attr('value'));
 		
 		var loadingMask = new A.LoadingMask(
 			{
@@ -316,6 +317,15 @@
 		portletURL.setParameter("javax.portlet.action", "updateDictCollection");
 		portletURL.setWindowState('<%=WindowState.NORMAL%>');
 		
+		var collectionLinked = '';
+		A.all('#<portlet:namespace/>dictCollectionsLinked').each(function(dictCol){
+			if (parseInt(dictCol.attr('value')) > 0){
+				collectionLinked += dictCol.attr('value') + ',';
+			}
+		});
+		
+		console.log('collectionLinked: '+collectionLinked);
+		
 		A.io.request(
 			portletURL.toString(),
 			{
@@ -324,10 +334,12 @@
 			    	<portlet:namespace/>collectionName: A.one('#<portlet:namespace/>collectionName').attr('value'),
 			    	<portlet:namespace/>collectionCode: A.one('#<portlet:namespace/>collectionCode').attr('value'),
 			    	<portlet:namespace/>description: A.one('#<portlet:namespace/>description').attr('value'),
+			    	<portlet:namespace/>collectionLinked: collectionLinked,
 			    },   
 			    on: {
 			        success: function(event, id, obj){
 			        	loadingMask.hide();
+			        	getDictCollections();
 						alert(Liferay.Language.get('success'));
 					},
 			    	error: function(){

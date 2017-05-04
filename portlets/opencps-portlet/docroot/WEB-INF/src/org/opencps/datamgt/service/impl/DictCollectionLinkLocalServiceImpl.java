@@ -55,7 +55,7 @@ public class DictCollectionLinkLocalServiceImpl extends
 				.create(dictCollectionLinkId);
 
 		DictCollection collection = dictCollectionPersistence
-				.fetchByPrimaryKey(dictCollectionId);
+				.fetchByPrimaryKey(dictCollectionLinkedId);
 
 		dictCollectionLink.setCompanyId(serviceContext.getCompanyId());
 		dictCollectionLink.setGroupId(serviceContext.getScopeGroupId());
