@@ -80,7 +80,13 @@ public class UserUtils {
 				am.setWardName(APIUtils.getDictItemName(bsn.getWardCode()));
 				am.setContactTelNo(bsn.getTelNo());
 				am.setContactEmail(bsn.getEmail());
-			}else {
+			}else if(Validator.isNotNull(user)) {
+				am.setApplicantName(user.getScreenName());
+				am.setApplicantIdDate(APIUtils.formatDateTime(user
+						.getCreateDate()));
+				am.setContactEmail(user.getEmailAddress());
+				
+			}else{
 				am = null;
 			}
 
