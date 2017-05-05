@@ -177,7 +177,7 @@
 					
 					<aui:fieldset>
 						<aui:input 
-							type="checkbox" 
+							type="hidden" 
 							name="displayDossierNo"
 							value='<%= displayDossierNo %>'
 						/>
