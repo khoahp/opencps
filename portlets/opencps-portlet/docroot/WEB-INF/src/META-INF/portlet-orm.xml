@@ -375,6 +375,29 @@
 			<transient name="userUuid" />
 		</attributes>
 	</mapped-superclass>
+	<mapped-superclass class="org.opencps.dossiermgt.model.impl.BusinessRegisterModelImpl">
+		<attributes>
+			<id name="businessRegisterId" />
+			<basic name="companyId" />
+			<basic name="groupId" />
+			<basic name="userId" />
+			<basic name="createDate">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="modifiedDate">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="ownerOrganizationId" />
+			<basic name="dossierTemplateId" />
+			<basic name="serviceProcessId" />
+			<basic name="dossierId" />
+			<basic name="validStatus" />
+			<transient name="modelAttributes" />
+			<transient name="primaryKey" />
+			<transient name="primaryKeyObj" />
+			<transient name="userUuid" />
+		</attributes>
+	</mapped-superclass>
 	<mapped-superclass class="org.opencps.dossiermgt.model.impl.DossierModelImpl">
 		<attributes>
 			<id name="dossierId" />
@@ -475,6 +498,10 @@
 			<basic name="signed" />
 			<basic name="signCheck" />
 			<basic name="signInfo" />
+			<basic name="formSchema" />
+			<basic name="formType" />
+			<basic name="formScript" />
+			<basic name="formReport" />
 			<transient name="modelAttributes" />
 			<transient name="ownerUserUuid" />
 			<transient name="primaryKey" />
@@ -685,6 +712,31 @@
 			<basic name="serviceMode" />
 			<basic name="govAgencyIndex" />
 			<basic name="serviceUrl" />
+			<transient name="modelAttributes" />
+			<transient name="primaryKey" />
+			<transient name="primaryKeyObj" />
+			<transient name="userUuid" />
+		</attributes>
+	</mapped-superclass>
+	<mapped-superclass class="org.opencps.dossiermgt.model.impl.ServiceOptionModelImpl">
+		<attributes>
+			<id name="serviceOptionId" />
+			<basic name="companyId" />
+			<basic name="groupId" />
+			<basic name="userId" />
+			<basic name="createDate">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="modifiedDate">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="serviceConfigId" />
+			<basic name="optionCode" />
+			<basic name="optionName" />
+			<basic name="optionOrder" />
+			<basic name="autoSelect" />
+			<basic name="dossierTemplateId" />
+			<basic name="serviceProcessId" />
 			<transient name="modelAttributes" />
 			<transient name="primaryKey" />
 			<transient name="primaryKeyObj" />
@@ -1336,6 +1388,87 @@
 			<transient name="userUuid" />
 		</attributes>
 	</mapped-superclass>
+	<mapped-superclass class="org.opencps.lucenequery.model.impl.LuceneMenuModelImpl">
+		<attributes>
+			<id name="menuItemId" />
+			<basic name="companyId" />
+			<basic name="groupId" />
+			<basic name="userId" />
+			<basic name="createdDate">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="modifiedDate">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="name" />
+			<basic name="pattern" />
+			<basic name="paramValues" />
+			<basic name="paramTypes" />
+			<basic name="targetPortletName" />
+			<basic name="layoutUUID" />
+			<basic name="parentId" />
+			<basic name="sibling" />
+			<basic name="treeIndex" />
+			<basic name="menuGroupId" />
+			<basic name="level" />
+			<transient name="modelAttributes" />
+			<transient name="primaryKey" />
+			<transient name="primaryKeyObj" />
+			<transient name="userUuid" />
+		</attributes>
+	</mapped-superclass>
+	<mapped-superclass class="org.opencps.lucenequery.model.impl.LuceneMenuGroupModelImpl">
+		<attributes>
+			<id name="menuGroupId" />
+			<basic name="companyId" />
+			<basic name="groupId" />
+			<basic name="userId" />
+			<basic name="createdDate">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="modifiedDate">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="name" />
+			<transient name="modelAttributes" />
+			<transient name="primaryKey" />
+			<transient name="primaryKeyObj" />
+			<transient name="userUuid" />
+		</attributes>
+	</mapped-superclass>
+	<mapped-superclass class="org.opencps.lucenequery.model.impl.LuceneMenuRoleModelImpl">
+		<attributes>
+			<id name="id">
+				<column name="ID_" />
+			</id>
+			<basic name="menuItemId" />
+			<basic name="roleId" />
+			<transient name="modelAttributes" />
+			<transient name="primaryKey" />
+			<transient name="primaryKeyObj" />
+		</attributes>
+	</mapped-superclass>
+	<mapped-superclass class="org.opencps.lucenequery.model.impl.LuceneQueryPatternModelImpl">
+		<attributes>
+			<id name="patternId" />
+			<basic name="companyId" />
+			<basic name="groupId" />
+			<basic name="userId" />
+			<basic name="createdDate">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="modifiedDate">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="name" />
+			<basic name="pattern" />
+			<basic name="url" />
+			<transient name="modelAttributes" />
+			<transient name="primaryKey" />
+			<transient name="primaryKeyObj" />
+			<transient name="userUuid" />
+		</attributes>
+	</mapped-superclass>
 	<entity class="org.opencps.accountmgt.model.impl.BusinessImpl" name="Business">
 		<table name="opencps_acc_business" />
 		<attributes />
@@ -1388,6 +1521,10 @@
 		<table name="opencps_dictversion" />
 		<attributes />
 	</entity>
+	<entity class="org.opencps.dossiermgt.model.impl.BusinessRegisterImpl" name="BusinessRegister">
+		<table name="opencps_business_register" />
+		<attributes />
+	</entity>
 	<entity class="org.opencps.dossiermgt.model.impl.DossierImpl" name="Dossier">
 		<table name="opencps_dossier" />
 		<attributes />
@@ -1422,6 +1559,10 @@
 	</entity>
 	<entity class="org.opencps.dossiermgt.model.impl.ServiceConfigImpl" name="ServiceConfig">
 		<table name="opencps_service_config" />
+		<attributes />
+	</entity>
+	<entity class="org.opencps.dossiermgt.model.impl.ServiceOptionImpl" name="ServiceOption">
+		<table name="opencps_service_option" />
 		<attributes />
 	</entity>
 	<entity class="org.opencps.api.model.impl.ApiServiceImpl" name="ApiService">
@@ -1530,6 +1671,22 @@
 	</entity>
 	<entity class="org.opencps.servicemgt.model.impl.TemplateFileImpl" name="TemplateFile">
 		<table name="opencps_templatefile" />
+		<attributes />
+	</entity>
+	<entity class="org.opencps.lucenequery.model.impl.LuceneMenuImpl" name="LuceneMenu">
+		<table name="opencps_lucene_menu" />
+		<attributes />
+	</entity>
+	<entity class="org.opencps.lucenequery.model.impl.LuceneMenuGroupImpl" name="LuceneMenuGroup">
+		<table name="opencps_lucene_menu_group" />
+		<attributes />
+	</entity>
+	<entity class="org.opencps.lucenequery.model.impl.LuceneMenuRoleImpl" name="LuceneMenuRole">
+		<table name="opencps_lucenemenu_role" />
+		<attributes />
+	</entity>
+	<entity class="org.opencps.lucenequery.model.impl.LuceneQueryPatternImpl" name="LuceneQueryPattern">
+		<table name="opencps_lucenequery_pattern" />
 		<attributes />
 	</entity>
 </entity-mappings>
