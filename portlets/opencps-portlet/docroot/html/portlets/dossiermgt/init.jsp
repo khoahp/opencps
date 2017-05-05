@@ -102,7 +102,7 @@
 	
 	//String orderBydDossierFile = preferences.getValue("orderBydDossierFile",StringPool.BLANK);
 	
-	long plidRes = GetterUtil.getLong(preferences.getValue("plid", "0"), 0);
+	String plidRes = GetterUtil.getString(portletPreferences.getValue("plidRes", ""));
 	
 	boolean displayRecentlyResultWhenSearch = GetterUtil.getBoolean(preferences.getValue("displayRecentlyResultWhenSearch", "false"), false);
 	
