@@ -88,6 +88,8 @@
 	
 	String maxUploadFileSizeUnit = preferences.getValue("maxUploadFileSizeUnit", StringPool.BLANK);
 	
+	boolean showResult = GetterUtil.getBoolean(preferences.getValue("showResult", "false"), false);
+	
 	/*dossier file list  */
 	
 	String dossierFileDisplayStyle = preferences.getValue("dossierFileDisplayStyle", "default");

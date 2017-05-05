@@ -131,7 +131,9 @@ public class ConfigurationImpl implements ConfigurationAction {
 
 		String maxUploadFileSizeUnit = ParamUtil.getString(actionRequest,
 				"maxUploadFileSizeUnit");
-		
+
+		boolean showResult = ParamUtil.getBoolean(actionRequest, "showResult");
+
 		String plidRes = ParamUtil.getString(actionRequest,
 				"plidRes");
 
@@ -162,8 +164,11 @@ public class ConfigurationImpl implements ConfigurationAction {
 
 		preferences.setValue("redirectPaymentURL", redirectURL.toString());
 		
+		preferences.setValue("showResult", String.valueOf(showResult));
+
 		preferences.setValue("plidRes",
 				plidRes);
+
 	}
 
 	protected void updateDossierList(PortletPreferences preferences,

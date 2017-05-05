@@ -50,7 +50,7 @@
 </aui:row>
 
 <c:choose>
-	<c:when test="<%=dossier != null && dossier.getDossierStatus() != PortletConstants.DOSSIER_STATUS_NEW %>">
+	<c:when test="<%=dossier != null && showResult==true || dossier.getDossierStatus() != PortletConstants.DOSSIER_STATUS_NEW %>">
 		<%
 			String[] actors = new String[]{};
 			String[] requestCommands = new String[]{StringPool.APOSTROPHE + WebKeys.DOSSIER_LOG_RESUBMIT_REQUEST + StringPool.APOSTROPHE, 
