@@ -313,7 +313,6 @@
 								</aui:a>
 							</div>
 						</div>
-					<!-- 
 						<div class="advance-signin">
 							<div class="sign-in-label">
 								<liferay-ui:message key="sign-in-with-facebook"/>
@@ -348,14 +347,14 @@
 								<aui:button name="sign-in-with-digital-signature" value="sign-in-with-digital-signature" cssClass="btn-signature-signin"/>
 							</div>
 						</div>
-					
- 					-->
 					</div>
 				</c:otherwise>
 			</c:choose>
 		</aui:form>
 
-<!-- 		<liferay-util:include page="/html/portlet/login/navigation.jsp" /> -->
+		<c:if test='<%=displayStyle.equals("default") %>'>
+			<liferay-util:include page="/html/portlet/login/navigation.jsp" />
+		</c:if>
 		
 		<aui:script use="aui-base">
 			var form = A.one(document.<portlet:namespace />fm);
