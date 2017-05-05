@@ -63,19 +63,36 @@
 							<td width="30%"><liferay-ui:message key="note"/></td>
 						</tr>
 						<%
-							PortletURL editURL = renderResponse.createRenderURL();
+							PortletURL markAsReadedUrl = renderResponse.createActionURL();
 						
 							for(UserNotificationEvent userNotificationEvent:userNotificationEvents){
 								
 								UserNotificationEventBean userNotificationBean = UserNotificationEventBean.getBean(userNotificationEvent, null, renderRequest);
+								
+								markAsReadedUrl.setParameter("userNotificationEventId", String.valueOf(userNotificationBean.getUserNotificationEventId()));
 						%>
 							<tr>
 								<td width="10%"><input name="<portlet:namespace/>checkboxs" label="" 
 									type="checkbox" value="<%=userNotificationBean.getUserNotificationEventId()%>" />
 								</td>
-								<td width="30%"><a href="<%=editURL%>"><%= userNotificationBean.getReceptionNo() %></a></td>
-								<td width="30%"><a href="<%=editURL%>"><%= userNotificationBean.getActionName() %></a></td>
-								<td width="30%"><a href="<%=editURL%>"><%= userNotificationBean.getNote() %></a></td>
+								<td width="30%">
+									<a href="<%=userNotificationBean.getUrl()%>" 
+										>
+										<%= userNotificationBean.getReceptionNo() %>
+									</a>
+								</td>
+								<td width="30%">
+									<a href="<%=userNotificationBean.getUrl()%>" 
+										>
+										<%= userNotificationBean.getActionName() %>
+									</a>
+								</td>
+								<td width="30%">
+									<a href="<%=userNotificationBean.getUrl()%>" 
+									>
+									<%= userNotificationBean.getNote() %>
+									</a>
+								</td>
 							</tr>
 						<%} %>
 					</tbody>
