@@ -44,6 +44,9 @@
 	<bean id="org.opencps.datamgt.service.DictVersionLocalService" class="org.opencps.datamgt.service.impl.DictVersionLocalServiceImpl" />
 	<bean id="org.opencps.datamgt.service.DictVersionService" class="org.opencps.datamgt.service.impl.DictVersionServiceImpl" />
 	<bean id="org.opencps.datamgt.service.persistence.DictVersionPersistence" class="org.opencps.datamgt.service.persistence.DictVersionPersistenceImpl" parent="basePersistence" />
+	<bean id="org.opencps.dossiermgt.service.BusinessRegisterLocalService" class="org.opencps.dossiermgt.service.impl.BusinessRegisterLocalServiceImpl" />
+	<bean id="org.opencps.dossiermgt.service.BusinessRegisterService" class="org.opencps.dossiermgt.service.impl.BusinessRegisterServiceImpl" />
+	<bean id="org.opencps.dossiermgt.service.persistence.BusinessRegisterPersistence" class="org.opencps.dossiermgt.service.persistence.BusinessRegisterPersistenceImpl" parent="basePersistence" />
 	<bean id="org.opencps.dossiermgt.service.DossierLocalService" class="org.opencps.dossiermgt.service.impl.DossierLocalServiceImpl" />
 	<bean id="org.opencps.dossiermgt.service.DossierService" class="org.opencps.dossiermgt.service.impl.DossierServiceImpl" />
 	<bean id="org.opencps.dossiermgt.service.persistence.DossierPersistence" class="org.opencps.dossiermgt.service.persistence.DossierPersistenceImpl" parent="basePersistence" />
@@ -75,6 +78,10 @@
 	<bean id="org.opencps.dossiermgt.service.ServiceConfigService" class="org.opencps.dossiermgt.service.impl.ServiceConfigServiceImpl" />
 	<bean id="org.opencps.dossiermgt.service.persistence.ServiceConfigPersistence" class="org.opencps.dossiermgt.service.persistence.ServiceConfigPersistenceImpl" parent="basePersistence" />
 	<bean id="org.opencps.dossiermgt.service.persistence.ServiceConfigFinder" class="org.opencps.dossiermgt.service.persistence.ServiceConfigFinderImpl" parent="basePersistence" />
+	<bean id="org.opencps.dossiermgt.service.ServiceOptionLocalService" class="org.opencps.dossiermgt.service.impl.ServiceOptionLocalServiceImpl" />
+	<bean id="org.opencps.dossiermgt.service.ServiceOptionService" class="org.opencps.dossiermgt.service.impl.ServiceOptionServiceImpl" />
+	<bean id="org.opencps.dossiermgt.service.persistence.ServiceOptionPersistence" class="org.opencps.dossiermgt.service.persistence.ServiceOptionPersistenceImpl" parent="basePersistence" />
+	<bean id="org.opencps.dossiermgt.service.persistence.ServiceOptionFinder" class="org.opencps.dossiermgt.service.persistence.ServiceOptionFinderImpl" parent="basePersistence" />
 	<bean id="org.opencps.api.service.ApiServiceLocalService" class="org.opencps.api.service.impl.ApiServiceLocalServiceImpl" />
 	<bean id="org.opencps.api.service.ApiServiceService" class="org.opencps.api.service.impl.ApiServiceServiceImpl" />
 	<bean id="org.opencps.api.service.persistence.ApiServicePersistence" class="org.opencps.api.service.persistence.ApiServicePersistenceImpl" parent="basePersistence" />
@@ -153,4 +160,13 @@
 	<bean id="org.opencps.servicemgt.service.TemplateFileService" class="org.opencps.servicemgt.service.impl.TemplateFileServiceImpl" />
 	<bean id="org.opencps.servicemgt.service.persistence.TemplateFilePersistence" class="org.opencps.servicemgt.service.persistence.TemplateFilePersistenceImpl" parent="basePersistence" />
 	<bean id="org.opencps.servicemgt.service.persistence.TemplateFileFinder" class="org.opencps.servicemgt.service.persistence.TemplateFileFinderImpl" parent="basePersistence" />
+	<bean id="org.opencps.lucenequery.service.LuceneMenuLocalService" class="org.opencps.lucenequery.service.impl.LuceneMenuLocalServiceImpl" />
+	<bean id="org.opencps.lucenequery.service.LuceneMenuService" class="org.opencps.lucenequery.service.impl.LuceneMenuServiceImpl" />
+	<bean id="org.opencps.lucenequery.service.persistence.LuceneMenuPersistence" class="org.opencps.lucenequery.service.persistence.LuceneMenuPersistenceImpl" parent="basePersistence" />
+	<bean id="org.opencps.lucenequery.service.LuceneMenuGroupLocalService" class="org.opencps.lucenequery.service.impl.LuceneMenuGroupLocalServiceImpl" />
+	<bean id="org.opencps.lucenequery.service.LuceneMenuGroupService" class="org.opencps.lucenequery.service.impl.LuceneMenuGroupServiceImpl" />
+	<bean id="org.opencps.lucenequery.service.persistence.LuceneMenuGroupPersistence" class="org.opencps.lucenequery.service.persistence.LuceneMenuGroupPersistenceImpl" parent="basePersistence" />
+	<bean id="org.opencps.lucenequery.service.LuceneQueryPatternLocalService" class="org.opencps.lucenequery.service.impl.LuceneQueryPatternLocalServiceImpl" />
+	<bean id="org.opencps.lucenequery.service.LuceneQueryPatternService" class="org.opencps.lucenequery.service.impl.LuceneQueryPatternServiceImpl" />
+	<bean id="org.opencps.lucenequery.service.persistence.LuceneQueryPatternPersistence" class="org.opencps.lucenequery.service.persistence.LuceneQueryPatternPersistenceImpl" parent="basePersistence" />
 </beans>
