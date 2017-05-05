@@ -38,6 +38,7 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.service.ServiceContext;
 
 /**
@@ -234,6 +235,7 @@ public class DictItemLocalServiceImpl extends DictItemLocalServiceBaseImpl {
 
 		Date now = new Date();
 		String treeIndex = getTreeIndex(dictItemId, parentId);
+		int level = StringUtil.split(treeIndex).length;
 
 		dictItem.setCompanyId(serviceContext.getCompanyId());
 		dictItem.setCreateDate(now);
@@ -248,6 +250,7 @@ public class DictItemLocalServiceImpl extends DictItemLocalServiceBaseImpl {
 		dictItem.setTreeIndex(treeIndex);
 		dictItem.setUserId(userId);
 		dictItem.setSibling(sibling);
+		dictItem.setLevel(level);
 
 		return dictItemPersistence.update(dictItem);
 	}

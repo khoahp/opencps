@@ -110,6 +110,7 @@
 		<column name="issueStatus" type="int" />
 		<column name="dictVersionId" type="long" />
 		<column name="sibling" type="long" />
+		<column name="level" type="int" />
 
 		<!-- Order -->
 		<order by="asc">

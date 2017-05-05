@@ -87,19 +87,13 @@
 	<!-- 		cssClass="search-container-action fa view" -->
 			
 		<c:if test="<%=DictCollectionPermission.contains(permissionChecker, scopeGroupId, ActionKeys.ADD_DICTCOLLECTION) %>">
-	 		<portlet:renderURL var="updateDictCollectionURL">
-				<portlet:param name="mvcPath" value="/html/portlets/data_management/admin/edit_dictcollection.jsp"/>
-				<portlet:param name="<%=DictCollectionDisplayTerms.DICTCOLLECTION_ID %>" value="<%=String.valueOf(collection.getDictCollectionId()) %>"/>
-				<portlet:param name="backURL" value="<%=currentURL %>"/>
-			</portlet:renderURL> 
 	 		<liferay-ui:icon 
+	 			id='<%=renderResponse.getNamespace() + "edit-items-button" %>' 
 	 			image="edit" 
-	 			message="edit" 
-	 			url="<%=updateDictCollectionURL.toString() %>" 
 	 		/> 
 	<!--  			cssClass="search-container-action fa  edit"  -->
 	 	</c:if>
-		<%-- <liferay-ui:icon-delete url="" confirmation='<%=LanguageUtil.get(locale, "are-you-sure-delete-entry") %>'/> --%>
+		
 		<c:if test="<%=collection != null && DictCollectionPermission.contains(permissionChecker, scopeGroupId, ActionKeys.DELETE) %>">
 	 		<portlet:actionURL var="deleteDictCollectionURL" name="deleteDictCollection" >
 				<portlet:param name="<%=DictCollectionDisplayTerms.DICTCOLLECTION_ID %>" 

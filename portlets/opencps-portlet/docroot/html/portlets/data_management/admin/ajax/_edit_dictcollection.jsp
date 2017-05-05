@@ -1,3 +1,4 @@
+<%@page import="org.opencps.datamgt.search.DictItemDisplayTerms"%>
 <%
 /**
  * OpenCPS is the open source Core Public Services software
@@ -38,19 +39,18 @@
 
 <%
 	DictCollection dictCollection = (DictCollection)request.getAttribute(WebKeys.DICT_COLLECTION_ENTRY);
-	long collectionId = dictCollection != null ? dictCollection.getDictCollectionId() : 0L;
-	String backURL = ParamUtil.getString(request, "backURL");
-	
-	List<DictCollectionLink> colsLinked = new ArrayList<DictCollectionLink>();
-	String collectionsLinked = StringPool.BLANK;
-	try {
-		colsLinked = DictCollectionLinkLocalServiceUtil.getByDictCollectionId(collectionId);
-		List<Long> colLinkedId = new ArrayList<Long>();
-		for (DictCollectionLink colLinked : colsLinked){
-			colLinkedId.add(colLinked.getDictCollectionLinkedId());
+	long collectionId = 0;
+	if (dictCollection == null){
+		collectionId = ParamUtil.getLong(request, DictItemDisplayTerms.DICTCOLLECTION_ID);
+		if (collectionId > 0){
+			try {
+				dictCollection = DictCollectionLocalServiceUtil.getDictCollection(collectionId);
+			} catch (Exception e) {}
 		}
-		collectionsLinked = StringUtil.merge(colLinkedId);
-	} catch (Exception e){}
+	} else {
+		collectionId = dictCollection.getDictCollectionId();
+	}
+	String backURL = ParamUtil.getString(request, "backURL");
 %>
 
 <liferay-ui:header
@@ -119,7 +119,9 @@
 												label=""
 												type="checkbox" 
 												inlineField="true"
-												checked="<%=checked %>"/>
+												checked="<%=checked %>"
+												cssClass='<%=!checked ? "no-linked-to-selected-collection" : "" %>'
+											/>
 											<%=collection.getCollectionName() %>
 										</li>
 									<%
@@ -132,7 +134,7 @@
 			</aui:fieldset>
 			<aui:fieldset>
 				<aui:button type="submit" name="submit" value="submit"/>
-				<aui:button type="reset" value="clear"/>
+				<aui:button type="submit" name="cancel" value="cancel"/>
 			</aui:fieldset>	
 		</aui:form>
 	</div>

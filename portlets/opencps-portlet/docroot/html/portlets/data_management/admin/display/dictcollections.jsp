@@ -75,6 +75,7 @@
 	});
 	
 	var selectedDictCollectionId = 0;	
+	var updateDictCollectionId = 0;
 	Liferay.provide(window, 'getDictCollectionDetail', function(collectionId){
 		
 		var loadingMask = new A.LoadingMask(
@@ -115,6 +116,13 @@
 						if (viewItemsButton){
 							viewItemsButton.on('click', function(){
 								getDictItems(selectedDictCollectionId);
+							});
+						}
+						
+						var editCollectionButton = A.one('#<portlet:namespace/>edit-items-button');
+						if (viewItemsButton){
+							editCollectionButton.on('click', function(){
+								editDictCollection(selectedDictCollectionId);
 							});
 						}
 						
@@ -238,7 +246,7 @@
 		);
 	},['aui-base','liferay-portlet-url','aui-io']);
 	
-	Liferay.provide(window, 'editDictCollection', function(){
+	Liferay.provide(window, 'editDictCollection', function(collectionId){
 		var loadingMask = new A.LoadingMask(
 			{
 				'strings.loading': '<%= UnicodeLanguageUtil.get(pageContext, "...") %>',
@@ -251,6 +259,12 @@
 		portletURL.setParameter("mvcPath", "/html/portlets/data_management/admin/ajax/_edit_dictcollection.jsp");
 		portletURL.setWindowState("<%=LiferayWindowState.EXCLUSIVE.toString()%>"); 
 		portletURL.setPortletMode("normal");
+		if (collectionId){
+			portletURL.setParameter('<%=DictItemDisplayTerms.DICTCOLLECTION_ID %>', collectionId);
+			updateDictCollectionId = collectionId;
+		} else {
+			updateDictCollectionId = 0;
+		}
 		
 		A.io.request(
 			portletURL.toString(),
@@ -272,28 +286,24 @@
 						}
 						
 						// initial value for dictcollection link checkbox
-						var collectionsLinked = '';
-						var linkedArr = collectionsLinked.split(',');
-						var match = false;
-						A.all('#<portlet:namespace/>dictCollectionsLinked').each(function(dictCol){
-							match = false;
-							for (var i = 0; i < linkedArr.length; i++) {
-						        if (linkedArr[i] == dictCol.attr('value')) {
-						        	match = true;
-						        	break;
-						        }
-						    }
-							if (!match){
-								dictCol.attr('value', '0');
-							}
+						var checkboxValue = {};
+						A.all('.no-linked-to-selected-collection').each(function(noSelected){
+							noSelected.ancestor().one('#<portlet:namespace/>dictCollectionsLinked').attr('value', '0');
 						});
 						
 						A.one('#<portlet:namespace/>fm')
 							.one('#<portlet:namespace/>submit')
 								.on('click', function(event){
 							event.preventDefault();
-							updateDictCollection();
+							updateDictCollection(updateDictCollectionId);
 						});
+						
+						A.one('#<portlet:namespace/>fm')
+							.one('#<portlet:namespace/>cancel')
+								.on('click', function(event){
+						event.preventDefault();
+						getDictCollectionDetail(selectedDictCollectionId);
+					});
 					},
 			    	error: function(){
 			    		loadingMask.hide();
@@ -303,8 +313,8 @@
 		);
 	},['aui-base','liferay-portlet-url','aui-io']);
 	
-	Liferay.provide(window, 'updateDictCollection', function(){
-		
+	Liferay.provide(window, 'updateDictCollection', function(dictCollectionId){
+		console.log('updateDictCollection: '+dictCollectionId);
 		var loadingMask = new A.LoadingMask(
 			{
 				'strings.loading': '<%= UnicodeLanguageUtil.get(pageContext, "...") %>',
@@ -324,8 +334,6 @@
 			}
 		});
 		
-		console.log('collectionLinked: '+collectionLinked);
-		
 		A.io.request(
 			portletURL.toString(),
 			{
@@ -334,6 +342,7 @@
 			    	<portlet:namespace/>collectionName: A.one('#<portlet:namespace/>collectionName').attr('value'),
 			    	<portlet:namespace/>collectionCode: A.one('#<portlet:namespace/>collectionCode').attr('value'),
 			    	<portlet:namespace/>description: A.one('#<portlet:namespace/>description').attr('value'),
+			    	<portlet:namespace/>dictCollectionId: dictCollectionId,
 			    	<portlet:namespace/>collectionLinked: collectionLinked,
 			    },   
 			    on: {
