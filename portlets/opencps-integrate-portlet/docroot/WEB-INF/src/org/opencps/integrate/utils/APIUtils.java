@@ -170,8 +170,6 @@ public class APIUtils {
 
 			boolean isEForm = isEForm(dossierPart);
 
-			System.out.println(":::::" + file.getFormData());
-
 			if (isEForm) {
 				dossierContent = file.getFormData();
 			}
