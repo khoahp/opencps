@@ -171,11 +171,11 @@ public class OCPSNotificationController {
 						try {
 
 							arrchived = NotificationUtils
-									.updateArchived(jsonObject.getLong("id"));
+									.updateArchived(jsonObject.getLong("userNotificationEventId"));
 						} catch (Exception e) {
 
 						}
-						respOb.put("id", jsonObject.getString("id"));
+						respOb.put("userNotificationEventId", jsonObject.getString("userNotificationEventId"));
 						respOb.put("archived", arrchived);
 
 						resp.put(respOb);
