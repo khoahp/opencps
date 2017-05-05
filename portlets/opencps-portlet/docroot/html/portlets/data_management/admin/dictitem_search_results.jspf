@@ -19,18 +19,18 @@
 <%
 	if(searchTerms != null && searchTerms.isAdvancedSearch()){
 		if(itemNames != null){
-			dictItems = DictItemLocalServiceUtil.getDictItems(dictCollectionId, itemNames, searchContainer.getStart(), searchContainer.getEnd(), searchContainer.getOrderByComparator());
+			dictItems = DictItemLocalServiceUtil.getDictItems(dictCollectionId, itemNames, searchContainer.getStart(), searchContainer.getEnd(), DataMgtUtil.getDictItemOrderByComparator(DictItemDisplayTerms.SIBLING, WebKeys.ORDER_BY_ASC));
 			totalCount = DictItemLocalServiceUtil.countByDictCollectionId(dictCollectionId, itemNames);
 		}else{
-			dictItems = DictItemLocalServiceUtil.getDictItemsByDictCollectionId(dictCollectionId, searchContainer.getStart(), searchContainer.getEnd(), searchContainer.getOrderByComparator());
+			dictItems = DictItemLocalServiceUtil.getDictItemsByDictCollectionId(dictCollectionId, searchContainer.getStart(), searchContainer.getEnd(), DataMgtUtil.getDictItemOrderByComparator(DictItemDisplayTerms.SIBLING, WebKeys.ORDER_BY_ASC));
 			totalCount = DictItemLocalServiceUtil.countByDictCollectionId(dictCollectionId);
 		}
 	}else{
 		if(itemNames != null){
-			dictItems = DictItemLocalServiceUtil.getDictItems(dictCollectionId, itemNames, searchContainer.getStart(), searchContainer.getEnd(), searchContainer.getOrderByComparator());
+			dictItems = DictItemLocalServiceUtil.getDictItems(dictCollectionId, itemNames, searchContainer.getStart(), searchContainer.getEnd(), DataMgtUtil.getDictItemOrderByComparator(DictItemDisplayTerms.SIBLING, WebKeys.ORDER_BY_ASC));
 			totalCount = DictItemLocalServiceUtil.countByDictCollectionId(dictCollectionId, itemNames);
 		}else{
-			dictItems = DictItemLocalServiceUtil.getDictItemsByDictCollectionId(dictCollectionId, searchContainer.getStart(), searchContainer.getEnd(), searchContainer.getOrderByComparator());
+			dictItems = DictItemLocalServiceUtil.getDictItemsByDictCollectionId(dictCollectionId, searchContainer.getStart(), searchContainer.getEnd(), DataMgtUtil.getDictItemOrderByComparator(DictItemDisplayTerms.SIBLING, WebKeys.ORDER_BY_ASC));
 			totalCount = DictItemLocalServiceUtil.countByDictCollectionId(dictCollectionId);
 		}
 	}

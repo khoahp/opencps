@@ -133,7 +133,7 @@
 				</aui:select> --%>
 				
 				<!-- sibling -->
-				<div id='<%=renderResponse.getNamespace() + "sibling" %>'>
+				<div id='<%=renderResponse.getNamespace() + "sibling-container" %>'>
 					<aui:select name="<%=DictItemDisplayTerms.SIBLING %>" label="sibling">
 						<aui:option value="0"></aui:option>
 					</aui:select>
@@ -237,7 +237,7 @@
 			        success: function(event, id, obj) {
 						var instance = this;
 						var siblings = instance.get('responseData');
-						var siblingsContainer = A.one("#<portlet:namespace/>sibling");
+						var siblingsContainer = A.one("#<portlet:namespace/>sibling-container");
 						if(siblingsContainer){
 							siblingsContainer.html(siblings);
 						}

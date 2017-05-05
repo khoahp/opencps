@@ -1,3 +1,6 @@
+<%@page import="org.opencps.datamgt.service.DictCollectionLocalServiceUtil"%>
+<%@page import="org.opencps.datamgt.model.DictCollection"%>
+<%@page import="java.util.List"%>
 <%
 /**
  * OpenCPS is the open source Core Public Services software
@@ -40,6 +43,37 @@
 				<div id='<%=renderResponse.getNamespace() + "collections-container" %>' ></div>
 			</div>
 		</div>
+		<%-- <div class="opencps-searchcontainer-wrapper default-box-shadow radius8">
+			<aui:row>
+				<liferay-ui:message key="edit-sibling"/>
+			</aui:row>
+			<div class="edit-form">
+				<portlet:actionURL name="editDictItemSibling" var="editDictItemSiblingURL"/>
+				<aui:form action="<%=editDictItemSiblingURL.toString() %>" method="POST" name="fm_editSibling">
+					<aui:row>
+						<aui:select name="numberedSiblingMode">
+							<aui:option value="1" label="numbered-for-all-dictItems"/>
+							<aui:option value="2" label="numbered-for-all-dictItems-in-dictcollection" selected="true"/>
+						</aui:select>
+					</aui:row>
+					<aui:row>
+						<aui:select name="<%=DictItemDisplayTerms.DICTCOLLECTION_ID %>">
+							<aui:option value="0" label="select-dictcollection"/>
+							<%
+								List<DictCollection> collections = DictCollectionLocalServiceUtil.getDictCollections();
+								for (DictCollection collection : collections){
+									%>
+										<aui:option value="<%=collection.getDictCollectionId() %>" ><%=collection.getCollectionName(locale) %></aui:option>
+									<%
+								}
+							%>
+						</aui:select>
+					</aui:row>
+					
+					<aui:button type="submit"/>
+				</aui:form>
+			</div>
+		</div> --%>
 	</div>
 	
 	<div class="span9">
@@ -204,6 +238,11 @@
 							});
 						});
 						
+						// add button dict item
+						A.one('#<portlet:namespace/>add-item').on('click', function(){
+							editDictItem();
+						});
+						
 						scrollWindow();
 					},
 			    	error: function(){
@@ -307,7 +346,6 @@
 						}
 						
 						// initial value for dictcollection link checkbox
-						var checkboxValue = {};
 						A.all('.no-linked-to-selected-collection').each(function(noSelected){
 							noSelected.ancestor().one('#<portlet:namespace/>dictCollectionsLinked').attr('value', '0');
 						});
@@ -322,9 +360,9 @@
 						A.one('#<portlet:namespace/>fm')
 							.one('#<portlet:namespace/>cancel')
 								.on('click', function(event){
-						event.preventDefault();
-						getDictCollectionDetail(selectedDictCollectionId);
-					});
+							event.preventDefault();
+							getDictCollectionDetail(selectedDictCollectionId);
+						});
 					},
 			    	error: function(){
 			    		loadingMask.hide();
@@ -347,11 +385,13 @@
 		portletURL.setParameter("mvcPath", "/html/portlets/data_management/admin/ajax/_edit_dictitem.jsp");
 		portletURL.setWindowState("<%=LiferayWindowState.EXCLUSIVE.toString()%>"); 
 		portletURL.setPortletMode("normal");
+		portletURL.setParameter('<%=DictItemDisplayTerms.DICTCOLLECTION_ID %>', selectedDictCollectionId);
 		
 		if (itemId){
 			portletURL.setParameter('<%=DictItemDisplayTerms.DICTITEM_ID %>', itemId);
 			selectedDictItemId = itemId;
 		} else {
+			portletURL.setParameter('<%=DictItemDisplayTerms.DICTCOLLECTION_ID %>', selectedDictCollectionId);
 			selectedDictItemId = 0;
 		}
 		
@@ -377,26 +417,32 @@
 						var dictCollection = A.one('#<portlet:namespace/><%=DictItemDisplayTerms.DICTCOLLECTION_ID%>');
 						
 						if(dictCollection){
-							
 							var dictCollectionId = dictCollection.val();
 							var dictItemId = selectedDictItemId;
-							
 							getDictItemsList(dictCollectionId, dictItemId);
-							
 							getDictItemsLinked(dictCollectionId, dictItemId);
-							
 							getSelectSibling(dictCollectionId, 0, dictItemId);
-							
 							dictCollection.on('change', function(){
 								dictCollectionId = dictCollection.val();
-								
 								getDictItemsList(dictCollectionId, dictItemId);
-								
 								getDictItemsLinked(dictCollectionId, dictItemId);
-								
 								getSelectSibling(dictCollectionId, 0, 0);
 							});
 						}
+						
+						A.one('#<portlet:namespace/>fm')
+							.one('#<portlet:namespace/>submit')
+								.on('click', function(event){
+							event.preventDefault();
+							updateDictItem(selectedDictItemId, selectedDictCollectionId);
+						});
+						
+						A.one('#<portlet:namespace/>fm')
+							.one('#<portlet:namespace/>cancel')
+								.on('click', function(event){
+							event.preventDefault();
+							getDictItems(selectedDictCollectionId);
+						});
 					},
 			    	error: function(){
 			    		loadingMask.hide();
@@ -407,7 +453,6 @@
 	},['aui-base','liferay-portlet-url','aui-io']);
 	
 	Liferay.provide(window, 'updateDictCollection', function(dictCollectionId){
-		console.log('updateDictCollection: '+dictCollectionId);
 		var loadingMask = new A.LoadingMask(
 			{
 				'strings.loading': '<%= UnicodeLanguageUtil.get(pageContext, "...") %>',
@@ -454,6 +499,56 @@
 		
 	},['aui-base','liferay-portlet-url','aui-io']);
 	
+	Liferay.provide(window, 'updateDictItem', function(dictItemId, dictCollectionId){
+		var loadingMask = new A.LoadingMask(
+			{
+				'strings.loading': '<%= UnicodeLanguageUtil.get(pageContext, "...") %>',
+				target: A.one('#<portlet:namespace/>collection-detail')
+			}
+		);
+		loadingMask.show();
+		
+		var portletURL = Liferay.PortletURL.createURL('<%= PortletURLFactoryUtil.create(request, WebKeys.DATA_MANAGEMENT_ADMIN_PORTLET, themeDisplay.getPlid(), PortletRequest.ACTION_PHASE) %>');
+		portletURL.setParameter("javax.portlet.action", "updateDictItem");
+		portletURL.setWindowState('<%=WindowState.NORMAL%>');
+		
+		var itemsLinked = '';
+		A.all('#<portlet:namespace/>dictItemLinked').each(function(item){
+			if (parseInt(item.attr('value')) > 0){
+				itemsLinked += item.attr('value') + ',';
+			}
+		});
+		
+		A.io.request(
+			portletURL.toString(),
+			{
+				method: 'POST',
+			    data:{    	
+			    	<portlet:namespace/><%=DictItemDisplayTerms.DICTITEM_ID%>: dictItemId,
+			    	<portlet:namespace/><%=DictItemDisplayTerms.DICTCOLLECTION_ID%>: dictCollectionId,
+			    	<portlet:namespace/><%=DictItemDisplayTerms.PARENTITEM_ID%>: A.one('#<portlet:namespace/>parentItemId').attr('value'),
+			    	<portlet:namespace/><%=DictItemDisplayTerms.ITEM_NAME%>: A.one('#<portlet:namespace/>itemName').attr('value'),
+			    	<portlet:namespace/><%=DictItemDisplayTerms.ITEM_CODE%>: A.one('#<portlet:namespace/>itemCode').attr('value'),
+			    	<portlet:namespace/><%=DictItemDisplayTerms.SIBLING%>: A.one('#<portlet:namespace/>sibling').attr('value'),
+			    	<portlet:namespace/>dictItemLinked: itemsLinked,
+			    },   
+			    on: {
+			        success: function(event, id, obj){
+			        	setTimeout(function(){
+							getDictItems(selectedDictCollectionId);
+							alert(Liferay.Language.get('success'));
+						}, 1000);
+					},
+			    	error: function(){
+			    		loadingMask.hide();
+			    		alert(Liferay.Language.get('error'));
+			    	}
+				}
+			}
+		);
+		
+	},['aui-base','liferay-portlet-url','aui-io']);
+	
 	Liferay.provide(window, 'getSelectSibling', function(dictCollectionId, parentItemId, dictItemId) {
 		var A = AUI();
 		
@@ -477,7 +572,7 @@
 			        success: function(event, id, obj) {
 						var instance = this;
 						var siblings = instance.get('responseData');
-						var siblingsContainer = A.one("#<portlet:namespace/>sibling");
+						var siblingsContainer = A.one("#<portlet:namespace/>sibling-container");
 						if(siblingsContainer){
 							siblingsContainer.html(siblings);
 						}
@@ -518,22 +613,10 @@
 							itemsLinkedContainer.html(itemsLinked);
 						}
 						
-						// set initial value
 						// todo itemsLinkedStr
-						var itemsLinkedStr = '';
-						var itemsLinkedArr = itemsLinkedStr.split(',');
-						var match = false;
-						A.all('#<portlet:namespace/>dictItemLinked').each(function(dictItem){
-							match = false;
-							for (var i = 0; i < itemsLinkedArr.length; i++) {
-						        if (itemsLinkedArr[i] == dictItem.attr('value')) {
-						        	match = true;
-						        	break;
-						        }
-						    }
-							if (!match){
-								dictItem.attr('value', '0');
-							}
+						// initial value for item link checkbox
+						A.all('.no-linked-to-selected-item').each(function(noSelected){
+							noSelected.ancestor().one('#<portlet:namespace/>dictItemLinked').attr('value', '0');
 						});
 						
 						// toggle expand
@@ -607,7 +690,7 @@
 	
 	Liferay.provide(window, 'scrollWindow', function(){
 		var anchor = A.one('#<portlet:namespace/>anchor-scroll');
-		$("html, body").animate({ scrollTop: anchor.getY() - 60 }, "normal");
+		$("html, body").animate({ scrollTop: anchor.getY() - 100 }, "normal");
 	});
 </aui:script>
 

@@ -19,13 +19,6 @@
 %>
 
 <%@page import="org.opencps.datamgt.model.DictCollection"%>
-<%@page import="org.opencps.util.MessageKeys"%>
-<%@page import="org.opencps.datamgt.EmptyItemCodeException"%>
-<%@page import="org.opencps.datamgt.OutOfLengthItemCodeException"%>
-<%@page import="org.opencps.datamgt.EmptyDictItemNameException"%>
-<%@page import="org.opencps.datamgt.OutOfLengthItemNameException"%>
-<%@page import="org.opencps.datamgt.DuplicateItemException"%>
-<%@page import="org.opencps.datamgt.NoSuchDictItemException"%>
 <%@page import="org.opencps.util.WebKeys"%>
 <%@page import="com.liferay.portal.kernel.log.LogFactoryUtil"%>
 <%@page import="com.liferay.portal.kernel.log.Log"%>
@@ -34,9 +27,6 @@
 <%@page import="java.util.List"%>
 <%@page import="org.opencps.datamgt.search.DictItemDisplayTerms"%>
 <%@page import="org.opencps.datamgt.model.DictItem"%>
-<%@page import="com.liferay.portal.kernel.portlet.LiferayWindowState"%>
-<%@page import="javax.portlet.PortletRequest"%>
-<%@page import="com.liferay.portlet.PortletURLFactoryUtil"%>
 <%@page import="org.opencps.datamgt.service.DictItemLinkLocalServiceUtil"%>
 <%@page import="org.opencps.datamgt.model.DictItemLink"%>
 
@@ -47,13 +37,14 @@
 <%
 	DictItem dictItem = (DictItem)request.getAttribute(WebKeys.DICT_ITEM_ENTRY);
 	long dictItemId = dictItem != null ? dictItem.getDictItemId() : 0L;
+	long collectionId = ParamUtil.getLong(request, DictItemDisplayTerms.DICTCOLLECTION_ID);
 	String backURL = ParamUtil.getString(request, "backURL");
 	
-	List<DictCollection> dictCollections = new ArrayList<DictCollection>();
+	DictCollection collection = null;
 	List<DictItem> dictItems = new ArrayList<DictItem>();
 	
 	try{
-		dictCollections = DictCollectionLocalServiceUtil.getDictCollections(scopeGroupId);
+		collection = DictCollectionLocalServiceUtil.getDictCollection(collectionId);
 	}catch(Exception e){
 		_log.error(e);
 	}
@@ -99,18 +90,7 @@
 				</aui:input>
 				
 				<aui:select name="<%=DictItemDisplayTerms.DICTCOLLECTION_ID %>" label="dict-collection">
-					<aui:option value="0"/>
-					<%
-						if(dictCollections != null){
-							for(DictCollection dictCollection : dictCollections){
-								%>
-									<aui:option value="<%=dictCollection.getDictCollectionId() %>">
-										<%=dictCollection.getCollectionName(locale) %>
-									</aui:option>
-								<%
-							}
-						}
-					%>
+					<aui:option value="<%=collectionId %>"><%=collection.getCollectionName(locale) %></aui:option>
 				</aui:select> 
 				<div id='<%=renderResponse.getNamespace() + "parentItem" %>'>
 					<aui:select name="<%=DictItemDisplayTerms.PARENTITEM_ID %>" label="parent-item">
@@ -122,7 +102,7 @@
 				</aui:select> --%>
 				
 				<!-- sibling -->
-				<div id='<%=renderResponse.getNamespace() + "sibling" %>'>
+				<div id='<%=renderResponse.getNamespace() + "sibling-container" %>'>
 					<aui:select name="<%=DictItemDisplayTerms.SIBLING %>" label="sibling">
 						<aui:option value="0"></aui:option>
 					</aui:select>
@@ -136,41 +116,8 @@
 			
 			<aui:fieldset>
 				<aui:button type="submit" name="submit" value="submit"/>
-				<aui:button type="reset" value="clear"/>
+				<aui:button type="submit" name="cancel" value="cancel"/>
 			</aui:fieldset>	
-		</aui:form>
-	</div>
-</div>
-
-<!-- edit sibling -->
-<div class="opencps-datamgt dictitem-wrapper opencps-bound-wrapper pd20 default-box-shadow">
-	<aui:row>
-		<liferay-ui:message key="edit-sibling"/>
-	</aui:row>
-	<div class="edit-form">
-		<portlet:actionURL name="editDictItemSibling" var="editDictItemSiblingURL"/>
-		<aui:form action="<%=editDictItemSiblingURL.toString() %>" method="POST" name="fm_editSibling">
-			<aui:row>
-				<aui:select name="numberedSiblingMode">
-					<aui:option value="1" label="numbered-for-all-dictItems"/>
-					<aui:option value="2" label="numbered-for-all-dictItems-in-dictcollection" selected="true"/>
-				</aui:select>
-			</aui:row>
-			<aui:row>
-				<aui:select name="<%=DictItemDisplayTerms.DICTCOLLECTION_ID %>">
-					<aui:option value="0" label="select-dictcollection"/>
-					<%
-						List<DictCollection> collections = DictCollectionLocalServiceUtil.getDictCollections();
-						for (DictCollection collection : collections){
-							%>
-								<aui:option value="<%=collection.getDictCollectionId() %>" ><%=collection.getCollectionName(locale) %></aui:option>
-							<%
-						}
-					%>
-				</aui:select>
-			</aui:row>
-			
-			<aui:button type="submit"/>
 		</aui:form>
 	</div>
 </div>

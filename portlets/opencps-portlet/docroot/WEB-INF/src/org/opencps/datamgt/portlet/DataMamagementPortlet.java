@@ -356,6 +356,26 @@ public class DataMamagementPortlet extends MVCPortlet {
 				itemName = entry.getValue();
 			}
 		}
+		
+		if (Validator.isNull(itemName)) {
+			itemName = ParamUtil.getString(actionRequest,
+					DictItemDisplayTerms.ITEM_NAME);
+			Locale vnLocale = new Locale("vi", "VN");
+			itemNameMap.put(vnLocale, itemName);
+		}
+		
+		String itemsLinked = StringPool.BLANK;
+		if (dictItemsLinked.length == 0) {
+			itemsLinked = ParamUtil.getString(actionRequest,
+					"collectionLinked");
+			String[] strArr = StringUtil.split(itemsLinked);
+			dictItemsLinked = new long[strArr.length];
+			for (int i = 0; i < strArr.length; i++) {
+				try {
+					dictItemsLinked[i] = Long.parseLong(strArr[i]);
+				} catch (Exception e) {}
+			}
+		}
 
 		String redirectURL = ParamUtil.getString(actionRequest, "redirectURL");
 		String returnURL = ParamUtil.getString(actionRequest, "returnURL");

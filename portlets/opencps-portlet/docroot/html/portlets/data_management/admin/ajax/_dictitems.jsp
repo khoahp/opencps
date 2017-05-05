@@ -1,3 +1,5 @@
+<%@page import="org.opencps.util.WebKeys"%>
+<%@page import="org.opencps.datamgt.util.DataMgtUtil"%>
 <%
 /**
  * OpenCPS is the open source Core Public Services software
@@ -60,7 +62,7 @@
 </div>
 
 <div>
-	<aui:button type="submit" value="add-item" onClick=""/>
+	<aui:button id='<%=renderResponse.getNamespace() + "add-item" %>' type="submit" value="add-item" />
 	<span><aui:input name="item-name" placeholder='<%= LanguageUtil.get(locale, "name") %>' /></span>
 	<span><aui:button name="search-item-button" value="search" /></span>
 </div>
@@ -82,7 +84,6 @@
 				}
 				
 				try{
-					
 					%>
 						<%@include file="/html/portlets/data_management/admin/dictitem_search_results.jspf" %>
 					<%

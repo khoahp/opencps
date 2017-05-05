@@ -103,7 +103,9 @@
 								label=""
 								type="checkbox" 
 								inlineField="true"
-								checked="<%=checked %>"/>
+								checked="<%=checked %>"
+								cssClass='<%=!checked ? "no-linked-to-selected-item" : "" %>'
+							/>
 							<%=index + item.getItemName(locale) %>
 						</li>
 					<%
