@@ -1,4 +1,3 @@
-<%@page import="org.opencps.datamgt.search.DictItemDisplayTerms"%>
 <%
 /**
  * OpenCPS is the open source Core Public Services software
@@ -17,6 +16,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 %>
+<%@page import="org.opencps.datamgt.search.DictItemDisplayTerms"%>
 <%@page import="org.opencps.datamgt.search.DictCollectionDisplayTerms"%>
 <%@page import="org.opencps.datamgt.model.DictCollection"%>
 <%@page import="org.opencps.util.MessageKeys"%>

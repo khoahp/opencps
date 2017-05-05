@@ -1,5 +1,3 @@
-<%@page import="org.opencps.datamgt.service.DictCollectionLocalServiceUtil"%>
-<%@page import="org.opencps.datamgt.model.DictCollection"%>
 <%
 /**
  * OpenCPS is the open source Core Public Services software
@@ -19,6 +17,9 @@
  */
 %>
 
+<%@page import="com.liferay.portal.kernel.language.LanguageUtil"%>
+<%@page import="org.opencps.datamgt.service.DictCollectionLocalServiceUtil"%>
+<%@page import="org.opencps.datamgt.model.DictCollection"%>
 <%@page import="com.liferay.portal.kernel.dao.search.SearchEntry"%>
 <%@page import="java.util.List"%>
 <%@page import="javax.portlet.PortletURL"%>
@@ -44,15 +45,6 @@
 		collection = DictCollectionLocalServiceUtil.getDictCollection(dictCollectionId);
 	} catch (Exception e) {}
 	
-	if (itemsListSearchContainer != null){
-		_log.info("8=========================o jsp");
-		_log.info("getStart jsp: "+itemsListSearchContainer.getStart());
-		_log.info("getEnd jsp: "+itemsListSearchContainer.getEnd());
-		_log.info("getCur: "+itemsListSearchContainer.getCur());
-		_log.info("getDelta: "+itemsListSearchContainer.getDelta());
-		_log.info("dictCollectionId: "+dictCollectionId);
-	}
-
 	PortletURL iteratorURL = renderResponse.createRenderURL();
 	iteratorURL.setParameter("mvcPath", "/html/portlets/data_management/admin/display/dictitems.jsp");
 	iteratorURL.setParameter(DictItemDisplayTerms.DICTCOLLECTION_ID, String.valueOf(dictCollectionId));
@@ -65,6 +57,12 @@
 
 <div>
 	<p><liferay-ui:message key='dictcollection' /> > <%=collection != null ? collection.getCollectionName() : StringPool.BLANK %> > <liferay-ui:message key='list' /></p>
+</div>
+
+<div>
+	<aui:button type="submit" value="add-item" onClick=""/>
+	<span><aui:input name="item-name" placeholder='<%= LanguageUtil.get(locale, "name") %>' /></span>
+	<span><aui:button name="search-item-button" value="search" /></span>
 </div>
 
 <div class="opencps-searchcontainer-wrapper-width-header default-box-shadow radius8 items-container">
@@ -104,24 +102,22 @@
 				keyProperty="dictItemId"
 			>
 				<%
-					PortletURL editURL = renderResponse.createRenderURL();
-					editURL.setParameter("mvcPath", "/html/portlets/data_management/admin/edit_dictitem.jsp");
-					editURL.setParameter(DictItemDisplayTerms.DICTITEM_ID, String.valueOf(dictItem.getDictItemId()));
-					editURL.setParameter("backURL", currentURL);
-					
 					row.setClassName("opencps-searchcontainer-row");
 					
 					//id column
-					row.addText(String.valueOf((row.getPos() + 1) + (searchContainer.getCur() - 1) * searchContainer.getDelta()));
+					row.addText(String.valueOf((row.getPos() + 1) 
+							+ (searchContainer.getCur() - 1) * searchContainer.getDelta()));
 					
-					row.addText(dictItem.getItemCode(), editURL);
+					row.addText(dictItem.getItemCode());
 					
-					row.addText(dictItem.getItemName(locale), editURL);
+					row.addText(dictItem.getItemName(locale));
 					
-					row.addText(dictItem.getTreeIndex(), editURL);
+					row.addText(dictItem.getTreeIndex());
 					
 					//action column
-					row.addJSP("center",SearchEntry.DEFAULT_VALIGN,"/html/portlets/data_management/admin/dictitem_actions.jsp", config.getServletContext(), request, response);
+					row.addJSP("center", SearchEntry.DEFAULT_VALIGN, 
+							"/html/portlets/data_management/admin/ajax/_dictitem_actions.jsp", 
+							config.getServletContext(), request, response);
 				%>	
 			</liferay-ui:search-container-row> 
 		

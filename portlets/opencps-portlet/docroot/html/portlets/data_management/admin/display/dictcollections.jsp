@@ -34,7 +34,7 @@
 	<div class="span3" id="<portlet:namespace/>anchor-scroll">
 		<div class="opencps-searchcontainer-wrapper default-box-shadow radius8">
 			<div class="openCPSTree yui3-widget component tree-view tree-drag-drop">
-				<aui:button value="add" onClick="editDictCollection()"/>
+				<aui:button type="submit" value="add-collection" onClick="editDictCollection()"/>
 				<aui:input name="collection-name" placeholder='<%= LanguageUtil.get(locale, "name") %>' />
 				<aui:button name="search-button" value="search" />
 				<div id='<%=renderResponse.getNamespace() + "collections-container" %>' ></div>
@@ -74,8 +74,20 @@
 		});
 	});
 	
+	//////// functions list
+	// 'getDictCollectionDetail' : load detail of the dict collection
+	// 'getDictItems' : load dict item list of the dict colleciton
+	// 'getDictCollections' : load dict collection list and push into the left div
+	// 'editDictCollection' : load page edit collection
+	// 'updateDictCollection' : do update dict collection
+	// 'editDictItem' : load page edit dict item
+	
+	// 'scrollWindow'
+	
 	var selectedDictCollectionId = 0;	
 	var updateDictCollectionId = 0;
+	var selectedDictItemId = 0;
+	
 	Liferay.provide(window, 'getDictCollectionDetail', function(collectionId){
 		
 		var loadingMask = new A.LoadingMask(
@@ -173,6 +185,7 @@
 							itemsContainer.html(items);
 						}
 						
+						// search container navigator
 						A.all('.items-container').all('.pagination').all('a').each(function(navigation){
 							navigation.on('click', function(event){
 								event.preventDefault();
@@ -180,6 +193,14 @@
 								var cur = event['target']['_node']['innerText'];
 								
 								getDictItems(selectedDictCollectionId, cur);
+							});
+						});
+						
+						// edit button dict item
+						A.all('.<portlet:namespace/>edit_dictItem_button').each(function(button){
+							var itemId = button.one('img')['_node']['id'].replace(/.+dictItemId_/, '');
+							button.on('click', function(){
+								editDictItem(itemId);
 							});
 						});
 						
@@ -313,6 +334,78 @@
 		);
 	},['aui-base','liferay-portlet-url','aui-io']);
 	
+	Liferay.provide(window, 'editDictItem', function(itemId){
+		var loadingMask = new A.LoadingMask(
+			{
+				'strings.loading': '<%= UnicodeLanguageUtil.get(pageContext, "...") %>',
+				target: A.one('#<portlet:namespace/>collection-detail')
+			}
+		);
+		loadingMask.show();
+		
+		var portletURL = Liferay.PortletURL.createURL('<%= PortletURLFactoryUtil.create(request, WebKeys.DATA_MANAGEMENT_ADMIN_PORTLET, themeDisplay.getPlid(), PortletRequest.RENDER_PHASE) %>');
+		portletURL.setParameter("mvcPath", "/html/portlets/data_management/admin/ajax/_edit_dictitem.jsp");
+		portletURL.setWindowState("<%=LiferayWindowState.EXCLUSIVE.toString()%>"); 
+		portletURL.setPortletMode("normal");
+		
+		if (itemId){
+			portletURL.setParameter('<%=DictItemDisplayTerms.DICTITEM_ID %>', itemId);
+			selectedDictItemId = itemId;
+		} else {
+			selectedDictItemId = 0;
+		}
+		
+		A.io.request(
+			portletURL.toString(),
+			{
+			    dataType: 'json',
+			    data:{    	
+			                	
+			    },   
+			    on: {
+			        success: function(event, id, obj) {
+			        	loadingMask.hide();
+			        	
+						var instance = this;
+						var result = instance.get('responseData');
+						var container = A.one("#<portlet:namespace/>collection-detail");
+						
+						if(container){
+							container.html(result);
+						}
+						
+						var dictCollection = A.one('#<portlet:namespace/><%=DictItemDisplayTerms.DICTCOLLECTION_ID%>');
+						
+						if(dictCollection){
+							
+							var dictCollectionId = dictCollection.val();
+							var dictItemId = selectedDictItemId;
+							
+							getDictItemsList(dictCollectionId, dictItemId);
+							
+							getDictItemsLinked(dictCollectionId, dictItemId);
+							
+							getSelectSibling(dictCollectionId, 0, dictItemId);
+							
+							dictCollection.on('change', function(){
+								dictCollectionId = dictCollection.val();
+								
+								getDictItemsList(dictCollectionId, dictItemId);
+								
+								getDictItemsLinked(dictCollectionId, dictItemId);
+								
+								getSelectSibling(dictCollectionId, 0, 0);
+							});
+						}
+					},
+			    	error: function(){
+			    		loadingMask.hide();
+			    	}
+				}
+			}
+		);
+	},['aui-base','liferay-portlet-url','aui-io']);
+	
 	Liferay.provide(window, 'updateDictCollection', function(dictCollectionId){
 		console.log('updateDictCollection: '+dictCollectionId);
 		var loadingMask = new A.LoadingMask(
@@ -359,6 +452,157 @@
 			}
 		);
 		
+	},['aui-base','liferay-portlet-url','aui-io']);
+	
+	Liferay.provide(window, 'getSelectSibling', function(dictCollectionId, parentItemId, dictItemId) {
+		var A = AUI();
+		
+		var getSelectSiblingURL = Liferay.PortletURL.createURL('<%= PortletURLFactoryUtil.create(request, WebKeys.DATA_MANAGEMENT_ADMIN_PORTLET, themeDisplay.getPlid(), PortletRequest.RENDER_PHASE) %>');
+		getSelectSiblingURL.setParameter("mvcPath", "/html/portlets/data_management/admin/select_sibling.jsp");
+		getSelectSiblingURL.setWindowState("<%=LiferayWindowState.EXCLUSIVE.toString()%>"); 
+		getSelectSiblingURL.setPortletMode("normal");
+		
+		getSelectSiblingURL.setParameter("dictCollectionId", dictCollectionId);
+		getSelectSiblingURL.setParameter("parentItemId", parentItemId);
+		getSelectSiblingURL.setParameter("dictItemId", dictItemId);
+		
+		A.io.request(
+			getSelectSiblingURL.toString(),
+			{
+			    dataType: 'json',
+			    data:{    	
+			                	
+			    },   
+			    on: {
+			        success: function(event, id, obj) {
+						var instance = this;
+						var siblings = instance.get('responseData');
+						var siblingsContainer = A.one("#<portlet:namespace/>sibling");
+						if(siblingsContainer){
+							siblingsContainer.html(siblings);
+						}
+					},
+			    	error: function(){}
+				}
+			}
+		);
+	},['aui-base','liferay-portlet-url','aui-io']);
+	
+	// use for toggle expand
+	var previousId = '';
+	
+	Liferay.provide(window, 'getDictItemsLinked', function(dictCollectionId, dictItemId) {
+		var A = AUI();
+		
+		var getItemsLinkedURL = Liferay.PortletURL.createURL('<%= PortletURLFactoryUtil.create(request, WebKeys.DATA_MANAGEMENT_ADMIN_PORTLET, themeDisplay.getPlid(), PortletRequest.RENDER_PHASE) %>');
+		getItemsLinkedURL.setParameter("mvcPath", "/html/portlets/data_management/admin/select_dictitems_linked.jsp");
+		getItemsLinkedURL.setWindowState("<%=LiferayWindowState.EXCLUSIVE.toString()%>"); 
+		getItemsLinkedURL.setPortletMode("normal");
+		
+		getItemsLinkedURL.setParameter("dictCollectionId", dictCollectionId);
+		getItemsLinkedURL.setParameter("dictItemId", dictItemId);
+		
+		A.io.request(
+			getItemsLinkedURL.toString(),
+			{
+			    dataType: 'json',
+			    data:{    	
+			                	
+			    },   
+			    on: {
+			        success: function(event, id, obj) {
+						var instance = this;
+						var itemsLinked = instance.get('responseData');
+						var itemsLinkedContainer = A.one("#<portlet:namespace/>itemLinkedContainer");
+						if(itemsLinkedContainer){
+							itemsLinkedContainer.html(itemsLinked);
+						}
+						
+						// set initial value
+						// todo itemsLinkedStr
+						var itemsLinkedStr = '';
+						var itemsLinkedArr = itemsLinkedStr.split(',');
+						var match = false;
+						A.all('#<portlet:namespace/>dictItemLinked').each(function(dictItem){
+							match = false;
+							for (var i = 0; i < itemsLinkedArr.length; i++) {
+						        if (itemsLinkedArr[i] == dictItem.attr('value')) {
+						        	match = true;
+						        	break;
+						        }
+						    }
+							if (!match){
+								dictItem.attr('value', '0');
+							}
+						});
+						
+						// toggle expand
+						for (var i = 0; i < $('.expand-anchor').length; i++){
+							var colId = $('.expand-anchor')[i].id.replace(/^.+dictCollectionId_/, '');
+							$('#<portlet:namespace/>expandable_' + colId).slideToggle( "normal");
+							A.one('#<portlet:namespace/>expand-anchor_dictCollectionId_' + colId).on('click', function(){
+								var id = this['_node']['id'].replace(/^.+dictCollectionId_/, '');
+								$('#<portlet:namespace/>expandable_' + id).slideToggle( "normal");
+								if (previousId.length > 0 && previousId != id){
+									$('#<portlet:namespace/>expandable_' + previousId).slideToggle("normal");
+								} 
+								if (previousId == id) {
+									previousId = '';
+								} else {
+									previousId = id;
+								}
+							});
+						}
+					},
+			    	error: function(){}
+				}
+			}
+		);
+	},['aui-base','liferay-portlet-url','aui-io']);
+	
+	Liferay.provide(window, 'getDictItemsList', function(dictCollectionId, dictItemId) {
+		var A = AUI();
+		
+		var portletURL = Liferay.PortletURL.createURL('<%= PortletURLFactoryUtil.create(request, WebKeys.DATA_MANAGEMENT_ADMIN_PORTLET, themeDisplay.getPlid(), PortletRequest.RENDER_PHASE) %>');
+		portletURL.setParameter("mvcPath", "/html/portlets/data_management/admin/select_dictitems.jsp");
+		portletURL.setWindowState("<%=LiferayWindowState.EXCLUSIVE.toString()%>"); 
+		portletURL.setPortletMode("normal");
+		
+		portletURL.setParameter("dictCollectionId", dictCollectionId);
+		portletURL.setParameter("dictItemId", dictItemId);
+		
+		A.io.request(
+			portletURL.toString(),
+			{
+			    dataType: 'json',
+			    data:{    	
+			                	
+			    },   
+			    on: {
+			        success: function(event, id, obj) {
+						var instance = this;
+						var dictItems = instance.get('responseData');
+						var parentItemContainer = A.one("#<portlet:namespace/>parentItem");
+						
+						if(parentItemContainer){
+							parentItemContainer.empty();
+							parentItemContainer.html(dictItems);
+						}
+						
+						var dictCollection = A.one('#<portlet:namespace/><%=DictItemDisplayTerms.DICTCOLLECTION_ID%>');
+						var parentItem = A.one('#<portlet:namespace/><%=DictItemDisplayTerms.PARENTITEM_ID%>');
+						
+						parentItem.on('change', function(){
+							dictCollectionId = dictCollection.val();
+							parentItemId = parentItem.val();
+							
+							getSelectSibling(dictCollectionId, parentItemId, 0);
+						});
+					},
+			    	error: function(){}
+				}
+			}
+		);
 	},['aui-base','liferay-portlet-url','aui-io']);
 	
 	Liferay.provide(window, 'scrollWindow', function(){
