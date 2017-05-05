@@ -5,6 +5,10 @@ import com.liferay.portal.service.UserNotificationEventLocalServiceUtil;
 
 public class NotificationUtils {
 	
+	/**
+	 * @param userNotificationEventId
+	 * @return
+	 */
 	public static boolean updateArchived(long userNotificationEventId) {
 
 		UserNotificationEvent userNotificationEvent = null;
