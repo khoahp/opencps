@@ -433,20 +433,25 @@
 									<td class="signature-status" width="10%">
 										<c:choose>
 											<c:when test="<%=dossierFileInUse.isSigned() %>">
-												<i class="fa fa-check-square-o" aria-hidden="true" title="signed"></i>
+												<aui:a href="javascript:void(0);" onClick='<%="javavscript:" + renderResponse.getNamespace() + "verifySign(this)" %>' title="" dossier-file="<%=dossierFileInUse.getDossierFileId() %>">
+												<i class="fa fa fa-info-circle" aria-hidden="true" title='<%= LanguageUtil.get(locale, "signed") %>'></i>
+												</aui:a>
 											</c:when>
 											<c:otherwise>
-												<i class="fa fa-square-o" aria-hidden="true" ></i>
+												<!-- <i class="fa fa-square-o" aria-hidden="true" ></i> -->
+												<label class="request-signed-number-label">
+												<liferay-ui:message key="request-signed-number"/>
+												</label>
 											</c:otherwise>
 										</c:choose>
 									</td>
-									<td class="signature-verify" width="10%">
+									<%-- <td class="signature-verify" width="10%">
 										<c:if test="<%=dossierFileInUse.isSigned() %>">
 											<aui:a href="javascript:void(0);" onClick='<%="javavscript:" + renderResponse.getNamespace() + "verifySign(this)" %>' title="check-sign" dossier-file="<%=dossierFileInUse.getDossierFileId() %>">
 												<i class="fa fa-pencil-square-o" aria-hidden="true"></i>
 											</aui:a>
 										</c:if>
-									</td>
+									</td> --%>
 								</tr>
 								
 							<%

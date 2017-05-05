@@ -31,8 +31,9 @@
 <aui:row>
 	<aui:col>
 		<label class="pd_t20 pd_b10"><liferay-ui:message key="service-process"/></label>
-		<liferay-ui:input-editor name="<%= ServiceDisplayTerms.SERVICE_PROCESS %>" 
-			toolbarSet="simple" initMethod="initProcess"
+		<liferay-ui:input-editor 
+			name="<%= ServiceDisplayTerms.SERVICE_PROCESS %>" 
+			initMethod="initProcess"
 		/>
 	</aui:col>
 </aui:row>
@@ -42,7 +43,7 @@
 		<label class="pd_t20 pd_b10"><liferay-ui:message key="service-method"/></label>
 		<liferay-ui:input-editor 
 			name="<%= ServiceDisplayTerms.SERVICE_METHOD %>" 
-			toolbarSet="simple" initMethod="initMethod"
+			initMethod="initMethod"
 		/>
 	</aui:col>
 </aui:row>
@@ -50,21 +51,27 @@
 <aui:row >
 	<aui:col>
 		<label class="pd_t20 pd_b10"><liferay-ui:message key="service-dossier"/></label>
-		<liferay-ui:input-editor name="<%= ServiceDisplayTerms.SERVICE_DOSSIER %>" initMethod="service_dossier"/>
+		<liferay-ui:input-editor 
+			name="<%= ServiceDisplayTerms.SERVICE_DOSSIER %>" 
+			initMethod="service_dossier"/>
 	</aui:col>
 </aui:row>
 
 <aui:row >
 	<aui:col>
 		<label class="pd_t20 pd_b10"><liferay-ui:message key="service-condition"/></label>
-		<liferay-ui:input-editor name="<%= ServiceDisplayTerms.SERVICE_CONDITION %>" initMethod="service_condition"/>
+		<liferay-ui:input-editor 
+			name="<%= ServiceDisplayTerms.SERVICE_CONDITION %>" 
+			initMethod="service_condition"/>
 	</aui:col>
 </aui:row>
 
 <aui:row >
 	<aui:col>
 		<label class="pd_t20 pd_b10"><liferay-ui:message key="service-duration"/></label>
-		<liferay-ui:input-editor name="<%= ServiceDisplayTerms.SERVICE_DURATION %>" initMethod="service_duration"/>
+		<liferay-ui:input-editor 
+			name="<%= ServiceDisplayTerms.SERVICE_DURATION %>" 
+			initMethod="service_duration"/>
 	</aui:col>
 </aui:row>
 
@@ -73,28 +80,36 @@
 		<label class="pd_t20 pd_b10">
 			<liferay-ui:message key="service-actors"/>
 		</label>
-		<liferay-ui:input-editor name="<%= ServiceDisplayTerms.SERVICE_ACTORS %>" initMethod="service_actors"/>
+		<liferay-ui:input-editor 
+			name="<%= ServiceDisplayTerms.SERVICE_ACTORS %>" 
+			initMethod="service_actors"/>
 	</aui:col>
 </aui:row>
 
 <aui:row >
 	<aui:col>
 		<label class="pd_t20 pd_b10"><liferay-ui:message key="service-fee"/></label>
-		<liferay-ui:input-editor name="<%= ServiceDisplayTerms.SERVICE_FEE %>" initMethod="service_fee"/>
+		<liferay-ui:input-editor 
+			name="<%= ServiceDisplayTerms.SERVICE_FEE %>" 
+			initMethod="service_fee"/>
 	</aui:col>
 </aui:row>
 
 <aui:row >
 	<aui:col>
 		<label class="pd_t20 pd_b10"><liferay-ui:message key="service-results"/></label>
-		<liferay-ui:input-editor name="<%= ServiceDisplayTerms.SERVICE_RESULTS %>" initMethod="service_results"/>
+		<liferay-ui:input-editor 
+			name="<%= ServiceDisplayTerms.SERVICE_RESULTS %>" 
+			initMethod="service_results"/>
 	</aui:col>
 </aui:row>
 
 <aui:row >
 	<aui:col>
 		<label class="pd_t20 pd_b10"><liferay-ui:message key="service-records"/></label>
-		<liferay-ui:input-editor name="<%= ServiceDisplayTerms.SERVICE_RECORDS %>" initMethod="service_records"/>
+		<liferay-ui:input-editor 
+			name="<%= ServiceDisplayTerms.SERVICE_RECORDS %>" 
+			initMethod="service_records"/>
 		
 	</aui:col>
 </aui:row>
@@ -102,8 +117,9 @@
 <aui:row >
 	<aui:col>
 		<label class="pd_t20 pd_b10"><liferay-ui:message key="service-instructions"/></label>
-		<liferay-ui:input-editor name="<%= ServiceDisplayTerms.SERVICE_INSTRUCTIONS %>" 
-			toolbarSet="simple" initMethod="initInstructions"/>
+		<liferay-ui:input-editor 
+			name="<%= ServiceDisplayTerms.SERVICE_INSTRUCTIONS %>" 
+			initMethod="initInstructions"/>
 	</aui:col>
 </aui:row>
 

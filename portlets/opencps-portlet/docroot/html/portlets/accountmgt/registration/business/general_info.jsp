@@ -157,18 +157,36 @@
 		<label class="control-label custom-lebel" for='<portlet:namespace/><%=BusinessDisplayTerms.BUSINESS_DATE_OF_IDNUMBER %>'>
 				<liferay-ui:message key="date-of-id-number"/>
 			</label>
-			<liferay-ui:input-date 
-				dayParam="<%=BusinessDisplayTerms.DATE_DAY %>"
-				dayValue="<%= dateOfIdNumber_split.getDayOfMoth() %>"
-				monthParam="<%=BusinessDisplayTerms.DATE_MONTH %>"
-				monthValue="<%= dateOfIdNumber_split.getMonth() %>"
-				name="<%=BusinessDisplayTerms.BUSINESS_DATE_OF_IDNUMBER %>"
-				yearParam="<%=BusinessDisplayTerms.DATE_YEAR %>"
-				yearValue="<%= dateOfIdNumber_split.getYear() %>"
-				formName="fm"
-				autoFocus="<%=true %>"
-				cssClass="input100"
-			/>
+			<c:choose>
+				<c:when test="<%=dateOfIdNumber != null %>">
+					<liferay-ui:input-date 
+						dayParam="<%=BusinessDisplayTerms.DATE_DAY %>"
+						dayValue="<%=dateOfIdNumber_split.getDayOfMoth() %>"
+						monthParam="<%=BusinessDisplayTerms.DATE_MONTH %>"
+						monthValue="<%= dateOfIdNumber_split.getMonth()%>"
+						name="<%=BusinessDisplayTerms.BUSINESS_DATE_OF_IDNUMBER %>"
+						yearParam="<%=BusinessDisplayTerms.DATE_YEAR %>"
+						yearValue="<%= dateOfIdNumber_split.getYear()%>"
+						formName="fm"
+						autoFocus="<%=true %>"
+						cssClass="input100"
+					/>
+				</c:when>
+				
+				<c:otherwise>
+					<liferay-ui:input-date 
+						nullable="true"
+						dayParam="<%=BusinessDisplayTerms.DATE_DAY %>"
+						monthParam="<%=BusinessDisplayTerms.DATE_MONTH %>"
+						name="<%=BusinessDisplayTerms.BUSINESS_DATE_OF_IDNUMBER %>"
+						yearParam="<%=BusinessDisplayTerms.DATE_YEAR %>"
+						formName="fm"
+						autoFocus="<%=true %>"
+						cssClass="input100"
+						
+					/>
+				</c:otherwise>
+			</c:choose>
 			
 			<div  id="<portlet:namespace/>defErrBirthDate" style="text-align: left; color: #b50303; margin-left:7px; margin-bottom: 10px; display: none;">
 			<liferay-ui:message key="required-field"/>
