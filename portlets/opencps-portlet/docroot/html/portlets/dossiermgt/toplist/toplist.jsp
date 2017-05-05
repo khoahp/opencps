@@ -16,6 +16,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 %>
+<%@page import="org.opencps.accountmgt.service.BusinessLocalServiceUtil"%>
 <%@page import="org.opencps.util.DateTimeUtil"%>
 <%@page import="com.liferay.portal.model.User"%>
 <%@page import="org.opencps.servicemgt.service.ServiceInfoLocalServiceUtil"%>
@@ -88,13 +89,22 @@
 					
 					String dossierName = StringPool.BLANK;
 					
-					User bossOfDossier = null;
+					/*User bossOfDossier = null;*/
 					ServiceInfo serviceInfo = null;
 					
-					try {
+					/*try {
 						bossOfDossier = UserLocalServiceUtil.getUser(dossier.getUserId());
 						dossierName = bossOfDossier.getFullName();
 					} catch(Exception e) {
+						//nothing to do
+					}*/
+					try{
+						if(business != null){
+							dossierName = business.getName();
+						} else if (citizen != null) {
+							dossierName = citizen.getFullName();
+						} 
+					} catch (Exception e){
 						//nothing to do
 					}
 					

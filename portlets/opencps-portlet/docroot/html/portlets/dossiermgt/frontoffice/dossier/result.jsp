@@ -1,3 +1,4 @@
+<%@page import="org.opencps.util.PortletPropsValues"%>
 <%
 /**
  * OpenCPS is the open source Core Public Services software
@@ -31,6 +32,9 @@
 <%@page import="org.opencps.util.DateTimeUtil"%>
 <%@page import="org.opencps.util.PortletConstants"%>
 <%@page import="org.opencps.util.PortletUtil"%>
+<%@page import="org.opencps.datamgt.model.DictItem"%>
+<%@page import="org.opencps.util.PortletUtil"%>
+<%@page import="org.opencps.dossiermgt.model.ServiceConfig"%>
 
 
 <%@ include file="../../init.jsp"%>
@@ -46,7 +50,7 @@
 </aui:row>
 
 <c:choose>
-	<c:when test="<%=dossier != null && dossier.getDossierStatus() != PortletConstants.DOSSIER_STATUS_NEW %>">
+	<c:when test="<%=dossier != null && showResult==true || dossier.getDossierStatus() != PortletConstants.DOSSIER_STATUS_NEW %>">
 		<%
 			String[] actors = new String[]{};
 			String[] requestCommands = new String[]{StringPool.APOSTROPHE + WebKeys.DOSSIER_LOG_RESUBMIT_REQUEST + StringPool.APOSTROPHE, 
@@ -85,6 +89,12 @@
 			
 			request.setAttribute("dossierPartsLevel1", dossierPartsLevel1);
 			request.setAttribute("dossier", dossier);
+			
+			ServiceConfig serviceConfig = (ServiceConfig) request.getAttribute(WebKeys.SERVICE_CONFIG_ENTRY);
+			
+			DictItem adminAction = PortletUtil.getDictItem(PortletPropsValues.DATAMGT_MASTERDATA_GOVERNMENT_AGENCY, 
+					serviceConfig.getGovAgencyCode(), 
+					scopeGroupId);
 		
 		%>
 		
@@ -92,20 +102,20 @@
 		<aui:row>
 			<aui:col width="50">
 				<aui:row>
-					<aui:col width="30" cssClass="bold">
+					<aui:col width="33" cssClass="bold">
 						<liferay-ui:message key="dossier-no"/>
 					</aui:col>
-					<aui:col width="70">
+					<aui:col width="66">
 						<%=Validator.isNotNull(dossier.getDossierId()) ? dossier.getDossierId() : StringPool.DASH %>
 					</aui:col>
 				</aui:row>
 			</aui:col>
 			<aui:col width="50">
 				<aui:row>
-					<aui:col width="30" cssClass="bold">
+					<aui:col width="33" cssClass="bold">
 						<liferay-ui:message key="dossier-reception-no"/>
 					</aui:col>
-					<aui:col width="70">
+					<aui:col width="66">
 						<%=Validator.isNotNull(dossier.getReceptionNo()) ? dossier.getReceptionNo() : StringPool.DASH %>
 					</aui:col>
 				</aui:row>
@@ -115,12 +125,21 @@
 			<aui:col width="20" cssClass="bold">
 				<liferay-ui:message key="dossier-service-name"/>
 			</aui:col>
-			<aui:col width="80">
+			<aui:col width="80" cssClass="pl-7">
 				<%=serviceInfoName %>
 			</aui:col>
 		</aui:row>
 		
-		<aui:row>
+		<aui:row cssClass="pd_b20">
+			<aui:col width="20" cssClass="bold">
+				<liferay-ui:message key="service-administration-action"/>
+			</aui:col>
+			<aui:col width="80" cssClass="pl-7">
+				<%=Validator.isNotNull(adminAction) ? adminAction.getItemName(locale,true) : StringPool.BLANK %>
+			</aui:col>
+		</aui:row>
+		
+		<aui:row cssClass="bd-t pt-5">
 			<aui:col width="50">
 				<aui:row>
 					<aui:col width="30" cssClass="bold">

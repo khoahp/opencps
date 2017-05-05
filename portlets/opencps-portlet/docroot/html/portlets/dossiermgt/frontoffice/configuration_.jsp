@@ -187,7 +187,7 @@
 					
 					<aui:fieldset>
 						<aui:input 
-							type="checkbox" 
+							type="hidden" 
 							name="displayDossierNo"
 							value='<%= displayDossierNo %>'
 						/>
@@ -348,11 +348,11 @@
 						cssClass="search-input select-box input100"
 					/>
 		
-					<aui:select name="plid" id="plid">
+					<aui:select name="plidRes" id="plidRes">
 						<%
 							for (Layout layoutTemp : allLayouts) {
 						%>
-							<aui:option value="<%= layoutTemp.getPlid() %>" selected="<%=layoutTemp.getPlid() == plidRes %>"><%= layoutTemp.getName(locale) %></aui:option>
+							<aui:option value="<%= layoutTemp.getPlid() %>" selected="<%= plidRes.equals(String.valueOf(layoutTemp.getPlid())) %>"><%= layoutTemp.getName(locale) %></aui:option>
 						<%
 							}
 						%>
@@ -374,7 +374,13 @@
 						/>
 					</aui:fieldset>
 					
-					
+					<aui:fieldset>
+						<aui:input 
+							type="checkbox"
+							name="showResult" 
+							value="<%=showResult %>"
+						/>
+					</aui:fieldset>
 					
 				</liferay-ui:panel>
 				

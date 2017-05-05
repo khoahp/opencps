@@ -127,9 +127,9 @@ public class DateTimeUtil {
 		}
 		return date;
 	}
-	
+
 	public static Date convertStringToFullDate(String strDate) {
-		
+
 		DateFormat df = getDateTimeFormat(_VN_DATE_TIME_FORMAT);
 		Date date = null;
 		try {
@@ -152,34 +152,34 @@ public class DateTimeUtil {
 		calendar.set(Calendar.YEAR, year);
 		return calendar.getTime();
 	}
-	
+
 	public static Date getDateBeginOfDay(int day, int month, int year) {
 
 		Calendar calendar = Calendar.getInstance();
-		
+
 		calendar.set(Calendar.DAY_OF_MONTH, day);
 		calendar.set(Calendar.MONTH, month);
 		calendar.set(Calendar.YEAR, year);
-		
+
 		calendar.set(Calendar.HOUR_OF_DAY, 0);
 		calendar.set(Calendar.MINUTE, 0);
 		calendar.set(Calendar.SECOND, 0);
-		
+
 		return calendar.getTime();
 	}
-	
+
 	public static Date getDateEndOfDay(int day, int month, int year) {
 
 		Calendar calendar = Calendar.getInstance();
-		
+
 		calendar.set(Calendar.DAY_OF_MONTH, day);
 		calendar.set(Calendar.MONTH, month);
 		calendar.set(Calendar.YEAR, year);
-		
+
 		calendar.set(Calendar.HOUR_OF_DAY, 23);
 		calendar.set(Calendar.MINUTE, 59);
 		calendar.set(Calendar.SECOND, 59);
-		
+
 		return calendar.getTime();
 	}
 
@@ -224,7 +224,7 @@ public class DateTimeUtil {
 		}
 		return calendar;
 	}
-	
+
 	public static int convertTimemilisecondsToDays(long time) {
 
 		int days = 0;
@@ -274,68 +274,75 @@ public class DateTimeUtil {
 		diffDays = time / (24 * 60 * 60 * 1000);
 
 		if (diffDays != 0) {
-			
+
 			format = format.replace(DAY, String.valueOf(Math.abs(diffDays)));
 			format = format.replace(DAY_LANG, day);
-			
-		} else {
-			
+
+		}
+		else {
+
 			format = format.replace(DAY, StringPool.BLANK);
 			format = format.replace(DAY_LANG, StringPool.BLANK);
-			
+
 		}
-		
+
 		if (diffHours == 0 && diffMinutes == 0) {
 			format = format.replace(SUB_DATE_TIME_FORMAT, StringPool.BLANK);
-		} else {
+		}
+		else {
 			format = format.replace(HOUR, String.valueOf(Math.abs(diffHours)));
-			format = format.replace(MINUTE,
-					String.valueOf(Math.abs(diffMinutes)));
+			format =
+				format.replace(MINUTE, String.valueOf(Math.abs(diffMinutes)));
 		}
 
 		if (time > 0) {
-			format = LanguageUtil.get(locale, EARLY) + StringPool.SPACE
-					+ format.trim();
-		} else if (time < 0) {
+			format =
+				LanguageUtil.get(locale, EARLY) + StringPool.SPACE +
+					format.trim();
+		}
+		else if (time < 0) {
 			format = LanguageUtil.get(locale, LATE) + StringPool.SPACE
-					
-					+ format.trim();
-		} else {
+
+			+ format.trim();
+		}
+		else {
 			format = LanguageUtil.get(locale, ONTIME) + format.trim();
 		}
 
 		return format;
 	}
-	
+
 	public DateTimeBean getDateTimeFromPattern(String pattern) {
-		
+
 		DateTimeBean dateTimeBean = new DateTimeBean();
 
 		int Days = 0;
 		int Hours = 0;
 		int Minutes = 0;
-		
+
 		/* Pattern Format Example : "3 10:30" */
-		
+
 		if (pattern.trim().length() > 0) {
 
 			String[] splitPattern = StringUtil.split(pattern, StringPool.SPACE);
 
 			if (splitPattern.length == 1) {
-				
-				Days = GetterUtil.getInteger(splitPattern[0], 0);
-
-			} else if (splitPattern.length == 2) {
 
 				Days = GetterUtil.getInteger(splitPattern[0], 0);
 
-				String[] splitHour = StringUtil.split(splitPattern[1],
-						StringPool.COLON);
+			}
+			else if (splitPattern.length == 2) {
+
+				Days = GetterUtil.getInteger(splitPattern[0], 0);
+
+				String[] splitHour =
+					StringUtil.split(splitPattern[1], StringPool.COLON);
 
 				if (splitHour.length == 2) {
 					Hours = GetterUtil.getInteger(splitHour[0]);
 					Minutes = GetterUtil.getInteger(splitHour[1]);
-				} else if (splitHour.length == 1) {
+				}
+				else if (splitHour.length == 1) {
 					Hours = GetterUtil.getInteger(splitHour[0]);
 				}
 
@@ -344,12 +351,11 @@ public class DateTimeUtil {
 		dateTimeBean.setDays(Days);
 		dateTimeBean.setHours(Hours);
 		dateTimeBean.setMinutes(Minutes);
-		
-		
+
 		return dateTimeBean;
 
 	}
-	
+
 	public class DateTimeBean {
 
 		public DateTimeBean() {
@@ -364,49 +370,99 @@ public class DateTimeUtil {
 		protected int Minutes;
 
 		public int getDays() {
+
 			return Days;
 		}
 
 		public void setDays(int days2) {
+
 			Days = days2;
 		}
 
 		public int getHours() {
+
 			return Hours;
 		}
 
 		public void setHours(int hours2) {
+
 			Hours = hours2;
 		}
 
 		public int getMinutes() {
+
 			return Minutes;
 		}
 
 		public void setMinutes(int minutes2) {
+
 			Minutes = minutes2;
 		}
 	}
-	
+
+	/**
+	 * @param date
+	 * @return
+	 */
+	public static Date getStartDateDay(Date date) {
+
+		if (date != null) {
+
+			Calendar calendar = Calendar.getInstance();
+
+			calendar.setTime(date);
+
+			calendar.set(Calendar.HOUR_OF_DAY, 0);
+			calendar.set(Calendar.MINUTE, 0);
+			calendar.set(Calendar.SECOND, 0);
+
+			return calendar.getTime();
+		}
+
+		return null;
+	}
+
+	/**
+	 * @param date
+	 * @return
+	 */
+	public static Date getEndDateDay(Date date) {
+
+		if (date != null) {
+
+			Calendar calendar = Calendar.getInstance();
+
+			calendar.setTime(date);
+
+			calendar.set(Calendar.HOUR_OF_DAY, 23);
+			calendar.set(Calendar.MINUTE, 59);
+			calendar.set(Calendar.SECOND, 59);
+
+			return calendar.getTime();
+		}
+
+		return null;
+	}
+
 	private static final String DAY = "{d}";
-	
+
 	private static final String DAY_LANG = "{D}";
-	
+
 	private static final String DAY_PROPERTIES = "day";
-	
+
 	private static final String HOUR = "{HH}";
-	
+
 	private static final String MINUTE = "{MM}";
-	
+
 	private static final String EARLY = "status-soon";
-	
+
 	private static final String LATE = "status-late";
-	
+
 	private static final String ONTIME = "status-ontime";
-	
-	private static final String DATE_TIME_FORMAT = "{d} {D} {HH}:{MM}";
-	
+
 	private static final String SUB_DATE_TIME_FORMAT = "{HH}:{MM}";
+
+	private static final String DATE_TIME_FORMAT = "{d} {D} {HH}:{mm}:{ss}";
 
 	public static final String _TIMESTAMP = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
 
@@ -415,7 +471,7 @@ public class DateTimeUtil {
 	public static final String _VN_DATE_FORMAT = "dd/MM/yyyy";
 
 	public static final String _EMPTY_DATE_TIME = "__/__/__";
-	
+
 	public static final String _DATE_TIME_TO_NAME = "yyyyMMdd";
 
 	private static Log _log = LogFactoryUtil.getLog(DateTimeUtil.class);
@@ -423,10 +479,12 @@ public class DateTimeUtil {
 	public static DateTimeBean DateTimeBean;
 
 	public static DateTimeBean getDateTimeBean() {
+
 		return DateTimeBean;
 	}
 
 	public static void setDateTimeBean(DateTimeBean dateTimeBean) {
+
 		DateTimeBean = dateTimeBean;
 	}
 

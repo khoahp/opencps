@@ -1,3 +1,4 @@
+<%@page import="org.opencps.util.PortletPropsValues"%>
 <%
 /**
  * OpenCPS is the open source Core Public Services software
@@ -34,6 +35,9 @@
 <%@page import="org.opencps.processmgt.model.ProcessStep"%>
 <%@page import="java.text.SimpleDateFormat"%>
 <%@page import="org.opencps.dossiermgt.model.DossierFileLog"%>
+<%@page import="org.opencps.datamgt.model.DictItem"%>
+<%@page import="org.opencps.util.PortletUtil"%>
+<%@page import="org.opencps.dossiermgt.model.ServiceConfig"%>
 
 <%@ include file="../../init.jsp"%>
 
@@ -61,6 +65,12 @@
 	
 	PortletURL iteratorURL = renderResponse.createRenderURL();
 	iteratorURL.setParameter("mvcPath", "/html/portlets/dossiermgt/frontoffice/dossier/history.jsp");
+	
+	ServiceConfig serviceConfig = (ServiceConfig) request.getAttribute(WebKeys.SERVICE_CONFIG_ENTRY);
+	
+	DictItem adminAction = PortletUtil.getDictItem(PortletPropsValues.DATAMGT_MASTERDATA_GOVERNMENT_AGENCY, 
+			serviceConfig.getGovAgencyCode(), 
+			scopeGroupId);
 
 %>
 <div class="header-title custom-title pdl30">
@@ -68,34 +78,43 @@
 </div>
 
 <aui:row>
-			<aui:col width="30">
+			<aui:col width="50">
 				<aui:row>
-					<aui:col width="30" cssClass="bold">
+					<aui:col width="33" cssClass="bold">
 						<liferay-ui:message key="dossier-no"/>
 					</aui:col>
-					<aui:col width="70">
+					<aui:col width="66" cssClass="pl-9">
 						<%=Validator.isNotNull(dossier.getDossierId()) ? dossier.getDossierId() : StringPool.DASH %>
 					</aui:col>
 				</aui:row>
 			</aui:col>
-			<aui:col width="70">
+			<aui:col width="50">
 				<aui:row>
-					<aui:col width="30" cssClass="bold">
+					<aui:col width="33" cssClass="bold">
 						<liferay-ui:message key="dossier-reception-no"/>
 					</aui:col>
-					<aui:col width="70">
+					<aui:col width="66" >
 						<%=Validator.isNotNull(dossier.getReceptionNo()) ? dossier.getReceptionNo() : StringPool.DASH %>
 					</aui:col>
 				</aui:row>
 			</aui:col>
 </aui:row>
 
-<aui:row cssClass="pd_b20">
+<aui:row cssClass="bd-0">
 	<aui:col width="20" cssClass="bold">
 		<liferay-ui:message key="dossier-service-name"/> 
 	</aui:col>
 	<aui:col width="80">
 		<%=serviceName%>
+	</aui:col>
+</aui:row>
+
+<aui:row cssClass="p-0 pl-30 pb-10">
+	<aui:col width="20" cssClass="bold">
+		<liferay-ui:message key="service-administration-action"/> 
+	</aui:col>
+	<aui:col width="80">
+		<%=Validator.isNotNull(adminAction) ? adminAction.getItemName(locale,true) : StringPool.BLANK %>
 	</aui:col>
 </aui:row>
 

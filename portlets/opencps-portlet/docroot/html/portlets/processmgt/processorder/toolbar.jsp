@@ -86,47 +86,19 @@
 		colWidth = 20;
 	}
 	
-	Date fromDate = null;
-	Date toDate = null;
-	
-	int fromDateDay = ParamUtil.getInteger(request, "fromDateDay");
-	int fromDateMonth = ParamUtil.getInteger(request, "fromDateMonth");
-	int fromDateYear = ParamUtil.getInteger(request, "fromDateYear");
-	int toDateDay = ParamUtil.getInteger(request, "toDateDay");
-	int toDateMonth = ParamUtil.getInteger(request, "toDateMonth");
-	int toDateYear = ParamUtil.getInteger(request, "toDateYear");
-	
-	if(fromDateDay > 0
-			&& fromDateMonth >= 0
-			&& fromDateYear > 0){
-		fromDate = 
-			DateTimeUtil.getDateBeginOfDay(fromDateDay, fromDateMonth, fromDateYear);
-	}
-	if(toDateDay > 0
-			&& toDateMonth >= 0
-			&& toDateYear > 0){
-		toDate = 
-			DateTimeUtil.getDateEndOfDay(toDateDay, toDateMonth, toDateYear);
-	} else if (fromDateDay > 0
-			&& fromDateMonth >= 0
-			&& fromDateYear > 0){
-		toDate = 
-			DateTimeUtil.getDateEndOfDay(fromDateDay, fromDateMonth, fromDateYear);
-	}
-	
-	boolean nullableFromDate = true;
-	boolean nullableToDate = true;
-	
-	if(fromDate != null){
-		nullableFromDate = false;
-	}
-	if(toDate != null){
-		nullableToDate = false;
-	}
 	DictItem curDictItem = null;
 	
 	DictCollection dictCollection = DictCollectionLocalServiceUtil.
 			getDictCollection(themeDisplay.getScopeGroupId(), PortletPropsValues.DATAMGT_MASTERDATA_SERVICE_DOMAIN);
+	
+	String fromDatePicker = ParamUtil.getString(request, "fromDatePicker");
+	String toDatePicker = ParamUtil.getString(request, "toDatePicker");
+	  
+	Date fromDate = DateTimeUtil.convertStringToDate(fromDatePicker);
+	fromDate = DateTimeUtil.getStartDateDay(fromDate);
+	  
+	Date toDate = DateTimeUtil.convertStringToDate(toDatePicker);
+	toDate = DateTimeUtil.getEndDateDay(toDate);
 	
 	List<DictItem> dictItems = DictItemLocalServiceUtil.getDictItemsByDictCollectionId(dictCollection.getDictCollectionId());
 	
@@ -270,37 +242,11 @@
 				<aui:row>
 					<div id="<portlet:namespace/>spoiler" class="showBottomRow">
 					<aui:col width="25" cssClass="search-col">
-						<liferay-ui:input-date 
-		 					name="fromDate"
-		 					nullable="<%= nullableFromDate %>"
-		 					dayParam="fromDateDay"
-		 					dayValue="<%= fromDateDay %>"
-		 					monthParam="fromDateMonth"
-		 					monthValue="<%= fromDateMonth %>"
-		 					yearParam="fromDateYear"
-		 					yearValue="<%= fromDateYear %>"
-		 					formName="fmSearch"
-		 					autoFocus="<%=true %>"
-		 					cssClass="search-input input-keyword" 
-		 				>
-		 				</liferay-ui:input-date>
+		 				 <aui:input name="fromDatePicker" label="<%=StringPool.BLANK %>" placeholder= "from-date" cssClass="search-input input-keyword"/>
 					</aui:col>
 					
 					<aui:col width="25" cssClass="search-col">
-						<liferay-ui:input-date 
-		 					name="toDate"
-		 					nullable="<%= nullableToDate %>"
-		 					dayParam="toDateDay"
-		 					dayValue="<%= toDateDay %>"
-		 					monthParam="toDateMonth"
-		 					monthValue="<%= toDateMonth %>"
-		 					yearParam="toDateYear"
-		 					yearValue="<%= toDateYear %>"
-		 					formName="fmSearch"
-		 					autoFocus="<%=true %>"
-		 					cssClass="search-input input-keyword"
-		 				>
-		 				</liferay-ui:input-date> 
+		 				 <aui:input name="toDatePicker" label="<%=StringPool.BLANK %>" placeholder= "to-date" cssClass="search-input input-keyword"/>
 					</aui:col>
 					<aui:col width="50" cssClass="search-col">
 						<liferay-ui:input-search 
@@ -392,6 +338,8 @@
 	Liferay.provide(window, '<portlet:namespace/>searchByProcecssOrderService', function(e) {
 		submitForm(document.<portlet:namespace />fmSearch);
 	},['liferay-portlet-url']);
+	renderDatepicker('<portlet:namespace/>fromDatePicker');
+	renderDatepicker('<portlet:namespace/>toDatePicker');
 </aui:script>
 
 <%!

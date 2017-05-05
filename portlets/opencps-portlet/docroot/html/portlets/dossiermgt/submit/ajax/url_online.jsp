@@ -1,4 +1,3 @@
-
 <%
 /**
  * OpenCPS is the open source Core Public Services software
@@ -55,7 +54,6 @@
 		plidSubmit = Long.valueOf(plidRes);
 	}
 	
-	
 %>
 
 <aui:row cssClass="serice-des">
@@ -96,7 +94,7 @@
 		</liferay-portlet:renderURL>
 		
 		<c:choose>
-			<c:when test='<%=Validator.isNotNull(serviceConfig) && ((serviceConfig.getServiceBusinees()) || (serviceConfig.getServiceCitizen()))%>'>
+			<c:when test='<%=Validator.isNotNull(serviceConfig) && ((serviceConfig.getServiceBusinees() && business != null) || (serviceConfig.getServiceCitizen() && citizen != null))%>'>
 				<aui:button type="button" name="submitonline" value="dossier-submit-online-temp" href="<%=Validator.isNotNull(serviceConfig.getServiceUrl()) ? serviceConfig.getServiceUrl() : servieOnlinePopURL.toString() %>" />
 			</c:when>
 			<c:otherwise>

@@ -92,6 +92,8 @@
 	
 	String maxUploadFileSizeUnit = preferences.getValue("maxUploadFileSizeUnit", StringPool.BLANK);
 	
+	boolean showResult = GetterUtil.getBoolean(preferences.getValue("showResult", "false"), false);
+	
 	/*dossier file list  */
 	
 	String dossierFileDisplayStyle = preferences.getValue("dossierFileDisplayStyle", "default");
@@ -108,7 +110,7 @@
 	
 	//String orderBydDossierFile = preferences.getValue("orderBydDossierFile",StringPool.BLANK);
 	
-	long plidRes = GetterUtil.getLong(preferences.getValue("plid", "0"), 0);
+	String plidRes = GetterUtil.getString(portletPreferences.getValue("plidRes", ""));
 	
 	double offsetX = GetterUtil.getDouble(preferences.getValue("offsetX", "0"), 0);
 	double offsetY = GetterUtil.getDouble(preferences.getValue("offsetY", "0"), 0);

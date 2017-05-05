@@ -389,8 +389,21 @@ public class AccountProfilePortlet extends MVCPortlet {
 		    ParamUtil.getInteger(
 		    		actionRequest, BusinessDisplayTerms.DATE_YEAR);
 		
-		Date dateOfIdNumber = DateTimeUtil.getDate(dateDayIDNumber, dateMonthIDNumber,
-				dateYearIDNumber);
+		String strDateOfIdNumber = ParamUtil.getString(actionRequest,
+				BusinessDisplayTerms.BUSINESS_DATE_OF_IDNUMBER);
+
+		if (Validator.isNull(strDateOfIdNumber)) {
+			dateDayIDNumber = 0;
+			dateMonthIDNumber = 0;
+			dateYearIDNumber = 0;
+		}
+
+		Date dateOfIdNumber = null;
+		if (dateDayIDNumber != 0 && dateMonthIDNumber != 0
+				&& dateYearIDNumber != 0) {
+			dateOfIdNumber = DateTimeUtil.getDate(dateDayIDNumber,
+					dateMonthIDNumber, dateYearIDNumber);
+		}
 
 		boolean isChangePassword = false;
 
