@@ -17,6 +17,7 @@
 
 package org.opencps.backend.engine;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -51,6 +52,12 @@ import org.opencps.processmgt.util.ProcessUtils;
 import org.opencps.util.PortletConstants;
 import org.opencps.util.WebKeys;
 
+
+
+import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.messaging.Message;
@@ -72,10 +79,61 @@ public class BackOfficeProcessEngine implements MessageListener {
 
 		_doRecevie(message);
 	}
+	
+	public static Date convertDateTime(String strDate) {
+
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+
+		Date date = null;
+
+		try {
+			date = sdf.parse(strDate);
+
+		} catch (Exception e) {
+		}
+		return date;
+	}
 
 	private void _doRecevie(Message message) {
+		
+		String msgFrom  = message.getString("msgFrom");
+		
+		SendToEngineMsg toEngineMsg = null;
+		
+		if (msgFrom.contentEquals("outside")) {
+			try {
+				
+				toEngineMsg = new SendToEngineMsg();
+				
+				JSONObject msgJSON = JSONFactoryUtil.createJSONObject(message.getString("jsonMsg"));
+				
+				toEngineMsg.setCompanyId(msgJSON.getLong("companyId"));
+				toEngineMsg.setGroupId(msgJSON.getLong("groupId") );
+				toEngineMsg.setUserId(msgJSON.getLong("userId"));
+				toEngineMsg.setActionDatetime(convertDateTime(msgJSON.getString("actionDatetime")));
+				toEngineMsg.setAssignToUserId(msgJSON.getLong("assignToUserId"));
+				toEngineMsg.setActionUserId(msgJSON.getLong("actionUserId"));
+				toEngineMsg.setDossierId(msgJSON.getLong("dossierId") );
+				toEngineMsg.setFileGroupId(msgJSON.getLong("fileGroupId"));
+				toEngineMsg.setPaymentValue(msgJSON.getDouble("paymentValue"));
+				toEngineMsg.setProcessOrderId(msgJSON.getLong("processOrderId") );
+				toEngineMsg.setReceptionNo(msgJSON.getString("receptionNo") );
+				toEngineMsg.setSignature(msgJSON.getInt("signature"));
+				toEngineMsg.setDossierStatus(msgJSON.getString("dossierStatus"));
+				toEngineMsg.setActionDatetime(convertDateTime(msgJSON.getString("actionDatetime")) );
+				toEngineMsg.setReceiveDate(convertDateTime(msgJSON.getString("receiveDate")) );
+				toEngineMsg.setFinishedDate(convertDateTime(msgJSON.getString("finishedDate")));
+				toEngineMsg.setEstimateDatetime(convertDateTime(msgJSON.getString("stimateDatetime")));
+				toEngineMsg.setEvent(msgJSON.getString("event"));
+				toEngineMsg.setProcessWorkflowId(msgJSON.getLong("processWorkflowId"));
+				
+			} catch (Exception e) {
+				_log.error("Can not cast JSON msg!");
+			}
+		} else {
+			 toEngineMsg = (SendToEngineMsg) message.get("msgToEngine");
+		}
 
-		SendToEngineMsg toEngineMsg = (SendToEngineMsg) message.get("msgToEngine");
 
 		List<SendNotificationMessage> lsNotification = new ArrayList<SendNotificationMessage>();
 

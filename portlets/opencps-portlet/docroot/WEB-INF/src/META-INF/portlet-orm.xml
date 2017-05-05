@@ -1681,10 +1681,13 @@
 		<table name="opencps_lucene_menu_group" />
 		<attributes />
 	</entity>
+<<<<<<< HEAD
 	<entity class="org.opencps.lucenequery.model.impl.LuceneMenuRoleImpl" name="LuceneMenuRole">
 		<table name="opencps_lucenemenu_role" />
 		<attributes />
 	</entity>
+=======
+>>>>>>> sync-core#rc-1.9-new-way
 	<entity class="org.opencps.lucenequery.model.impl.LuceneQueryPatternImpl" name="LuceneQueryPattern">
 		<table name="opencps_lucenequery_pattern" />
 		<attributes />
