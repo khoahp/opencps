@@ -36,7 +36,7 @@ import com.liferay.portal.service.UserNotificationEventLocalServiceUtil;
 public class OCPSNotificationController {
 
 	@POST
-	@Path("/getNotifications")
+	@Path("/notifications")
 	@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
 	public Response getNotifications(@HeaderParam("apiKey") String apikey,
 			@Context HttpServletRequest request, String body) {
@@ -119,6 +119,7 @@ public class OCPSNotificationController {
 
 					res.put("total", totalSize);
 					res.put("userNotificationEvents", jsonArray);
+					res.put("email", email);
 
 					return Response.status(200).entity(res.toString()).build();
 				}
@@ -139,7 +140,7 @@ public class OCPSNotificationController {
 	}
 
 	@POST
-	@Path("/markNotificationAsReaded")
+	@Path("/marknotificationasreaded")
 	@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
 	public Response markNotificationAsReaded(
 			@HeaderParam("apiKey") String apiKey,
