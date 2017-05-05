@@ -1,3 +1,9 @@
+<%@page import="com.liferay.portal.kernel.search.SearchContextFactory"%>
+<%@page import="com.liferay.portal.kernel.search.SearchContext"%>
+<%@page import="com.liferay.portal.kernel.search.SearchEngineUtil"%>
+<%@page import="org.opencps.lucenequery.LuceneQuery"%>
+<%@page import="org.opencps.dossiermgt.service.DossierLocalServiceUtil"%>
+<%@page import="org.opencps.dossiermgt.model.Dossier"%>
 <%@page import="com.liferay.portal.kernel.search.Hits"%>
 <%
 /**
@@ -20,15 +26,32 @@
 
 <%
 
-Hits hits = null;
+String pattern = "(articleId=?)";
+List<String> paramValues = new ArrayList<String>();
+paramValues.add("CVDTNDKV4");
 
-String pa = "(dossierStatus=?) [and] (serviceInfoNo = ?)";
-List<Object> params = new ArrayList<Object>();
-params.add("");
-params.add("");
+List<String> paramTypes = new ArrayList<String>();
+paramTypes.add("String");
 
-//LuceneQuery luceneQuery = new LuceneQuery(pattern, luceneMenuSchema.getParams(), searchContext);
+SearchContext searchContext = SearchContextFactory.getInstance(request);
 
-searchContainer.setResults(new ArrayList<Dossier>());
-searchContainer.setTotal(0);
+LuceneQuery luceneQuery = new LuceneQuery(pattern, paramValues, paramTypes, searchContext);
+
+Hits hits = SearchEngineUtil.search(searchContext, luceneQuery.getQuery());
+
+List<com.liferay.portal.kernel.search.Document> documents =
+hits.toList();
+
+List<Dossier> dossierIndexResults = new ArrayList<Dossier>();
+
+for (com.liferay.portal.kernel.search.Document document : documents) {
+	long dossierId = GetterUtil.getLong(document.get(DossierDisplayTerms.DOSSIER_ID));
+	
+	Dossier dossier = DossierLocalServiceUtil.getDossier(dossierId);
+	
+	dossierIndexResults.add(dossier);
+}
+
+searchContainer.setResults(dossierIndexResults);
+searchContainer.setTotal(hits.getLength());
 %>

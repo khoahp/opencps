@@ -37,9 +37,10 @@ public class LuceneQueryUtil {
 	 * @param key
 	 * @param param
 	 * @return
+	 * @throws ParseException 
 	 */
 	protected static BooleanQuery addExactTerm(BooleanQuery query, String key,
-			Object param) {
+			Object param) throws ParseException {
 		if (param instanceof Long) {
 			query.addExactTerm(key, (long) (param));
 		} else if (param instanceof Integer) {
@@ -53,7 +54,7 @@ public class LuceneQueryUtil {
 		} else if (param instanceof Boolean) {
 			query.addExactTerm(key, (boolean) (param));
 		} else if (param instanceof String) {
-			query.addExactTerm(key, (String) (param));
+			query.addTerm(key, (String) (param), false);
 		}
 
 		return query;
@@ -241,6 +242,7 @@ public class LuceneQueryUtil {
 											0,
 											term.indexOf(StringPool.EQUAL
 													.toLowerCase())).trim();
+							_log.info("===params.get(paramPossition)===" + params.get(paramPossition));
 							addExactTerm(query, key, params.get(paramPossition));
 						} else if (term.contains(StringPool.LIKE.toLowerCase())) {
 							key = term
