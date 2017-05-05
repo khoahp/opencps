@@ -144,14 +144,7 @@ public class PortletPropsKeys {
 	public static final String OPENCPS_CANCEL_DOSSIER_NOTICE = "opencps.cancel.dossier.notice";
 	public static final String OPENCPS_PERSON_MAKE_PROCEDURE_CANCEL = "opencps.person.make.procedure.cancel";
 	
-	public static final String SYSTEM_EMAIL = "email.from.default";
-	public static final String SUBJECT_TO_CUSTOMER = "subject.email.to.customer";
-	public static final String CONTENT_TO_CUSTOMER = "content.email.to.customer";
-	public static final String CONTENT_TO_CUSTOMER_WITHOUT_RECEPTION_NO = "content.email.to.customer.without.receptionNo";
 	public static final String HOLIDAYCONFIG_DESCRIPTION_LENGTH = "opencps.holidayconfig.description.lengths";
-	
-	public static final String NOTIFICATION_INBOX_TITLE = "opencps.notificationmgt.title";
-	public static final String NOTIFICATION_INBOX_BODY = "opencps.notificationmgt.body";
 	
 	public static final String DM_USER_GROUP_NOTIFY = "opencps.datamgt.masterdata.notification.user.group";
 	public static final String DM_POSTAL_GATE = "opencps.datamgt.masterdata.postalgate";

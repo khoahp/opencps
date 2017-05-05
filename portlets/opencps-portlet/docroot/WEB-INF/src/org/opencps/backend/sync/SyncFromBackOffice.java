@@ -231,72 +231,60 @@ public class SyncFromBackOffice implements MessageListener {
 	/**
 	 * @param dossierId
 	 */
-	public void sendEmailCustomer(long dossierId) {
-		
-		try {
-			Dossier dossier = DossierLocalServiceUtil.getDossier(dossierId);
-			
-			SyncServiceContext syncServiceContext =
-			    new SyncServiceContext(
-			        dossier.getCompanyId(), dossier.getGroupId(),
-			        dossier.getUserId(), true, true);
-			Locale locale = new Locale("vi", "VN");
-
-			
-			String fromName = PrefsPropsUtil
-			    .getString(dossier.getCompanyId(), PropsKeys.ADMIN_EMAIL_FROM_NAME);
-			
-			String fromAddress = PrefsPropsUtil
-			    .getString(dossier.getCompanyId(), PropsKeys.ADMIN_EMAIL_FROM_ADDRESS);
-
-			String toName = dossier.getContactName();
-			
-			String toAddress = dossier.getContactEmail();
-
-			String subject = PortletPropsValues.SUBJECT_TO_CUSTOMER + LanguageUtil.get(locale, dossier.getDossierStatus());
-			
-			String emailBody = PortletPropsValues.CONTENT_TO_CUSTOMER;
-			
-			emailBody = StringUtil.replace(emailBody, "{receptionNo}", Long.toString(dossierId));
-
-			
-			emailBody = emailBody + LanguageUtil.get(locale, dossier.getDossierStatus());
-			
-			SubscriptionSender subscriptionSender = new SubscriptionSender();
-
-			subscriptionSender
-			    .setBody(emailBody);
-			subscriptionSender
-			    .setCompanyId(dossier.getCompanyId());
-			
-			subscriptionSender
-			    .setFrom(fromAddress, fromName);
-			subscriptionSender
-			    .setHtmlFormat(true);
-			subscriptionSender
-			    .setMailId("user", dossier.getUserId(), System
-			            .currentTimeMillis(),
-			        PwdGenerator
-			            .getPassword());
-			subscriptionSender
-			    .setServiceContext(syncServiceContext.getServiceContext());
-			subscriptionSender
-			    .setSubject(subject);
-			subscriptionSender
-			    .setUserId(dossier.getUserId());
-
-			subscriptionSender
-			    .addRuntimeSubscribers(toAddress, toName);
-
-			subscriptionSender
-			    .flushNotificationsAsync();
-	        
-        }
-        catch (Exception e) {
-	      _log.error(e);
-        }
-		
-	}
+//	public void sendEmailCustomer(long dossierId) {
+//
+//		try {
+//			Dossier dossier = DossierLocalServiceUtil.getDossier(dossierId);
+//
+//			SyncServiceContext syncServiceContext = new SyncServiceContext(
+//					dossier.getCompanyId(), dossier.getGroupId(),
+//					dossier.getUserId(), true, true);
+//			Locale locale = new Locale("vi", "VN");
+//
+//			String fromName = PrefsPropsUtil.getString(dossier.getCompanyId(),
+//					PropsKeys.ADMIN_EMAIL_FROM_NAME);
+//
+//			String fromAddress = PrefsPropsUtil.getString(
+//					dossier.getCompanyId(), PropsKeys.ADMIN_EMAIL_FROM_ADDRESS);
+//
+//			String toName = dossier.getContactName();
+//
+//			String toAddress = dossier.getContactEmail();
+//
+//			String subject = PortletPropsValues.SUBJECT_TO_CUSTOMER
+//					+ LanguageUtil.get(locale, dossier.getDossierStatus());
+//
+//			String emailBody = PortletPropsValues.CONTENT_TO_CUSTOMER;
+//
+//			emailBody = StringUtil.replace(emailBody, "{receptionNo}",
+//					Long.toString(dossierId));
+//
+//			emailBody = emailBody
+//					+ LanguageUtil.get(locale, dossier.getDossierStatus());
+//
+//			SubscriptionSender subscriptionSender = new SubscriptionSender();
+//
+//			subscriptionSender.setBody(emailBody);
+//			subscriptionSender.setCompanyId(dossier.getCompanyId());
+//
+//			subscriptionSender.setFrom(fromAddress, fromName);
+//			subscriptionSender.setHtmlFormat(true);
+//			subscriptionSender.setMailId("user", dossier.getUserId(),
+//					System.currentTimeMillis(), PwdGenerator.getPassword());
+//			subscriptionSender.setServiceContext(syncServiceContext
+//					.getServiceContext());
+//			subscriptionSender.setSubject(subject);
+//			subscriptionSender.setUserId(dossier.getUserId());
+//
+//			subscriptionSender.addRuntimeSubscribers(toAddress, toName);
+//
+//			subscriptionSender.flushNotificationsAsync();
+//
+//		} catch (Exception e) {
+//			_log.error(e);
+//		}
+//
+//	}
 	private Log _log = LogFactoryUtil.getLog(SyncFromBackOffice.class);
 
 }

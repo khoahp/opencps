@@ -302,15 +302,6 @@ public class PortletPropsValues {
 	public static final String OPENCPS_PERSON_MAKE_PROCEDURE_CANCEL = PortletProps
 			.get(PortletPropsKeys.OPENCPS_PERSON_MAKE_PROCEDURE_CANCEL);
 
-	public static final String SYSTEM_EMAIL = PortletProps
-			.get(PortletPropsKeys.SYSTEM_EMAIL);
-	public static final String SUBJECT_TO_CUSTOMER = PortletProps
-			.get(PortletPropsKeys.SUBJECT_TO_CUSTOMER);
-	public static final String CONTENT_TO_CUSTOMER = PortletProps
-			.get(PortletPropsKeys.CONTENT_TO_CUSTOMER);
-	public static final String CONTENT_TO_CUSTOMER_WITHOUT_RECEPTION_NO = PortletProps
-			.get(PortletPropsKeys.CONTENT_TO_CUSTOMER_WITHOUT_RECEPTION_NO);
-
 	public static final int HOLIDAYCONFIG_DESCRIPTION_LENGTH = GetterUtil
 			.getInteger(PortletProps
 					.get(PortletPropsKeys.HOLIDAYCONFIG_DESCRIPTION_LENGTH),
@@ -321,12 +312,6 @@ public class PortletPropsValues {
 	
 	public static final String DM_POSTAL_GATE = PortletProps
 			.get(PortletPropsKeys.DM_POSTAL_GATE);
-
-	public static final String NOTIFICATION_INBOX_TITLE = PortletProps
-			.get(PortletPropsKeys.NOTIFICATION_INBOX_TITLE);
-	
-	public static final String NOTIFICATION_INBOX_BODY = PortletProps
-			.get(PortletPropsKeys.NOTIFICATION_INBOX_BODY);
 
 	public static final String DM_PAYMENT_GATE = PortletProps
 			.get(PortletPropsKeys.DM_PAYMENT_GATE);
