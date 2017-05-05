@@ -18,4 +18,4 @@
 
 <portlet:defineObjects />
 
-This is the <b>Opencps Integrate</b> portlet. Update 
+This is the <b>Vr Business</b> portlet.
