@@ -79,22 +79,28 @@
 <aui:row cssClass="nav-content-row">
 	<aui:col width="100">
 		<aui:select name="paymentConfigId" showEmptyOption="true" label="payment-config-no">
+		
+			
 			<%
 				for (PaymentConfig paymentConfig : paymentConfigs) {
 
 					boolean selected = false;
+					
+					if(Validator.isNotNull(serviceProcess)){
 
-					if (paymentConfig.getPaymentConfigId() == serviceProcess
-							.getPaymentConfigId()) {
-
-						selected = true;
-
+						if (paymentConfig.getPaymentConfigId() == serviceProcess
+								.getPaymentConfigId()) {
+	
+							selected = true;
+	
+						}
 					}
 			%>
 				<aui:option selected="<%=selected %>" value="<%= paymentConfig.getPaymentConfigId() %>"><%= paymentConfig.getPaymentConfigNo() %></aui:option>
 			<%
 				}
 			%>
+
 		</aui:select>
 	</aui:col>
 </aui:row>
@@ -108,7 +114,7 @@
 <aui:row>
 	<aui:col>
 		<aui:input name="isRequestPayment" label="create-payment-file" type="checkbox" 
-			value="<%=serviceProcess.getIsRequestPayment() %>">
+			value="<%=Validator.isNotNull(serviceProcess)? serviceProcess.getIsRequestPayment():false %>">
 			
 		</aui:input>
 	</aui:col>

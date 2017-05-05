@@ -422,7 +422,7 @@ public class BackOfficeProcessEngine implements MessageListener {
 						Validator.isNotNull(dossier) ? dossier.getDossierId()
 								: 0,
 						Validator.isNotNull(paymentFile) ? paymentFile
-								.getPaymentFileId() : 0, processOrderId);
+								.getPaymentFileId() : 0, processOrderId,toEngineMsg.getActionNote());
 
 				toBackOffice.setListNotifications(lsNotification);
 
