@@ -1,4 +1,5 @@
 
+<%@page import="org.opencps.accountmgt.service.BusinessLocalServiceUtil"%>
 <%
 /**
  * OpenCPS is the open source Core Public Services software
@@ -89,13 +90,22 @@
 					
 					String dossierName = StringPool.BLANK;
 					
-					User bossOfDossier = null;
+					/*User bossOfDossier = null;*/
 					ServiceInfo serviceInfo = null;
 					
-					try {
+					/*try {
 						bossOfDossier = UserLocalServiceUtil.getUser(dossier.getUserId());
 						dossierName = bossOfDossier.getFullName();
 					} catch(Exception e) {
+						//nothing to do
+					}*/
+					try{
+						if(business != null){
+							dossierName = business.getName();
+						} else if (citizen != null) {
+							dossierName = citizen.getFullName();
+						} 
+					} catch (Exception e){
 						//nothing to do
 					}
 					

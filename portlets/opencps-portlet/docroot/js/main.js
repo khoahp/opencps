@@ -169,4 +169,16 @@ Liferay.provide(window, 'closeDialog', function(id, portletName) {
 	dialog.destroy();
 });
 
+Liferay.provide(window, 'renderDatepicker', function(triggerId) {
+	  
+	  var datePicker = new Liferay.RenderDatePicker(
+	        {
+	           trigger : '#' + triggerId,
+	      lang : 'vi',
+	      mask : '%d/%m/%Y',
+	      defaultValue : '',
+	      zIndex : 1
+	        }
+	     ).render();
+	},['render-datepicker']);
 

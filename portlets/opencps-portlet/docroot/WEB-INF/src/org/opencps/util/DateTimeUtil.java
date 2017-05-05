@@ -283,6 +283,49 @@ public class DateTimeUtil {
 
 		return format;
 	}
+	/**
+	   * @param date
+	   * @return
+	   */
+	 public static Date getStartDateDay(Date date) {
+
+	    if (date != null) {
+
+	      Calendar calendar = Calendar.getInstance();
+	      
+	      calendar.setTime(date);
+
+	      calendar.set(Calendar.HOUR_OF_DAY, 0);
+	      calendar.set(Calendar.MINUTE, 0);
+	      calendar.set(Calendar.SECOND, 0);
+
+	      return calendar.getTime();
+	    }
+
+	    return null;
+	  }
+	  
+	  /**
+	   * @param date
+	   * @return
+	   */
+	  public static Date getEndDateDay(Date date) {
+
+	    if (date != null) {
+
+	      Calendar calendar = Calendar.getInstance();
+	      
+	      calendar.setTime(date);
+
+	      calendar.set(Calendar.HOUR_OF_DAY, 23);
+	      calendar.set(Calendar.MINUTE, 59);
+	      calendar.set(Calendar.SECOND, 59);
+
+	      return calendar.getTime();
+	    }
+
+	    return null;
+	  }
 	private static final String DATE_TIME_FORMAT = "{d} {D} {HH}:{mm}:{ss}";
 
 	public static final String _TIMESTAMP = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";

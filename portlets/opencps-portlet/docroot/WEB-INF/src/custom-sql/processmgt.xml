@@ -638,7 +638,7 @@
             )
 			AND opencps_processstep.dossierSubStatus = ?
 			AND (opencps_dossier.receptionNo = ? or opencps_serviceinfo.serviceName like ? or opencps_dossier.subjectName like ? or opencps_dossier.dossierId = ?)
-			AND (opencps_dossier.receiveDatetime BETWEEN ? AND ?)
+			AND (opencps_dossier.submitDatetime BETWEEN ? AND ?)
 			AND opencps_serviceinfo.domainCode= ?
 			ORDER BY 
 				opencps_dossier.estimateDatetime DESC, 
@@ -705,7 +705,7 @@
             )
             AND opencps_processstep.dossierSubStatus = ?
             AND (opencps_dossier.receptionNo = ? or opencps_serviceinfo.serviceName like ? or opencps_dossier.subjectName like ? or opencps_dossier.dossierId = ?)
-            AND (opencps_dossier.receiveDatetime BETWEEN ? AND ?)
+            AND (opencps_dossier.submitDatetime BETWEEN ? AND ?)
             AND opencps_serviceinfo.domainCode= ?
 		]]>
 	</sql>
