@@ -469,6 +469,7 @@ public class DataMamagementPortlet extends MVCPortlet {
 								DictItemDisplayTerms.SIBLING,
 								WebKeys.ORDER_BY_ASC));
 		if (dictItemBefor == null) {
+			// new dict item
 			for (DictItem d : items) {
 				if (d.getDictItemId() != dictItem.getDictItemId()
 						&& d.getSibling() >= sibling) {
@@ -477,15 +478,41 @@ public class DataMamagementPortlet extends MVCPortlet {
 				}
 			}
 		} else {
-			// update sibling for current parent tree
-			for (DictItem d : items) {
-				if (d.getDictItemId() != dictItem.getDictItemId()
-						&& d.getSibling() >= sibling) {
-					d.setSibling(d.getSibling() + 1);
-					DictItemLocalServiceUtil.updateDictItem(d);
+			// update exist dict item
+			if (dictItem.getParentItemId() == dictItemBefor.getParentItemId()) {
+				// item no change parent
+				if (dictItem.getSibling() > dictItemBefor.getSibling()) {
+					// item move down
+					for (DictItem d : items) {
+						if (d.getDictItemId() != dictItem.getDictItemId()
+								&& d.getSibling() > dictItemBefor.getSibling()
+								&& d.getSibling() <= sibling) {
+							d.setSibling(d.getSibling() - 1);
+							DictItemLocalServiceUtil.updateDictItem(d);
+						}
+					}
+				} else {
+					// item move up
+					for (DictItem d : items) {
+						if (d.getDictItemId() != dictItem.getDictItemId()
+								&& d.getSibling() >= sibling
+								&& d.getSibling() < dictItemBefor.getSibling()) {
+							d.setSibling(d.getSibling() + 1);
+							DictItemLocalServiceUtil.updateDictItem(d);
+						}
+					}
 				}
-			}
-			if (dictItem.getParentItemId() != dictItemBefor.getParentItemId()) {
+			} else {
+				// item change parent
+				// update current tree
+				for (DictItem d : items) {
+					if (d.getDictItemId() != dictItem.getDictItemId()
+							&& d.getSibling() >= sibling) {
+						d.setSibling(d.getSibling() + 1);
+						DictItemLocalServiceUtil.updateDictItem(d);
+					}
+				}
+				// update previous tree
 				items = DictItemLocalServiceUtil.getBy_D_P(dictItemBefor
 						.getDictCollectionId(),
 						dictItemBefor.getParentItemId(), QueryUtil.ALL_POS,
@@ -493,7 +520,6 @@ public class DataMamagementPortlet extends MVCPortlet {
 								.getDictItemOrderByComparator(
 										DictItemDisplayTerms.SIBLING,
 										WebKeys.ORDER_BY_ASC));
-				// update sibling for previous parent tree
 				for (DictItem d : items) {
 					if (d.getSibling() > dictItemBefor.getSibling()) {
 						d.setSibling(d.getSibling() - 1);
@@ -501,9 +527,9 @@ public class DataMamagementPortlet extends MVCPortlet {
 					}
 				}
 
+				// update tree index for children tree
 				items = DictItemLocalServiceUtil
 						.getDictItemsByParentItemId(dictItem.getDictItemId());
-				// update tree index for children tree
 				updateTreeIndexChildrenTree(dictItem, items);
 			}
 		}

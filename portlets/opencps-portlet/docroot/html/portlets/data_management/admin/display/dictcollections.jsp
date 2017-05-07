@@ -43,37 +43,12 @@
 				<div id='<%=renderResponse.getNamespace() + "collections-container" %>' ></div>
 			</div>
 		</div>
-		<%-- <div class="opencps-searchcontainer-wrapper default-box-shadow radius8">
-			<aui:row>
-				<liferay-ui:message key="edit-sibling"/>
-			</aui:row>
-			<div class="edit-form">
-				<portlet:actionURL name="editDictItemSibling" var="editDictItemSiblingURL"/>
-				<aui:form action="<%=editDictItemSiblingURL.toString() %>" method="POST" name="fm_editSibling">
-					<aui:row>
-						<aui:select name="numberedSiblingMode">
-							<aui:option value="1" label="numbered-for-all-dictItems"/>
-							<aui:option value="2" label="numbered-for-all-dictItems-in-dictcollection" selected="true"/>
-						</aui:select>
-					</aui:row>
-					<aui:row>
-						<aui:select name="<%=DictItemDisplayTerms.DICTCOLLECTION_ID %>">
-							<aui:option value="0" label="select-dictcollection"/>
-							<%
-								List<DictCollection> collections = DictCollectionLocalServiceUtil.getDictCollections();
-								for (DictCollection collection : collections){
-									%>
-										<aui:option value="<%=collection.getDictCollectionId() %>" ><%=collection.getCollectionName(locale) %></aui:option>
-									<%
-								}
-							%>
-						</aui:select>
-					</aui:row>
-					
-					<aui:button type="submit"/>
-				</aui:form>
-			</div>
-		</div> --%>
+		
+		<!-- update items sibling -->
+		<liferay-portlet:renderURL var="updateItemsURL">
+			<liferay-portlet:param name="mvcPath" value="/html/portlets/data_management/admin/display/update_items.jsp"/>
+		</liferay-portlet:renderURL>
+		<aui:button href="<%=updateItemsURL.toString() %>" value="update-data-items"/>
 	</div>
 	
 	<div class="span9">

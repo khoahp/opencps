@@ -43,7 +43,7 @@
 	<sql id="org.opencps.datamgt.service.persistence.DictItemFinder.searchBy_G_D_N_L_S">
 		<![CDATA[
 			SELECT 
-				di.*
+				DISTINCT di.*
 			FROM 
 				opencps_dictitem AS di 
 			LEFT JOIN
@@ -68,21 +68,26 @@
 			SELECT 
 				COUNT(*) AS COUNT_VALUE
 			FROM 
-				opencps_dictitem AS di 
-			LEFT JOIN
-				noibo_qa.opencps_dictitemlink AS dil
-			ON 
-				di.dictItemId = dil.dictItemId
-			WHERE 
-				di.groupid = ?
-			AND 
-				di.dictCollectionId = ?
-			AND 
-				di.itemName LIKE ?
-			AND 
-				dil.dictItemLinkedId = ?
-			AND	
-				di.issueStatus = ?
+			(
+				SELECT 
+					DISTINCT di.*
+				FROM 
+					opencps_dictitem AS di 
+				LEFT JOIN
+					noibo_qa.opencps_dictitemlink AS dil
+				ON 
+					di.dictItemId = dil.dictItemId
+				WHERE 
+					di.groupid = ?
+				AND 
+					di.dictCollectionId = ?
+				AND 
+					di.itemName LIKE ?
+				AND 
+					dil.dictItemLinkedId = ?
+				AND	
+					di.issueStatus = ?
+			) AS result
 		]]>
 	</sql>
 </custom-sql>
