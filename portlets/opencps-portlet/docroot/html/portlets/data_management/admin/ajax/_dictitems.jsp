@@ -1,5 +1,3 @@
-<%@page import="org.opencps.util.WebKeys"%>
-<%@page import="org.opencps.datamgt.util.DataMgtUtil"%>
 <%
 /**
  * OpenCPS is the open source Core Public Services software
@@ -19,6 +17,11 @@
  */
 %>
 
+<%@page import="com.liferay.portal.kernel.dao.orm.QueryUtil"%>
+<%@page import="org.opencps.datamgt.service.DictCollectionLinkLocalServiceUtil"%>
+<%@page import="org.opencps.datamgt.model.DictCollectionLink"%>
+<%@page import="org.opencps.util.WebKeys"%>
+<%@page import="org.opencps.datamgt.util.DataMgtUtil"%>
 <%@page import="com.liferay.portal.kernel.language.LanguageUtil"%>
 <%@page import="org.opencps.datamgt.service.DictCollectionLocalServiceUtil"%>
 <%@page import="org.opencps.datamgt.model.DictCollection"%>
@@ -41,52 +44,123 @@
 <%
 	long dictCollectionId = ParamUtil.getLong(request, DictItemSearchTerms.DICTCOLLECTION_ID);
 	SearchContainer itemsListSearchContainer = (SearchContainer) request.getAttribute("itemsListSearchContainer");
-	
+	String searchKeyword = ParamUtil.getString(request, "searchKeyword");
+	long itemLinkedId = ParamUtil.getLong(request, "itemLinkedId");
+
 	DictCollection collection = null;
 	try {
-		collection = DictCollectionLocalServiceUtil.getDictCollection(dictCollectionId);
-	} catch (Exception e) {}
-	
+		collection = DictCollectionLocalServiceUtil
+				.getDictCollection(dictCollectionId);
+	} catch (Exception e) {
+	}
+
 	PortletURL iteratorURL = renderResponse.createRenderURL();
-	iteratorURL.setParameter("mvcPath", "/html/portlets/data_management/admin/display/dictitems.jsp");
-	iteratorURL.setParameter(DictItemDisplayTerms.DICTCOLLECTION_ID, String.valueOf(dictCollectionId));
+	iteratorURL
+			.setParameter("mvcPath",
+					"/html/portlets/data_management/admin/display/dictitems.jsp");
+	iteratorURL.setParameter(DictItemDisplayTerms.DICTCOLLECTION_ID,
+			String.valueOf(dictCollectionId));
 	iteratorURL.setParameter("actionKey", "ajax-load-dict-items");
-	
+
 	List<DictItem> dictItems = new ArrayList<DictItem>();
-	
+
 	int totalCount = 0;
+	
+	List<DictCollectionLink> collectionsLinked = new ArrayList<DictCollectionLink>();
+	try {
+		collectionsLinked = DictCollectionLinkLocalServiceUtil
+				.getByDictCollectionId(dictCollectionId);
+	} catch (Exception e){
+		_log.error(e);
+	}
 %>
 
 <div>
-	<p><liferay-ui:message key='dictcollection' /> > <%=collection != null ? collection.getCollectionName() : StringPool.BLANK %> > <liferay-ui:message key='list' /></p>
+	<p>
+		<liferay-ui:message key='dictcollection' /> > 
+		<%=collection != null ? collection.getCollectionName() : StringPool.BLANK %> > 
+		<liferay-ui:message key='list' />
+	</p>
 </div>
 
 <div>
 	<aui:button id='<%=renderResponse.getNamespace() + "add-item" %>' type="submit" value="add-item" />
-	<span><aui:input name="item-name" placeholder='<%= LanguageUtil.get(locale, "name") %>' /></span>
-	<span><aui:button name="search-item-button" value="search" /></span>
+	<aui:input name="item-name" value="<%=searchKeyword %>" placeholder='<%= LanguageUtil.get(locale, "name") %>' />
+	<%
+	if (collectionsLinked.size() > 0){
+		%>
+		<aui:select name="item-linked">
+			<aui:option value="0" ></aui:option>
+			<%
+			DictCollection dictCollection = null;
+			List<DictItem> dictItemsL = new ArrayList<DictItem>();
+			List<DictItem> dictItemsOrdered = new ArrayList<DictItem>();
+			
+			for (DictCollectionLink linked : collectionsLinked){
+				
+				dictCollection = DictCollectionLocalServiceUtil
+						.getDictCollection(linked.getDictCollectionLinkedId());
+				%>
+				<aui:option value="0" disabled="true"><%=dictCollection.getCollectionName(locale) %></aui:option>
+				<%
+				try {
+					dictItemsL = DictItemLocalServiceUtil
+							.getBy_D_P(dictCollection.getDictCollectionId(), 0, 
+									QueryUtil.ALL_POS, QueryUtil.ALL_POS,
+									DataMgtUtil.getDictItemOrderByComparator(
+											DictItemDisplayTerms.SIBLING, WebKeys.ORDER_BY_ASC));
+					dictItemsOrdered.clear();
+					dictItemsOrdered = getDictItemsOrderBySibling(dictItemsOrdered, 
+							dictItemsL, dictCollection.getDictCollectionId());
+				} catch (Exception e){
+					_log.error(e);
+				}
+				for (DictItem item : dictItemsOrdered){
+					int level = StringUtil.count(item.getTreeIndex(), StringPool.PERIOD);
+					String index = "|__";
+					for(int i = 0; i < level; i++){
+						index += "__";
+					}
+					%>
+					<aui:option 
+						value="<%=item.getDictItemId() %>" 
+						selected="<%=item.getDictItemId() == itemLinkedId %>"
+					>
+						<%=index + item.getItemName(locale) %>
+					</aui:option>
+					<%
+				}
+			}
+			%>
+		</aui:select>
+		<%
+	}
+	%>
+	
+	<aui:button name="search-item-button" value="search" />
 </div>
 
 <div class="opencps-searchcontainer-wrapper-width-header default-box-shadow radius8 items-container">
 	<liferay-ui:search-container 
-		searchContainer="<%=itemsListSearchContainer == null ? new DictItemSearch(renderRequest, SearchContainer.DEFAULT_DELTA, iteratorURL) : itemsListSearchContainer %>" 
+		searchContainer="<%=itemsListSearchContainer == null ? 
+				new DictItemSearch(renderRequest, SearchContainer.DEFAULT_DELTA, iteratorURL) : itemsListSearchContainer %>" 
 		headerNames="STT,code,name,tree-index,action"
 	>
 	
 		<liferay-ui:search-container-results>
 			<%
-				DictItemSearchTerms searchTerms = (DictItemSearchTerms)searchContainer.getSearchTerms();
-				
 				String[] itemNames = null;
 				
-				if(Validator.isNotNull(searchTerms) && Validator.isNotNull(searchTerms.getKeywords())){
-					itemNames = CustomSQLUtil.keywords(searchTerms.getKeywords());
+				if (Validator.isNotNull(searchKeyword)){
+					itemNames = CustomSQLUtil.keywords(searchKeyword);
 				}
 				
 				try{
-					%>
-						<%@include file="/html/portlets/data_management/admin/dictitem_search_results.jspf" %>
-					<%
+					dictItems = DictItemLocalServiceUtil.searchBy_G_D_N_L_S(
+							scopeGroupId, dictCollectionId, searchKeyword, itemLinkedId, 1, 
+							searchContainer.getStart(), searchContainer.getEnd());
+					totalCount = DictItemLocalServiceUtil.countBy_G_D_N_L_S(
+							scopeGroupId, searchKeyword, dictCollectionId, itemLinkedId, 1);
 				}catch(Exception e){
 					_log.error(e);
 				}
@@ -105,7 +179,6 @@
 				<%
 					row.setClassName("opencps-searchcontainer-row");
 					
-					//id column
 					row.addText(String.valueOf((row.getPos() + 1) 
 							+ (searchContainer.getCur() - 1) * searchContainer.getDelta()));
 					
@@ -127,6 +200,21 @@
 </div>
 
 <%!
+	private List<DictItem> getDictItemsOrderBySibling(List<DictItem> 
+				result, List<DictItem> items, long dictCollectionId) 
+				throws Exception{
+		for (DictItem item : items){
+			result.add(item);
+			List<DictItem> subItems = DictItemLocalServiceUtil
+					.getBy_D_P(dictCollectionId, item.getDictItemId(), 
+							QueryUtil.ALL_POS, QueryUtil.ALL_POS,
+							DataMgtUtil.getDictItemOrderByComparator(
+									DictItemDisplayTerms.SIBLING, WebKeys.ORDER_BY_ASC));
+			getDictItemsOrderBySibling(result, subItems, dictCollectionId);
+		}
+		
+		return result;
+	}
 	private Log _log = LogFactoryUtil.getLog("html.portlets.data_management.admin.dictitem.jsp");
 %>
 

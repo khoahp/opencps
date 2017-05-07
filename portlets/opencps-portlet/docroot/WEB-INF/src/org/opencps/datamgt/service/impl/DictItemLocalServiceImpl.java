@@ -713,6 +713,20 @@ public class DictItemLocalServiceImpl extends DictItemLocalServiceBaseImpl {
 				dictCollectionId, parentItemId, start, end, orderBy);
 	}
 
+	public List<DictItem> searchBy_G_D_N_L_S(long groupId, long collectionId,
+			String itemName, long itemLinked, int status, int start, int end)
+			throws SystemException {
+		return dictItemFinder.searchBy_G_D_N_L_S(groupId, collectionId,
+				itemName, itemLinked, status, start, end);
+	}
+
+	public int countBy_G_D_N_L_S(long groupId, String itemName,
+			long collectionId, long itemLinked, int status)
+			throws SystemException {
+		return dictItemFinder.countBy_G_D_N_L_S(groupId, collectionId,
+				itemName, itemLinked, status);
+	}
+
 	public int countAll() throws SystemException {
 		return dictItemLinkPersistence.countAll();
 	}
