@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.opencps.dossiermgt.model.Dossier;
 import org.opencps.lucenequery.LuceneQueryFormatException;
 import org.opencps.lucenequery.LuceneQuerySyntaxException;
 import org.opencps.lucenequery.menu.bean.LuceneMenuSchema;
@@ -13,6 +14,8 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.search.BooleanClauseOccur;
 import com.liferay.portal.kernel.search.BooleanQuery;
 import com.liferay.portal.kernel.search.BooleanQueryFactoryUtil;
+import com.liferay.portal.kernel.search.Indexer;
+import com.liferay.portal.kernel.search.IndexerRegistryUtil;
 import com.liferay.portal.kernel.search.ParseException;
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -98,8 +101,17 @@ public class LuceneQueryUtil {
 	 * @param searchContext
 	 * @return
 	 */
+
 	public static BooleanQuery buildQuerySearch(String pattern,
 			List<Object> params, SearchContext searchContext) {
+		searchContext
+				.setEntryClassNames(new String[] { Dossier.class.getName() });
+
+		Indexer indexer = IndexerRegistryUtil.getIndexer(Dossier.class
+				.getName());
+
+		searchContext.setSearchEngineId(indexer.getSearchEngineId());
+
 		BooleanQuery query = BooleanQueryFactoryUtil.create(searchContext);
 		List<String> subQueries = new ArrayList<String>();
 		try {

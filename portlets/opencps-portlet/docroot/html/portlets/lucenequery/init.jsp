@@ -1,7 +1,3 @@
-
-<%@page import="org.opencps.lucenequery.service.LuceneMenuGroupLocalServiceUtil"%>
-<%@page import="java.util.ArrayList"%>
-<%@page import="org.opencps.lucenequery.model.LuceneMenuGroup"%>
 <%
 	/**
 	 * OpenCPS is the open source Core Public Services software
@@ -21,7 +17,9 @@
 	 */
 %>
 
-
+<%@page import="org.opencps.lucenequery.service.LuceneMenuGroupLocalServiceUtil"%>
+<%@page import="java.util.ArrayList"%>
+<%@page import="org.opencps.lucenequery.model.LuceneMenuGroup"%>
 <%@page import="org.opencps.lucenequery.util.LuceneQueryUtil"%>
 <%@page import="org.opencps.lucenequery.menu.bean.LuceneMenuSchema"%>
 <%@page import="java.util.List"%>

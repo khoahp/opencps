@@ -53,7 +53,11 @@
 	notiStatusConfigs = NotificationStatusConfigLocalServiceUtil.getNotificationStatusConfigs(QueryUtil.ALL_POS, QueryUtil.ALL_POS);
 	
 	///////////////////////////////////////////
-	String[] emailListException = StringUtil.split(notiEventConfig.getUserExcept());
+	String[] emailListException = null;
+	
+	if(eventConfig){
+		emailListException = StringUtil.split(notiEventConfig.getUserExcept());
+	}
 	
 	List leftList = new ArrayList();
 	
@@ -87,7 +91,7 @@
 %>
 
 <liferay-ui:header
-	title='<%=eventConfig? "add-notification-event-config"
+	title='<%=!eventConfig ? "add-notification-event-config"
 					: "update-notification-event-config"%>' />
 
 
@@ -106,15 +110,16 @@
 		<portlet:actionURL var="updateNotificationEventConfigURL" name="updateNotificationEventConfig" />
 
 		<aui:form action="<%=updateNotificationEventConfigURL.toString()%>"
-			onSubmit='<%= "event.preventDefault(); " + renderResponse.getNamespace() + "getValueRightBox();" %>'> 
-			method="post" name="fm">
+			onSubmit='<%= "event.preventDefault(); " + renderResponse.getNamespace() + "getValueRightBox();" %>'
+			method="post" name="fm"> 
+			
 
 			<aui:model-context bean="<%=notiEventConfig%>"
 				model="<%=NotificationEventConfig.class%>" />
 				
 			<aui:input name="<%=NotificationEventConfigDisplayTerms.NOTICE_EVENT_CONFIG_ID%>"
 				type="hidden"
-				value="<%=eventConfig ? String.valueOf(notiEventConfig.getNotiEventConfigId()):StringPool.BLANK %>" />
+				value="<%=eventConfig ? String.valueOf(notiEventConfig.getNotiEventConfigId()): StringPool.BLANK %>" />
 				
 			<aui:input name="<%=WebKeys.BACK_URL%>" type="hidden"
 				value="<%=backURL%>" />
@@ -125,18 +130,19 @@
 			<aui:select  name="<%=NotificationStatusConfigDisplayTerms.NOTICE_CONFIG_ID%>"
 				label="noti-status-config">
 				<%
-					for (NotificationStatusConfig notiStatusConfig : notiStatusConfigs) {
+					
+						for (NotificationStatusConfig notiStatusConfig : notiStatusConfigs) {
+								
+							boolean statusSelect = false;
 							
-						boolean statusSelect = false;
-						
-							if (eventConfig) {
-
-								if (notiStatusConfig.getNotiStatusConfigId() == notiEventConfig
-										.getNotiStatusConfigId()) {
-									
-									statusSelect = true;
+								if (eventConfig) {
+	
+									if (notiStatusConfig.getNotiStatusConfigId() == notiEventConfig
+											.getNotiStatusConfigId()) {
+										
+										statusSelect = true;
+									}
 								}
-							}
 				%>
 
 				<aui:option selected="<%=true%>"
@@ -147,7 +153,8 @@
 				</aui:option>
 
 				<%
-				}
+						}
+					
 				%>
 			</aui:select>
 			
@@ -200,6 +207,8 @@
 							}
 							catch (Exception e) {
 							}
+							
+							
 					
 							if (curRootLayout != null) {
 								
@@ -207,12 +216,12 @@
 								
 								if(eventConfig){
 									
-											if (curRootLayout.getPlid() == Long
-													.valueOf(notiEventConfig.getPlId())) {
+									if (curRootLayout.getPlid() == Long
+											.valueOf(notiEventConfig.getPlId())) {
 
-												select = true;
-											}
-										}
+										select = true;
+									}
+								}
 				%>
 	
 					<aui:option label="<%= name %>" 
@@ -220,7 +229,7 @@
 						value="<%= curRootLayout.getPlid() %>" />
 	
 				<%
-					}
+							}
 				}
 				%>
 
@@ -257,8 +266,7 @@
 		var A = AUI();
 		var userExceptList = Liferay.Util.listSelect(document.<portlet:namespace />fm.<portlet:namespace />userExceptList);
 		var userExceptListValues = A.one('#<portlet:namespace />userExceptListValues');
-		 console.log("userExceptList:"+userExceptList);
-		 console.log("userExceptListValues:"+userExceptListValues);
+		
 		userExceptListValues.val(userExceptList);
 		submitForm(document.<portlet:namespace />fm);
 	}, ['liferay-util-list-fields']);
