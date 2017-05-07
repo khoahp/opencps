@@ -439,6 +439,7 @@
 	
 	Liferay.provide(window, 'editDictItem', function(itemId){
 		needConfirnChangeView = true;
+		previousId = '';
 		
 		var loadingMask = new A.LoadingMask(
 			{
@@ -512,7 +513,6 @@
 								.one('#<portlet:namespace/>cancel')
 									.on('click', function(event){
 								event.preventDefault();
-								previousId = '';
 								getDictItems(selectedDictCollectionId);
 							});
 						}
