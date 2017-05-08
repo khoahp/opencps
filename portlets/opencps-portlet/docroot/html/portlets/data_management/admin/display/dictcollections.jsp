@@ -1,6 +1,3 @@
-<%@page import="org.opencps.datamgt.service.DictCollectionLocalServiceUtil"%>
-<%@page import="org.opencps.datamgt.model.DictCollection"%>
-<%@page import="java.util.List"%>
 <%
 /**
  * OpenCPS is the open source Core Public Services software
@@ -266,6 +263,12 @@
 										A.one('#<portlet:namespace/>item-linked').attr('value') : 0;
 								getDictItems(selectedDictCollectionId, 1, searchKeyword, itemLinkedIdSearch);
 							})
+						}
+						//
+						if (A.one('.lfr-pagination-delta-selector')){
+							A.one('.lfr-pagination-delta-selector').on('click', function(even){
+								even.preventDefault();
+							});
 						}
 						
 						scrollWindow();

@@ -9,15 +9,11 @@
 		</portlet-class>
 		<init-param>
 			<name>view-template</name>
-			<value>/html/portlets/data_management/admin/display/dictcollections.jsp</value>
+			<value>/html/portlets/data_management/admin/view.jsp</value>
 		</init-param>
 		<init-param>
 			<name>template-path</name>
 			<value>/html/portlets/data_management/admin/</value>
-		</init-param>
-		<init-param>
-			<name>config-template</name>
-			<value>/html/portlets/data_management/admin/configuration.jsp</value>
 		</init-param>
 		<expiration-cache>0</expiration-cache>
 		<supports>
