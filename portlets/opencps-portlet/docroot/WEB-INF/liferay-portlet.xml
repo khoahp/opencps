@@ -373,6 +373,15 @@
 		<css-class-wrapper>28-portlet</css-class-wrapper>
 	</portlet>
 	<portlet>
+		<portlet-name>29</portlet-name>
+		<icon>/icon.png</icon>
+		<header-portlet-css>/css/main.css</header-portlet-css>
+		<footer-portlet-javascript>
+			/js/main.js
+		</footer-portlet-javascript>
+		<css-class-wrapper>29-portlet</css-class-wrapper>
+	</portlet>
+	<portlet>
 		<portlet-name>1001</portlet-name>
 		<icon>/icon.png</icon>
 		<configuration-action-class>org.opencps.dashboard.portlet.ConfigurationImpl</configuration-action-class>

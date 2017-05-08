@@ -1,3 +1,4 @@
+<%@page import="org.opencps.datamgt.NoSuchDictItemException"%>
 <%
 	/**
 	 * OpenCPS is the open source Core Public Services software
@@ -18,7 +19,11 @@
 %>
 <%@ include file="../init.jsp"%>
 
+<liferay-util:include page='<%=templatePath + "toolbar.jsp"%>'
+	servletContext="<%=application%>" />
+
 <%
+	
 	PortletURL iteratorURL = renderResponse.createRenderURL();
 	iteratorURL.setParameter("tabs1", PortletKeys.PAYMENTCONFIG_TAB);
  %>
@@ -49,27 +54,32 @@
 			modelVar="paymentConfig" keyProperty="paymentConfigId">
 			<%
 				row.setClassName("opencps-searchcontainer-row");
-				row.addText(String.valueOf(row.getPos() + 1));
-				row.addText(DateTimeUtil.convertDateToString(
-						paymentConfig.getCreateDate(),
-						DateTimeUtil._VN_DATE_TIME_FORMAT));
+					row.addText(String.valueOf(row.getPos() + 1));
+					row.addText(DateTimeUtil.convertDateToString(
+							paymentConfig.getCreateDate(),
+							DateTimeUtil._VN_DATE_TIME_FORMAT));
 
-				row.addText(DateTimeUtil.convertDateToString(
-						paymentConfig.getModifiedDate(),
-						DateTimeUtil._VN_DATE_TIME_FORMAT));
+					row.addText(DateTimeUtil.convertDateToString(
+							paymentConfig.getModifiedDate(),
+							DateTimeUtil._VN_DATE_TIME_FORMAT));
 
-				row.addText(paymentConfig.getPaymentConfigNo());
-				
-				DictItem dictItem = new DictItemImpl();
-				
-				dictItem =  DictItemLocalServiceUtil.getDictItem(paymentConfig.getPaymentGateType());
+					row.addText(paymentConfig.getPaymentConfigNo());
+					
+					DictItem dictItem = new DictItemImpl();
+					
+						try {
+							dictItem = DictItemLocalServiceUtil
+									.getDictItem(paymentConfig.getPaymentGateType());
+						} catch (NoSuchDictItemException e) {
 
-				row.addText(dictItem.getItemCode());
+						}
 
-				row.addJSP("center", SearchEntry.DEFAULT_VALIGN,
-						templatePath + "/paymentconfig_action.jsp",
-						config.getServletContext(), request, response);
-				row.setParameter(WebKeys.REDIRECT_URL, iteratorURL);
+					row.addText(dictItem.getItemCode());
+
+					row.addJSP("center", SearchEntry.DEFAULT_VALIGN,
+							templatePath + "/paymentconfig_action.jsp",
+							config.getServletContext(), request, response);
+					row.setParameter(WebKeys.REDIRECT_URL, iteratorURL);
 			%>
 
 		</liferay-ui:search-container-row>

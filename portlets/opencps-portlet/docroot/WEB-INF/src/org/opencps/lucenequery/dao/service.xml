@@ -49,6 +49,7 @@
         <column name="treeIndex" type="String"></column>
         <column name="menuGroupId" type="long"></column>
         <column name="level" type="int"></column>
+        <!-- <column name="roles" type="Collection" mapping-table="opencps_menu_role" entity='com.liferay.portal.Role'/> -->
         <order by="asc">
             <order-column name="sibling" order-by="asc"></order-column>
         </order>
@@ -66,6 +67,7 @@
             <finder-column name="menuGroupId"></finder-column>
             <finder-column name="parentId"></finder-column>
         </finder>
+        <!-- <reference entity="Role" package-path="com.liferay.portal"></reference> -->
     </entity>
     <entity name="LuceneMenuGroup" local-service="true" table="opencps_lucene_menu_group">
         <column name="menuGroupId" type="long" primary="true"></column>
@@ -81,6 +83,17 @@
         </order>
         <finder name="GroupId" return-type="Collection">
             <finder-column name="groupId"></finder-column>
+        </finder>
+    </entity>
+    <entity name="LuceneMenuRole" table="opencps_lucenemenu_role" local-service="true">
+        <column name="id" type="long" primary="true"></column>
+        <column name="menuItemId" type="long"></column>
+        <column name="roleId" type="long"></column>
+        <finder name="RoleId" return-type="Collection">
+            <finder-column name="roleId"></finder-column>
+        </finder>
+        <finder name="MenuItemId" return-type="Collection">
+            <finder-column name="menuItemId"></finder-column>
         </finder>
     </entity>
     <exceptions>
