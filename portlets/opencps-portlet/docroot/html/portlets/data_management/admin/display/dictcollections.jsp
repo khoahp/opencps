@@ -105,8 +105,8 @@
 			if (!confirm(Liferay.Language.get('are-you-sure'))){
 				return;
 			}
+			needConfirnChangeView = false;
 		}
-		needConfirnChangeView = false;
 		
 		var loadingMask = new A.LoadingMask(
 			{
@@ -164,8 +164,8 @@
 			if (!confirm(Liferay.Language.get('are-you-sure'))){
 				return;
 			}
+			needConfirnChangeView = false;
 		}
-		needConfirnChangeView = false;
 		
 		var loadingMask = new A.LoadingMask(
 			{
@@ -342,8 +342,8 @@
 			if (!confirm(Liferay.Language.get('are-you-sure'))){
 				return;
 			}
+			needConfirnChangeView = true;
 		}
-		needConfirnChangeView = true;
 		
 		var loadingMask = new A.LoadingMask(
 			{
