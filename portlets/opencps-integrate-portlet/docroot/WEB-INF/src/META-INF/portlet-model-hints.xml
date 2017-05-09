@@ -12,4 +12,14 @@
 		<field name="apiKey" type="String" />
 		<field name="agency" type="String" />
 	</model>
+	<model name="org.opencps.integrate.dao.model.IntegrateAPILogs">
+		<field name="id" type="long" />
+		<field name="companyId" type="long" />
+		<field name="groupId" type="long" />
+		<field name="userId" type="long" />
+		<field name="createDate" type="Date" />
+		<field name="modifiedDate" type="Date" />
+		<field name="actionCode" type="Date" />
+		<field name="apiKey" type="String" />
+	</model>
 </model-hints>

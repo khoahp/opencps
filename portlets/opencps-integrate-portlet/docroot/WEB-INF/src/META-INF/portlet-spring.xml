@@ -4,4 +4,7 @@
 	<bean id="org.opencps.integrate.dao.service.IntegrateAPILocalService" class="org.opencps.integrate.dao.service.impl.IntegrateAPILocalServiceImpl" />
 	<bean id="org.opencps.integrate.dao.service.IntegrateAPIService" class="org.opencps.integrate.dao.service.impl.IntegrateAPIServiceImpl" />
 	<bean id="org.opencps.integrate.dao.service.persistence.IntegrateAPIPersistence" class="org.opencps.integrate.dao.service.persistence.IntegrateAPIPersistenceImpl" parent="basePersistence" />
+	<bean id="org.opencps.integrate.dao.service.IntegrateAPILogsLocalService" class="org.opencps.integrate.dao.service.impl.IntegrateAPILogsLocalServiceImpl" />
+	<bean id="org.opencps.integrate.dao.service.IntegrateAPILogsService" class="org.opencps.integrate.dao.service.impl.IntegrateAPILogsServiceImpl" />
+	<bean id="org.opencps.integrate.dao.service.persistence.IntegrateAPILogsPersistence" class="org.opencps.integrate.dao.service.persistence.IntegrateAPILogsPersistenceImpl" parent="basePersistence" />
 </beans>
