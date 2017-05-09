@@ -164,24 +164,24 @@
 	
 	<div class="dossier-info-header">
 		<div class="row-fluid">
-			<label class="span3"><liferay-ui:message key="service-name"/>:</label>
+			<label class="span3"><liferay-ui:message key="service-name"/></label>
 			<p class="span9"><%=HtmlUtil.escape(serviceName) %></p>
 		</div>
 		
 		<div class="row-fluid">
-			<label class="span3"><liferay-ui:message key="service-administration-action"/>:</label>
+			<label class="span3"><liferay-ui:message key="service-administration-action"/></label>
 			<p class="span9"><%=Validator.isNotNull(adminAction) ? adminAction.getItemName(locale,true) : StringPool.BLANK %></p>
 		</div>
 		
 		<div class="row-fluid">
-			<label class="span3"><liferay-ui:message key="dossier-no"/>:</label>
+			<label class="span3"><liferay-ui:message key="dossier-no"/></label>
 			<p class="span3"><%=dossier != null ? dossier.getDossierId() : StringPool.DASH %></p>
-			<label class="span3"><liferay-ui:message key="dossier-reception-no"/>:</label>
+			<label class="span3"><liferay-ui:message key="dossier-reception-no"/></label>
 			<p class="span3"><%=dossier != null && Validator.isNotNull(dossier.getReceptionNo()) ? dossier.getReceptionNo() : StringPool.DASH %></p>
 		</div>
 		
 		<div class="row-fluid">
-			<label class="span3"><liferay-ui:message key="dossier-status"/>:</label>
+			<label class="span3"><liferay-ui:message key="dossier-status"/></label>
 			<p class="span9"><span class="red"><%=dossier != null ? PortletUtil.getDossierStatusLabel(dossier.getDossierStatus(), locale) : "" %></span></p>
 		</div>
 	</div>
