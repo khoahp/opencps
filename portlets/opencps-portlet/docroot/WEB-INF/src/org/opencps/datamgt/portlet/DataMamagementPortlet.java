@@ -125,6 +125,27 @@ public class DataMamagementPortlet extends MVCPortlet {
 			}
 		}
 	}
+	
+	public void changeStatusItemToNoUse(ActionRequest actionRequest,
+			ActionResponse actionResponse) throws IOException {
+
+		long dictItemId = ParamUtil.getLong(actionRequest,
+				DictItemDisplayTerms.DICTITEM_ID, 0L);
+		String redirectURL = ParamUtil.getString(actionRequest, "redirectURL");
+		try {
+			DictItem item = DictItemLocalServiceUtil.getDictItem(dictItemId);
+			item.setIssueStatus(2);
+			DictItemLocalServiceUtil.updateDictItem(item);
+		} catch (Exception e) {
+			SessionErrors.add(actionRequest,
+					MessageKeys.DATAMGT_SYSTEM_EXCEPTION_OCCURRED);
+			_log.error(e);
+		} finally {
+			if (Validator.isNotNull(redirectURL)) {
+				actionResponse.sendRedirect(redirectURL);
+			}
+		}
+	}
 
 	@Override
 	public void render(RenderRequest renderRequest,

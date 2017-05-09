@@ -32,11 +32,18 @@
 
 <div class="row-fluid">
 	<div class="span3" id="<portlet:namespace/>anchor-scroll">
-		<div class="opencps-searchcontainer-wrapper default-box-shadow radius8">
+		<div class="opencps-searchcontainer-wrapper default-box-shadow radius8 data-manager-action">
 			<div class="openCPSTree yui3-widget component tree-view tree-drag-drop">
 				<aui:button type="submit" value="add-collection" onClick="editDictCollection()"/>
-				<aui:input name="collection-name" placeholder='<%= LanguageUtil.get(locale, "name") %>' />
-				<aui:button name="search-button" value="search" />
+				<div>
+					<aui:input 
+						name="collection-name" 
+						placeholder='<%= LanguageUtil.get(locale, "name") %>' 
+						cssClass="input100" 
+						label=""
+					/>
+					<aui:button name="search-button" value="search" type="submit" />
+				</div>
 				<div id='<%=renderResponse.getNamespace() + "collections-container" %>' ></div>
 			</div>
 		</div>
@@ -49,7 +56,7 @@
 	</div>
 	
 	<div class="span9">
-		<div class="opencps-searchcontainer-wrapper default-box-shadow radius8">
+		<div class="opencps-searchcontainer-wrapper default-box-shadow radius8 data-manager-container">
 			<div id='<%=renderResponse.getNamespace() + "collection-detail" %>' ></div>
 		</div>
 	</div>
@@ -66,6 +73,7 @@
 	var A = AUI();
 	
 	AUI().ready('aui-base','liferay-portlet-url','aui-io', function(A){
+		checkLogined();
 		getDictCollections();
 		getDictCollectionDetail();
 		
@@ -92,6 +100,7 @@
 	// 'editDictCollection' : load page edit collection
 	// 'updateDictCollection' : do update dict collection
 	// 'editDictItem' : load page edit dict item
+	// 'updateDictItem': do update dict item
 	
 	// 'scrollWindow'
 	
@@ -101,6 +110,10 @@
 	var needConfirnChangeView = false;
 	
 	Liferay.provide(window, 'getDictCollectionDetail', function(collectionId){
+		if (!checkLogined()){
+			return;
+		}
+		
 		if (needConfirnChangeView){
 			if (!confirm(Liferay.Language.get('are-you-sure'))){
 				return;
@@ -140,7 +153,7 @@
 						}
 						if (A.one('#<portlet:namespace/>view-items-button')){
 							A.one('#<portlet:namespace/>view-items-button').on('click', function(){
-								getDictItems(selectedDictCollectionId);
+								getDictItems(selectedDictCollectionId, false, false, false, 'true');
 							});
 						}
 						if (A.one('#<portlet:namespace/>edit-items-button')){
@@ -159,7 +172,11 @@
 		);
 	},['aui-base','liferay-portlet-url','aui-io']);
 	
-	Liferay.provide(window, 'getDictItems', function(dictCollectionId, cur, keyword, itemLinkedId){
+	Liferay.provide(window, 'getDictItems', function(dictCollectionId, cur, keyword, itemLinkedId, status){
+		if (!checkLogined()){
+			return;
+		}
+		
 		if (needConfirnChangeView){
 			if (!confirm(Liferay.Language.get('are-you-sure'))){
 				return;
@@ -187,6 +204,9 @@
 		}
 		if (itemLinkedId){
 			iteratorURL.setParameter('itemLinkedId', itemLinkedId);
+		}
+		if (status){
+			iteratorURL.setParameter('itemsStatus', status);
 		}
 		
 		A.io.request(
@@ -230,6 +250,28 @@
 								});
 							});
 						}
+						// delete button dict item
+						if (A.all('.<portlet:namespace/>delete_dictItem_button')){
+							A.all('.<portlet:namespace/>delete_dictItem_button').each(function(button){
+								var itemId = button.one('img')['_node']['id'].replace(/.+dictItemId_/, '');
+								button.on('click', function(event){
+									event.preventDefault();
+									// todo
+									if (confirm(Liferay.Language.get('are-you-sure-delete-this-entry'))){
+										changeStatusItemToNoUse(itemId);
+										getDictItems(selectedDictCollectionId);
+									}
+								});
+							});
+						}
+						// in used checkbox
+						if (A.one('#<portlet:namespace/>itemsStatusInUsed')){
+							A.one('#<portlet:namespace/>itemsStatusInUsed').on('change', function(){
+								console.log('itemsStatusInUsed: '+itemsStatusInUsed);
+								var itemsStatusInUsed = A.one('#<portlet:namespace/>itemsStatusInUsed').attr('value');
+								getDictItems(selectedDictCollectionId, false, false, false, itemsStatusInUsed);
+							});
+						}
 						// add button dict item
 						if (A.one('#<portlet:namespace/>add-item')){
 							A.one('#<portlet:namespace/>add-item').on('click', function(){
@@ -243,7 +285,9 @@
 										A.one('#<portlet:namespace/>item-name').attr('value') : '';
 								var itemLinkedIdSearch = A.one('#<portlet:namespace/>item-linked') ?
 										A.one('#<portlet:namespace/>item-linked').attr('value') : 0;
-								getDictItems(selectedDictCollectionId, 1, searchKeyword, itemLinkedId);
+								var itemsStatusInUsed = A.one('#<portlet:namespace/>itemsStatusInUsed') ?
+										A.one('#<portlet:namespace/>itemsStatusInUsed').attr('value') : 1;
+								getDictItems(selectedDictCollectionId, 1, searchKeyword, itemLinkedId, itemsStatusInUsed);
 							});
 						}
 						if (A.one('#<portlet:namespace/>item-name')){
@@ -252,7 +296,9 @@
 										A.one('#<portlet:namespace/>item-name').attr('value') : '';
 								var itemLinkedIdSearch = A.one('#<portlet:namespace/>item-linked') ?
 										A.one('#<portlet:namespace/>item-linked').attr('value') : 0;
-								getDictItems(selectedDictCollectionId, 1, searchKeyword, itemLinkedId);
+								var itemsStatusInUsed = A.one('#<portlet:namespace/>itemsStatusInUsed') ?
+										A.one('#<portlet:namespace/>itemsStatusInUsed').attr('value') : 1;
+								getDictItems(selectedDictCollectionId, 1, searchKeyword, itemLinkedId, itemsStatusInUsed);
 							})
 						}
 						if (A.one('#<portlet:namespace/>item-linked')){
@@ -261,7 +307,9 @@
 										A.one('#<portlet:namespace/>item-name').attr('value') : '';
 								var itemLinkedIdSearch = A.one('#<portlet:namespace/>item-linked') ?
 										A.one('#<portlet:namespace/>item-linked').attr('value') : 0;
-								getDictItems(selectedDictCollectionId, 1, searchKeyword, itemLinkedIdSearch);
+								var itemsStatusInUsed = A.one('#<portlet:namespace/>itemsStatusInUsed') ?
+										A.one('#<portlet:namespace/>itemsStatusInUsed').attr('value') : 1;
+								getDictItems(selectedDictCollectionId, 1, searchKeyword, itemLinkedId, itemsStatusInUsed);
 							})
 						}
 						//
@@ -282,6 +330,10 @@
 	},['aui-base','liferay-portlet-url','aui-io']);
 	
 	Liferay.provide(window, 'getDictCollections', function(collectionName){
+		if (!checkLogined()){
+			return;
+		}
+		
 		var loadingMask = new A.LoadingMask(
 			{
 				'strings.loading': '<%= UnicodeLanguageUtil.get(pageContext, "...") %>',
@@ -338,12 +390,16 @@
 	},['aui-base','liferay-portlet-url','aui-io']);
 	
 	Liferay.provide(window, 'editDictCollection', function(collectionId){
+		if (!checkLogined()){
+			return;
+		}
+		
 		if (needConfirnChangeView){
 			if (!confirm(Liferay.Language.get('are-you-sure'))){
 				return;
 			}
-			needConfirnChangeView = true;
 		}
+		needConfirnChangeView = true;
 		
 		var loadingMask = new A.LoadingMask(
 			{
@@ -393,8 +449,8 @@
 								.one('#<portlet:namespace/>submit')
 									.on('click', function(event){
 								event.preventDefault();
-								updateDictCollection(updateDictCollectionId);
-								needConfirnChangeView = false;
+								var status = updateDictCollection(updateDictCollectionId);
+								//needConfirnChangeView = false;
 							});
 						}
 						if (A.one('#<portlet:namespace/>fm')
@@ -416,6 +472,10 @@
 	},['aui-base','liferay-portlet-url','aui-io']);
 	
 	Liferay.provide(window, 'editDictItem', function(itemId){
+		if (!checkLogined()){
+			return;
+		}
+		
 		needConfirnChangeView = true;
 		previousId = '';
 		
@@ -504,13 +564,9 @@
 	},['aui-base','liferay-portlet-url','aui-io']);
 	
 	Liferay.provide(window, 'updateDictCollection', function(dictCollectionId){
-		var loadingMask = new A.LoadingMask(
-			{
-				'strings.loading': '<%= UnicodeLanguageUtil.get(pageContext, "...") %>',
-				target: A.one('#<portlet:namespace/>collection-detail')
-			}
-		);
-		loadingMask.show();
+		if (!checkLogined()){
+			return;
+		}
 		
 		var portletURL = Liferay.PortletURL.createURL('<%= PortletURLFactoryUtil.create(request, WebKeys.DATA_MANAGEMENT_ADMIN_PORTLET, themeDisplay.getPlid(), PortletRequest.ACTION_PHASE) %>');
 		portletURL.setParameter("javax.portlet.action", "updateDictCollection");
@@ -528,22 +584,43 @@
 			dictCollectionId = 0;
 		}
 		
+		var collectionName = A.one('#<portlet:namespace/>collectionName') ? 
+    			A.one('#<portlet:namespace/>collectionName').attr('value') : '';
+		var collectionCode = A.one('#<portlet:namespace/>collectionCode') ? 
+   				A.one('#<portlet:namespace/>collectionCode').attr('value') : '';
+   		var description = A.one('#<portlet:namespace/>description') ? 
+    			A.one('#<portlet:namespace/>description').attr('value') : '';
+    	if (collectionName == ''){
+    		alert(Liferay.Language.get('please-enter-collection-name'));
+    		return false;
+    	}
+    	if (collectionCode == ''){
+    		alert(Liferay.Language.get('please-enter-collection-code'));
+    		return false;
+    	}
+    	
+    	var loadingMask = new A.LoadingMask(
+   			{
+   				'strings.loading': '<%= UnicodeLanguageUtil.get(pageContext, "...") %>',
+   				target: A.one('#<portlet:namespace/>collection-detail')
+   			}
+   		);
+   		loadingMask.show();
+		
 		A.io.request(
 			portletURL.toString(),
 			{
 				method: 'POST',
 			    data:{    	
-			    	<portlet:namespace/>collectionName: A.one('#<portlet:namespace/>collectionName') ? 
-			    			A.one('#<portlet:namespace/>collectionName').attr('value') : '',
-			    	<portlet:namespace/>collectionCode: A.one('#<portlet:namespace/>collectionCode') ? 
-			    			A.one('#<portlet:namespace/>collectionCode').attr('value') : '',
-			    	<portlet:namespace/>description: A.one('#<portlet:namespace/>description') ? 
-			    			A.one('#<portlet:namespace/>description').attr('value') : '',
+			    	<portlet:namespace/>collectionName: collectionName,
+			    	<portlet:namespace/>collectionCode: collectionCode,
+			    	<portlet:namespace/>description: description,
 			    	<portlet:namespace/>dictCollectionId: dictCollectionId,
 			    	<portlet:namespace/>collectionLinked: collectionLinked,
 			    },   
 			    on: {
 			        success: function(event, id, obj){
+			        	needConfirnChangeView = false;
 			        	loadingMask.hide();
 			        	getDictCollections();
 						alert(Liferay.Language.get('success'));
@@ -555,17 +632,13 @@
 				}
 			}
 		);
-		
+		return true;		
 	},['aui-base','liferay-portlet-url','aui-io']);
 	
 	Liferay.provide(window, 'updateDictItem', function(dictItemId, dictCollectionId){
-		var loadingMask = new A.LoadingMask(
-			{
-				'strings.loading': '<%= UnicodeLanguageUtil.get(pageContext, "...") %>',
-				target: A.one('#<portlet:namespace/>collection-detail')
-			}
-		);
-		loadingMask.show();
+		if (!checkLogined()){
+			return;
+		}
 		
 		var portletURL = Liferay.PortletURL.createURL('<%= PortletURLFactoryUtil.create(request, WebKeys.DATA_MANAGEMENT_ADMIN_PORTLET, themeDisplay.getPlid(), PortletRequest.ACTION_PHASE) %>');
 		portletURL.setParameter("javax.portlet.action", "updateDictItem");
@@ -586,6 +659,33 @@
 			dictCollectionId = 0;
 		}
 		
+		var itemName = A.one('#<portlet:namespace/>itemName') ?
+    			A.one('#<portlet:namespace/>itemName').attr('value') : '';
+    	var itemCode = A.one('#<portlet:namespace/>itemCode') ?
+    			A.one('#<portlet:namespace/>itemCode').attr('value') : '';
+    	var parentItemId = A.one('#<portlet:namespace/>parentItemId') ?
+    			A.one('#<portlet:namespace/>parentItemId').attr('value') : 0;
+    	var sibling = A.one('#<portlet:namespace/>sibling') ?
+    			A.one('#<portlet:namespace/>sibling').attr('value') : 0;
+		var sibling = A.one('#<portlet:namespace/>itemsStatusInUsed') ?
+ 	    		A.one('#<portlet:namespace/>itemsStatusInUsed').attr('value') : 1;
+    	if (itemName == ''){
+    		alert(Liferay.Language.get('please-enter-item-name'));
+    		return;
+    	}
+    	if (itemCode == ''){
+    		alert(Liferay.Language.get('please-enter-item-code'));
+    		return;
+    	}
+    	
+    	var loadingMask = new A.LoadingMask(
+   			{
+   				'strings.loading': '<%= UnicodeLanguageUtil.get(pageContext, "...") %>',
+   				target: A.one('#<portlet:namespace/>collection-detail')
+   			}
+   		);
+   		loadingMask.show();
+		
 		A.io.request(
 			portletURL.toString(),
 			{
@@ -593,14 +693,10 @@
 			    data:{    	
 			    	<portlet:namespace/><%=DictItemDisplayTerms.DICTITEM_ID%>: dictItemId,
 			    	<portlet:namespace/><%=DictItemDisplayTerms.DICTCOLLECTION_ID%>: dictCollectionId,
-			    	<portlet:namespace/><%=DictItemDisplayTerms.PARENTITEM_ID%>: A.one('#<portlet:namespace/>parentItemId') ?
-			    			A.one('#<portlet:namespace/>parentItemId').attr('value') : 0,
-			    	<portlet:namespace/><%=DictItemDisplayTerms.ITEM_NAME%>: A.one('#<portlet:namespace/>itemName') ?
-			    			A.one('#<portlet:namespace/>itemName').attr('value') : '',
-			    	<portlet:namespace/><%=DictItemDisplayTerms.ITEM_CODE%>: A.one('#<portlet:namespace/>itemCode') ?
-			    			A.one('#<portlet:namespace/>itemCode').attr('value') : '',
-			    	<portlet:namespace/><%=DictItemDisplayTerms.SIBLING%>: A.one('#<portlet:namespace/>sibling') ?
-			    			A.one('#<portlet:namespace/>sibling').attr('value') : 0,
+			    	<portlet:namespace/><%=DictItemDisplayTerms.PARENTITEM_ID%>: parentItemId,
+			    	<portlet:namespace/><%=DictItemDisplayTerms.ITEM_NAME%>: itemName,
+			    	<portlet:namespace/><%=DictItemDisplayTerms.ITEM_CODE%>: itemCode,
+			    	<portlet:namespace/><%=DictItemDisplayTerms.SIBLING%>: sibling,
 			    	<portlet:namespace/>dictItemLinked: itemsLinked,
 			    },   
 			    on: {
@@ -620,8 +716,52 @@
 		
 	},['aui-base','liferay-portlet-url','aui-io']);
 	
+	Liferay.provide(window, 'changeStatusItemToNoUse', function(dictItemId){
+		if (!checkLogined()){
+			return;
+		}
+		
+		var portletURL = Liferay.PortletURL.createURL('<%= PortletURLFactoryUtil.create(request, WebKeys.DATA_MANAGEMENT_ADMIN_PORTLET, themeDisplay.getPlid(), PortletRequest.ACTION_PHASE) %>');
+		portletURL.setParameter("javax.portlet.action", "changeStatusItemToNoUse");
+		portletURL.setWindowState('<%=WindowState.NORMAL%>');
+		
+    	var loadingMask = new A.LoadingMask(
+   			{
+   				'strings.loading': '<%= UnicodeLanguageUtil.get(pageContext, "...") %>',
+   				target: A.one('#<portlet:namespace/>collection-detail')
+   			}
+   		);
+   		loadingMask.show();
+		
+		A.io.request(
+			portletURL.toString(),
+			{
+				method: 'POST',
+			    data:{    	
+			    	<portlet:namespace/><%=DictItemDisplayTerms.DICTITEM_ID%>: dictItemId,
+			    },   
+			    on: {
+			        success: function(event, id, obj){
+			        	setTimeout(function(){
+							getDictItems(selectedDictCollectionId);
+							alert(Liferay.Language.get('success'));
+						}, 1000);
+					},
+			    	error: function(){
+			    		loadingMask.hide();
+			    		alert(Liferay.Language.get('error'));
+			    	}
+				}
+			}
+		);
+		
+	},['aui-base','liferay-portlet-url','aui-io']);
+	
 	Liferay.provide(window, 'getSelectSibling', function(dictCollectionId, parentItemId, dictItemId){
-
+		if (!checkLogined()){
+			return;
+		}
+		
 		var getSelectSiblingURL = Liferay.PortletURL.createURL('<%= PortletURLFactoryUtil.create(request, WebKeys.DATA_MANAGEMENT_ADMIN_PORTLET, themeDisplay.getPlid(), PortletRequest.RENDER_PHASE) %>');
 		getSelectSiblingURL.setParameter("mvcPath", "/html/portlets/data_management/admin/select_sibling.jsp");
 		getSelectSiblingURL.setWindowState("<%=LiferayWindowState.EXCLUSIVE.toString()%>"); 
@@ -654,6 +794,9 @@
 	var previousId = '';
 	
 	Liferay.provide(window, 'getDictItemsLinked', function(dictCollectionId, dictItemId){
+		if (!checkLogined()){
+			return;
+		}
 		
 		var getItemsLinkedURL = Liferay.PortletURL.createURL('<%= PortletURLFactoryUtil.create(request, WebKeys.DATA_MANAGEMENT_ADMIN_PORTLET, themeDisplay.getPlid(), PortletRequest.RENDER_PHASE) %>');
 		getItemsLinkedURL.setParameter("mvcPath", "/html/portlets/data_management/admin/select_dictitems_linked.jsp");
@@ -676,7 +819,6 @@
 							itemsLinkedContainer.html(itemsLinked);
 						}
 						
-						// todo itemsLinkedStr
 						// initial value for item link checkbox
 						if (A.all('.no-linked-to-selected-item')){
 							A.all('.no-linked-to-selected-item').each(function(noSelected){
@@ -716,6 +858,9 @@
 	},['aui-base','liferay-portlet-url','aui-io']);
 	
 	Liferay.provide(window, 'getDictItemsList', function(dictCollectionId, dictItemId){
+		if (!checkLogined()){
+			return;
+		}
 		
 		var portletURL = Liferay.PortletURL.createURL('<%= PortletURLFactoryUtil.create(request, WebKeys.DATA_MANAGEMENT_ADMIN_PORTLET, themeDisplay.getPlid(), PortletRequest.RENDER_PHASE) %>');
 		portletURL.setParameter("mvcPath", "/html/portlets/data_management/admin/select_dictitems.jsp");
@@ -763,6 +908,14 @@
 		var y = anchor ? anchor.getY() : 100;
 		$("html, body").animate({ scrollTop: y - 100 }, "normal");
 	});
+	
+	var checkLogined = function(){
+		if (!Liferay.ThemeDisplay.isSignedIn()){
+			alert(Liferay.Language.get('please-login-and-try-again'));
+			return false;
+		}
+		return true;
+	}
 </aui:script>
 
 <%!

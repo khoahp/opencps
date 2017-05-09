@@ -108,6 +108,12 @@
 					</aui:select>
 				</div>
 				
+				<aui:select name="itemsStatusInUsed">
+					<aui:option value="0" label="draf" />
+					<aui:option value="1" label="in-used" />
+					<aui:option value="2" label="no-used" />
+				</aui:select>
+				
 				<!-- dictItem linked -->
 				<label><liferay-ui:message key="dict-items-linked" /></label>
 				<div id='<%=renderResponse.getNamespace() + "itemLinkedContainer" %>' ></div>

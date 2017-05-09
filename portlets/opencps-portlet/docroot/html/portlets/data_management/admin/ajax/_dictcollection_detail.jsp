@@ -51,9 +51,9 @@
 %>
 
 <c:if test="<%=collection == null %>">
-	<p><label><liferay-ui:message key='dictcollection-statistic' /></label></p>
-	<p><liferay-ui:message key='tatal-dictcollections' />: <%=DictCollectionLocalServiceUtil.countAll() %></p>
-	<p><liferay-ui:message key='tatal-dictitems' />: <%=DictItemLocalServiceUtil.countAll() %></p>
+	<p class="breadcrumb"><liferay-ui:message key='dictcollection-statistic' /></p>
+	<p><span><liferay-ui:message key='tatal-dictcollections' />:</span> <%=DictCollectionLocalServiceUtil.countAll() %></p>
+	<p><span><liferay-ui:message key='tatal-dictitems' />:</span> <%=DictItemLocalServiceUtil.countAll() %></p>
 	<%
 		DictCollection col = null;
 		try {
@@ -63,20 +63,20 @@
 							WebKeys.ORDER_BY_DESC)).get(0);
 		} catch (Exception e){}
 	%>
-	<p><liferay-ui:message key="update-date" />
-		: <%=col != null ? DateTimeUtil.convertDateToString(col.getModifiedDate(), DateTimeUtil._VN_DATE_TIME_FORMAT) : StringPool.DASH %>
+	<p><span><liferay-ui:message key="update-date" />
+		:</span> <%=col != null ? DateTimeUtil.convertDateToString(col.getModifiedDate(), DateTimeUtil._VN_DATE_TIME_FORMAT) : StringPool.DASH %>
 	</p>
 </c:if>
 
 <c:if test="<%=collection != null %>">
 	<div>
-		<p><liferay-ui:message key='dictcollection' /> > <%=collection != null ? collection.getCollectionName() : StringPool.BLANK %></p>
+		<p class="breadcrumb"><liferay-ui:message key='dictcollection' /> > <%=collection != null ? collection.getCollectionName() : StringPool.BLANK %></p>
 	</div>
 
 	<div>
-		<p><liferay-ui:message key='dictcollection-code' />: <%=collection.getCollectionCode() %></p>
-		<p><liferay-ui:message key='dictcollection-name' />: <%=collection.getCollectionName(locale) %></p>
-		<p><liferay-ui:message key='dictcollection-types' />: <%=typesStr %></p>
+		<p><span><liferay-ui:message key='dictcollection-code' />:</span> <%=collection.getCollectionCode() %></p>
+		<p><span><liferay-ui:message key='dictcollection-name' />:</span> <%=collection.getCollectionName(locale) %></p>
+		<p><span><liferay-ui:message key='dictcollection-types' />:</span> <%=typesStr %></p>
 	</div>
 	
 	<div>
@@ -84,14 +84,14 @@
 			id='<%=renderResponse.getNamespace() + "view-items-button" %>' 
 			image="view" 
 		/>
-	<!-- 		cssClass="search-container-action fa view" -->
+		<aui:button type="submit" cssClass="view-button" value="view"/>
 			
 		<c:if test="<%=DictCollectionPermission.contains(permissionChecker, scopeGroupId, ActionKeys.ADD_DICTCOLLECTION) %>">
 	 		<liferay-ui:icon 
 	 			id='<%=renderResponse.getNamespace() + "edit-items-button" %>' 
 	 			image="edit" 
-	 		/> 
-	<!--  			cssClass="search-container-action fa  edit"  -->
+	 		/>
+	 	<aui:button type="submit" cssClass="edit-button" value="edit"/>
 	 	</c:if>
 		
 		<c:if test="<%=collection != null && DictCollectionPermission.contains(permissionChecker, scopeGroupId, ActionKeys.DELETE) %>">
@@ -107,7 +107,7 @@
 				message="delete"  
 				url="<%=deleteDictCollectionURL.toString() %>" 
 			/>
-	<!-- 			cssClass="search-container-action fa delete"  -->
+			<aui:button type="submit" cssClass="delete-button" value="delete"/>
 	 	</c:if>
 	 </div>
 </c:if>

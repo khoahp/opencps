@@ -29,29 +29,23 @@
 	DictItem dictItem = (DictItem) row.getObject();
 %> 
 
-<aui:row>
-	<aui:col>
-		<c:if test="<%=DictItemPermission.contains(permissionChecker, scopeGroupId, ActionKeys.ADD_DICTITEM) %>">
-			<liferay-ui:icon 
-				image="edit" 
-				message="edit" 
-				id='<%=renderResponse.getNamespace() + "dictItemId_" + dictItem.getDictItemId() %>'
-				cssClass='<%=renderResponse.getNamespace() + "edit_dictItem_button" %>'
-			/> 
-		<!-- 		cssClass="search-container-action fa edit"  -->
-		</c:if>
-	</aui:col>
-	<aui:col>
-		<c:if test="<%=DictItemPermission.contains(permissionChecker, scopeGroupId, ActionKeys.DELETE) %>">
-			<liferay-ui:icon-delete 
-				image="delete" 
-				message="delete"  
-				url=""
-				id='<%=renderResponse.getNamespace() + "dictItemId_" + dictItem.getDictItemId() %>'
-				cssClass='<%=renderResponse.getNamespace() + "delete_dictItem_button" %>'
-			/>
-		<!-- 		cssClass="search-container-action fa delete"  -->
-		</c:if>
-	</aui:col>	
-</aui:row>
+<c:if test="<%=DictItemPermission.contains(permissionChecker, scopeGroupId, ActionKeys.ADD_DICTITEM) %>">
+	<%-- <liferay-ui:icon 
+		image="edit" 
+		message="edit" 
+		id='<%=renderResponse.getNamespace() + "dictItemId_" + dictItem.getDictItemId() %>'
+		cssClass='<%=renderResponse.getNamespace() + "edit_dictItem_button" %>'
+	/> --%>
+	<aui:button type="submit" value="edit-button" cssClass="edit-button"/>
+</c:if>
+<c:if test="<%=DictItemPermission.contains(permissionChecker, scopeGroupId, ActionKeys.DELETE) %>">
+	<%-- <liferay-ui:icon-delete 
+		image="delete" 
+		message="delete"  
+		url=""
+		id='<%=renderResponse.getNamespace() + "dictItemId_" + dictItem.getDictItemId() %>'
+		cssClass='<%=renderResponse.getNamespace() + "delete_dictItem_button" %>'
+	/> --%>
+	<aui:button type="submit" value="delete-button" cssClass="delete-button"/>
+</c:if>
 	  
