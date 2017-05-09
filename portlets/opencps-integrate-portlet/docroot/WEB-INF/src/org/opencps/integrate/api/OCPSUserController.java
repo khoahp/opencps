@@ -185,6 +185,7 @@ public class OCPSUserController {
 				resp.put("WardName", am.getWardName());
 				resp.put("ContactTelNo", am.getContactTelNo());
 				resp.put("ContactEmail", am.getContactEmail());
+				resp.put("Address", am.getAddress());
 
 				return Response.status(200).entity(resp.toString()).build();
 
