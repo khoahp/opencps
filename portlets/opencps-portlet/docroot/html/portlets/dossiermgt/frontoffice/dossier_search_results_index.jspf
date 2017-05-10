@@ -1,3 +1,4 @@
+<%@page import="org.opencps.dossiermgt.search.DossierSearchTerms"%>
 <%@page import="com.liferay.portal.kernel.search.BooleanQuery"%>
 <%@page import="com.liferay.portal.kernel.search.BooleanClauseOccur"%>
 <%@page import="com.liferay.portal.kernel.search.BooleanQueryFactoryUtil"%>
@@ -30,22 +31,47 @@
 %>
 
 <%
+DossierSearchTerms searchTerms = (DossierSearchTerms)searchContainer.getSearchTerms();
 
-/* SearchContext searchContext = SearchContextFactory.getInstance(request);
+SearchContext searchContext = SearchContextFactory.getInstance(request);
 searchContext.setAttribute("paginationType", "more");
-searchContext.setStart(0);
-searchContext.setEnd(10); 
+searchContext.setStart(searchContainer.getStart());
+searchContext.setEnd(searchContainer.getEnd()); 
 
-TermQuery termQuery1 = TermQueryFactoryUtil.create(searchContext, "govAgencyCode", dklr_v10_administrationCode);
+BooleanQuery searchQuery = BooleanQueryFactoryUtil.create(searchContext);
+for (Map.Entry<String, String> entry : keywordIndexs.entrySet()) {
+	
+	if(Validator.isNotNull(entry.getValue())) {
+		String[] values = StringUtil.split(entry.getValue(), StringPool.POUND);
+		
+		BooleanQuery booleanQuery = BooleanQueryFactoryUtil.create(searchContext);
+		
+		for(String value : values) {
+			TermQuery termQuery = TermQueryFactoryUtil.create(searchContext, entry.getKey(), value);
+			
+			booleanQuery.add(termQuery, BooleanClauseOccur.SHOULD);
+		}
+		
+		searchQuery.add(booleanQuery, BooleanClauseOccur.MUST);
+	}
+}
+	
+if(Validator.isNotNull(searchTerms.getSubmitDateTimeFrom()) 
+		|| Validator.isNotNull(searchTerms.getSubmitDateTimeTo())) {
 
-BooleanQuery booleanQuery = BooleanQueryFactoryUtil.create(searchContext);
-booleanQuery.add(termQuery1, BooleanClauseOccur.MUST);
+	BooleanQuery booleanQuery = BooleanQueryFactoryUtil.create(searchContext);
+	
+	booleanQuery.addRangeTerm(DossierDisplayTerms.SUBMIT_DATETIME, GetterUtil.getLong(searchTerms.getIndexerSubmitDateTimeFrom()), GetterUtil.getLong(searchTerms.getIndexerSubmitDateTimeTo()));
+	
+	searchQuery.add(booleanQuery, BooleanClauseOccur.MUST);
+}
 
-System.out.println("booleanQuery:::"+booleanQuery);
+System.out.println("dossier_search_results_index_query:::"+searchQuery);
 
-Hits hits = SearchEngineUtil.search(searchContext, booleanQuery); */
+Hits hits = SearchEngineUtil.search(searchContext, searchQuery);
 
-String pattern = "(govAgencyCode=?)";
+/* StringBuilder sbPattern = new StringBuilder();// "(govAgencyCode=?)";
+
 List<String> paramValues = new ArrayList<String>();
 paramValues.add(dklr_v10_administrationCode);
 
@@ -53,10 +79,12 @@ List<String> paramTypes = new ArrayList<String>();
 paramTypes.add("String");
 
 SearchContext searchContext = SearchContextFactory.getInstance(request);
+searchContext.setStart(searchContainer.getStart());
+searchContext.setEnd(searchContainer.getEnd());
 
-LuceneQuery luceneQuery = new LuceneQuery(pattern, paramValues, paramTypes, searchContext);
+LuceneQuery luceneQuery = new LuceneQuery(sbPattern.toString, paramValues, paramTypes, searchContext);
 
-Hits hits = SearchEngineUtil.search(searchContext, luceneQuery.getQuery());
+Hits hits = SearchEngineUtil.search(searchContext, luceneQuery.getQuery()); */
 
 List<com.liferay.portal.kernel.search.Document> documents =
 hits.toList();
@@ -69,10 +97,15 @@ for (com.liferay.portal.kernel.search.Document document : documents) {
 	Dossier dossier = DossierLocalServiceUtil.getDossier(dossierId);
 	
 	dossierIndexResults.add(dossier);
+	
+	// lay gia tri tuong ung voi key duoc danh index, va luu vao mang de truy xuat nhanh
+	for (String keyPatterns : dynamicFormKeyPatterns) {
+		String[] keys = StringUtil.split(keyPatterns, StringPool.POUND);
+		
+		mapDynamicFormValues.put(dossierId + StringPool.UNDERLINE + keys[0], GetterUtil.getString(document.get(keys[0])));
+	}
 }
 
 searchContainer.setResults(dossierIndexResults);
 searchContainer.setTotal(hits.getLength());
-
-System.out.println("===hits.getLength()===" + hits.getLength());
 %>

@@ -19,6 +19,7 @@ package org.opencps.util;
 
 import java.text.DateFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
@@ -28,6 +29,8 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.DateFormatFactoryUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.PropsKeys;
+import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.TimeZoneUtil;
@@ -429,5 +432,7 @@ public class DateTimeUtil {
 	public static void setDateTimeBean(DateTimeBean dateTimeBean) {
 		DateTimeBean = dateTimeBean;
 	}
+	
+	public static final SimpleDateFormat indexerDateFormat = new SimpleDateFormat(PropsUtil.get(PropsKeys.INDEX_DATE_FORMAT_PATTERN));
 
 }

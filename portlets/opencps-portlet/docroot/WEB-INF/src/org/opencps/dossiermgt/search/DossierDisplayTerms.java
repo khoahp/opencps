@@ -22,9 +22,10 @@ import java.util.Date;
 import javax.portlet.PortletRequest;
 
 import org.opencps.util.DateTimeUtil;
-import org.opencps.util.PortletConstants;
 
+import com.liferay.portal.kernel.dao.search.DAOParamUtil;
 import com.liferay.portal.kernel.dao.search.DisplayTerms;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.WebKeys;
@@ -86,13 +87,14 @@ public class DossierDisplayTerms extends DisplayTerms {
 	public static final String ACCOUNT_TYPE = "accountType";
 	public static final String REDIRECT_PAYMENT_URL = "redirectPaymentURL";
 	public static final String SERVICE_DOMAIN_ID = "serviceDomainId";
-	
+	public static final String SERVICE_INFO_NO = "serviceInfoNo";
+	public static final String SUBMIT_DATETIME_FROM = "submitDatetimeFrom";
+	public static final String SUBMIT_DATETIME_TO = "submitDatetimeTo";
 	
 	public static final String USER_ID = "userId";
 
 	public DossierDisplayTerms(PortletRequest portletRequest) {
-		super(
-			portletRequest);
+		super(portletRequest);
 
 		createDate = ParamUtil
 			.getDate(portletRequest, CREATE_DATE, DateTimeUtil
@@ -137,6 +139,40 @@ public class DossierDisplayTerms extends DisplayTerms {
 		
 		serviceDomainIndex = ParamUtil
 				.getString(portletRequest, SERVICE_DOMAIN_INDEX);
+		
+		serviceInfoNo = ParamUtil
+				.getString(portletRequest, SERVICE_INFO_NO);
+		
+		setSubmitDateTimeFrom(ParamUtil
+				.getString(portletRequest, SUBMIT_DATETIME_FROM));
+		
+		setSubmitDateTimeTo(ParamUtil
+				.getString(portletRequest, SUBMIT_DATETIME_TO));
+		
+		//if(Validator.isNotNull(submitDateTimeFrom)) {
+			Date submitDateTimeFromDate = GetterUtil.getDate(getSubmitDateTimeFrom(), DateTimeUtil.getDateTimeFormat("MM/dd/yyyy"));
+			
+			if(submitDateTimeFromDate != null) {
+				indexerSubmitDateTimeFrom = DateTimeUtil.indexerDateFormat.format(submitDateTimeFromDate);
+			}
+		//}
+		
+		//if(Validator.isNotNull(submitDateTimeTo)) {
+			Date submitDateTimeToDate = GetterUtil.getDate(getSubmitDateTimeTo(), DateTimeUtil.getDateTimeFormat("MM/dd/yyyy"));
+			
+			if(submitDateTimeToDate != null) {
+				indexerSubmitDateTimeTo = DateTimeUtil.indexerDateFormat.format(submitDateTimeToDate);
+			}
+		//}
+		
+		setDomainCode(DAOParamUtil
+			.getString(portletRequest, SERVICE_DOMAIN_CODE));
+
+		govAgencyName = DAOParamUtil
+			.getString(portletRequest, GOVAGENCY_NAME);
+		
+		setServiceDomainId(DAOParamUtil
+				.getString(portletRequest, "serviceDomainId"));
 	}
 
 	public long setGroupId(PortletRequest portletRequest) {
@@ -561,31 +597,6 @@ public class DossierDisplayTerms extends DisplayTerms {
 		this.serviceNo = serviceNo;
 	}
 
-	protected int serviceMode;
-	protected int counter;
-	protected String dossierStatus;
-	protected int dossierSource;
-
-	protected long dossierId;
-	protected long groupId;
-	protected long companyId;
-	protected long userId;
-
-	protected long ownerOrganizationId;
-	protected long serviceConfigId;
-	protected long serviceInfoId;
-	protected long dossierTemplateId;
-	protected long govAgencyOrganizationId;
-	protected long subjectId;
-
-	protected String receptionNo;
-	protected String serviceName;
-	protected String serviceNo;
-	protected String externalRefNo;
-	protected String externalRefUrl;
-	protected String serviceDomainIndex;
-	protected String serviceDomainCode;
-
 	public String getServiceDomainCode() {
 
 		return serviceDomainCode;
@@ -596,44 +607,123 @@ public class DossierDisplayTerms extends DisplayTerms {
 		this.serviceDomainCode = serviceDomainCode;
 	}
 
-	protected String serviceAdministrationIndex;
-	protected String govAgencyCode;
-	protected String govAgencyName;
-	protected String subjectName;
-	protected String address;
-	protected String cityCode;
-	protected String cityName;
-	protected String districtCode;
-	protected String districtName;
-	protected String wardCode;
-	protected String wardName;
-	protected String contactName;
-	protected String contactTelNo;
-	protected String contactEmail;
-	protected String note;
-	protected Date createDate;
-	protected Date modifiedDate;
-	protected Date submitDatetime;
-	protected Date receiveDatetime;
-	protected Date estimateDatetime;
-	protected Date finishDatetime;
-
-	protected String redirectPaymentURL;
-
-	/**
-	 * @return the redirectPaymentURL
-	 */
 	public String getRedirectPaymentURL() {
 
 		return redirectPaymentURL;
 	}
 
-	/**
-	 * @param redirectPaymentURL
-	 *            the redirectPaymentURL to set
-	 */
 	public void setRedirectPaymentURL(String redirectPaymentURL) {
 
 		this.redirectPaymentURL = redirectPaymentURL;
 	}
+
+	public String getServiceInfoNo() {
+		return serviceInfoNo;
+	}
+
+	public void setServiceInfoNo(String serviceInfoNo) {
+		this.serviceInfoNo = serviceInfoNo;
+	}
+
+	public String getIndexerSubmitDateTimeFrom() {
+		return indexerSubmitDateTimeFrom;
+	}
+
+	public void setIndexerSubmitDateTimeFrom(String indexerSubmitDateTimeFrom) {
+		this.indexerSubmitDateTimeFrom = indexerSubmitDateTimeFrom;
+	}
+
+	public String getIndexerSubmitDateTimeTo() {
+		return indexerSubmitDateTimeTo;
+	}
+
+	public void setIndexerSubmitDateTimeTo(String indexerSubmitDateTimeTo) {
+		this.indexerSubmitDateTimeTo = indexerSubmitDateTimeTo;
+	}
+
+	public String getDomainCode() {
+		return domainCode;
+	}
+
+	public void setDomainCode(String domainCode) {
+		this.domainCode = domainCode;
+	}
+
+	public String getServiceDomainId() {
+		return serviceDomainId;
+	}
+
+	public void setServiceDomainId(String serviceDomainId) {
+		this.serviceDomainId = serviceDomainId;
+	}
+
+	public String getSubmitDateTimeFrom() {
+		return submitDateTimeFrom;
+	}
+
+	public void setSubmitDateTimeFrom(String submitDateTimeFrom) {
+		this.submitDateTimeFrom = submitDateTimeFrom;
+	}
+
+	public String getSubmitDateTimeTo() {
+		return submitDateTimeTo;
+	}
+
+	public void setSubmitDateTimeTo(String submitDateTimeTo) {
+		this.submitDateTimeTo = submitDateTimeTo;
+	}
+
+	private int serviceMode;
+	private int counter;
+	private String dossierStatus;
+	private int dossierSource;
+
+	private long dossierId;
+	private long groupId;
+	private long companyId;
+	private long userId;
+
+	private long ownerOrganizationId;
+	private long serviceConfigId;
+	private long serviceInfoId;
+	private long dossierTemplateId;
+	private long govAgencyOrganizationId;
+	private long subjectId;
+
+	private String receptionNo;
+	private String serviceName;
+	private String serviceNo;
+	private String externalRefNo;
+	private String externalRefUrl;
+	private String serviceDomainIndex;
+	private String serviceDomainCode;
+	private String serviceAdministrationIndex;
+	private String govAgencyCode;
+	private String govAgencyName;
+	private String subjectName;
+	private String address;
+	private String cityCode;
+	private String cityName;
+	private String districtCode;
+	private String districtName;
+	private String wardCode;
+	private String wardName;
+	private String contactName;
+	private String contactTelNo;
+	private String contactEmail;
+	private String note;
+	private Date createDate;
+	private Date modifiedDate;
+	private Date submitDatetime;
+	private Date receiveDatetime;
+	private Date estimateDatetime;
+	private Date finishDatetime;
+	private String redirectPaymentURL;
+	private String serviceInfoNo;
+	private String submitDateTimeFrom;
+	private String submitDateTimeTo;
+	private String indexerSubmitDateTimeFrom;
+	private String indexerSubmitDateTimeTo;
+	private String domainCode;
+	private String serviceDomainId;
 }
