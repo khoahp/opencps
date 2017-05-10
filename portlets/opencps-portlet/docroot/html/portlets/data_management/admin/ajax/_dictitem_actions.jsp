@@ -31,25 +31,12 @@
 %> 
 
 <c:if test="<%=DictItemPermission.contains(permissionChecker, scopeGroupId, ActionKeys.ADD_DICTITEM) %>">
-	<%-- <liferay-ui:icon 
-		image="edit" 
-		message="edit" 
-		id='<%=renderResponse.getNamespace() + "dictItemId_" + dictItem.getDictItemId() %>'
-		cssClass='<%=renderResponse.getNamespace() + "edit_dictItem_button" %>'
-	/> --%>
 	<aui:button name='<%=renderResponse.getNamespace() + "dictItemId_" + dictItem.getDictItemId() %>'
 	 	type="submit" value="edit" 
 	 	cssClass='<%="edit-button " + renderResponse.getNamespace() + "edit_dictItem_button" %>'
 	/>
 </c:if>
 <c:if test="<%=DictItemPermission.contains(permissionChecker, scopeGroupId, ActionKeys.DELETE) %>">
-	<%-- <liferay-ui:icon-delete 
-		image="delete" 
-		message="delete"  
-		url=""
-		id='<%=renderResponse.getNamespace() + "dictItemId_" + dictItem.getDictItemId() %>'
-		cssClass='<%=renderResponse.getNamespace() + "delete_dictItem_button" %>'
-	/> --%>
 	<aui:button name='<%=renderResponse.getNamespace() + "dictItemId_" + dictItem.getDictItemId() %>'
 	 	type="submit" value='<%=itemsStatus != 1 ? "delete" : "no-use" %>' 
 	 	cssClass='<%="delete-button " + renderResponse.getNamespace() + (itemsStatus != 1 ? "delete_dictItem_button" : "no_use_dictItem_button") %>'

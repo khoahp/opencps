@@ -70,7 +70,7 @@
 </div>
 
 <div>
-	<aui:button id='<%=renderResponse.getNamespace() + "add-item" %>' type="submit" value="add-dict-item" />
+	<aui:button id='<%=renderResponse.getNamespace() + "add-item" %>' type="submit" value="add" />
 	<aui:row>
 		<aui:col width="50">
 			<aui:input 
@@ -93,38 +93,40 @@
 					
 					for (DictCollectionLink linked : collectionsLinked){
 						
-						dictCollection = DictCollectionLocalServiceUtil
-								.getDictCollection(linked.getDictCollectionLinkedId());
-						%>
-						<aui:option value="0" disabled="true"><%=dictCollection.getCollectionName(locale) %></aui:option>
-						<%
 						try {
-							dictItemsL = DictItemLocalServiceUtil
-									.getBy_D_P(dictCollection.getDictCollectionId(), 0, 
-											QueryUtil.ALL_POS, QueryUtil.ALL_POS,
-											DataMgtUtil.getDictItemOrderByComparator(
-													DictItemDisplayTerms.SIBLING, WebKeys.ORDER_BY_ASC));
-							dictItemsOrdered.clear();
-							dictItemsOrdered = getDictItemsOrderBySibling(dictItemsOrdered, 
-									dictItemsL, dictCollection.getDictCollectionId());
-						} catch (Exception e){
-							_log.error(e);
-						}
-						for (DictItem item : dictItemsOrdered){
-							int level = StringUtil.count(item.getTreeIndex(), StringPool.PERIOD);
-							String index = "|__";
-							for(int i = 0; i < level; i++){
-								index += "__";
-							}
+							dictCollection = DictCollectionLocalServiceUtil
+									.getDictCollection(linked.getDictCollectionLinkedId());
 							%>
-							<aui:option 
-								value="<%=item.getDictItemId() %>" 
-								selected="<%=item.getDictItemId() == itemLinkedId %>"
-							>
-								<%=index + item.getItemName(locale) %>
-							</aui:option>
+							<aui:option value="0" disabled="true"><%=dictCollection.getCollectionName(locale) %></aui:option>
 							<%
-						}
+							try {
+								dictItemsL = DictItemLocalServiceUtil
+										.getBy_D_P(dictCollection.getDictCollectionId(), 0, 
+												QueryUtil.ALL_POS, QueryUtil.ALL_POS,
+												DataMgtUtil.getDictItemOrderByComparator(
+														DictItemDisplayTerms.SIBLING, WebKeys.ORDER_BY_ASC));
+								dictItemsOrdered.clear();
+								dictItemsOrdered = getDictItemsOrderBySibling(dictItemsOrdered, 
+										dictItemsL, dictCollection.getDictCollectionId());
+							} catch (Exception e){
+								_log.error(e);
+							}
+							for (DictItem item : dictItemsOrdered){
+								int level = StringUtil.count(item.getTreeIndex(), StringPool.PERIOD);
+								String index = "|__";
+								for(int i = 0; i < level; i++){
+									index += "__";
+								}
+								%>
+								<aui:option 
+									value="<%=item.getDictItemId() %>" 
+									selected="<%=item.getDictItemId() == itemLinkedId %>"
+								>
+									<%=index + item.getItemName(locale) %>
+								</aui:option>
+								<%
+							}
+						} catch (Exception e){}
 					}
 					%>
 				</aui:select>
@@ -134,7 +136,7 @@
 		</aui:col>
 		
 		<aui:col width="50">
-			<aui:select name="itemsStatusInUsed">
+			<aui:select name="itemsStatusInUsed" label="status">
 				<aui:option value="0" label="draf" selected="<%=itemsStatus == 0 %>" />
 				<aui:option value="1" label="in-used" selected="<%=itemsStatus == 1 %>" />
 				<aui:option value="2" label="no-used" selected="<%=itemsStatus == 2 %>" />

@@ -52,7 +52,7 @@
 
 <c:if test="<%=collection == null %>">
 	<p class="breadcrumb"><liferay-ui:message key='dictcollection-statistic' /></p>
-	<p><span><liferay-ui:message key='tatal-dictcollections' />:</span> <%=DictCollectionLocalServiceUtil.countAll() %></p>
+	<p><span><liferay-ui:message key='dict-collection' />:</span> <%=DictCollectionLocalServiceUtil.countAll() %></p>
 	<p><span><liferay-ui:message key='tatal-dictitems' />:</span> <%=DictItemLocalServiceUtil.countAll() %></p>
 	<%
 		DictCollection col = null;
@@ -70,31 +70,23 @@
 
 <c:if test="<%=collection != null %>">
 	<div>
-		<p class="breadcrumb"><liferay-ui:message key='dictcollection' /> > <%=collection != null ? collection.getCollectionName() : StringPool.BLANK %></p>
+		<p class="breadcrumb"><liferay-ui:message key='dict-collection' /> > <%=collection != null ? collection.getCollectionName() : StringPool.BLANK %></p>
 	</div>
 
 	<div>
 		<p><span><liferay-ui:message key='collection-code' />:</span> <%=collection.getCollectionCode() %></p>
 		<p><span><liferay-ui:message key='collection-name' />:</span> <%=collection.getCollectionName(locale) %></p>
-		<p><span><liferay-ui:message key='collection-escription' />:</span> <%=collection.getDescription() %></p>
+		<p><span><liferay-ui:message key='description' />:</span> <%=collection.getDescription() %></p>
 		<p><span><liferay-ui:message key='collection-types' />:</span> <%=typesStr %></p>
 	</div>
 	
 	<div>
-		<%-- <liferay-ui:icon 
-			id='<%=renderResponse.getNamespace() + "view-items-button" %>' 
-			image="view" 
-		/> --%>
 		<aui:button 
 			name="view-items-button"
 			type="submit" cssClass="view-button" value="view"
 		/>
 			
 		<c:if test="<%=DictCollectionPermission.contains(permissionChecker, scopeGroupId, ActionKeys.ADD_DICTCOLLECTION) %>">
-	 		<%-- <liferay-ui:icon 
-	 			id='<%=renderResponse.getNamespace() + "edit-items-button" %>' 
-	 			image="edit" 
-	 		/> --%>
 	 		<aui:button 
 	 			name="edit-collection-button"
 	 			type="submit" cssClass="edit-button" value="edit"
@@ -102,18 +94,6 @@
 	 	</c:if>
 		
 		<c:if test="<%=collection != null && DictCollectionPermission.contains(permissionChecker, scopeGroupId, ActionKeys.DELETE) %>">
-	 		<%-- <portlet:actionURL var="deleteDictCollectionURL" name="deleteDictCollection" >
-				<portlet:param name="<%=DictCollectionDisplayTerms.DICTCOLLECTION_ID %>" 
-					value="<%=String.valueOf(collection.getDictCollectionId()) %>"/>
-				<portlet:param name="redirectURL" value="<%=currentURL %>"/>
-			</portlet:actionURL> 
-			<liferay-ui:icon-delete 
-				id="delete-button"
-				image="delete" 
-				confirmation="are-you-sure-delete-entry" 
-				message="delete"  
-				url="<%=deleteDictCollectionURL.toString() %>" 
-			/> --%>
 			<aui:button 
 				name="delete-collection-button"
 				type="submit" cssClass="delete-button" value="delete"

@@ -34,7 +34,7 @@
 	<div class="span3" id="<portlet:namespace/>anchor-scroll">
 		<div class="opencps-searchcontainer-wrapper default-box-shadow radius8 data-manager-action">
 			<div class="openCPSTree yui3-widget component tree-view tree-drag-drop">
-				<aui:button type="submit" value="add-collection" onClick="editDictCollection()"/>
+				<aui:button type="submit" value="add" onClick="editDictCollection()"/>
 				<div>
 					<aui:input 
 						name="collection-name" 
