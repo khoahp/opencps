@@ -368,6 +368,15 @@ public class SendToEngineMsg {
 	
 		this.receiveDate = receiveDate;
 	}
+	
+	public PaymentFileObj getPaymentFileObj() {
+		return paymentFileObj;
+	}
+
+	public void setPaymentFileObj(PaymentFileObj paymentFileObj) {
+		this.paymentFileObj = paymentFileObj;
+	}
+
 	protected long dossierId;
 	protected long fileGroupId;
 	protected String event;
@@ -392,4 +401,5 @@ public class SendToEngineMsg {
 	protected Date submitDate;
 	protected Date finishedDate;
 	protected Date receiveDate;
+	protected PaymentFileObj paymentFileObj;
 }
