@@ -88,7 +88,7 @@
 	<aui:row>
 		<aui:col width="50">
 			<aui:input 
-				name="dict-item-name" 
+				name="item-name" 
 				value="<%=searchKeyword %>" 
 				placeholder='<%= LanguageUtil.get(locale, "name") %>' 
 				cssClass="input100"

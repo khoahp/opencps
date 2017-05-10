@@ -369,7 +369,9 @@ public class DataMamagementPortlet extends MVCPortlet {
 		
 		long sibling = ParamUtil.getLong(actionRequest,
 				DictItemDisplayTerms.SIBLING);
-		
+
+		int status = ParamUtil.getInteger(actionRequest, "status");
+
 		String itemName = itemNameMap.get(actionRequest.getLocale());
 
 		for (Map.Entry<Locale, String> entry : itemNameMap.entrySet()) {
@@ -412,7 +414,7 @@ public class DataMamagementPortlet extends MVCPortlet {
 					dictItem = DictItemLocalServiceUtil.addDictItem(
 							serviceContext.getUserId(), dictCollectionId,
 							itemCode, itemNameMap, itemNameMap, parentItemId,
-							sibling, serviceContext);
+							sibling, status, serviceContext);
 				} else {
 					dictItem = DictItemLocalServiceUtil.addDictItem(
 							serviceContext.getUserId(), dictCollectionId,
@@ -433,7 +435,7 @@ public class DataMamagementPortlet extends MVCPortlet {
 
 				dictItem = DictItemLocalServiceUtil.updateDictItem(dictItemId,
 						dictCollectionId, dictVersionId, itemCode, itemNameMap,
-						itemNameMap, parentItemId, sibling, serviceContext);
+						itemNameMap, parentItemId, sibling, status, serviceContext);
 
 				boolean moveDown = true;
 				if (dictItemBefor.getSibling() > sibling) {

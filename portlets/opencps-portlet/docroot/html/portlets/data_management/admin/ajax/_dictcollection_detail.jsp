@@ -80,22 +80,28 @@
 	</div>
 	
 	<div>
-		<liferay-ui:icon 
+		<%-- <liferay-ui:icon 
 			id='<%=renderResponse.getNamespace() + "view-items-button" %>' 
 			image="view" 
+		/> --%>
+		<aui:button 
+			name="view-items-button"
+			type="submit" cssClass="view-button" value="view"
 		/>
-		<aui:button type="submit" cssClass="view-button" value="view"/>
 			
 		<c:if test="<%=DictCollectionPermission.contains(permissionChecker, scopeGroupId, ActionKeys.ADD_DICTCOLLECTION) %>">
-	 		<liferay-ui:icon 
+	 		<%-- <liferay-ui:icon 
 	 			id='<%=renderResponse.getNamespace() + "edit-items-button" %>' 
 	 			image="edit" 
+	 		/> --%>
+	 		<aui:button 
+	 			name="edit-collection-button"
+	 			type="submit" cssClass="edit-button" value="edit"
 	 		/>
-	 	<aui:button type="submit" cssClass="edit-button" value="edit"/>
 	 	</c:if>
 		
 		<c:if test="<%=collection != null && DictCollectionPermission.contains(permissionChecker, scopeGroupId, ActionKeys.DELETE) %>">
-	 		<portlet:actionURL var="deleteDictCollectionURL" name="deleteDictCollection" >
+	 		<%-- <portlet:actionURL var="deleteDictCollectionURL" name="deleteDictCollection" >
 				<portlet:param name="<%=DictCollectionDisplayTerms.DICTCOLLECTION_ID %>" 
 					value="<%=String.valueOf(collection.getDictCollectionId()) %>"/>
 				<portlet:param name="redirectURL" value="<%=currentURL %>"/>
@@ -106,8 +112,10 @@
 				confirmation="are-you-sure-delete-entry" 
 				message="delete"  
 				url="<%=deleteDictCollectionURL.toString() %>" 
+			/> --%>
+			<aui:button 
+				type="submit" cssClass="delete-button" value="delete"
 			/>
-			<aui:button type="submit" cssClass="delete-button" value="delete"/>
 	 	</c:if>
 	 </div>
 </c:if>

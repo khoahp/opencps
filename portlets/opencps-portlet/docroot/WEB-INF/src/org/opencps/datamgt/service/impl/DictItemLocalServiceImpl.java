@@ -225,7 +225,7 @@ public class DictItemLocalServiceImpl extends DictItemLocalServiceBaseImpl {
 	public DictItem addDictItem(long userId, long dictCollectionId,
 			String itemCode, Map<Locale, String> itemNameMap,
 			Map<Locale, String> itemDescriptionMap, long parentId,
-			long sibling, ServiceContext serviceContext)
+			long sibling, int status, ServiceContext serviceContext)
 			throws SystemException, NoSuchDictItemException {
 
 		long dictItemId = CounterLocalServiceUtil.increment(DictItem.class
@@ -251,6 +251,7 @@ public class DictItemLocalServiceImpl extends DictItemLocalServiceBaseImpl {
 		dictItem.setUserId(userId);
 		dictItem.setSibling(sibling);
 		dictItem.setLevel(level);
+		dictItem.setIssueStatus(status);
 
 		return dictItemPersistence.update(dictItem);
 	}
@@ -634,7 +635,7 @@ public class DictItemLocalServiceImpl extends DictItemLocalServiceBaseImpl {
 			long dictVersionId, String itemCode,
 			Map<Locale, String> itemNameMap,
 			Map<Locale, String> itemDescriptionMap, long parentItemId,
-			long sibling, ServiceContext serviceContext)
+			long sibling, int status, ServiceContext serviceContext)
 			throws NoSuchDictItemException, SystemException,
 			NoSuchDictVersionException {
 
@@ -659,6 +660,7 @@ public class DictItemLocalServiceImpl extends DictItemLocalServiceBaseImpl {
 		dictItem.setUserId(serviceContext.getUserId());
 		dictItem.setDictVersionId(dictVersionId);
 		dictItem.setSibling(sibling);
+		dictItem.setIssueStatus(status);
 		
 		return dictItemPersistence.update(dictItem);
 	}
