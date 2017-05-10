@@ -67,6 +67,7 @@ public class DictItemLinkLocalServiceImpl extends
 		dictItemLink.setDictItemLinkedId(dictItemLinkedId);
 		dictItemLink.setSequenceNo(sequenceNo);
 		dictItemLink.setDictItemLinkedName(dictItem.getItemName());
+		dictItemLink.setDictItemLinkedCode(dictItem.getItemCode());
 
 		return dictItemLinkPersistence.update(dictItemLink);
 	}

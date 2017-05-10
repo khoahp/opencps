@@ -212,6 +212,7 @@
 		<!-- Other fields -->
 		<column name="dictItemId" type="long" />
 		<column name="dictItemLinkedId" type="long" />
+		<column name="dictItemLinkedCode" type="String" />
 		<column name="dictItemLinkedName" type="String" />
 		<column name="sequenceNo" type="long" />
 		
