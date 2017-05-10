@@ -36,7 +36,7 @@ public class Hourly implements MessageListener {
 	public void receive(Message message)
 		throws MessageListenerException {
 
-		_log.info("RUNNING _HOURLY $$$$$");
+		//_log.info("RUNNING _HOURLY $$$$$");
 
 		List<ProcessWorkflow> processWorkflows = new ArrayList<ProcessWorkflow>();
 
@@ -63,8 +63,8 @@ public class Hourly implements MessageListener {
 							BackendUtils.checkPreCondition(
 								processWorkflow.getPreCondition(), processOrder.getDossierId());
 
-						_log.info("Scheduler _HOURLY ########" + processWorkflow.getActionName() +
-							"_" + processOrder.getDossierId());
+						/*_log.info("Scheduler _HOURLY ########" + processWorkflow.getActionName() +
+							"_" + processOrder.getDossierId());*/
 
 						if (preCondition) {
 							long processWorkflowId = processWorkflow.getProcessWorkflowId();
@@ -146,5 +146,5 @@ public class Hourly implements MessageListener {
 
 	}
 
-	private Log _log = LogFactoryUtil.getLog(OneMinute.class);
+	private Log _log = LogFactoryUtil.getLog(Hourly.class);
 }
