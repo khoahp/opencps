@@ -26,5 +26,9 @@
 		preferencesPortlet = PortletPreferencesFactoryUtil.getPortletSetup(request, portletResource);
 	}
 		
-	String plidServiceDetail = preferences.getValue("plidServiceDetail","0");
+	long plidServiceDetail = GetterUtil.getLong(preferences.getValue("plidServiceDetail","0"));
+	
+	String style = preferences.getValue("style","default");
+	
+	boolean showListServiceTemplateFile = GetterUtil.getBoolean(preferences.getValue("showListServiceTemplateFile", null), true);
 %>

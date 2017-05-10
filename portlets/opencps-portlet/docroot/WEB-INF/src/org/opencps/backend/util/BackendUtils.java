@@ -106,7 +106,7 @@ public class BackendUtils {
 					StringUtil.split(condition, StringPool.UNDERLINE)[0],
 					PRE_CONDITION_PAYOK)) {
 				
-				_log.info("FAAAAAAAAAAAAAAAAAA");
+				//_log.info("FAAAAAAAAAAAAAAAAAA");
 				
 				validPayok = _checkPayOkCondition(dossierId);
 

@@ -181,7 +181,15 @@
 											<liferay-ui:message key="reception-no"/>
 										</div>
 										
-										<div class="span3"><%=dossier.getReceptionNo() %></div>
+										<div class="span3">
+											<c:if test="<%= Validator.isNotNull(dossier.getReceptionNo()) %>">
+												<%=dossier.getReceptionNo() %>
+											</c:if>
+											<c:if test="<%= Validator.isNull(dossier.getReceptionNo()) %>">
+												<span style="font-style: italic;"><liferay-ui:message key="no-reception-no"/></span>
+											</c:if>
+										
+										</div>
 									</div>
 								</c:when>
 								

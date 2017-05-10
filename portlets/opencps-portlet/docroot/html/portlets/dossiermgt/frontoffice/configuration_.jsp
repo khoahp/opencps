@@ -1,3 +1,7 @@
+
+<%@page import="com.liferay.portal.kernel.util.Constants"%>
+<%@page import="org.opencps.jasperreport.util.JRReportUtil.DocType"%>
+<%@page import="org.opencps.util.PortletUtil"%>
 <%
 /**
  * OpenCPS is the open source Core Public Services software
@@ -16,8 +20,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 %>
-<%@page import="org.opencps.jasperreport.util.JRReportUtil.DocType"%>
-<%@page import="org.opencps.util.PortletUtil"%>
+
 <%@page import="com.liferay.portal.kernel.util.ArrayUtil"%>
 <%@page import="com.liferay.portal.kernel.util.KeyValuePair"%>
 <%@page import="org.opencps.datamgt.model.DictItem"%>
@@ -35,10 +38,8 @@
 
 <%
 	String tabs2 = ParamUtil.getString(request, "tabs2", "dossier-list");
-	String tabs2Names = "dossier-list,dossier,dossier-file-list, digital-signature";
+	String tabs2Names = "dossier-list,dossier,dossier-file-list";
 	
-	String templatesToDisplay_cfg = GetterUtil.getString(portletPreferences.getValue("templatesToDisplay", "default"));
-
 	List<Layout> privateLayouts = LayoutLocalServiceUtil.getLayouts(scopeGroupId, true);
 	List<Layout> publicLayouts = LayoutLocalServiceUtil.getLayouts(scopeGroupId, false);
 	List<Layout> allLayouts = new ArrayList<Layout>();
@@ -87,6 +88,10 @@
 	List<DictItem> dictItems = PortletUtil.getDictItemInUseByCode(themeDisplay.getScopeGroupId(), 
 			PortletPropsValues.DATAMGT_MASTERDATA_SERVICE_DOMAIN, 
 			PortletConstants.TREE_VIEW_DEFAULT_ITEM_CODE);
+	
+	String templatesToDisplay_cfg = preferences.getValue("templatesToDisplay", "default");
+	
+	long redirectAddDossierPlid = GetterUtil.getLong(preferences.getValue("redirectAddDossierPlid", null));
 %>
 
 
@@ -118,7 +123,7 @@
 />
 
 <aui:form action="<%= configurationActionURL %>" method="post" name="configurationForm">
-
+	<aui:input type="hidden" name="<%= Constants.CMD %>" value="<%= Constants.UPDATE %>" />
 	<c:choose>
 		<c:when test='<%=tabs2.equalsIgnoreCase("dossier-list") %>'>
 			<liferay-ui:panel-container 
@@ -143,18 +148,24 @@
 							<aui:option selected="<%= dossierListDisplayStyle.equals(\"treemenu_left\") %>" value="treemenu_left">
 								<liferay-ui:message key="treemenu-left"/>
 							</aui:option>
-						</aui:select>
-					</aui:fieldset>
-					
-					<aui:fieldset>
-						<aui:select name="templatesToDisplay" id="templatesToDisplay">
-							<aui:option selected="<%= templatesToDisplay_cfg.equals(\"default\") %>" value="default">default</aui:option>
 							
-							<aui:option selected="<%= templatesToDisplay_cfg.equals(\"20_80\") %>" value="20_80">20_80</aui:option>
-						
+							<aui:option selected="<%= dossierListDisplayStyle.equals(\"treemenu_left_table\") %>" value="treemenu_left_table">
+								<liferay-ui:message key="treemenu-left-table"/>
+							</aui:option>
+							
+							<aui:option selected="<%= dossierListDisplayStyle.equals(\"dklr_v10\") %>" value="dklr_v10">
+								<liferay-ui:message key="dklr_v10"/>
+							</aui:option>
 						</aui:select>
-					
 					</aui:fieldset>
+					
+					<aui:select name="templatesToDisplay" id="templatesToDisplay">
+			
+						<aui:option selected="<%= templatesToDisplay_cfg.equals(\"default\") %>" value="default">default</aui:option>
+						
+						<aui:option selected="<%= templatesToDisplay_cfg.equals(\"20_80\") %>" value="20_80">20_80</aui:option>
+					
+					</aui:select>
 					
 					<aui:fieldset>
 						<aui:input 
@@ -258,6 +269,42 @@
 							}
 						%>
 					</aui:select>
+					
+					<aui:select name="redirectAddDossierPlid" id="redirectAddDossierPlid" showEmptyOption="<%= true %>">
+						<optgroup label='----<liferay-ui:message key="private"/>----'>
+							<%
+								for (Layout layoutTemp : privateLayouts) {
+							%>
+								<aui:option value="<%= layoutTemp.getPlid() %>" selected="<%=layoutTemp.getPlid() == redirectAddDossierPlid %>"><%= layoutTemp.getName(locale) %></aui:option>
+							<%
+								}
+							%>
+						</optgroup>
+						
+						<optgroup label='----<liferay-ui:message key="public"/>----'>
+							<%
+								for (Layout layoutTemp : publicLayouts) {
+							%>
+								<aui:option value="<%= layoutTemp.getPlid() %>" selected="<%=layoutTemp.getPlid() == redirectAddDossierPlid %>"><%= layoutTemp.getName(locale) %></aui:option>
+							<%
+								}
+							%>
+						</optgroup>
+					</aui:select>
+				</liferay-ui:panel>
+				
+				<liferay-ui:panel 
+					collapsible="<%= true %>" 
+					extended="<%= true %>" 
+					id="dklrV10DisplayPanel" 
+					persistState="<%= true %>" 
+					title="dklr-v10-style"
+				>
+					<aui:input 
+						type="text" 
+						name="preferences--dklr_v10_administrationCode--"
+						value='<%= dklr_v10_administrationCode %>'
+					/>
 				</liferay-ui:panel>
 			</liferay-ui:panel-container>
 		</c:when>
@@ -280,6 +327,10 @@
 						<aui:select name="dossierDisplayStyle" id="dossierDisplayStyle">		
 							<aui:option selected="<%= dossierDisplayStyle.equals(\"default\") %>" value="default">
 								<liferay-ui:message key="default"/>
+							</aui:option>
+							
+							<aui:option selected="<%= dossierDisplayStyle.equals(\"style1\") %>" value="style1">
+								<liferay-ui:message key="style1"/>
 							</aui:option>
 						</aui:select>
 					</aui:fieldset>
@@ -529,56 +580,7 @@
 				</liferay-ui:panel>
 			</liferay-ui:panel-container>
 		</c:when>
-		<c:when test='<%=tabs2.equalsIgnoreCase("digital-signature") %>'>
-			<aui:fieldset>
-				<aui:select name="signatureType">
-					<aui:option value="selectPoint" selected='<%= signatureType.equals("selectPoint") %>'>
-						<liferay-ui:message key="selected-point"/>
-					</aui:option>
-					
-					<aui:option value="fixAtPoint" selected='<%= signatureType.equals("fixAtPoint") %>'>
-						<liferay-ui:message key="fix-at-point"/>
-					</aui:option>
-				</aui:select>
-				
-			</aui:fieldset>
-			
-			<div id="<portlet:namespace />fixatpoint">
-				<aui:fieldset>
-					<aui:row>
-						<aui:col width="50">
-							<aui:input name="offsetX" value="<%=offsetX %>"/>
-						</aui:col>
-						<aui:col width="50">
-							<aui:input name="offsetY" value="<%=offsetY %>"/>
-						</aui:col>
-					</aui:row>
-				</aui:fieldset>
-			</div>
-			
-			<aui:fieldset>
-				<aui:select name="characterAttach" multiple="true">		
-					<aui:option value="image" selected='<%=ArrayUtil.contains(characterAttachs, "image") %>'>
-						<liferay-ui:message key="image"/>
-					</aui:option>
-					
-					<aui:option value="text" selected='<%= ArrayUtil.contains(characterAttachs, "text") %>'>
-						<liferay-ui:message key="text" />
-					</aui:option>
-				</aui:select>
-			</aui:fieldset>
-			
-			<aui:fieldset>
-				<aui:select name="textPositionWithImageSign">
-					<aui:option value="overlaps" selected='<%=textPositionWithImageSign.equals("overlaps") %>'>
-						<liferay-ui:message key="overlaps" />
-					</aui:option>
-					<aui:option value="noOverlaps" selected='<%=textPositionWithImageSign.equals("noOverlaps") %>'>
-						<liferay-ui:message key="no-overlaps" />
-					</aui:option>
-				</aui:select>
-			</aui:fieldset>
-		</c:when>
+		
 		<c:otherwise>
 		
 			
@@ -588,23 +590,3 @@
 	<aui:button type="submit" name="Save" value="save"/>
 
 </aui:form>
-
-<aui:script>
-	AUI().ready(function(A) {
-		var signatureType = A.one('#<portlet:namespace />signatureType');
-		var fixatpoint = A.one('#<portlet:namespace />fixatpoint');
-		<portlet:namespace />checkShowCoordinate(signatureType, fixatpoint);
-		signatureType.on('change', function() {
-			<portlet:namespace />checkShowCoordinate(signatureType, fixatpoint);
-		});
-		
-	});
-	
-	Liferay.provide(window, '<portlet:namespace />checkShowCoordinate', function(signatureType, fixatpoint) {
-		if(signatureType.val() == 'selectPoint') {
-			fixatpoint.hide();
-		} else {
-			fixatpoint.show();
-		}
-	})
-</aui:script>

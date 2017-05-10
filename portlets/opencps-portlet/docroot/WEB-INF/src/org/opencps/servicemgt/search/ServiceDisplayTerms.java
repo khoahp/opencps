@@ -50,6 +50,7 @@ public class ServiceDisplayTerms extends DisplayTerms {
 	public static final String SERVICE_ONLINEURL = "onlineUrl";
 	public static final String GROUP_ID = "groupId";
 	public static final String COMPANY_ID = "companyId";
+	public static final String SERVICE_LEVEL = "serviceLevel";
 
 	public static final String TEMPLATE_FILE_IDS =
 	    "templateSearchContainerPrimaryKeys";
@@ -105,6 +106,12 @@ public class ServiceDisplayTerms extends DisplayTerms {
 		groupId = setGroupId(request);
 		
 		serviceId = ParamUtil.getLong(request, SERVICE_ID);
+		
+		int intServiceLevel = ParamUtil.getInteger(request, SERVICE_LEVEL);
+		
+		if(intServiceLevel > 0) {
+			setServiceLevelId(intServiceLevel);
+		}
 
 	}
 
@@ -514,6 +521,7 @@ public class ServiceDisplayTerms extends DisplayTerms {
 	protected int hasTemplateFiles;
 	protected String onlineUrl;
 	protected long groupId;
+	protected Integer serviceLevel;
 
 	/**
 	 * @return the fileTemplateIds
@@ -534,6 +542,14 @@ public class ServiceDisplayTerms extends DisplayTerms {
 
 		
 		return GetterUtil.getLongValues(strFileTemplateIds, new long [] {});
+	}
+
+	public Integer getServiceLevel() {
+		return serviceLevel;
+	}
+
+	public void setServiceLevelId(Integer serviceLevel) {
+		this.serviceLevel = serviceLevel;
 	}
 
 	protected long[] fileTemplateIds;

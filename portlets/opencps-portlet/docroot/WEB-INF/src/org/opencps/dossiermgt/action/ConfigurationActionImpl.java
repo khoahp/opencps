@@ -57,6 +57,10 @@ public class ConfigurationActionImpl implements ConfigurationAction {
 					"dossierpage", "");
 			String dossierfilepage = ParamUtil.getString(actionRequest,
 					"dossierfilepage", "");
+			
+			String displayStyle = ParamUtil.getString(actionRequest,
+					"displayStyle", "default");
+			
 			PortletPreferences prefs = PortletPreferencesFactoryUtil
 					.getPortletSetup(actionRequest, portletResource);
 
@@ -65,6 +69,8 @@ public class ConfigurationActionImpl implements ConfigurationAction {
 			prefs.setValue("dossierpage", dossierpage);
 			
 			prefs.setValue("dossierfilepage", dossierfilepage);
+			
+			prefs.setValue("displayStyle", displayStyle);
 
 			prefs.store();
 
