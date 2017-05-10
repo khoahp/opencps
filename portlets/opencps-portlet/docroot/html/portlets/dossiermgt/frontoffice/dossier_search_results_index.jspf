@@ -1,0 +1,78 @@
+<%@page import="com.liferay.portal.kernel.search.BooleanQuery"%>
+<%@page import="com.liferay.portal.kernel.search.BooleanClauseOccur"%>
+<%@page import="com.liferay.portal.kernel.search.BooleanQueryFactoryUtil"%>
+<%@page import="com.liferay.portal.kernel.search.TermQueryFactoryUtil"%>
+<%@page import="com.liferay.portal.kernel.search.TermQuery"%>
+<%@page import="com.liferay.portal.kernel.search.SearchContextFactory"%>
+<%@page import="com.liferay.portal.kernel.search.SearchContext"%>
+<%@page import="com.liferay.portal.kernel.search.SearchEngineUtil"%>
+<%@page import="org.opencps.lucenequery.LuceneQuery"%>
+<%@page import="org.opencps.dossiermgt.service.DossierLocalServiceUtil"%>
+<%@page import="org.opencps.dossiermgt.model.Dossier"%>
+<%@page import="com.liferay.portal.kernel.search.Hits"%>
+<%
+/**
+ * OpenCPS is the open source Core Public Services software
+ * Copyright (C) 2016-present OpenCPS community
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+%>
+
+<%
+
+/* SearchContext searchContext = SearchContextFactory.getInstance(request);
+searchContext.setAttribute("paginationType", "more");
+searchContext.setStart(0);
+searchContext.setEnd(10); 
+
+TermQuery termQuery1 = TermQueryFactoryUtil.create(searchContext, "govAgencyCode", dklr_v10_administrationCode);
+
+BooleanQuery booleanQuery = BooleanQueryFactoryUtil.create(searchContext);
+booleanQuery.add(termQuery1, BooleanClauseOccur.MUST);
+
+System.out.println("booleanQuery:::"+booleanQuery);
+
+Hits hits = SearchEngineUtil.search(searchContext, booleanQuery); */
+
+String pattern = "(govAgencyCode=?)";
+List<String> paramValues = new ArrayList<String>();
+paramValues.add(dklr_v10_administrationCode);
+
+List<String> paramTypes = new ArrayList<String>();
+paramTypes.add("String");
+
+SearchContext searchContext = SearchContextFactory.getInstance(request);
+
+LuceneQuery luceneQuery = new LuceneQuery(pattern, paramValues, paramTypes, searchContext);
+
+Hits hits = SearchEngineUtil.search(searchContext, luceneQuery.getQuery());
+
+List<com.liferay.portal.kernel.search.Document> documents =
+hits.toList();
+
+List<Dossier> dossierIndexResults = new ArrayList<Dossier>();
+
+for (com.liferay.portal.kernel.search.Document document : documents) {
+	long dossierId = GetterUtil.getLong(document.get(DossierDisplayTerms.DOSSIER_ID));
+	
+	Dossier dossier = DossierLocalServiceUtil.getDossier(dossierId);
+	
+	dossierIndexResults.add(dossier);
+}
+
+searchContainer.setResults(dossierIndexResults);
+searchContainer.setTotal(hits.getLength());
+
+System.out.println("===hits.getLength()===" + hits.getLength());
+%>

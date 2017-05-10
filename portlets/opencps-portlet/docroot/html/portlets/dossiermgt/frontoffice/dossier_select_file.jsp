@@ -109,7 +109,7 @@
 	searchURL.setParameter("redirectURL", redirectURL);
 	searchURL.setParameter("modalDialogId", modalDialogId);
 	
-	boolean isSameTemplate = ParamUtil.getBoolean(request, "isSameTemplate", true);
+	boolean isSameTemplate = ParamUtil.getBoolean(request, "isSameTemplate", false);
 					
 	String templateFileNo = StringPool.BLANK;
 	templateFileNo = ParamUtil.getString(request, DossierDisplayTerms.TEMPLATE_FILE_NO);
@@ -135,12 +135,12 @@
 	
 	
 	List<String> headerNames = new ArrayList<String>();
-	headerNames.add("");
-	headerNames.add("#");
-	headerNames.add("template-info");
-	headerNames.add("template");
+	headerNames.add("stt");
+	headerNames.add("dossier-file-no");
+	headerNames.add("dossier-file-date");
+	headerNames.add("dossier-file-name");
 	headerNames.add("dossier");
-	//headerNames.add("select");
+	headerNames.add("action");
 	
 	String headers = StringUtil.merge(headerNames);
 %>
@@ -230,20 +230,20 @@
 				<%
 					DossierFileSearchTerms searchTerms = (DossierFileSearchTerms)searchContainer.getSearchTerms();
 								
-						List<DossierFile> dossierFiles = new ArrayList<DossierFile>();
-						int totalCount = 0;
-						try {
-							dossierFiles = DossierFileLocalServiceUtil.searchDossierFile(scopeGroupId, citizen != null ? citizen.getMappingUserId() : 0, business != null ? business.getMappingOrganizationId() : 0, searchTerms.getKeywords(), templateFileNo, 0, searchContainer.getStart(), searchContainer.getEnd(), searchContainer.getOrderByComparator());
-							totalCount = DossierFileLocalServiceUtil.countDossierFile(scopeGroupId, citizen != null ? citizen.getMappingUserId() : 0, business != null ? business.getMappingOrganizationId() : 0, searchTerms.getKeywords(), templateFileNo, 0);
-						} catch(Exception e){
-							
-						}
-
-						total = totalCount;
-						results = dossierFiles;
+					List<DossierFile> dossierFiles = new ArrayList<DossierFile>();
+					int totalCount = 0;
+					try {
+						dossierFiles = DossierFileLocalServiceUtil.searchDossierFile(scopeGroupId, citizen != null ? citizen.getMappingUserId() : 0, business != null ? business.getMappingOrganizationId() : 0, searchTerms.getKeywords(), templateFileNo, 0, searchContainer.getStart(), searchContainer.getEnd(), searchContainer.getOrderByComparator());
+						totalCount = DossierFileLocalServiceUtil.countDossierFile(scopeGroupId, citizen != null ? citizen.getMappingUserId() : 0, business != null ? business.getMappingOrganizationId() : 0, searchTerms.getKeywords(), templateFileNo, 0);
+					} catch(Exception e){
 						
-						pageContext.setAttribute("results", results);
-						pageContext.setAttribute("total", total);				
+					}
+
+					total = totalCount;
+					results = dossierFiles;
+					
+					pageContext.setAttribute("results", results);
+					pageContext.setAttribute("total", total);				
 				%>
 			</liferay-ui:search-container-results>	
 				<liferay-ui:search-container-row 
@@ -263,43 +263,52 @@
 					<%
 						String templateFileURL = StringPool.BLANK;
 						String dossierFileURL = StringPool.BLANK;
-							try {
-								if(Validator.isNotNull(dossierFile.getTemplateFileNo())) {
-									String tempNo = dossierFile.getTemplateFileNo();
-									TemplateFile templateFile = TemplateFileLocalServiceUtil
-											.getTemplateFileByNo(scopeGroupId, tempNo);
-										long templateFileEntryId = 0;
-										
-										if(Validator.isNotNull(templateFile)) {
-											templateFileEntryId = templateFile.getFileEntryId();
-											if(templateFileEntryId > 0) {
-												FileEntry templateFileEntry =
-														DLFileEntryUtil.getFileEntry(templateFileEntryId);
-												templateFileURL = DLUtil.getPreviewURL(
-														templateFileEntry, templateFileEntry.getFileVersion(),
-														themeDisplay, StringPool.BLANK);
-											}
-									}
+						
+						try {
+							if(Validator.isNotNull(dossierFile.getTemplateFileNo())) {
+								String tempNo = dossierFile.getTemplateFileNo();
+								TemplateFile templateFile = TemplateFileLocalServiceUtil
+										.getTemplateFileByNo(scopeGroupId, tempNo);
+									long templateFileEntryId = 0;
+									
+									if(Validator.isNotNull(templateFile)) {
+										templateFileEntryId = templateFile.getFileEntryId();
+										if(templateFileEntryId > 0) {
+											FileEntry templateFileEntry =
+													DLFileEntryUtil.getFileEntry(templateFileEntryId);
+											templateFileURL = DLUtil.getPreviewURL(
+													templateFileEntry, templateFileEntry.getFileVersion(),
+													themeDisplay, StringPool.BLANK);
+										}
 								}
-							} catch (Exception e) {}
-							
-							try {
-								long dossierFileEntryId = dossierFile.getFileEntryId();
-								
-								if(dossierFileEntryId > 0) {
-									FileEntry dossierFileEntry =
-											DLFileEntryUtil.getFileEntry(dossierFileEntryId);
-									dossierFileURL = DLUtil.getPreviewURL(
-											dossierFileEntry, dossierFileEntry.getFileVersion(),
-											themeDisplay, StringPool.BLANK);
-								}
-							} catch(Exception e) {} 
-							
-							String viewDossierUrlNomal = viewDossierURL.toString();
-							if(viewDossierUrlNomal.contains("p_p_state=pop_up"))  {
-								viewDossierUrlNomal = StringUtil.replace(viewDossierUrlNomal, "p_p_state=pop_up", "p_p_state=nomal");
 							}
+						} catch (Exception e) {}
+						
+						try {
+							long dossierFileEntryId = dossierFile.getFileEntryId();
 							
+							if(dossierFileEntryId > 0) {
+								FileEntry dossierFileEntry =
+										DLFileEntryUtil.getFileEntry(dossierFileEntryId);
+								dossierFileURL = DLUtil.getPreviewURL(
+										dossierFileEntry, dossierFileEntry.getFileVersion(),
+										themeDisplay, StringPool.BLANK);
+							}
+						} catch(Exception e) {} 
+						
+						String viewDossierUrlNomal = viewDossierURL.toString();
+						if(viewDossierUrlNomal.contains("p_p_state=pop_up"))  {
+							viewDossierUrlNomal = StringUtil.replace(viewDossierUrlNomal, "p_p_state=pop_up", "p_p_state=nomal");
+						}
+						
+						Dossier dossierSearch = null;
+						String receptionNo = StringPool.DASH;
+						
+						try {
+							dossierSearch = DossierLocalServiceUtil.getDossier(dossierFile.getDossierId());
+							
+							receptionNo = Validator.isNotNull(dossierSearch.getReceptionNo()) ? dossierSearch.getReceptionNo() : String.valueOf(dossierSearch.getDossierId());
+						} catch(Exception e) {}
 					%>
 									
 					<liferay-util:buffer var="rowTicker">
@@ -308,93 +317,49 @@
 					</liferay-util:buffer>
 
 					<liferay-util:buffer var="boundCol1">
-						<div class="row-fluid">
-							<div class="span6 bold-label">
-								<liferay-ui:message key="template-file-no"/>
-							</div>
-
-							<div class="span6">
-								<a href="<%=templateFileURL %>" target="_blank">
-									<%=Validator.isNotNull(templateFileNo) ? templateFileNo : StringPool.DASH %>
-								</a>
-							</div>
-
-						</div>
-						
-						<div class="row-fluid">
-							<div class="span6 bold-label">
-								<liferay-ui:message key="dossier-file-no"/>
-							</div>
-							<div class="span6"><%=Validator.isNotNull(dossierFile.getDossierFileNo()) ? dossierFile.getDossierFileNo() : StringPool.DASH %></div>
-						</div>
-						
-						<div class="row-fluid">
-							<div class="span6 bold-label">
-								<liferay-ui:message key="dossier-file-createdate"/>
-							</div>
-							<div class="span6">
-							
-								<%=Validator.isNotNull(dossierFile.getModifiedDate()) ? 
-										DateTimeUtil.convertDateToString(dossierFile.getModifiedDate() , DateTimeUtil._VN_DATE_TIME_FORMAT): StringPool.DASH %>
-							
-							</div>
-						</div>
+						<%=Validator.isNotNull(dossierFile.getDossierFileNo()) ? dossierFile.getDossierFileNo() : StringPool.DASH %>
 					</liferay-util:buffer>
 					
 					<liferay-util:buffer var="boundCol2">
-						<div class="row-fluid">
-							<div class="span4 bold-label">
-								<liferay-ui:message key="dossier-file-date"/>
-							</div>
-							<div class="span8"><%=Validator.isNotNull(dossierFile.getDossierFileDate()) ? 
-									DateTimeUtil.convertDateToString(dossierFile.getDossierFileDate(), DateTimeUtil._VN_DATE_FORMAT) :
-										StringPool.DASH %>
-							</div>
-						</div>
-						<div class="row-fluid">
-							<div class="span4 bold-label">
-								<liferay-ui:message key="dossier-file-name"/>
-							</div>
-							<div class="span8">
-								<a href="<%=dossierFileURL %>" target="_blank">
-									<%=Validator.isNotNull(dossierFile.getDisplayName()) ? dossierFile.getDisplayName() : StringPool.DASH %>
-								</a>
-							</div>
-						</div>
-						
+						<% if(Validator.isNotNull(dossierFile.getDossierFileDate())) {%>
+							<%= DateTimeUtil.convertDateToString(dossierFile.getDossierFileDate(), DateTimeUtil._VN_DATE_FORMAT) %>
+						<%} else if (Validator.isNotNull(dossierFile.getModifiedDate())) {%>
+							<%= DateTimeUtil.convertDateToString(dossierFile.getModifiedDate(), DateTimeUtil._VN_DATE_FORMAT) %>
+						<% } else { %>
+							<%= StringPool.DASH %>
+						<% } %>
+					</liferay-util:buffer>
+					
+					<liferay-util:buffer var="boundCol3">
+						<a href="<%=dossierFileURL %>" target="_blank">
+							<%=Validator.isNotNull(dossierFile.getDisplayName()) ? dossierFile.getDisplayName() : StringPool.DASH %>
+						</a>
 					</liferay-util:buffer>
 					
 					
-					<liferay-util:buffer var="boundCol3">
-						<div class="row-fluid">
-							<div class="span6 bold-label">
-								<liferay-ui:message key="reception-no"/>
-							</div>
-							<div class="span6"><%=Validator.isNotNull(dossier) ? dossier.getReceptionNo() : StringPool.DASH %></div>
-						</div>
+					<liferay-util:buffer var="boundCol4">
+						<%= receptionNo %>
+					</liferay-util:buffer>
+					
+					<liferay-util:buffer var="boundCol5">
+						<% String jsButton = "javascript:" + renderResponse.getNamespace() + "selectDossierFile(" + dossierFile.getDossierFileId() +")"; %>
 						
-						<div class="row-fluid">
-							<div class="span6 bold-label">
-								<liferay-ui:message key="dossier-no"/>
-							</div>
-							<div class="span6">
-								<a href="<%=viewDossierUrlNomal %>" target="_blank">
-									<%=(dossierFile.getDossierId() > 0) ? String.valueOf(dossierFile.getDossierId()) : StringPool.DASH %>
-								</a>
-							</div>
-						</div>
+						<a href="javascript:void(0)" onclick="<%= jsButton %>" class="dsf-select-btn">
+							<i></i> <liferay-ui:message key="select" />
+						</a>
+						
+						<a href="<%=dossierFileURL %>" class="dsf-view-btn" target="_blank">
+							<i></i> <liferay-ui:message key="view" />
+						</a>
 					</liferay-util:buffer>
 					
 					<%
-						row.addText(rowTicker);
-						// no column
-						row.addText(String.valueOf(row.getPos() + 1 + searchContainer.getStart()));
+						row.addText(String.valueOf((searchContainer.getCur() - 1) * searchContainer.getDelta() + index + 1));
 						row.addText(boundCol1);
 						row.addText(boundCol2);
 						row.addText(boundCol3);
-						
-					//	row.addButton(LanguageUtil.get(locale, "select"), "javascript:" + renderResponse.getNamespace() + "selectDossierFile(" + dossierFile.getDossierFileId() +")");
-						
+						row.addText(boundCol4);
+						row.addText(boundCol5);
 					%>	
 				</liferay-ui:search-container-row> 
 			
@@ -412,8 +377,8 @@
 		<aui:input name="<%=DossierFileDisplayTerms.GROUP_NAME %>" type="hidden" value="<%=groupName %>"/>
 		<aui:input name="receiveHiddenDossierFile" type="hidden" />
 		<aui:row>
-			<aui:button  name="btnAccept" value="agree" cssClass="btn-primary"/>
-			<aui:button name="btnCancel" value="cancel"/>
+			<aui:button name="btnAccept" value="agree" cssClass="dsf-btn-ok btn btn-primary"/>
+			<aui:button name="btnCancel" value="cancel" cssClass="dsf-btn-cancel btn"/>
 		</aui:row>
 	</div>
 

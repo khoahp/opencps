@@ -193,12 +193,7 @@ public class LuceneQueryUtil {
 										searchContext, key, (long) tempValue);
 							} else if (tempValue instanceof String) {
 								termQuery = TermQueryFactoryUtil.create(
-										searchContext, key, (String) tempValue);
-							} else {
-								_log.warn("################################ Can not create TermQuery width key = "
-										+ key
-										+ " param = "
-										+ tempValue.toString());
+										searchContext, key, String.valueOf(tempValue));
 							}
 
 							if (termQuery != null) {
@@ -275,14 +270,9 @@ public class LuceneQueryUtil {
 							if (tempValue instanceof Long) {
 								termQuery = TermQueryFactoryUtil.create(
 										searchContext, key, (long) tempValue);
-							} else if (tempValue instanceof String) {
-								termQuery = TermQueryFactoryUtil.create(
-										searchContext, key, (String) tempValue);
 							} else {
-								_log.warn("################################ Can not create TermQuery width key = "
-										+ key
-										+ " param = "
-										+ tempValue.toString());
+								termQuery = TermQueryFactoryUtil.create(
+										searchContext, key, String.valueOf(tempValue));
 							}
 
 							if (termQuery != null) {

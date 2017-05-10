@@ -25,9 +25,7 @@
 
 <%
 	if(Validator.isNotNull(serviceDomainIndex_cfg)){
-		
-			searchTerms.setServiceDomainIndex(serviceDomainIndex_cfg);
-
+		searchTerms.setServiceDomainIndex(serviceDomainIndex_cfg);
 	}
 
 	totalCount = DossierLocalServiceUtil.countDossierByUser(scopeGroupId, themeDisplay.getUserId(), searchTerms.getKeywords(), searchTerms.getServiceDomainIndex(), dossierStatus);

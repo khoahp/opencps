@@ -73,6 +73,12 @@ public class DossierSearch extends SearchContainer<Dossier> {
 	public DossierSearch(
 	    PortletRequest portletRequest, int delta, PortletURL iteratorURL) {
 
+		this(portletRequest, delta, iteratorURL, headerNames);
+	}
+	
+	public DossierSearch(
+	    PortletRequest portletRequest, int delta, PortletURL iteratorURL, List<String> headerNames) {
+
 		super(
 		    portletRequest, new DossierDisplayTerms(
 		        portletRequest), new DossierSearchTerms(

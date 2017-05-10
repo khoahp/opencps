@@ -28,7 +28,7 @@ import javax.portlet.RenderResponse;
 
 import org.opencps.util.WebKeys;
 
-import com.liferay.portal.kernel.portlet.ConfigurationAction;
+import com.liferay.portal.kernel.portlet.DefaultConfigurationAction;
 import com.liferay.portal.kernel.servlet.SessionMessages;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.util.PortalUtil;
@@ -40,17 +40,16 @@ import com.liferay.portlet.PortletURLFactoryUtil;
  * @author khoavd
  *
  */
-public class ConfigurationImpl_ implements ConfigurationAction{
+public class ConfigurationImpl_ extends DefaultConfigurationAction {
 
 	/* (non-Javadoc)
      * @see com.liferay.portal.kernel.portlet.ConfigurationAction#processAction(javax.portlet.PortletConfig, javax.portlet.ActionRequest, javax.portlet.ActionResponse)
      */
-	@Override
 	public void processAction(
 	    PortletConfig portletConfig, ActionRequest actionRequest,
 	    ActionResponse actionResponse)
 	    throws Exception {
-
+		
 		long plid = ParamUtil.getLong(actionRequest, "plid");
 		
 		long itemsToDisplay = ParamUtil.getLong(actionRequest, "itemsToDisplay");
@@ -153,6 +152,8 @@ public class ConfigurationImpl_ implements ConfigurationAction{
 		preferences.setValue("allowQuickCreateDossier", String.valueOf(allowQuickCreateDossier));
 		
 		preferences.store();
+		
+		super.processAction(portletConfig, actionRequest, actionResponse);
 
 		SessionMessages.add(actionRequest, "potlet-config-saved");
 

@@ -398,7 +398,7 @@
 						<%
 							String chiTiet = StringPool.BLANK;
 							String popupURL = renderResponse.getNamespace() +  "openDialogTermOfUse();";
-							chiTiet =  "<a href=\"http://dichvucong.mt.gov.vn/-ieu-khoan-su-dung\" target=\"_blank\" class=\"detail-terms-links\">"+LanguageUtil.get(pageContext, "term-detail")+"</a>";
+							chiTiet =  "<a href=\"javascript:void(0);\" onclick=\"" + popupURL + "\" class=\"detail-terms-links\">"+LanguageUtil.get(pageContext, "term-detail")+"</a>";
 						%>
 						<aui:input 
 							name="termsOfUse"

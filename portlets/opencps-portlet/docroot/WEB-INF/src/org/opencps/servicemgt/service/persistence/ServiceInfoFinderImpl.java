@@ -24,7 +24,8 @@ import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.SQLQuery;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.Type;
-import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
@@ -52,7 +53,7 @@ public class ServiceInfoFinderImpl extends BasePersistenceImpl<ServiceInfo>
 	 */
 	public int countService(
 	    long groupId, String keywords, String administrationCode,
-	    String domainCode) {
+	    String domainCode, Integer serviceLevel) {
 
 		//String[] names = null;
 		boolean andOperator = false;
@@ -65,7 +66,7 @@ public class ServiceInfoFinderImpl extends BasePersistenceImpl<ServiceInfo>
 		}
 
 		return _countService(
-		    groupId, keywords, administrationCode, domainCode, andOperator);
+		    groupId, keywords, administrationCode, domainCode, serviceLevel, andOperator);
 	}
 
 	/**
@@ -79,7 +80,7 @@ public class ServiceInfoFinderImpl extends BasePersistenceImpl<ServiceInfo>
 	 */
 	public List<ServiceInfo> searchService(
 	    long groupId, String keywords, String administrationCode,
-	    String domainCode, int start, int end) {
+	    String domainCode, Integer serviceLevel, int start, int end) {
 
 		//String[] names = null;
 		boolean andOperator = false;
@@ -92,7 +93,7 @@ public class ServiceInfoFinderImpl extends BasePersistenceImpl<ServiceInfo>
 		}
 
 		return _searchService(
-		    groupId, keywords, administrationCode, domainCode, andOperator, start,
+		    groupId, keywords, administrationCode, domainCode, serviceLevel, andOperator, start,
 		    end);
 	}
 
@@ -107,29 +108,16 @@ public class ServiceInfoFinderImpl extends BasePersistenceImpl<ServiceInfo>
 	 * @return
 	 */
 	private List<ServiceInfo> _searchService(
-	    long groupId, String keyword, String adminCode, String domainCode,
+	    long groupId, String keyword, String adminCode, String domainCode, Integer serviceLevel,
 	    boolean andOperator, int start, int end) {
 
-		//keywords = CustomSQLUtil.keywords(keywords);
-
 		Session session = null;
+		
 		try {
 			session = openSession();
 
 			String sql = CustomSQLUtil.get(SEARCH_SERVICE_SQL);
 
-			/*sql =
-			    CustomSQLUtil.replaceKeywords(
-			        sql, "lower(opencps_serviceinfo.serviceName)",
-			        StringPool.LIKE, true, keywords);
-
-			sql =
-			    CustomSQLUtil.replaceKeywords(
-			        sql, "lower(opencps_serviceinfo.fullName)",
-			        StringPool.LIKE, true, keywords);
-
-			sql = CustomSQLUtil.replaceAndOperator(sql, andOperator);*/
-			
 			if(Validator.isNull(keyword)){
 				sql = StringUtil.replace(sql,
 				        "AND ((lower(opencps_serviceinfo.serviceName) LIKE ?) OR (lower(opencps_serviceinfo.fullName) LIKE ?))",
@@ -150,6 +138,20 @@ public class ServiceInfoFinderImpl extends BasePersistenceImpl<ServiceInfo>
 				    StringUtil.replace(
 				        sql, "AND ((opencps_serviceinfo.domainCode = ?) OR (opencps_serviceinfo.domainIndex like ?))",
 				        StringPool.BLANK);
+			}
+			
+			if(serviceLevel == null) {
+				sql = StringUtil.replace(
+						sql, "LEFT JOIN opencps_service_config ON opencps_serviceinfo.serviceInfoId = opencps_service_config.serviceInfoId",
+						StringPool.BLANK);
+				
+				sql = StringUtil.replace(
+						sql, "AND (opencps_service_config.serviceLevel = ?)",
+						StringPool.BLANK);
+				
+				sql = StringUtil.replace(
+						sql, "GROUP BY opencps_serviceinfo.serviceInfoId",
+						StringPool.BLANK);
 			}
 			
 
@@ -178,17 +180,16 @@ public class ServiceInfoFinderImpl extends BasePersistenceImpl<ServiceInfo>
 				qPos.add(domainCode);
 				qPos.add(StringPool.PERCENT+domainCode+StringPool.PERIOD+StringPool.PERCENT);
 			}
+			
+			if(serviceLevel != null) {
+				qPos.add(serviceLevel);
+			}
 
 			return (List<ServiceInfo>) QueryUtil.list(
 			    q, getDialect(), start, end);
 		}
 		catch (Exception e) {
-			try {
-				throw new SystemException(e);
-			}
-			catch (SystemException se) {
-				se.printStackTrace();
-			}
+			_log.error(e);
 		}
 		finally {
 			closeSession(session);
@@ -207,28 +208,15 @@ public class ServiceInfoFinderImpl extends BasePersistenceImpl<ServiceInfo>
 	 * @return
 	 */
 	private int _countService(
-	    long groupId, String keyword, String adminCode, String domainCode,
-	    boolean andOperator) {
-
-		//keywords = CustomSQLUtil.keywords(keywords);
+		long groupId, String keyword, String adminCode, String domainCode, Integer serviceLevel,
+		boolean andOperator) {
 
 		Session session = null;
+		
 		try {
 			session = openSession();
 
 			String sql = CustomSQLUtil.get(COUNT_SERVICE_SQL);
-
-			/*sql =
-			    CustomSQLUtil.replaceKeywords(
-			        sql, "lower(opencps_serviceinfo.serviceName)",
-			        StringPool.LIKE, true, keywords);
-
-			sql =
-			    CustomSQLUtil.replaceKeywords(
-			        sql, "lower(opencps_serviceinfo.fullName)",
-			        StringPool.LIKE, true, keywords);
-
-			sql = CustomSQLUtil.replaceAndOperator(sql, andOperator);*/
 			
 			if(Validator.isNull(keyword)){
 				sql = StringUtil.replace(sql,
@@ -250,6 +238,20 @@ public class ServiceInfoFinderImpl extends BasePersistenceImpl<ServiceInfo>
 				    StringUtil.replace(
 				        sql, "AND ((opencps_serviceinfo.domainCode = ?) OR (opencps_serviceinfo.domainIndex like ?))",
 				        StringPool.BLANK);
+			}
+			
+			if(serviceLevel == null) {
+				sql = StringUtil.replace(
+						sql, "LEFT JOIN opencps_service_config ON opencps_serviceinfo.serviceInfoId = opencps_service_config.serviceInfoId",
+						StringPool.BLANK);
+				
+				sql = StringUtil.replace(
+						sql, "AND (opencps_service_config.serviceLevel = ?)",
+						StringPool.BLANK);
+				
+				sql = StringUtil.replace(
+						sql, "GROUP BY opencps_serviceinfo.serviceInfoId",
+						StringPool.BLANK);
 			}
 
 			SQLQuery q = session.createSQLQuery(sql);
@@ -276,6 +278,10 @@ public class ServiceInfoFinderImpl extends BasePersistenceImpl<ServiceInfo>
 				qPos.add(domainCode);
 				qPos.add(StringPool.PERCENT+domainCode+StringPool.PERIOD+StringPool.PERCENT);
 			}
+			
+			if(serviceLevel != null) {
+				qPos.add(serviceLevel);
+			}
 
 			Iterator<Integer> itr = q.iterate();
 
@@ -291,12 +297,7 @@ public class ServiceInfoFinderImpl extends BasePersistenceImpl<ServiceInfo>
 
 		}
 		catch (Exception e) {
-			try {
-				throw new SystemException(e);
-			}
-			catch (SystemException se) {
-				se.printStackTrace();
-			}
+			_log.error(e);
 		}
 		finally {
 			closeSession(session);
@@ -304,5 +305,7 @@ public class ServiceInfoFinderImpl extends BasePersistenceImpl<ServiceInfo>
 
 		return 0;
 	}
+	
+	private static Log _log = LogFactoryUtil.getLog(ServiceInfoFinderImpl.class.getName());
 
 }

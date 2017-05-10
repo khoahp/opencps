@@ -62,12 +62,16 @@
 			SELECT
 				opencps_serviceinfo.*
 			FROM
-				opencps_serviceinfo
+				opencps_serviceinfo 
+			LEFT JOIN opencps_service_config ON opencps_serviceinfo.serviceInfoId = opencps_service_config.serviceInfoId 
 			WHERE
-				groupId = ?
+				opencps_serviceinfo.groupId = ?
 			AND ((lower(opencps_serviceinfo.serviceName) LIKE ?) OR (lower(opencps_serviceinfo.fullName) LIKE ?))
 			AND (opencps_serviceinfo.administrationCode = ?)
 			AND ((opencps_serviceinfo.domainCode = ?) OR (opencps_serviceinfo.domainIndex like ?))
+			AND (opencps_service_config.serviceLevel = ?)
+			GROUP BY opencps_serviceinfo.serviceInfoId
+			ORDER BY opencps_serviceinfo.createDate
 		]]>
 	</sql>
 
@@ -76,12 +80,15 @@
 			SELECT
 				count(*) AS COUNT_VALUE
 			FROM
-				opencps_serviceinfo
+				opencps_serviceinfo 
+			LEFT JOIN opencps_service_config ON opencps_serviceinfo.serviceInfoId = opencps_service_config.serviceInfoId 
 			WHERE
-				groupId = ?
+				opencps_serviceinfo.groupId = ?
 			AND ((lower(opencps_serviceinfo.serviceName) LIKE ?) OR (lower(opencps_serviceinfo.fullName) LIKE ?))
 			AND (opencps_serviceinfo.administrationCode = ?)
 			AND ((opencps_serviceinfo.domainCode = ?) OR (opencps_serviceinfo.domainIndex like ?))
+			AND (opencps_service_config.serviceLevel = ?)
+			GROUP BY opencps_serviceinfo.serviceInfoId
 		]]>
 	</sql>
 </custom-sql>
