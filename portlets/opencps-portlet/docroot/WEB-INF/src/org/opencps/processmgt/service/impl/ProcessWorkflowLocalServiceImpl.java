@@ -44,6 +44,10 @@ import com.liferay.portal.service.ServiceContext;
  * @see org.opencps.processmgt.service.base.ProcessWorkflowLocalServiceBaseImpl
  * @see org.opencps.processmgt.service.ProcessWorkflowLocalServiceUtil
  */
+/**
+ * @author khoavu
+ *
+ */
 public class ProcessWorkflowLocalServiceImpl
 	extends ProcessWorkflowLocalServiceBaseImpl {
 	/*
@@ -355,5 +359,11 @@ public class ProcessWorkflowLocalServiceImpl
 	public List<ProcessWorkflow> getProcessWorkflowByEvent(String autoEvent)
 	    throws PortalException, SystemException {
 		return processWorkflowPersistence.findByAutoEvent(autoEvent);
+	}
+	
+	public ProcessWorkflow getProcessWorkflowByActionCodeAndPreStep(
+			String actionCode, long preProcessStepId) throws PortalException,
+			SystemException {
+		return processWorkflowPersistence.fetchByA_C_PreS(actionCode, preProcessStepId);
 	}
 }
