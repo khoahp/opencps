@@ -332,7 +332,12 @@ public class OCPSDossierController {
 						MessageBusUtil.sendMessage(
 								"opencps/backoffice/engine/destination", msg);
 					}
-
+					
+					resp.put("Result", "New");
+					resp.put("DossierId", dossierid);
+					resp.put("ActionUid", "");
+					resp.put("DossierStatus", "New");
+					
 					return Response.status(200).entity(resp.toString()).build();
 
 				} catch (Exception e) {

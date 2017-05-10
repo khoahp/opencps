@@ -25,7 +25,6 @@ public class Permit {
 			} else {
 				throw new NotAuthException();
 			}
-			
 		} catch (PortalException | SystemException e) {
 			throw new NoSuchDossierException();
 		} 

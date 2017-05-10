@@ -359,4 +359,4 @@ portlets/opencps-integrate-portlet/docroot/WEB-INF/src/org/opencps/integrate/dao
 portlets/opencps-integrate-portlet/.classpath
 portlets/opencps-integrate-portlet/.settings/*
 portlets/vr-business-portlet/docroot/WEB-INF/classes/*
-
+portlets/vr-business-portlet/docroot/WEB-INF/lib/vr-business-portlet-service.jar
