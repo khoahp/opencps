@@ -470,17 +470,16 @@ public class DossierIndexer extends BaseIndexer {
 
 				Document document = getDocument(dossier);
 
-				documents.add(document);
+				//documents.add(document);
+				addDocument(document);
 			}
 
 		};
 
 		actionableDynamicQuery.setCompanyId(companyId);
+		actionableDynamicQuery.setSearchEngineId(getSearchEngineId());
 
 		actionableDynamicQuery.performActions();
-
-		SearchEngineUtil.updateDocuments(getSearchEngineId(), companyId,
-				documents);
 	}
 
 	@Override
