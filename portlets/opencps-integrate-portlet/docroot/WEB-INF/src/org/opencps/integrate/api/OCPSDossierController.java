@@ -333,23 +333,42 @@ public class OCPSDossierController {
 								"opencps/backoffice/engine/destination", msg);
 					}
 					
+					ProcessWorkflow processWorkflow = APIUtils
+							.getProcessWorkflow(dossierid, am.getActionCode());
+					
+					String nextStatus = APIUtils.getPostDossierStatus(processWorkflow);
+
 					resp.put("Result", "New");
 					resp.put("DossierId", dossierid);
 					resp.put("ActionUid", "");
-					resp.put("DossierStatus", "New");
+					resp.put("DossierStatus", nextStatus);
 					
 					return Response.status(200).entity(resp.toString()).build();
 
 				} catch (Exception e) {
+					resp.put("Result", "Error");
+					resp.put("DossierId", dossierid);
+					resp.put("ActionUid", "");
+					resp.put("ErrorMessage", APIUtils.getLanguageValue("no-action-code-found"));
 
 					return Response.status(404).entity(resp.toString()).build();
 				}
 			} else {
+				resp.put("Result", "Error");
+				resp.put("DossierId", dossierid);
+				resp.put("ActionUid", "");
+				resp.put("ErrorMessage", APIUtils.getLanguageValue("no-access-resource"));
+
 				// Not access resources
 				return Response.status(403).entity(resp.toString()).build();
 			}
 		} else {
 			// Not validate
+			resp.put("Result", "Error");
+			resp.put("DossierId", dossierid);
+			resp.put("ActionUid", "");
+			resp.put("ErrorMessage", APIUtils.getLanguageValue("not-validate"));
+
 			return Response.status(401).entity(resp.toString()).build();
 		}
 	}
