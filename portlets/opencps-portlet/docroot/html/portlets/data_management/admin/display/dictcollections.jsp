@@ -85,7 +85,7 @@
 			});
 		}
 		if (A.one('#<portlet:namespace/>collection-name')){
-			A.one('#<portlet:namespace/>collection-name').on('change', function(){
+			A.one('#<portlet:namespace/>collection-name').on('keyup', function(){
 				var collectionName = A.one('#<portlet:namespace/>collection-name') ?
 						A.one('#<portlet:namespace/>collection-name').attr('value') : '';
 				getDictCollections(collectionName);
@@ -103,13 +103,10 @@
 	// 'updateDictItem': do update dict item
 	// 'deleteDictItem'
 	
-	// 'scrollWindow'
-	
 	var selectedDictCollectionId = 0;	
 	var updateDictCollectionId = 0;
 	var selectedDictItemId = 0;
 	var needConfirnChangeView = false;
-	var statusItemSelected = 1;
 	
 	Liferay.provide(window, 'getDictCollectionDetail', function(collectionId){
 		if (!Liferay.ThemeDisplay.isSignedIn()){
@@ -156,7 +153,7 @@
 						}
 						if (A.one('#<portlet:namespace/>view-items-button')){
 							A.one('#<portlet:namespace/>view-items-button').on('click', function(){
-								getDictItems(selectedDictCollectionId, false, false, false, 'true');
+								getDictItemsToolbar(selectedDictCollectionId);
 							});
 						}
 						if (A.one('#<portlet:namespace/>edit-collection-button')){
@@ -164,8 +161,12 @@
 								editDictCollection(selectedDictCollectionId);
 							});
 						}
-						
-						scrollWindow();
+						if (A.one('#<portlet:namespace/>delete-collection-button')){
+							A.one('#<portlet:namespace/>delete-collection-button').on('click', function(){
+								//todo
+								deleteDictCollection(selectedDictCollectionId);
+							});
+						}
 					},
 			    	error: function(){
 			    		loadingMask.hide();
@@ -175,7 +176,93 @@
 		);
 	},['aui-base','liferay-portlet-url','aui-io']);
 	
-	Liferay.provide(window, 'getDictItems', function(dictCollectionId, cur, keyword, itemLinkedId, status){
+	Liferay.provide(window, 'getDictItemsToolbar', function(dictCollectionId){
+		if (!Liferay.ThemeDisplay.isSignedIn()){
+			alert(Liferay.Language.get('please-login-and-try-again'));
+			return;
+		}
+		
+		var loadingMask = new A.LoadingMask(
+			{
+				'strings.loading': '<%= UnicodeLanguageUtil.get(pageContext, "...") %>',
+				target: A.one('#<portlet:namespace/>collection-detail')
+			}
+		);
+		loadingMask.show();
+		
+		var portletURL = Liferay.PortletURL.createURL('<%= PortletURLFactoryUtil.create(request, WebKeys.DATA_MANAGEMENT_ADMIN_PORTLET, themeDisplay.getPlid(), PortletRequest.RENDER_PHASE) %>');
+		portletURL.setParameter("mvcPath", "/html/portlets/data_management/admin/ajax/_dictitems_toolbar.jsp");
+		portletURL.setWindowState("<%=LiferayWindowState.EXCLUSIVE.toString()%>"); 
+		portletURL.setPortletMode("normal");
+		if (dictCollectionId){
+			portletURL.setParameter('<%=DictItemDisplayTerms.DICTCOLLECTION_ID %>', dictCollectionId);
+		}
+		var keyword = A.one('#<portlet:namespace/>item-name') ? 
+				A.one('#<portlet:namespace/>item-name').attr('value') : '';
+		var itemLinkedId = A.one('#<portlet:namespace/>item-linked') ?
+				A.one('#<portlet:namespace/>item-linked').attr('value') : 0;
+		var status = A.one('#<portlet:namespace/>itemsStatusInUsed') ?
+				A.one('#<portlet:namespace/>itemsStatusInUsed').attr('value') : 1;
+		portletURL.setParameter('searchKeyword', keyword);
+		portletURL.setParameter('itemLinkedId', itemLinkedId);
+		portletURL.setParameter('itemsStatus', status);
+		
+		A.io.request(
+				portletURL.toString(),
+			{
+			    dataType: 'json',
+			    data: {},   
+			    on: {
+			        success: function(event, id, obj){
+			        	loadingMask.hide();
+			        	
+						var instance = this;
+						var items = instance.get('responseData');
+						var itemsContainer = A.one("#<portlet:namespace/>collection-detail");
+						
+						if (itemsContainer){
+							itemsContainer.html(items);
+						}
+						getDictItems(selectedDictCollectionId);
+						// items status
+						if (A.one('#<portlet:namespace/>itemsStatusInUsed')){
+							A.one('#<portlet:namespace/>itemsStatusInUsed').on('change', function(){
+								getDictItems(selectedDictCollectionId);
+							});
+						}
+						// add button dict item
+						if (A.one('#<portlet:namespace/>add-item')){
+							A.one('#<portlet:namespace/>add-item').on('click', function(){
+								editDictItem();
+							});
+						}
+						// search items
+						if (A.one('#<portlet:namespace/>search-item-button')){
+							A.one('#<portlet:namespace/>search-item-button').on('click', function(){
+								getDictItems(selectedDictCollectionId);
+							});
+						}
+						if (A.one('#<portlet:namespace/>item-name')){
+							A.one('#<portlet:namespace/>item-name').on('keyup', function(){
+								getDictItems(selectedDictCollectionId);
+							})
+						}
+						if (A.one('#<portlet:namespace/>item-linked')){
+							A.one('#<portlet:namespace/>item-linked').on('change', function(){
+								getDictItems(selectedDictCollectionId);
+							})
+						}
+						
+					},
+			    	error: function(){
+			    		loadingMask.hide();
+			    	}
+				}
+			}
+		);
+	},['aui-base','liferay-portlet-url','aui-io']);
+	
+	Liferay.provide(window, 'getDictItems', function(dictCollectionId, cur){
 		if (!Liferay.ThemeDisplay.isSignedIn()){
 			alert(Liferay.Language.get('please-login-and-try-again'));
 			return;
@@ -191,28 +278,30 @@
 		var loadingMask = new A.LoadingMask(
 			{
 				'strings.loading': '<%= UnicodeLanguageUtil.get(pageContext, "...") %>',
-				target: A.one('#<portlet:namespace/>collection-detail')
+				target: A.one('#<portlet:namespace/>dictItems_container')
 			}
 		);
 		loadingMask.show();
 		
 		var iteratorURL = Liferay.PortletURL.createURL('<%=iteratorURL.toString()%>');
-		iteratorURL.setParameter('<%=DictItemDisplayTerms.DICTCOLLECTION_ID %>', selectedDictCollectionId);
+		if (dictCollectionId){
+			iteratorURL.setParameter('<%=DictItemDisplayTerms.DICTCOLLECTION_ID %>', dictCollectionId);
+		}
 		if (cur){
 			iteratorURL.setParameter('cur', cur);
 		} else {
 			iteratorURL.setParameter('cur', '1');
 		}
-		if (keyword){
-			iteratorURL.setParameter('searchKeyword', keyword);
-		}
-		if (itemLinkedId){
-			iteratorURL.setParameter('itemLinkedId', itemLinkedId);
-		}
-		if (status){
-			iteratorURL.setParameter('itemsStatus', status);
-			statusItemSelected = status;
-		}
+		
+		var keyword = A.one('#<portlet:namespace/>item-name') ? 
+				A.one('#<portlet:namespace/>item-name').attr('value') : '';
+		var itemLinkedId = A.one('#<portlet:namespace/>item-linked') ?
+				A.one('#<portlet:namespace/>item-linked').attr('value') : 0;
+		var status = A.one('#<portlet:namespace/>itemsStatusInUsed') ?
+				A.one('#<portlet:namespace/>itemsStatusInUsed').attr('value') : 1;
+		iteratorURL.setParameter('searchKeyword', keyword);
+		iteratorURL.setParameter('itemLinkedId', itemLinkedId);
+		iteratorURL.setParameter('itemsStatus', status);
 		
 		A.io.request(
 			iteratorURL.toString(),
@@ -225,7 +314,7 @@
 			        	
 						var instance = this;
 						var items = instance.get('responseData');
-						var itemsContainer = A.one("#<portlet:namespace/>collection-detail");
+						var itemsContainer = A.one("#<portlet:namespace/>dictItems_container");
 						
 						if (itemsContainer){
 							itemsContainer.html(items);
@@ -237,16 +326,8 @@
 							A.all('.items-container').all('.pagination').all('a').each(function(navigation){
 								navigation.on('click', function(event){
 									event.preventDefault();
-									
 									var cur = event['target']['_node']['innerText'];
-									var searchKeyword = A.one('#<portlet:namespace/>item-name') ?
-											A.one('#<portlet:namespace/>item-name').attr('value') : '';
-									var itemLinkedIdSearch = A.one('#<portlet:namespace/>item-linked') ?
-											A.one('#<portlet:namespace/>item-linked').attr('value') : 0;
-									var itemsStatusInUsed = A.one('#<portlet:namespace/>itemsStatusInUsed') ?
-											A.one('#<portlet:namespace/>itemsStatusInUsed').attr('value') : 1;
-									
-									getDictItems(selectedDictCollectionId, cur, searchKeyword, itemLinkedIdSearch, itemsStatusInUsed);
+									getDictItems(selectedDictCollectionId, cur);
 								});
 							});
 						}
@@ -269,7 +350,7 @@
 									event.preventDefault();
 									if (confirm(Liferay.Language.get('are-you-sure-change-item-to-no-use'))){
 										changeStatusItemToNoUse(itemId);
-										getDictItems(selectedDictCollectionId, 1, false, false, statusItemSelected);
+										getDictItems(selectedDictCollectionId);
 									}
 								});
 							});
@@ -282,64 +363,11 @@
 								button.on('click', function(event){
 									event.preventDefault();
 									if (confirm(Liferay.Language.get('are-you-sure-delete-item'))){
-										//todo
 										deleteDictItem(itemId);
-										getDictItems(selectedDictCollectionId, 1, false, false, statusItemSelected);
+										getDictItemsToolbar(selectedDictCollectionId);
 									}
 								});
 							});
-						}
-						// items status
-						if (A.one('#<portlet:namespace/>itemsStatusInUsed')){
-							A.one('#<portlet:namespace/>itemsStatusInUsed').on('change', function(){
-								var searchKeyword = A.one('#<portlet:namespace/>item-name') ? 
-										A.one('#<portlet:namespace/>item-name').attr('value') : '';
-								var itemLinkedIdSearch = A.one('#<portlet:namespace/>item-linked') ?
-										A.one('#<portlet:namespace/>item-linked').attr('value') : 0;
-								var itemsStatusInUsed = A.one('#<portlet:namespace/>itemsStatusInUsed') ?
-										A.one('#<portlet:namespace/>itemsStatusInUsed').attr('value') : 1;
-								getDictItems(selectedDictCollectionId, 1, searchKeyword, itemLinkedIdSearch, itemsStatusInUsed);
-							});
-						}
-						// add button dict item
-						if (A.one('#<portlet:namespace/>add-item')){
-							A.one('#<portlet:namespace/>add-item').on('click', function(){
-								editDictItem();
-							});
-						}
-						// search items
-						if (A.one('#<portlet:namespace/>search-item-button')){
-							A.one('#<portlet:namespace/>search-item-button').on('click', function(){
-								var searchKeyword = A.one('#<portlet:namespace/>item-name') ? 
-										A.one('#<portlet:namespace/>item-name').attr('value') : '';
-								var itemLinkedIdSearch = A.one('#<portlet:namespace/>item-linked') ?
-										A.one('#<portlet:namespace/>item-linked').attr('value') : 0;
-								var itemsStatusInUsed = A.one('#<portlet:namespace/>itemsStatusInUsed') ?
-										A.one('#<portlet:namespace/>itemsStatusInUsed').attr('value') : 1;
-								getDictItems(selectedDictCollectionId, 1, searchKeyword, itemLinkedIdSearch, itemsStatusInUsed);
-							});
-						}
-						if (A.one('#<portlet:namespace/>item-name')){
-							A.one('#<portlet:namespace/>item-name').on('change', function(){
-								var searchKeyword = A.one('#<portlet:namespace/>item-name') ? 
-										A.one('#<portlet:namespace/>item-name').attr('value') : '';
-								var itemLinkedIdSearch = A.one('#<portlet:namespace/>item-linked') ?
-										A.one('#<portlet:namespace/>item-linked').attr('value') : 0;
-								var itemsStatusInUsed = A.one('#<portlet:namespace/>itemsStatusInUsed') ?
-										A.one('#<portlet:namespace/>itemsStatusInUsed').attr('value') : 1;
-								getDictItems(selectedDictCollectionId, 1, searchKeyword, itemLinkedIdSearch, itemsStatusInUsed);
-							})
-						}
-						if (A.one('#<portlet:namespace/>item-linked')){
-							A.one('#<portlet:namespace/>item-linked').on('change', function(){
-								var searchKeyword = A.one('#<portlet:namespace/>item-name') ? 
-										A.one('#<portlet:namespace/>item-name').attr('value') : '';
-								var itemLinkedIdSearch = A.one('#<portlet:namespace/>item-linked') ?
-										A.one('#<portlet:namespace/>item-linked').attr('value') : 0;
-								var itemsStatusInUsed = A.one('#<portlet:namespace/>itemsStatusInUsed') ?
-										A.one('#<portlet:namespace/>itemsStatusInUsed').attr('value') : 1;
-								getDictItems(selectedDictCollectionId, 1, searchKeyword, itemLinkedIdSearch, itemsStatusInUsed);
-							})
 						}
 						//
 						if (A.one('.lfr-pagination-delta-selector')){
@@ -348,7 +376,6 @@
 							});
 						}
 						
-						scrollWindow();
 					},
 			    	error: function(){
 			    		loadingMask.hide();
@@ -409,7 +436,6 @@
 							});
 						}
 						
-						scrollWindow();
 					},
 			    	error: function(){
 			    		loadingMask.hide();
@@ -502,6 +528,56 @@
 		);
 	},['aui-base','liferay-portlet-url','aui-io']);
 	
+	Liferay.provide(window, 'deleteDictCollection', function(collectionId){
+		if (!Liferay.ThemeDisplay.isSignedIn()){
+			alert(Liferay.Language.get('please-login-and-try-again'));
+			return;
+		}
+		
+		if (!confirm(Liferay.Language.get('are-you-sure'))){
+			return;
+		}
+		
+		var loadingMask = new A.LoadingMask(
+			{
+				'strings.loading': '<%= UnicodeLanguageUtil.get(pageContext, "...") %>',
+				target: A.one('#<portlet:namespace/>collection-detail')
+			}
+		);
+		loadingMask.show();
+		
+		var portletURL = Liferay.PortletURL.createURL('<%= PortletURLFactoryUtil.create(request, WebKeys.DATA_MANAGEMENT_ADMIN_PORTLET, themeDisplay.getPlid(), PortletRequest.ACTION_PHASE) %>');
+		portletURL.setParameter("javax.portlet.action", "deleteDictCollection");
+		portletURL.setWindowState('<%=WindowState.NORMAL%>');
+		
+		if (collectionId){
+			portletURL.setParameter('<%=DictItemDisplayTerms.DICTCOLLECTION_ID %>', collectionId);
+		}
+		
+		A.io.request(
+			portletURL.toString(),
+			{
+			    dataType: 'json',
+			    data: {},   
+			    on: {
+			        success: function(event, id, obj){
+			        	loadingMask.hide();
+			        	
+			        	getDictCollections('');
+			        	getDictCollectionDetail();
+			        	
+			        	if (A.one('#<portlet:namespace/>collection-name')){
+			        		A.one('#<portlet:namespace/>collection-name').attr('value', '');
+			        	}
+					},
+			    	error: function(){
+			    		loadingMask.hide();
+			    	}
+				}
+			}
+		);
+	},['aui-base','liferay-portlet-url','aui-io']);
+	
 	Liferay.provide(window, 'editDictItem', function(itemId){
 		if (!Liferay.ThemeDisplay.isSignedIn()){
 			alert(Liferay.Language.get('please-login-and-try-again'));
@@ -583,7 +659,7 @@
 								.one('#<portlet:namespace/>cancel')
 									.on('click', function(event){
 								event.preventDefault();
-								getDictItems(selectedDictCollectionId);
+								getDictItemsToolbar(selectedDictCollectionId);
 							});
 						}
 					},
@@ -655,7 +731,9 @@
 			        success: function(event, id, obj){
 			        	needConfirnChangeView = false;
 			        	loadingMask.hide();
-			        	getDictCollections();
+			        	var collectionName = A.one('#<portlet:namespace/>collection-name') ? 
+								A.one('#<portlet:namespace/>collection-name').attr('value') : '';
+			        	getDictCollections(collectionName);
 						alert(Liferay.Language.get('success'));
 					},
 			    	error: function(){
@@ -737,7 +815,7 @@
 			    on: {
 			        success: function(event, id, obj){
 			        	setTimeout(function(){
-							getDictItems(selectedDictCollectionId);
+							getDictItemsToolbar(selectedDictCollectionId);
 							alert(Liferay.Language.get('success'));
 						}, 1000);
 					},
@@ -779,7 +857,7 @@
 			    on: {
 			        success: function(event, id, obj){
 			        	setTimeout(function(){
-							getDictItems(selectedDictCollectionId);
+			        		getDictItemsToolbar(selectedDictCollectionId);
 							alert(Liferay.Language.get('success'));
 						}, 1000);
 					},

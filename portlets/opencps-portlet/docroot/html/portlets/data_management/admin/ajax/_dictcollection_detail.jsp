@@ -74,9 +74,10 @@
 	</div>
 
 	<div>
-		<p><span><liferay-ui:message key='dictcollection-code' />:</span> <%=collection.getCollectionCode() %></p>
-		<p><span><liferay-ui:message key='dictcollection-name' />:</span> <%=collection.getCollectionName(locale) %></p>
-		<p><span><liferay-ui:message key='dictcollection-types' />:</span> <%=typesStr %></p>
+		<p><span><liferay-ui:message key='collection-code' />:</span> <%=collection.getCollectionCode() %></p>
+		<p><span><liferay-ui:message key='collection-name' />:</span> <%=collection.getCollectionName(locale) %></p>
+		<p><span><liferay-ui:message key='collection-escription' />:</span> <%=collection.getDescription() %></p>
+		<p><span><liferay-ui:message key='collection-types' />:</span> <%=typesStr %></p>
 	</div>
 	
 	<div>
@@ -114,6 +115,7 @@
 				url="<%=deleteDictCollectionURL.toString() %>" 
 			/> --%>
 			<aui:button 
+				name="delete-collection-button"
 				type="submit" cssClass="delete-button" value="delete"
 			/>
 	 	</c:if>

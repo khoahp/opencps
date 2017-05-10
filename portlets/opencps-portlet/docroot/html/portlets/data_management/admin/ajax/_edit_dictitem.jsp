@@ -109,9 +109,9 @@
 				</div>
 				
 				<aui:select name="itemsStatusInUsed">
-					<aui:option value="0" label="draf" />
-					<aui:option value="1" label="in-used" />
-					<aui:option value="2" label="no-used" />
+					<aui:option value="0" label="draf" selected="<%=dictItem != null ? dictItem.getIssueStatus() == 0 : false %>" />
+					<aui:option value="1" label="in-used" selected="<%=(dictItem != null ? dictItem.getIssueStatus() == 1 : false) || dictItem == null%>" />
+					<aui:option value="2" label="no-used" selected="<%=dictItem != null ? dictItem.getIssueStatus() == 2 : false %>" />
 				</aui:select>
 				
 				<!-- dictItem linked -->
