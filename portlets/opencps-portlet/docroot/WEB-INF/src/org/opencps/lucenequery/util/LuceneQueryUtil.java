@@ -18,6 +18,8 @@ import com.liferay.portal.kernel.search.Indexer;
 import com.liferay.portal.kernel.search.IndexerRegistryUtil;
 import com.liferay.portal.kernel.search.ParseException;
 import com.liferay.portal.kernel.search.SearchContext;
+import com.liferay.portal.kernel.search.TermQuery;
+import com.liferay.portal.kernel.search.TermQueryFactoryUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
@@ -180,7 +182,29 @@ public class LuceneQueryUtil {
 											0,
 											term.indexOf(StringPool.EQUAL
 													.toLowerCase())).trim();
-							addExactTerm(query, key, params.get(paramPossition));
+							// addExactTerm(query, key,
+							// params.get(paramPossition));
+							TermQuery termQuery = null;
+
+							Object tempValue = params.get(paramPossition);
+
+							if (tempValue instanceof Long) {
+								termQuery = TermQueryFactoryUtil.create(
+										searchContext, key, (long) tempValue);
+							} else if (tempValue instanceof String) {
+								termQuery = TermQueryFactoryUtil.create(
+										searchContext, key, (String) tempValue);
+							} else {
+								_log.warn("################################ Can not create TermQuery width key = "
+										+ key
+										+ " param = "
+										+ tempValue.toString());
+							}
+
+							if (termQuery != null) {
+								query.add(termQuery, BooleanClauseOccur.MUST);
+							}
+
 						} else if (term.contains(StringPool.LIKE.toLowerCase())) {
 							key = term
 									.substring(
@@ -241,7 +265,29 @@ public class LuceneQueryUtil {
 											0,
 											term.indexOf(StringPool.EQUAL
 													.toLowerCase())).trim();
-							addExactTerm(query, key, params.get(paramPossition));
+							// addExactTerm(query, key,
+							// params.get(paramPossition));
+
+							TermQuery termQuery = null;
+
+							Object tempValue = params.get(paramPossition);
+
+							if (tempValue instanceof Long) {
+								termQuery = TermQueryFactoryUtil.create(
+										searchContext, key, (long) tempValue);
+							} else if (tempValue instanceof String) {
+								termQuery = TermQueryFactoryUtil.create(
+										searchContext, key, (String) tempValue);
+							} else {
+								_log.warn("################################ Can not create TermQuery width key = "
+										+ key
+										+ " param = "
+										+ tempValue.toString());
+							}
+
+							if (termQuery != null) {
+								query.add(termQuery, BooleanClauseOccur.MUST);
+							}
 						} else if (term.contains(StringPool.LIKE.toLowerCase())) {
 							key = term
 									.substring(
