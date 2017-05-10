@@ -69,7 +69,7 @@ public class DossierSearch extends SearchContainer<Dossier> {
 	}
 	public static final String EMPTY_RESULTS_MESSAGE =
 	    "no-dossier-were-found";
-
+	
 	public DossierSearch(
 	    PortletRequest portletRequest, int delta, PortletURL iteratorURL) {
 
@@ -77,7 +77,14 @@ public class DossierSearch extends SearchContainer<Dossier> {
 	}
 	
 	public DossierSearch(
-	    PortletRequest portletRequest, int delta, PortletURL iteratorURL, List<String> headerNames) {
+		    PortletRequest portletRequest, int delta, PortletURL iteratorURL, List<String> headerNames) {
+		
+		this(portletRequest, delta, iteratorURL, headerNames, true);
+	}
+	
+	public DossierSearch(
+	    PortletRequest portletRequest, int delta, PortletURL iteratorURL, List<String> headerNames, 
+	    Boolean appendIteratorURL) {
 
 		super(
 		    portletRequest, new DossierDisplayTerms(
@@ -85,28 +92,30 @@ public class DossierSearch extends SearchContainer<Dossier> {
 		            portletRequest), DEFAULT_CUR_PARAM, delta, iteratorURL, 
 		    	headerNames, EMPTY_RESULTS_MESSAGE);
 
-		DossierDisplayTerms displayTerms =
-		    (DossierDisplayTerms) getDisplayTerms();
-		
-		iteratorURL
-		    .setParameter("serviceDomainId", displayTerms
-		        .getServiceDomainIndex());
-		iteratorURL
-		    .setParameter(DossierDisplayTerms.DOSSIER_STATUS, String.valueOf(displayTerms
-		        .getDossierStatus()));
-
-		iteratorURL
-		    .setParameter(DossierDisplayTerms.GROUP_ID, String
-		        .valueOf(displayTerms
-		            .getGroupId()));
-		iteratorURL
-		    .setParameter(DossierDisplayTerms.CREATE_DATE, DateTimeUtil
-		        .convertDateToString(displayTerms
-		            .getCreateDate(), DateTimeUtil._VN_DATE_TIME_FORMAT));
-		iteratorURL
-		    .setParameter(DossierDisplayTerms.RECEIVE_DATETIME, DateTimeUtil
-		        .convertDateToString(displayTerms
-		            .getReceiveDatetime(), DateTimeUtil._VN_DATE_TIME_FORMAT));
+		if(appendIteratorURL != null && appendIteratorURL.booleanValue()) {
+			DossierDisplayTerms displayTerms =
+				    (DossierDisplayTerms) getDisplayTerms();
+			
+			iteratorURL
+			    .setParameter("serviceDomainId", displayTerms
+			        .getServiceDomainIndex());
+			iteratorURL
+			    .setParameter(DossierDisplayTerms.DOSSIER_STATUS, String.valueOf(displayTerms
+			        .getDossierStatus()));
+	
+			iteratorURL
+			    .setParameter(DossierDisplayTerms.GROUP_ID, String
+			        .valueOf(displayTerms
+			            .getGroupId()));
+			iteratorURL
+			    .setParameter(DossierDisplayTerms.CREATE_DATE, DateTimeUtil
+			        .convertDateToString(displayTerms
+			            .getCreateDate(), DateTimeUtil._VN_DATE_TIME_FORMAT));
+			iteratorURL
+			    .setParameter(DossierDisplayTerms.RECEIVE_DATETIME, DateTimeUtil
+			        .convertDateToString(displayTerms
+			            .getReceiveDatetime(), DateTimeUtil._VN_DATE_TIME_FORMAT));
+		}
 		
 		try {
 
@@ -134,6 +143,13 @@ public class DossierSearch extends SearchContainer<Dossier> {
 
 		this(
 		    portletRequest, DEFAULT_DELTA, iteratorURL);
+	}
+	
+	public DossierSearch(
+			PortletRequest portletRequest, PortletURL iteratorURL, List<String> headerNames, 
+			Boolean appendIteratorURL) {
+
+		this(portletRequest, DEFAULT_DELTA, iteratorURL, headerNames, appendIteratorURL);
 	}
 
 	private static Log _log = LogFactoryUtil

@@ -17,16 +17,7 @@
 
 package org.opencps.dossiermgt.search;
 
-import java.util.Date;
-
 import javax.portlet.PortletRequest;
-
-import org.opencps.util.DateTimeUtil;
-import org.opencps.util.PortletConstants;
-
-import com.liferay.portal.kernel.dao.search.DAOParamUtil;
-import com.liferay.portal.kernel.util.ParamUtil;
-import com.liferay.portal.kernel.util.StringPool;
 
 /**
  * @author trungnt
@@ -34,126 +25,6 @@ import com.liferay.portal.kernel.util.StringPool;
 public class DossierSearchTerms extends DossierDisplayTerms {
 
 	public DossierSearchTerms(PortletRequest portletRequest) {
-		super(
-			portletRequest);
-
-		createDate = ParamUtil
-			.getDate(portletRequest, CREATE_DATE, DateTimeUtil
-				.getDateTimeFormat(DateTimeUtil._VN_DATE_TIME_FORMAT));
-
-		receiveDatetime = ParamUtil
-			.getDate(portletRequest, RECEIVE_DATETIME, DateTimeUtil
-				.getDateTimeFormat(DateTimeUtil._VN_DATE_TIME_FORMAT));
-		dossierStatus = ParamUtil
-			.getString(portletRequest, DOSSIER_STATUS,
-				StringPool.BLANK);
-
-		serviceName = DAOParamUtil
-			.getString(portletRequest, SERVICE_NAME);
-
-		modifiedDate = ParamUtil
-			.getDate(portletRequest, MODIFIED_DATE, DateTimeUtil
-				.getDateTimeFormat(DateTimeUtil._VN_DATE_TIME_FORMAT));
-
-		receptionNo = DAOParamUtil
-			.getString(portletRequest, RECEPTION_NO);
-
-		domainCode = DAOParamUtil
-			.getString(portletRequest, SERVICE_DOMAIN_CODE);
-
-		govAgencyName = DAOParamUtil
-			.getString(portletRequest, GOVAGENCY_NAME);
-		
-		serviceDomainId = DAOParamUtil
-				.getString(portletRequest, "serviceDomainId");
-
-	}
-
-	public String getDossierStatus() {
-
-		return dossierStatus;
-	}
-
-	public void setDossierStatus(String dossierStatus) {
-
-		this.dossierStatus = dossierStatus;
-	}
-
-	public String getServiceName() {
-
-		return serviceName;
-	}
-
-	public void setServiceName(String serviceName) {
-
-		this.serviceName = serviceName;
-	}
-
-	public String getGovAgencyName() {
-
-		return govAgencyName;
-	}
-
-	public void setGovAgencyName(String govAgencyName) {
-
-		this.govAgencyName = govAgencyName;
-	}
-
-	public String getReceptionNo() {
-
-		return receptionNo;
-	}
-
-	public void setReceptionNo(String receptionNo) {
-
-		this.receptionNo = receptionNo;
-	}
-
-	public Date getCreateDate() {
-
-		return createDate;
-	}
-
-	public void setCreateDate(Date createDate) {
-
-		this.createDate = createDate;
-	}
-
-	public Date getReceiveDatetime() {
-
-		return receiveDatetime;
-	}
-
-	public void setReceiveDatetime(Date receiveDatetime) {
-
-		this.receiveDatetime = receiveDatetime;
-	}
-
-	protected String dossierStatus;
-	protected String serviceName;
-	protected String domainCode;
-
-	public String getDomainCode() {
-
-		return domainCode;
-	}
-
-	public void setDomainCode(String domainCode) {
-
-		this.domainCode = domainCode;
-	}
-
-	protected String govAgencyName;
-	protected String receptionNo;
-	protected Date createDate;
-	protected Date receiveDatetime;
-	protected String serviceDomainId;
-
-	public String getServiceDomainId() {
-		return serviceDomainId;
-	}
-
-	public void setServiceDomainId(String serviceDomainId) {
-		this.serviceDomainId = serviceDomainId;
+		super(portletRequest);
 	}
 }
