@@ -8,6 +8,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
@@ -25,7 +26,6 @@ import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.User;
 import com.liferay.portal.model.UserNotificationEvent;
@@ -145,11 +145,11 @@ public class OCPSNotificationController {
 	}
 
 	@POST
-	@Path("/marknotificationasreaded")
+	@Path("/notifications/{notificationsid: .*}/read")
 	@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
 	public Response markNotificationAsReaded(
 			@HeaderParam("apiKey") String apiKey,
-			@Context HttpServletRequest request, String body) {
+			@Context HttpServletRequest request, String body, @PathParam("notificationsid") long notificationsid) {
 
 		OCPSAuth auth = new OCPSAuth();
 
@@ -173,20 +173,23 @@ public class OCPSNotificationController {
 					for (int i = 0; i < jsonArray.length(); i++) {
 						JSONObject jsonObject = jsonArray.getJSONObject(i);
 
-						try {
-
-							arrchived = NotificationUtils
-									.updateArchived(jsonObject.getLong("userNotificationEventId"));
-						} catch (Exception e) {
-
-						}
-						respOb.put("userNotificationEventId", jsonObject.getString("userNotificationEventId"));
-						respOb.put("archived", arrchived);
-
-						resp.put(respOb);
 					}
 
 				}
+				
+				try {
+
+					arrchived = NotificationUtils
+							.updateArchived(notificationsid);
+					
+				} catch (Exception e) {
+
+				}
+				
+				respOb.put("userNotificationEventId", notificationsid);
+				respOb.put("archived", arrchived);
+
+				resp.put(respOb);
 
 				return Response.status(200).entity(resp.toString()).build();
 

@@ -33,23 +33,34 @@
 		<reference entity="User" package-path="com.liferay.portal" />
 	</entity>
 	
-	<entity name="IntegrateAPILogs" local-service="true" table="opencps_apikey_log"
-		remote-service="true">
+	<entity name="ForgotPass" local-service="true" table="opencps_verifycode"
+		remote-service="false">
 
-		<column name="id" type="long" primary="true"></column>
-		<column name="companyId" type="long"></column>
-		<column name="groupId" type="long"></column>
-		<column name="userId" type="long"></column>
-		<column name="createDate" type="Date"></column>
-		<column name="modifiedDate" type="Date"></column>
-		<column name="actionCode" type="Date"></column>
-		<column name="apiKey" type="String"></column>
-
+		<column name="id" type="long" primary="true"/>
+		<column name="createDate" type="Date"/>
+		<column name="verifyCode" type="String"/>
+		<column name="verifyDate" type="Date"/>
+		<column name="expiredDate" type="Date"/>
+		<column name="userid" type="long"/>
+		<column name="inused" type="boolean"/>
+		
+		<!-- Finder -->
+		<finder return-type="ForgotPass" name="V_C">
+			<finder-column name="verifyCode"/>
+		</finder>
+		
+		<finder return-type="Collection" name="U_ID">
+			<finder-column name="userid"/>
+		</finder>
+		
 	</entity>
+	
+	
 	
 	<exceptions>
 		<exception>DossierStatus</exception>
 		<exception>NoMessageContent</exception>
 		<exception>InvalidMessageContent</exception>
+		<exception>InvalidOldPass</exception>
 	</exceptions>
 </service-builder>
