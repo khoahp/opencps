@@ -9,6 +9,7 @@ import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -40,7 +41,8 @@ public class OCPSNotificationController {
 	@Path("/notifications")
 	@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
 	public Response getNotifications(@HeaderParam("apiKey") String apikey,
-			@Context HttpServletRequest request, String body) {
+			@Context HttpServletRequest request, @QueryParam("email") String email,
+			@QueryParam("start") int start, @QueryParam("end") int end) {
 
 		OCPSAuth auth = new OCPSAuth();
 
@@ -51,12 +53,14 @@ public class OCPSNotificationController {
 		if (Validator.isNotNull(api)) {
 
 			try {
-
-				req = JSONFactoryUtil.createJSONObject(body);
-
-				String email = req.getString("email", StringPool.BLANK);
-				int start = req.getInt("start", QueryUtil.ALL_POS);
-				int end = req.getInt("end", QueryUtil.ALL_POS);
+				
+				if (start == 0) {
+					start = QueryUtil.ALL_POS;
+				}
+				
+				if (end == 0) {
+					end = QueryUtil.ALL_POS;
+				}
 
 				ServiceContext context = ServiceContextFactory
 						.getInstance(request);
