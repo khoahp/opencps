@@ -93,15 +93,21 @@
 		}
 	});
 	
-	//////// functions list
-	// 'getDictCollectionDetail' : load detail of the dict collection
-	// 'getDictItems' : load dict item list of the dict colleciton
-	// 'getDictCollections' : load dict collection list and push into the left div
-	// 'editDictCollection' : load page edit collection
-	// 'updateDictCollection' : do update dict collection
-	// 'editDictItem' : load page edit dict item
-	// 'updateDictItem': do update dict item
-	// 'deleteDictItem'
+//////// functions list
+// 	Liferay.provide(window, 'getDictCollectionDetail', function(collectionId){
+// 	Liferay.provide(window, 'getDictItemsToolbar', function(dictCollectionId){
+// 	Liferay.provide(window, 'getDictItems', function(dictCollectionId, cur){
+// 	Liferay.provide(window, 'getDictCollections', function(collectionName){
+// 	Liferay.provide(window, 'editDictCollection', function(collectionId){
+// 	Liferay.provide(window, 'deleteDictCollection', function(collectionId){
+// 	Liferay.provide(window, 'editDictItem', function(itemId){
+// 	Liferay.provide(window, 'updateDictCollection', function(dictCollectionId){
+// 	Liferay.provide(window, 'updateDictItem', function(dictItemId, dictCollectionId){
+// 	Liferay.provide(window, 'changeStatusItemToNoUse', function(dictItemId){
+// 	Liferay.provide(window, 'deleteDictItem', function(dictItemId){
+// 	Liferay.provide(window, 'getSelectSibling', function(dictCollectionId, parentItemId, dictItemId){
+// 	Liferay.provide(window, 'getDictItemsLinked', function(dictCollectionId, dictItemId){
+// 	Liferay.provide(window, 'getDictItemsList', function(dictCollectionId, dictItemId){
 	
 	var selectedDictCollectionId = 0;	
 	var updateDictCollectionId = 0;
