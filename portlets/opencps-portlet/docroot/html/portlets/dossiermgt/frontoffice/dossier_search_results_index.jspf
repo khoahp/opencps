@@ -26,9 +26,9 @@
 
 <%
 
-String pattern = "(articleId=?)";
+String pattern = "(govAgencyCode=?)";
 List<String> paramValues = new ArrayList<String>();
-paramValues.add("CVDTNDKV4");
+paramValues.add(dklr_v10_administrationCode.toLowerCase());
 
 List<String> paramTypes = new ArrayList<String>();
 paramTypes.add("String");
@@ -54,4 +54,6 @@ for (com.liferay.portal.kernel.search.Document document : documents) {
 
 searchContainer.setResults(dossierIndexResults);
 searchContainer.setTotal(hits.getLength());
+
+System.out.println("===hits.getLength()===" + hits.getLength());
 %>

@@ -201,7 +201,7 @@
 								}
 								
 								%>
-										<%@include file="/html/portlets/dossiermgt/frontoffice/dosier_search_results_index.jspf" %>
+										<%@include file="/html/portlets/dossiermgt/frontoffice/dossier_search_results_index.jspf" %>
 								<%
 							}catch(Exception e){
 								_log.error(e);
@@ -209,16 +209,19 @@
 						%>
 					</liferay-ui:search-container-results>	
 						<liferay-ui:search-container-row 
-							className="org.opencps.dossiermgt.bean.DossierBean" 
-							modelVar="dossierBean" 
+							className="org.opencps.dossiermgt.model.Dossier" 
+							escapedModel="<%= true %>"
+							modelVar="dossier" 
 							keyProperty="dossierId"
 						>
 						
 						<%
-							Dossier dossier = dossierBean.getDossier();
 							String cssStatusColor = "status-color-" + dossier.getDossierStatus();
+							
 							List<DossierLog> dossierLogs = new ArrayList<DossierLog>();
+							
 							String noteContent = StringPool.BLANK;
+							
 							try {
 								dossierLogs = DossierLogLocalServiceUtil.findDossierLog(1, dossier.getDossierId(), 0, 1);
 								if(dossierLogs.size() > 0) {
@@ -227,6 +230,17 @@
 							} catch(Exception e) {
 								_log.error(e);
 							}
+							
+							long serviceInfoId = dossier.getServiceInfoId();
+							ServiceInfo serviceInfo = null;
+							
+							try {
+								serviceInfo = ServiceInfoLocalServiceUtil.getServiceInfo(serviceInfoId);
+							} catch(Exception e) {
+								_log.error(e);
+							}
+							
+							String serviceName = serviceInfo != null ? serviceInfo.getServiceName() : StringPool.BLANK;
 						%>
 						<liferay-util:buffer var="col1">
 							<div class="dossier-list-stt">
@@ -244,7 +258,7 @@
 						
 						<liferay-util:buffer var="col4">
 							<div class="dossier-list-service-name">
-								<%=dossierBean.getServiceName() %>
+								<%=serviceName %>
 							</div>
 						</liferay-util:buffer>
 						
@@ -275,7 +289,7 @@
 							row.addText(col4);
 							row.addText(col5);
 							row.addText(col6);
-							row.addJSP("center", SearchEntry.DEFAULT_VALIGN,"/html/portlets/dossiermgt/frontoffice/dossier_actions.jsp", 
+							row.addJSP("center", SearchEntry.DEFAULT_VALIGN,"/html/portlets/dossiermgt/frontoffice/display/dossierlist/dossier_actions_dklr_v10.jsp", 
 										config.getServletContext(), request, response);
 							
 						%>	
