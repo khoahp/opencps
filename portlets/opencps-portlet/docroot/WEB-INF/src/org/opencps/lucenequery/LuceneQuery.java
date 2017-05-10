@@ -14,6 +14,7 @@ import com.liferay.portal.kernel.search.BooleanQuery;
 import com.liferay.portal.kernel.search.BooleanQueryFactoryUtil;
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 
@@ -219,7 +220,7 @@ public class LuceneQuery {
 		List<Class<?>> clazzs = new ArrayList<Class<?>>();
 
 		String[] arrParamValue = Validator.isNotNull(paramValues) ? StringUtil
-				.split(paramValues) : null;
+				.split(paramValues, StringPool.POUND) : null;
 		String[] arrParamTypes = Validator.isNotNull(paramTypes) ? StringUtil
 				.split(paramTypes) : null;
 

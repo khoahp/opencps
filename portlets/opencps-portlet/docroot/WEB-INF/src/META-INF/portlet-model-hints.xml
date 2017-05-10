@@ -1034,6 +1034,11 @@
 		<field name="modifiedDate" type="Date" />
 		<field name="name" type="String" />
 	</model>
+	<model name="org.opencps.lucenequery.model.LuceneMenuRole">
+		<field name="id" type="long" />
+		<field name="menuItemId" type="long" />
+		<field name="roleId" type="long" />
+	</model>
 	<model name="org.opencps.lucenequery.model.LuceneQueryPattern">
 		<field name="patternId" type="long" />
 		<field name="companyId" type="long" />

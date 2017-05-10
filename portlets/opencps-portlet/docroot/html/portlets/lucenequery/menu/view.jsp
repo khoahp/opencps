@@ -60,7 +60,7 @@
 	<ul class="lucene-menu-wrapper">
 		<li>
 		<%
-		
+			int[] expandAt = new int[]{0, 0};
 			for(int i = 0; i < menuGroupIds.length; i++){
 				
 				LuceneMenuGroup luceneMenuGroup = null;
@@ -100,6 +100,12 @@
 						if(!LuceneMenuRoleLocalServiceUtil.hasPermission(menuItem.getMenuItemId(), 
 								user.getUserId())){
 							continue;
+						}
+						
+						String cssExpandGroup = "closed";
+						
+						if(i == expandAt[0] && treeMenu.indexOf(menuItem) == expandAt[1]){
+							cssExpandGroup = "expanded";
 						}
 						
 						Hits hits = null;
@@ -151,7 +157,7 @@
 						if(menuItem.getLevel() > currentLevel){
 							//open <ul><li>
 							%>
-								<ul  class='<%="menu-group group-level-" + menuItem.getLevel()%>'>
+								<ul  class='<%="menu-group group-level-" + menuItem.getLevel() + StringPool.SPACE + cssExpandGroup%>'>
 									<li class='<%="menu-item level-" + menuItem.getLevel()%>'>
 										<i class="fa fa-caret-right" aria-hidden="true"></i>
 										<aui:a href="<%=tempURL.toString() %>">
