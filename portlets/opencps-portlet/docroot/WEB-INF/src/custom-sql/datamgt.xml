@@ -47,7 +47,7 @@
 			FROM 
 				opencps_dictitem AS di 
 			LEFT JOIN
-				noibo_qa.opencps_dictitemlink AS dil
+				opencps_dictitemlink AS dil
 			ON 
 				di.dictItemId = dil.dictItemId
 			WHERE 
@@ -75,7 +75,7 @@
 				FROM 
 					opencps_dictitem AS di 
 				LEFT JOIN
-					noibo_qa.opencps_dictitemlink AS dil
+					opencps_dictitemlink AS dil
 				ON 
 					di.dictItemId = dil.dictItemId
 				WHERE 
