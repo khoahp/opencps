@@ -33,6 +33,8 @@ import org.opencps.api.NoMessageContentException;
 import org.opencps.api.service.ApiServiceLocalServiceUtil;
 import org.opencps.api.service.base.ApiServiceServiceBaseImpl;
 import org.opencps.api.util.APIServiceConstants;
+import org.opencps.api.util.APIUtils;
+import org.opencps.backend.message.PaymentFileObj;
 import org.opencps.backend.message.SendToEngineMsg;
 import org.opencps.backend.message.UserActionMsg;
 import org.opencps.dossiermgt.NoSuchDossierException;
@@ -46,6 +48,10 @@ import org.opencps.dossiermgt.model.ServiceConfig;
 import org.opencps.dossiermgt.service.DossierLocalServiceUtil;
 import org.opencps.jms.business.SyncFromBackOffice;
 import org.opencps.jms.message.body.SyncFromBackOfficeMsgBody;
+import org.opencps.paymentmgt.InvalidPaymentAmountException;
+import org.opencps.paymentmgt.NoSuchPaymentFileException;
+import org.opencps.paymentmgt.model.PaymentFile;
+import org.opencps.paymentmgt.service.PaymentFileLocalServiceUtil;
 import org.opencps.processmgt.NoSuchProcessOrderException;
 import org.opencps.processmgt.NoSuchProcessWorkflowException;
 import org.opencps.processmgt.model.ProcessOrder;
@@ -141,7 +147,7 @@ public class ApiServiceServiceImpl extends ApiServiceServiceBaseImpl {
 			}
 		} catch (Exception e) {
 			result = e.getClass().getName();
-			_log.error(e);
+			e.printStackTrace();
 		}
 		
 		
@@ -168,7 +174,7 @@ public class ApiServiceServiceImpl extends ApiServiceServiceBaseImpl {
 					
 					// DossierLocalServiceUtil.getByGC_DS(govAgencyCode, dossierStatus);
 		} catch (PortalException | SystemException e) {
-			_log.error(e);
+			e.printStackTrace();
 		}
 		
 		
@@ -178,7 +184,7 @@ public class ApiServiceServiceImpl extends ApiServiceServiceBaseImpl {
 				try {
 					serviceInfo = ServiceInfoLocalServiceUtil.getServiceInfo(dossier.getServiceInfoId());
 				} catch (PortalException | SystemException e) {
-					_log.error(e);
+					e.printStackTrace();
 				}
 				String stringJsonMessageContent;
 				try {
@@ -189,7 +195,8 @@ public class ApiServiceServiceImpl extends ApiServiceServiceBaseImpl {
 						jsonMessageObjects.put(jsonMessageContent);
 					}
 				} catch (PortalException | SystemException e) {
-					_log.error(e);
+					// TODO Auto-generated catch block
+					 e.printStackTrace();
 				}
 				
 			}
@@ -211,6 +218,297 @@ public class ApiServiceServiceImpl extends ApiServiceServiceBaseImpl {
 		ApiServiceLocalServiceUtil.addLog(getUserId(), APIServiceConstants.CODE_06, 
 			serviceContext.getRemoteAddr(), phone, inputObj.toString(), 
 			APIServiceConstants.IN, serviceContext);
+	}
+	
+	@JSONWebService(value = "adddossier", method = "POST")
+	public JSONObject updateDossier(String event, String dossierInfo) 
+		throws SystemException, PortalException {
+		
+		JSONObject resultObj = JSONFactoryUtil.createJSONObject();
+		
+		ServiceContext serviceContext = getServiceContext();
+		
+		_log.info("::DOSSIER_INFO:: " + dossierInfo);
+
+		long userId = 0;
+		
+		try {
+			userId = getUserId();
+			
+			JSONObject input = JSONFactoryUtil.createJSONObject();
+			input.put("event", event);
+			input.put("dossierInfo", dossierInfo);
+
+			ApiServiceLocalServiceUtil.addLog(userId,
+				APIServiceConstants.CODE_07, serviceContext.getRemoteAddr(), event, 
+				input.toString(), APIServiceConstants.IN,
+				serviceContext);
+			
+			JSONObject dossierInfoObj = JSONFactoryUtil.createJSONObject(dossierInfo);
+			
+			String govAgencyCode = dossierInfoObj.getString("govAgencyCode");
+			String serviceNo = dossierInfoObj.getString("serviceNo");
+			//String serviceName = dossierInfoObj.getString("serviceName");
+			String receptionNo = dossierInfoObj.getString("receptionNo");
+			String receiveDatetime = dossierInfoObj.getString("receiveDatetime");
+			String estimateDatetime = dossierInfoObj.getString("estimateDatetime");
+			String subjectName = dossierInfoObj.getString("subjectName");
+			String address = dossierInfoObj.getString("address");
+			String cityCode = dossierInfoObj.getString("cityCode");
+			String cityName = dossierInfoObj.getString("cityName");
+			String districtCode = dossierInfoObj.getString("districtCode");
+			String districtName = dossierInfoObj.getString("districtName");
+			String wardCode = dossierInfoObj.getString("wardCode");
+			String wardName = dossierInfoObj.getString("wardName");
+			String contactName = dossierInfoObj.getString("contactName");
+			String contactTelNo = dossierInfoObj.getString("contactTelNo");
+			String contactEmail = dossierInfoObj.getString("contactEmail");
+			String note = dossierInfoObj.getString("note");
+			String dossierFiles = dossierInfoObj.getString("dossierFiles");
+			
+			// if event is submit then create dossier online
+			if(event.equalsIgnoreCase(WebKeys.ACTION_SUBMIT_VALUE)) {
+				if(Validator.isNotNull(contactEmail)) {
+					User userOfDossierOnline = userPersistence.fetchByC_EA(
+							serviceContext.getCompanyId(), contactEmail);
+					
+					if(userOfDossierOnline == null) {
+						// create user citizen
+						Calendar cal = Calendar.getInstance();
+						int birthDateDay = cal.get(Calendar.DAY_OF_MONTH);
+						int birthDateMonth = cal.get(Calendar.MONTH);
+						int birthDateYear = cal.get(Calendar.YEAR);
+
+						Citizen citizen = CitizenLocalServiceUtil.addCitizen(contactName, 
+								StringPool.BLANK, 0,
+								birthDateDay, birthDateMonth, birthDateYear, address, cityCode,
+								districtCode, wardCode, cityName, districtName, wardName,
+								contactEmail, StringPool.BLANK,
+								serviceContext.getScopeGroupId(), StringPool.BLANK,
+								StringPool.BLANK, StringPool.BLANK, null, 0, serviceContext);
+						
+						if(citizen != null) {
+							CitizenLocalServiceUtil.updateStatus(
+								citizen.getCitizenId(), serviceContext.getUserId(),
+								PortletConstants.ACCOUNT_STATUS_APPROVED);
+						}
+						
+						userId = citizen.getMappingUserId();
+						
+						// update default passoword is telNo
+						userLocalService.updatePassword(userId, contactTelNo, contactTelNo, false);
+					} else {
+						userId = userOfDossierOnline.getUserId();
+					}
+					
+					serviceContext.setUserId(userId);
+				} else {
+					throw new NoSuchUserException();
+				}
+			}
+			
+			
+			_log.info("::INFO:: " + serviceNo);
+			
+			ServiceInfo serviceInfo = serviceInfoPersistence.fetchByC_SN(
+				serviceContext.getCompanyId(), serviceNo);
+			
+			_log.info("::INFO:: " + serviceNo + serviceInfo.getServiceinfoId());
+
+			ServiceConfig serviceConfig = serviceConfigPersistence.findByG_S_G(
+				serviceContext.getScopeGroupId(), serviceInfo.getServiceinfoId(), govAgencyCode);
+			
+			//Get dossier status 
+			ProcessWorkflow processWorkflow = APIUtils.getProcessWorkflowByEvent(serviceConfig.getServiceProcessId(), event, 0);
+			
+			String nextStepStatus = APIUtils.getPostDossierStatus(processWorkflow);
+			
+			DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			
+			long ownerOrganizationId = 0;
+			long dossierTemplateId = serviceConfig.getDossierTemplateId();
+			String templateFileNo = StringPool.BLANK;
+			long serviceConfigId = serviceConfig.getServiceConfigId();
+			long serviceInfoId = serviceInfo.getServiceinfoId();
+			String serviceDomainIndex = serviceConfig.getServiceDomainIndex();
+			long govAgencyOrganizationId = serviceConfig.getGovAgencyOrganizationId();
+			String govAgencyName = serviceConfig.getGovAgencyName();
+			int serviceMode = 1; 
+			String serviceAdministrationIndex = serviceConfig.getServiceAdministrationIndex();
+			String subjectId = StringPool.BLANK;
+			
+			String dossierDestinationFolder = StringPool.BLANK;
+
+			SplitDate splitDate = PortletUtil.splitDate(new Date());
+
+			dossierDestinationFolder =
+				PortletUtil.getDossierDestinationFolder(
+					serviceContext.getScopeGroupId(), splitDate.getYear(),
+					splitDate.getMonth(), splitDate.getDayOfMoth());
+
+			DLFolder dossierFolder =
+				DLFolderUtil.getTargetFolder(
+					serviceContext.getUserId(),
+					serviceContext.getScopeGroupId(),
+					serviceContext.getScopeGroupId(), false, 0,
+					dossierDestinationFolder, StringPool.BLANK, false,
+					serviceContext);
+			
+			// tao moi ho so
+			Dossier dossier = DossierLocalServiceUtil.addDossier(
+				serviceContext.getUserId(), ownerOrganizationId,
+				dossierTemplateId, templateFileNo, serviceConfigId,
+				serviceInfoId, serviceDomainIndex,
+				govAgencyOrganizationId, govAgencyCode, govAgencyName,
+				serviceMode, serviceAdministrationIndex, cityCode,
+				cityName, districtCode, districtName, wardName,
+				wardCode, subjectName, subjectId, address, contactName,
+				contactTelNo, contactEmail, note,
+				PortletConstants.DOSSIER_SOURCE_DIRECT,
+				PortletConstants.DOSSIER_STATUS_NEW,
+				dossierFolder.getFolderId(), StringPool.BLANK,
+				serviceContext);
+			
+			dossier.setReceptionNo(receptionNo);
+			
+			if(Validator.isNotNull(receiveDatetime)) {
+				Date date_receiveDatetime = formatter.parse(receiveDatetime);
+				dossier.setReceiveDatetime(date_receiveDatetime);
+			}
+			
+			if(Validator.isNotNull(estimateDatetime)) {
+				Date date_estimateDatetime = formatter.parse(estimateDatetime);
+				dossier.setEstimateDatetime(date_estimateDatetime);
+			}
+			
+			//update ho so co ma tiep nhan
+			dossier = DossierLocalServiceUtil.updateDossier(dossier);
+			
+			//add dossier file
+			JSONArray dossierFilesArray = JSONFactoryUtil.createJSONArray(dossierFiles);
+			for(int i = 0; i < dossierFilesArray.length(); i++) {
+				JSONObject jsonObj = dossierFilesArray.getJSONObject(i);
+				
+				String partNo = GetterUtil.getString(jsonObj.getString("dossierPartNo"));
+				String dossierFileName = GetterUtil.getString(jsonObj.getString("dossierFileName"));
+				String dossierFileURL = GetterUtil.getString(jsonObj.getString("dossierFileURL"));
+				
+				Date fileDate = new Date();
+				
+				DossierPart dossierPart = dossierPartLocalService.getDossierPartByT_PN(
+					dossierTemplateId, partNo);
+				
+				byte[] bytes = getFileFromURL(dossierFileURL);
+				
+				String sourceFileName = dossierFileName;
+				
+				String extension = FileUtil.getExtension(sourceFileName);
+				
+				if(Validator.isNull(extension)) {
+					extension = StringUtil.replace(FileUtil.getExtension(dossierFileURL), 
+						StringPool.FORWARD_SLASH, StringPool.BLANK);
+					
+					if(Validator.isNotNull(extension)) {
+						sourceFileName = dossierFileName.concat(StringPool.UNDERLINE)
+								.concat(String.valueOf(System.nanoTime()))
+								.concat(StringPool.PERIOD).concat(extension);
+					}
+				}
+				
+				String mimeType = MimeTypesUtil.getExtensionContentType(extension);
+				
+				serviceContext.setUserId(dossier.getUserId());
+				
+				DLFolder dossierFileFolder = DLFolderUtil.getDossierFolder(
+						serviceContext.getScopeGroupId(),
+						null, dossier.getOid(),
+						serviceContext);
+				
+				dossierFileLocalService
+				.addDossierFile(
+						dossier.getUserId(),
+						dossier.getDossierId(),
+						dossierPart.getDossierpartId(),
+						dossierPart.getTemplateFileNo(),
+						StringPool.BLANK,
+						0L,
+						0L,
+						dossier.getUserId(),
+						dossier.getOwnerOrganizationId(),
+						dossierFileName,
+						mimeType,
+						PortletConstants.DOSSIER_FILE_MARK_UNKNOW,
+						2,
+						StringPool.BLANK,
+						fileDate,
+						1,
+						PortletConstants.DOSSIER_FILE_SYNC_STATUS_SYNCSUCCESS,
+						dossierFileFolder.getFolderId(),
+						sourceFileName, mimeType, dossierFileName,
+						StringPool.BLANK, StringPool.BLANK,
+						bytes, serviceContext);
+			}
+			
+			//update ho so ve system
+			DossierLocalServiceUtil.updateDossierStatus(
+				dossier.getDossierId(), 0, PortletConstants.DOSSIER_STATUS_SYSTEM,
+				WebKeys.DOSSIER_ACTOR_CITIZEN, 0,
+				StringPool.BLANK, StringPool.BLANK, PortletUtil.getActionInfo(
+					PortletConstants.DOSSIER_STATUS_SYSTEM,
+					serviceContext.getLocale()), StringPool.BLANK,
+				PortletConstants.DOSSIER_FILE_SYNC_STATUS_REQUIREDSYNC,
+				PortletConstants.DOSSIER_LOG_NORMAL);
+			
+			//chuyen ho so vao backend
+			UserActionMsg actionMsg = new UserActionMsg();
+
+			Message message = new Message();
+			
+			actionMsg.setAction(WebKeys.ACTION_SUBMIT_VALUE);
+			
+			actionMsg.setEvent(WebKeys.ACTION_ONEGATE_VALUE);
+
+			actionMsg.setDossierId(dossier.getDossierId());
+
+			actionMsg.setFileGroupId(0);
+
+			actionMsg.setLocale(serviceContext.getLocale());
+
+			actionMsg.setUserId(serviceContext.getUserId());
+
+			actionMsg.setGroupId(serviceContext.getScopeGroupId());
+
+			actionMsg.setCompanyId(dossier.getCompanyId());
+
+			actionMsg.setGovAgencyCode(dossier.getGovAgencyCode());
+
+			actionMsg.setDossierOId(dossier.getOid());
+
+			actionMsg.setDossierStatus(PortletConstants.DOSSIER_STATUS_NEW);
+
+			message.put("msgToEngine", actionMsg);
+			
+			MessageBusUtil.sendMessage(
+				"opencps/frontoffice/out/destination", message);
+			
+			
+			resultObj.put("statusCode", "Success");
+			resultObj.put("oid", dossier.getOid());
+			resultObj.put("currentStatus", nextStepStatus);
+			
+		} catch (Exception e) {
+			_log.error(e);
+			
+			resultObj = JSONFactoryUtil.createJSONObject();
+			resultObj.put("statusCode", "Error");
+			resultObj.put("message", e.getClass().getName());
+		}
+		
+		ApiServiceLocalServiceUtil.addLog(userId, APIServiceConstants.CODE_07, 
+			serviceContext.getRemoteAddr(), "", resultObj.toString(), 
+			APIServiceConstants.OUT, serviceContext);
+		
+		return resultObj;
 	}
 	
 	@JSONWebService(value = "dossier", method = "POST")
@@ -1040,6 +1338,381 @@ public class ApiServiceServiceImpl extends ApiServiceServiceBaseImpl {
 		
 		return resultObj;
 	}
+	
+	/**
+	 * @param oid
+	 * @param actioncode
+	 * @param actionnote
+	 * @param username
+	 * @param currentStatus
+	 * @return
+	 */
+	@JSONWebService(value = "changeStep", method = "POST")
+	public JSONObject changeStep(String oid, String actioncode,
+			String actionnote, String username, String currentstatus) {
+
+		JSONObject resultObj = JSONFactoryUtil.createJSONObject();
+
+		ServiceContext serviceContext = getServiceContext();
+
+		long userId = 0;
+
+		try {
+			userId = getUserId();
+
+			JSONObject input = JSONFactoryUtil.createJSONObject();
+			input.put("oid", oid);
+			input.put("actioncode", actioncode);
+			input.put("actionnote", actionnote);
+			input.put("username", username);
+			input.put("currentstatus", currentstatus);
+
+			// insert log received
+			ApiServiceLocalServiceUtil.addLog(userId,
+					APIServiceConstants.CODE_05,
+					serviceContext.getRemoteAddr(), oid, input.toString(),
+					APIServiceConstants.IN, serviceContext);
+
+			Dossier dossier = dossierPersistence.findByOID(oid);
+
+			ProcessOrder processOrder = processOrderPersistence.findByD_F(
+					dossier.getDossierId(), 0);
+
+			User user = userLocalService.getUserByScreenName(
+					dossier.getCompanyId(), username);
+
+			ProcessWorkflow processWorkflow = APIUtils.getProcessWorkflow(oid,
+					currentstatus, actioncode);
+			
+			String nextStatus = APIUtils.getPostDossierStatus(processWorkflow);
+
+			Message message = new Message();
+
+			SendToEngineMsg sendToEngineMsg = new SendToEngineMsg();
+
+			sendToEngineMsg.setCompanyId(dossier.getCompanyId());
+			sendToEngineMsg.setGroupId(dossier.getGroupId());
+			sendToEngineMsg.setActionNote(actionnote);
+			sendToEngineMsg.setAssignToUserId(0);
+			sendToEngineMsg.setActionUserId(user.getUserId());
+			sendToEngineMsg.setDossierId(dossier.getDossierId());
+			sendToEngineMsg.setFileGroupId(0);
+			sendToEngineMsg.setPaymentValue(GetterUtil.getDouble(0));
+			sendToEngineMsg.setProcessOrderId(processOrder.getProcessOrderId());
+
+			sendToEngineMsg.setReceptionNo(Validator.isNotNull(dossier
+					.getReceptionNo()) ? dossier.getReceptionNo()
+					: StringPool.BLANK);
+			sendToEngineMsg.setSignature(0);
+			sendToEngineMsg.setDossierStatus(dossier.getDossierStatus());
+			
+			if (Validator.isNotNull(processWorkflow)) {
+				if (Validator.isNotNull(processWorkflow.getAutoEvent())) {
+					sendToEngineMsg.setEvent(processWorkflow.getAutoEvent());
+				} else {
+					sendToEngineMsg.setProcessWorkflowId(processWorkflow
+							.getProcessWorkflowId());
+				}
+			}
+			
+			message.put("msgToEngine", sendToEngineMsg);
+
+			MessageBusUtil.sendMessage("opencps/backoffice/engine/destination",
+					message);
+
+			resultObj.put("statusCode", "Success");
+			resultObj.put("currentStatus", nextStatus);
+
+		} catch (Exception e) {
+			_log.error(e);
+
+			resultObj = JSONFactoryUtil.createJSONObject();
+			resultObj.put("statusCode", "Error");
+
+			if (e instanceof NoSuchDossierException) {
+				resultObj.put("message", "DossierNotFound");
+			} else if (e instanceof NoSuchProcessOrderException) {
+				resultObj.put("message", "ProcessOrderNotFound");
+			} else if (e instanceof NoSuchProcessWorkflowException) {
+				resultObj.put("message", "ActionCodeNotFound");
+			} else {
+				resultObj.put("message", e.getClass().getName());
+			}
+		}
+
+		ApiServiceLocalServiceUtil.addLog(userId, APIServiceConstants.CODE_05,
+				serviceContext.getRemoteAddr(), oid, resultObj.toString(),
+				APIServiceConstants.OUT, serviceContext);
+
+		return resultObj;
+	}
+
+	@JSONWebService(value = "addpayment", method = "POST")
+	public JSONObject addPaymentFile(String oid, String actioncode,
+			String actionnote, String username, String currentstatus, String paymentfile) {
+
+		JSONObject resultObj = JSONFactoryUtil.createJSONObject();
+
+		ServiceContext serviceContext = getServiceContext();
+
+		long userId = 0;
+
+		try {
+			userId = getUserId();
+
+			JSONObject input = JSONFactoryUtil.createJSONObject();
+			
+			JSONObject paymentfileObj = JSONFactoryUtil.createJSONObject(paymentfile);
+			
+			input.put("oid", oid);
+			input.put("actioncode", actioncode);
+			input.put("actionnote", actionnote);
+			input.put("username", username);
+			input.put("currentstatus", currentstatus);
+			input.put("paymentfile", paymentfile);
+			
+			PaymentFileObj paymentObj = new PaymentFileObj();
+
+			paymentObj.setTotalPayment(GetterUtil.getInteger(paymentfileObj
+					.getString("totalPayment")));
+			
+			if (Validator.isNull(paymentfileObj.getString("paymentOption"))) {
+				paymentObj.setPaymentOption("bank,cash,keypay");
+			} else {
+				paymentObj.setPaymentOption(paymentfileObj
+						.getString("paymentOption"));
+			}
+
+			if (Validator.isNull(paymentfileObj.getString("paymentMessages"))) {
+				paymentObj.setPaymentMessages("yeu-cau-thanh-toan");
+
+			} else {
+				paymentObj.setPaymentMessages(paymentfileObj
+						.getString("paymentMessages"));
+
+			}
+
+			if (Validator.isNull(paymentfileObj.getString("paymentName"))) {
+				paymentObj.setPaymentName("yeu-cau-thanh-toan");
+
+			} else {
+				paymentObj.setPaymentName(paymentfileObj
+						.getString("paymentName"));
+
+			}
+			
+
+			// insert log received
+			ApiServiceLocalServiceUtil.addLog(userId,
+					APIServiceConstants.CODE_09,
+					serviceContext.getRemoteAddr(), oid, input.toString(),
+					APIServiceConstants.IN, serviceContext);
+
+			Dossier dossier = dossierPersistence.findByOID(oid);
+
+			ProcessOrder processOrder = processOrderPersistence.findByD_F(
+					dossier.getDossierId(), 0);
+
+			User user = userLocalService.getUserByScreenName(
+					dossier.getCompanyId(), username);
+
+			ProcessWorkflow processWorkflow = APIUtils.getProcessWorkflow(oid,
+					currentstatus, actioncode);
+			
+			String nextStatus = APIUtils.getPostDossierStatus(processWorkflow);
+
+			Message message = new Message();
+
+			SendToEngineMsg sendToEngineMsg = new SendToEngineMsg();
+
+			sendToEngineMsg.setCompanyId(dossier.getCompanyId());
+			sendToEngineMsg.setGroupId(dossier.getGroupId());
+			sendToEngineMsg.setActionNote(actionnote);
+			sendToEngineMsg.setAssignToUserId(0);
+			sendToEngineMsg.setActionUserId(user.getUserId());
+			sendToEngineMsg.setDossierId(dossier.getDossierId());
+			sendToEngineMsg.setFileGroupId(0);
+			sendToEngineMsg.setPaymentValue(GetterUtil.getDouble(0));
+			sendToEngineMsg.setProcessOrderId(processOrder.getProcessOrderId());
+			sendToEngineMsg.setPaymentFileObj(paymentObj);
+
+			sendToEngineMsg.setReceptionNo(Validator.isNotNull(dossier
+					.getReceptionNo()) ? dossier.getReceptionNo()
+					: StringPool.BLANK);
+			sendToEngineMsg.setSignature(0);
+			sendToEngineMsg.setDossierStatus(dossier.getDossierStatus());
+			
+			if (Validator.isNotNull(processWorkflow)) {
+				if (Validator.isNotNull(processWorkflow.getAutoEvent())) {
+					sendToEngineMsg.setEvent(processWorkflow.getAutoEvent());
+				} else {
+					sendToEngineMsg.setProcessWorkflowId(processWorkflow
+							.getProcessWorkflowId());
+				}
+			}
+			
+			message.put("msgToEngine", sendToEngineMsg);
+
+			MessageBusUtil.sendMessage("opencps/backoffice/engine/destination",
+					message);
+
+			resultObj.put("statusCode", "Success");
+			resultObj.put("currentStatus", nextStatus);
+
+		} catch (Exception e) {
+			_log.error(e);
+
+			resultObj = JSONFactoryUtil.createJSONObject();
+			resultObj.put("statusCode", "Error");
+
+			if (e instanceof NoSuchDossierException) {
+				resultObj.put("message", "DossierNotFound");
+			} else if (e instanceof NoSuchProcessOrderException) {
+				resultObj.put("message", "ProcessOrderNotFound");
+			} else if (e instanceof NoSuchProcessWorkflowException) {
+				resultObj.put("message", "ActionCodeNotFound");
+			} else {
+				resultObj.put("message", e.getClass().getName());
+			}
+		}
+
+		ApiServiceLocalServiceUtil.addLog(userId, APIServiceConstants.CODE_10,
+				serviceContext.getRemoteAddr(), oid, resultObj.toString(),
+				APIServiceConstants.OUT, serviceContext);
+
+		return resultObj;
+	}
+
+	@JSONWebService(value = "updatePaymentStatus", method = "POST")
+	public JSONObject updatePaymentStatus(String oid, String actioncode,
+			String actionnote, String username, String currentstatus, String paymentfilestatus) {
+
+		JSONObject resultObj = JSONFactoryUtil.createJSONObject();
+
+		ServiceContext serviceContext = getServiceContext();
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
+		
+		long userId = 0;
+
+		try {
+			userId = getUserId();
+
+			JSONObject input = JSONFactoryUtil.createJSONObject();
+			
+			JSONObject paymentfileObj = JSONFactoryUtil.createJSONObject(paymentfilestatus);
+			
+			input.put("oid", oid);
+			input.put("actioncode", actioncode);
+			input.put("actionnote", actionnote);
+			input.put("username", username);
+			input.put("currentstatus", currentstatus);
+			input.put("paymentfilestatus", paymentfilestatus);
+			
+			PaymentFileObj paymentObj = new PaymentFileObj();
+			
+			paymentObj.setTotalPayment(GetterUtil.getInteger(paymentfileObj.getString("totalPayment")));
+			paymentObj.setPaymentMethods(GetterUtil.getInteger(paymentfileObj.getString("paymentMethods")));
+			paymentObj.setPaymentMessages(paymentfileObj.getString("paymentMessages"));
+			if (Validator.isNull(paymentfileObj.getString("paymentDate"))) {
+				paymentObj.setPaymentDate((new Date()));
+			} else {
+				paymentObj.setPaymentDate(sdf.parse(paymentfileObj.getString("paymentDate")));
+			}
+			paymentObj.setPaymentOid((paymentfileObj.getString("paymentOid")));
+			
+			PaymentFile paymentFile = PaymentFileLocalServiceUtil.getPaymentFileByOID(paymentObj.getPaymentOid());
+			
+			paymentFile.setApproveNote(paymentObj.getPaymentMessages());
+			paymentFile.setApproveDatetime(paymentObj.getPaymentDate());
+			paymentFile.setPaymentMethod(paymentObj.getPaymentMethods());
+			paymentFile.setAmount(GetterUtil.getDouble(paymentObj.getTotalPayment()));
+			
+			if (paymentObj.getTotalPayment() >= paymentFile.getAmount()) {
+				paymentFile.setPaymentStatus(2);
+				
+				PaymentFileLocalServiceUtil.updatePaymentFile(paymentFile);
+				
+			} else {
+				throw new InvalidPaymentAmountException();
+			}
+			
+			// insert log received
+			ApiServiceLocalServiceUtil.addLog(userId,
+					APIServiceConstants.CODE_10,
+					serviceContext.getRemoteAddr(), oid, input.toString(),
+					APIServiceConstants.IN, serviceContext);
+
+			Dossier dossier = dossierPersistence.findByOID(oid);
+
+			ProcessOrder processOrder = processOrderPersistence.findByD_F(
+					dossier.getDossierId(), 0);
+
+			User user = userLocalService.getUserByScreenName(
+					dossier.getCompanyId(), username);
+
+			ProcessWorkflow processWorkflow = APIUtils.getProcessWorkflow(oid,
+					currentstatus, actioncode);
+			
+			String nextStatus = APIUtils.getPostDossierStatus(processWorkflow);
+
+			Message message = new Message();
+
+			SendToEngineMsg sendToEngineMsg = new SendToEngineMsg();
+
+			sendToEngineMsg.setCompanyId(dossier.getCompanyId());
+			sendToEngineMsg.setGroupId(dossier.getGroupId());
+			sendToEngineMsg.setActionNote(actionnote);
+			sendToEngineMsg.setAssignToUserId(0);
+			sendToEngineMsg.setActionUserId(user.getUserId());
+			sendToEngineMsg.setDossierId(dossier.getDossierId());
+			sendToEngineMsg.setFileGroupId(0);
+			sendToEngineMsg.setPaymentValue(GetterUtil.getDouble(0));
+			sendToEngineMsg.setProcessOrderId(processOrder.getProcessOrderId());
+			sendToEngineMsg.setPaymentFileObj(paymentObj);
+
+			sendToEngineMsg.setReceptionNo(Validator.isNotNull(dossier
+					.getReceptionNo()) ? dossier.getReceptionNo()
+					: StringPool.BLANK);
+			sendToEngineMsg.setSignature(0);
+			sendToEngineMsg.setDossierStatus(dossier.getDossierStatus());
+			
+			if (Validator.isNotNull(processWorkflow)) {
+				if (Validator.isNotNull(processWorkflow.getAutoEvent())) {
+					sendToEngineMsg.setEvent(processWorkflow.getAutoEvent());
+				} else {
+					sendToEngineMsg.setProcessWorkflowId(processWorkflow
+							.getProcessWorkflowId());
+				}
+			}
+			
+			message.put("msgToEngine", sendToEngineMsg);
+
+			MessageBusUtil.sendMessage("opencps/backoffice/engine/destination",
+					message);
+
+			resultObj.put("statusCode", "Success");
+			resultObj.put("currentStatus", nextStatus);
+
+		} catch (Exception e) {
+			_log.error(e);
+
+			resultObj = JSONFactoryUtil.createJSONObject();
+			resultObj.put("statusCode", "Error");
+
+			if (e instanceof NoSuchPaymentFileException) {
+				resultObj.put("message", "NoSuchPaymentFileFund");
+			} else if (e instanceof InvalidPaymentAmountException) {
+				resultObj.put("message", "InvalidPaymentAmountException");
+			}
+		}
+
+		ApiServiceLocalServiceUtil.addLog(userId, APIServiceConstants.CODE_10,
+				serviceContext.getRemoteAddr(), oid, resultObj.toString(),
+				APIServiceConstants.OUT, serviceContext);
+
+		return resultObj;
+	}
 
 	@JSONWebService(value = "dossiers", method = "GET")
 	public JSONObject searchDossierByDS_RD_SN_U(String dossierstatus,
@@ -1194,7 +1867,13 @@ public class ApiServiceServiceImpl extends ApiServiceServiceBaseImpl {
 					if (df.getFileEntryId() > 0) {
 						try {
 							FileEntry fileEntry = DLAppLocalServiceUtil.getFileEntry(df.getFileEntryId());
-							jsonDossierFile.put("dossierFullFileName", fileEntry.getTitle());
+							String fullFileName = fileEntry.getTitle();
+							
+							if(!fullFileName.contains(StringPool.PERIOD)) {
+								fullFileName = fileEntry.getTitle() + "." + fileEntry.getExtension();
+							}
+							
+							jsonDossierFile.put("dossierFullFileName", fullFileName);
 							
 							String url = getFileURL(fileEntry, serviceContext);
 	
@@ -1233,6 +1912,8 @@ public class ApiServiceServiceImpl extends ApiServiceServiceBaseImpl {
 	private JSONObject getDossierForList(Dossier dossier) throws SystemException {
 		JSONObject dossierObj = null;
 		
+		JSONArray paymentFiles = getPaymentFileObj(dossier.getDossierId());
+		
 		if(dossier != null) {
 			ServiceInfo serviceInfo = serviceInfoPersistence.fetchByPrimaryKey(dossier.getServiceInfoId());
 			
@@ -1250,6 +1931,7 @@ public class ApiServiceServiceImpl extends ApiServiceServiceBaseImpl {
 				dossierObj.put("dossierStatus", dossier.getDossierStatus());
 				dossierObj.put("delayStatus", dossier.getDelayStatus());
 				dossierObj.put("serviceMode", dossier.getServiceMode());
+				dossierObj.put("paymentFiles", paymentFiles);
 				
 				if (dossier.getSubmitDatetime() != null) {
 					dossierObj.put("submitDatetime",
@@ -1269,6 +1951,75 @@ public class ApiServiceServiceImpl extends ApiServiceServiceBaseImpl {
 		}
 		
 		return dossierObj;
+	}
+	
+	/**
+	 * @param dossierId
+	 * @return
+	 */
+	private JSONArray getPaymentFileObj(long dossierId) {
+		List<PaymentFile> paymentFiles = new ArrayList<PaymentFile>();
+
+		JSONObject paymentFileObj = null;
+
+		JSONArray resultArr = JSONFactoryUtil.createJSONArray();
+
+		try {
+			paymentFiles = PaymentFileLocalServiceUtil
+					.getPaymentFileByD_(dossierId);
+
+			_log.info("INFO:::: PaymentFileSize = " + paymentFiles.size());
+
+			SimpleDateFormat sdf = new SimpleDateFormat(
+					DateTimeUtil._VN_DATE_TIME_FORMAT);
+
+			for (PaymentFile paymentFile : paymentFiles) {
+				paymentFileObj = JSONFactoryUtil.createJSONObject();
+
+				paymentFileObj.put("oid", paymentFile.getOid());
+
+				paymentFileObj.put("createDate",
+						sdf.format(paymentFile.getCreateDate()));
+				paymentFileObj.put("paymentName", paymentFile.getPaymentName());
+				paymentFileObj.put("requestNote", paymentFile.getRequestNote());
+				paymentFileObj.put("paymentOptions",
+						paymentFile.getPaymentOptions());
+				paymentFileObj.put("paymentStatus",
+						paymentFile.getPaymentStatus());
+				paymentFileObj.put("paymentMethod",
+						paymentFile.getPaymentMethod());
+				paymentFileObj.put("approveNote", paymentFile.getApproveNote());
+				paymentFileObj.put("invoiceNo", paymentFile.getInvoiceNo());
+				paymentFileObj.put("totalPayment", paymentFile.getAmount());
+
+				if (Validator.isNotNull(paymentFile.getRequestDatetime())) {
+					paymentFileObj.put("requestDatetime",
+							sdf.format(paymentFile.getRequestDatetime()));
+				}
+
+				if (Validator.isNotNull(paymentFile.getConfirmDatetime())) {
+					paymentFileObj.put("confirmDatetime",
+							sdf.format(paymentFile.getConfirmDatetime()));
+				}
+
+				if (Validator.isNotNull(paymentFile.getConfirmFileEntryId())) {
+					paymentFileObj.put("confirmFileEntryId",
+							sdf.format(paymentFile.getConfirmFileEntryId()));
+				}
+
+				if (Validator.isNotNull(paymentFile.getApproveDatetime())) {
+					paymentFileObj.put("approveDatetime",
+							sdf.format(paymentFile.getApproveDatetime()));
+				}
+
+				resultArr.put(paymentFileObj);
+			}
+
+		} catch (Exception e) {
+			_log.error(e);
+		}
+
+		return resultArr;
 	}
 	
 	private ServiceContext getServiceContext() {
@@ -1387,6 +2138,57 @@ public class ApiServiceServiceImpl extends ApiServiceServiceBaseImpl {
 	
 	@JSONWebService(value = "updatereceptionno", method = "POST")
 	public JSONObject updateDossierReceptionNo(String oid, String receptionno) {
+		
+		JSONObject resultObj = JSONFactoryUtil.createJSONObject();
+		
+		ServiceContext serviceContext = getServiceContext();
+		
+		long userId = 0;
+		
+		try {
+			userId = getUserId();
+			
+			JSONObject input = JSONFactoryUtil.createJSONObject();
+			
+			input.put("oid", oid);
+			input.put("recptionNo", receptionno);
+
+			ApiServiceLocalServiceUtil.addLog(userId,
+				APIServiceConstants.CODE_08, serviceContext.getRemoteAddr(), oid, 
+				input.toString(), APIServiceConstants.IN,
+				serviceContext);
+
+			
+			Dossier dossier = dossierPersistence.findByOID(oid);
+			
+			dossier.setReceptionNo(receptionno);
+			
+			dossierPersistence.update(dossier);
+			
+			resultObj.put("statusCode", "Success");
+			resultObj.put("oid", oid);
+
+		} catch (Exception e) {
+			_log.error(e);
+			
+			resultObj = JSONFactoryUtil.createJSONObject();
+			
+			resultObj.put("statusCode", "Error");
+			
+			if(e instanceof NoSuchDossierException) {
+				resultObj.put("message", "DossierNotFound");
+			} 
+		}
+		
+		ApiServiceLocalServiceUtil.addLog(userId, APIServiceConstants.CODE_08, 
+			serviceContext.getRemoteAddr(), oid, resultObj.toString(), 
+			APIServiceConstants.OUT, serviceContext);
+		
+		return resultObj;
+	}
+	
+	@JSONWebService(value = "changereceptionno", method = "POST")
+	public JSONObject updateReceptionNo(String oid, String receptionno) {
 		
 		JSONObject resultObj = JSONFactoryUtil.createJSONObject();
 		
