@@ -416,6 +416,8 @@ public class OCPSDossierController {
 								.getExtensionContentType(extension);
 
 						serviceContext.setUserId(dossier.getUserId());
+						serviceContext.setAddGuestPermissions(true);
+						serviceContext.setAddGroupPermissions(true);
 
 						byte[] bytes = Base64.decode(dfm
 								.getAttachmentFileData());
@@ -436,8 +438,6 @@ public class OCPSDossierController {
 							mimeType = dfm.getDossierFileContent();
 						}
 						
-						serviceContext.setAddGuestPermissions(true);
-						serviceContext.setAddGroupPermissions(true);
 						
 						_log.info("DOSSIER_FILE_NAME : " + dfm.getAttachmentFileName());
 						
