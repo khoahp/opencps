@@ -778,6 +778,11 @@ public class EmployeeLocalServiceImpl extends EmployeeLocalServiceBaseImpl {
 
 		return employeePersistence.update(employee);
 	}
+	
+	public List<Employee> findBy_G_N(long groupId, String name)
+			throws SystemException {
+		return employeePersistence.findByG_N(groupId, name);
+	}
 
 	private Log _log = LogFactoryUtil
 			.getLog(EmployeeLocalServiceImpl.class.getName());
