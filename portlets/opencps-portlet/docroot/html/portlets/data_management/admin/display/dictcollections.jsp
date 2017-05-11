@@ -926,7 +926,7 @@
 		}
 		
 		var getSelectSiblingURL = Liferay.PortletURL.createURL('<%= PortletURLFactoryUtil.create(request, WebKeys.DATA_MANAGEMENT_ADMIN_PORTLET, themeDisplay.getPlid(), PortletRequest.RENDER_PHASE) %>');
-		getSelectSiblingURL.setParameter("mvcPath", "/html/portlets/data_management/admin/select_sibling.jsp");
+		getSelectSiblingURL.setParameter("mvcPath", "/html/portlets/data_management/admin/ajax/_select_sibling.jsp");
 		getSelectSiblingURL.setWindowState("<%=LiferayWindowState.EXCLUSIVE.toString()%>"); 
 		getSelectSiblingURL.setPortletMode("normal");
 		getSelectSiblingURL.setParameter("dictCollectionId", dictCollectionId);

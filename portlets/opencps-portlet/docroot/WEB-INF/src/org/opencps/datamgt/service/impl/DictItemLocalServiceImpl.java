@@ -27,6 +27,7 @@ import org.opencps.datamgt.NoSuchDictItemException;
 import org.opencps.datamgt.NoSuchDictVersionException;
 import org.opencps.datamgt.model.DictCollection;
 import org.opencps.datamgt.model.DictItem;
+import org.opencps.datamgt.model.DictItemLink;
 import org.opencps.datamgt.model.DictVersion;
 import org.opencps.datamgt.service.base.DictItemLocalServiceBaseImpl;
 import org.opencps.datamgt.util.DataMgtUtil;
@@ -280,13 +281,20 @@ public class DictItemLocalServiceImpl extends DictItemLocalServiceBaseImpl {
 	 * @throws NoSuchDictItemException
 	 *             - Loi khong tim thay DictItem voi dictItemId tuong ung
 	 */
-	public void deleteDictItemById(long dictItemId)
-		throws SystemException, NoSuchDictItemException {
+	public void deleteDictItemById(long dictItemId) throws SystemException,
+			NoSuchDictItemException {
 
-		List<DictItem> dictItems =
-			dictItemPersistence.findByTreeIndex(dictItemId + StringPool.PERIOD);
+		List<DictItem> dictItems = dictItemPersistence
+				.findByTreeIndex(dictItemId + StringPool.PERIOD);
 		if (dictItems == null || dictItems.isEmpty()) {
 			dictItemPersistence.remove(dictItemId);
+			
+			// delete dict items linked
+			List<DictItemLink> linked = dictItemLinkPersistence
+					.findByDictItemId(dictItemId);
+			for (DictItemLink dictItemLink : linked) {
+				dictItemLinkPersistence.remove(dictItemLink);
+			}
 		}
 	}
 

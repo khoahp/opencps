@@ -70,6 +70,6 @@
 </aui:select>
 
 <%!
-	private Log _log = LogFactoryUtil.getLog("html.portlets.data_management.admin.select_sibling.jsp");
+	private Log _log = LogFactoryUtil.getLog("html.portlets.data_management.admin.ajax._select_sibling.jsp");
 %>
 
