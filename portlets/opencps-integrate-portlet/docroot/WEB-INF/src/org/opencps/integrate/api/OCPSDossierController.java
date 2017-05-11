@@ -64,6 +64,8 @@ import com.liferay.portlet.documentlibrary.model.DLFolder;
 @Path("/api")
 public class OCPSDossierController {
 	
+	
+	
 	@PUT
 	@Path("/dossiers/{dossierid: .*}/dossierfiles/{dossierfileuid: .*}")
 	@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
@@ -330,19 +332,43 @@ public class OCPSDossierController {
 						MessageBusUtil.sendMessage(
 								"opencps/backoffice/engine/destination", msg);
 					}
+					
+					ProcessWorkflow processWorkflow = APIUtils
+							.getProcessWorkflow(dossierid, am.getActionCode());
+					
+					String nextStatus = APIUtils.getPostDossierStatus(processWorkflow);
 
+					resp.put("Result", "New");
+					resp.put("DossierId", dossierid);
+					resp.put("ActionUid", "");
+					resp.put("DossierStatus", nextStatus);
+					
 					return Response.status(200).entity(resp.toString()).build();
 
 				} catch (Exception e) {
+					resp.put("Result", "Error");
+					resp.put("DossierId", dossierid);
+					resp.put("ActionUid", "");
+					resp.put("ErrorMessage", APIUtils.getLanguageValue("no-action-code-found"));
 
 					return Response.status(404).entity(resp.toString()).build();
 				}
 			} else {
+				resp.put("Result", "Error");
+				resp.put("DossierId", dossierid);
+				resp.put("ActionUid", "");
+				resp.put("ErrorMessage", APIUtils.getLanguageValue("no-access-resource"));
+
 				// Not access resources
 				return Response.status(403).entity(resp.toString()).build();
 			}
 		} else {
 			// Not validate
+			resp.put("Result", "Error");
+			resp.put("DossierId", dossierid);
+			resp.put("ActionUid", "");
+			resp.put("ErrorMessage", APIUtils.getLanguageValue("not-validate"));
+
 			return Response.status(401).entity(resp.toString()).build();
 		}
 	}
@@ -409,7 +435,12 @@ public class OCPSDossierController {
 										"{}"))) {
 							mimeType = dfm.getDossierFileContent();
 						}
-
+						
+						serviceContext.setAddGuestPermissions(true);
+						serviceContext.setAddGroupPermissions(true);
+						
+						_log.info("DOSSIER_FILE_NAME : " + dfm.getAttachmentFileName());
+						
 						dossierFile = DossierFileLocalServiceUtil
 								.addDossierFile(
 										dossier.getUserId(),
@@ -833,6 +864,145 @@ public class OCPSDossierController {
 
 					resp.put("ErrorMessage",
 							APIUtils.getLanguageValue("create-dossier-error"));
+
+					_log.error(e);
+
+					return Response.status(404).entity(resp.toString()).build();
+				}
+
+			} else {
+				// Not access resources
+				return Response.status(403).entity(resp.toString()).build();
+			}
+		} else {
+			// Not validate
+			return Response.status(401).entity(resp.toString()).build();
+		}
+	}
+	
+	@PUT
+	@Path("/dossiers/{dossierid: .*}")
+	@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
+	public Response updateDossiers(@HeaderParam("apikey") String apikey,
+			@Context HttpServletRequest request, String body,
+			@PathParam("dossierid") long dossierid) {
+
+		JSONObject resp = JSONFactoryUtil.createJSONObject();
+
+		JSONObject input = JSONFactoryUtil.createJSONObject();
+
+		try {
+			input = JSONFactoryUtil.createJSONObject(body);
+		} catch (Exception e) {
+			return Response.status(404).entity(resp.toString()).build();
+		}
+
+		OCPSPermission permit = new OCPSPermission();
+
+		OCPSAuth auth = new OCPSAuth();
+
+		IntegrateAPI api = auth.auth(apikey);
+
+		boolean isPermit = permit.isAddDossierPermission(apikey);
+
+		if (Validator.isNotNull(api)) {
+			if (isPermit) {
+
+				ServiceContext context = DossierUtils
+						.getServletContext(request);
+
+				context.setScopeGroupId(APIUtils.GROUPID);
+
+				DossierModel dm = DossierUtils.getDossierModel(input);
+
+				User user = APIUtils.getUserByEmail(context.getCompanyId(),
+						dm.getContactEmail());
+
+				// If actor is Mobile
+				if (auth.isUser(apikey)) {
+					context.setUserId(api.getUserId());
+				} else {
+					if (Validator.isNotNull(user)) {
+						context.setUserId(user.getUserId());
+					}
+				}
+
+				try {
+					// Get Dossier
+
+					Dossier dossier = DossierUtils.getDossierById(dossierid);
+
+					if (Validator.isNotNull(dossier)) {
+						
+						if (Validator.isNotNull(dm.getApplicantName())) {
+							dossier.setContactName(dm.getApplicantName());
+						}
+						
+						if (Validator.isNotNull(dm.getApplicantIdNo())) {
+							dossier.setSubjectId(dm.getApplicantIdNo());
+						}
+						
+						if (Validator.isNotNull(dm.getAddress())) {
+							dossier.setAddress(dm.getAddress());
+						}
+						
+						if (Validator.isNotNull(dm.getCityName())) {
+							dossier.setCityCode(dm.getCityName());
+						}
+						
+						if (Validator.isNotNull(dm.getCityCode())) {
+							dossier.setCityCode(dm.getCityCode());
+						}
+
+						if (Validator.isNotNull(dm.getDistrictCode())) {
+							dossier.setCityCode(dm.getDistrictCode());
+						}
+						
+						if (Validator.isNotNull(dm.getWardCode())) {
+							dossier.setCityCode(dm.getWardCode());
+						}
+						if (Validator.isNotNull(dm.getDistrictName())) {
+							dossier.setCityCode(dm.getDistrictName());
+						}
+						
+						if (Validator.isNotNull(dm.getWardName())) {
+							dossier.setCityCode(dm.getWardName());
+						}
+						
+						if (Validator.isNotNull(dm.getContactTelNo())) {
+							dossier.setContactTelNo(dm.getContactTelNo());
+						}
+						
+						if (Validator.isNotNull(dm.getDossierNote())) {
+							dossier.setNote(dm.getDossierNote());
+						}
+						
+						DossierLocalServiceUtil.updateDossier(dossier);
+						
+						resp.put("Result", "Update");
+						resp.put("DossierId", dossier.getDossierId());
+						resp.put("ReferenceId", dossier.getOid());
+						resp.put("AgencyCode", dossier.getGovAgencyCode());
+
+						return Response.status(200).entity(resp.toString())
+								.build();
+
+					} else {
+						resp.put("Result", "Error");
+						resp.put(
+								"ErrorMessage",
+								APIUtils.getLanguageValue("no-dossier-exist-with-dossierid"));
+
+						return Response.status(404).entity(resp.toString())
+								.build();
+
+					}
+
+				} catch (Exception e) {
+					resp.put("Result", "Error");
+
+					resp.put("ErrorMessage",
+							APIUtils.getLanguageValue("update-dossier-error"));
 
 					_log.error(e);
 

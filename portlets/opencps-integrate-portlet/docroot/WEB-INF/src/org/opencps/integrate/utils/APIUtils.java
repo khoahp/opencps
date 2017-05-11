@@ -17,6 +17,12 @@ import org.opencps.dossiermgt.service.DossierLogLocalServiceUtil;
 import org.opencps.dossiermgt.service.DossierPartLocalServiceUtil;
 import org.opencps.paymentmgt.model.PaymentFile;
 import org.opencps.paymentmgt.service.PaymentFileLocalServiceUtil;
+import org.opencps.processmgt.model.ProcessOrder;
+import org.opencps.processmgt.model.ProcessStep;
+import org.opencps.processmgt.model.ProcessWorkflow;
+import org.opencps.processmgt.service.ProcessOrderLocalServiceUtil;
+import org.opencps.processmgt.service.ProcessStepLocalServiceUtil;
+import org.opencps.processmgt.service.ProcessWorkflowLocalServiceUtil;
 import org.opencps.servicemgt.model.ServiceInfo;
 import org.opencps.servicemgt.service.ServiceInfoLocalServiceUtil;
 
@@ -36,6 +42,60 @@ import com.liferay.portlet.documentlibrary.util.DLUtil;
 public class APIUtils {
 	
 	public static final long GROUPID = 20182;
+	
+	public static ProcessWorkflow getProcessWorkflow(long dossierId, String actionCode) {
+
+		Dossier dossier = null;
+
+		ProcessWorkflow processWorkflow = null;
+
+		ProcessOrder processOrder = null;
+
+			try {
+				dossier = DossierLocalServiceUtil.getDossier(dossierId);
+
+
+					processOrder = ProcessOrderLocalServiceUtil
+							.getProcessOrder(dossier.getDossierId(), 0);
+
+					processWorkflow = ProcessWorkflowLocalServiceUtil
+							.getProcessWorkflowByActionCodeAndPreStep(
+									actionCode, processOrder.getProcessStepId());
+			
+
+			} catch (Exception e) {
+
+			}
+		
+		return processWorkflow;
+
+	}
+	
+	public static String getPostDossierStatus(ProcessWorkflow processWorkflow) {
+
+		String nextDossierStatus = StringPool.BLANK;
+
+		if (Validator.isNotNull(processWorkflow)) {
+			long postStepId = processWorkflow.getPostProcessStepId();
+
+			if (postStepId != 0) {
+				try {
+
+					ProcessStep processStep = ProcessStepLocalServiceUtil
+							.getProcessStep(postStepId);
+
+					nextDossierStatus = processStep.getDossierStatus();
+
+				} catch (Exception e) {
+					_log.info("NoNextStepFound!");
+				}
+			}
+
+		}
+
+		return nextDossierStatus;
+	}
+	
 
 	/**
 	 * @param dictItemCode
