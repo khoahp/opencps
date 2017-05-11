@@ -16,8 +16,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 %>
+<%@page import="org.opencps.datamgt.search.DictItemDisplayTerms"%>
 <%@page import="org.opencps.datamgt.search.DictCollectionDisplayTerms"%>
-<%@page import="org.opencps.datamgt.model.impl.DictCollectionImpl"%>
 <%@page import="org.opencps.datamgt.model.DictCollection"%>
 <%@page import="org.opencps.util.MessageKeys"%>
 <%@page import="org.opencps.datamgt.OutOfLengthCollectionNameException"%>
@@ -33,25 +33,24 @@
 <%@page import="java.util.List"%>
 <%@page import="java.util.ArrayList"%>
 
-<%@ include file="../init.jsp"%>
+<%@ include file="../../init.jsp"%>
 
 <portlet:actionURL var="updateDictCollectionURL" name="updateDictCollection" />
 
 <%
 	DictCollection dictCollection = (DictCollection)request.getAttribute(WebKeys.DICT_COLLECTION_ENTRY);
-	long collectionId = dictCollection != null ? dictCollection.getDictCollectionId() : 0L;
-	String backURL = ParamUtil.getString(request, "backURL");
-	
-	List<DictCollectionLink> colsLinked = new ArrayList<DictCollectionLink>();
-	String collectionsLinked = StringPool.BLANK;
-	try {
-		colsLinked = DictCollectionLinkLocalServiceUtil.getByDictCollectionId(collectionId);
-		List<Long> colLinkedId = new ArrayList<Long>();
-		for (DictCollectionLink colLinked : colsLinked){
-			colLinkedId.add(colLinked.getDictCollectionLinkedId());
+	long collectionId = 0;
+	if (dictCollection == null){
+		collectionId = ParamUtil.getLong(request, DictItemDisplayTerms.DICTCOLLECTION_ID);
+		if (collectionId > 0){
+			try {
+				dictCollection = DictCollectionLocalServiceUtil.getDictCollection(collectionId);
+			} catch (Exception e) {}
 		}
-		collectionsLinked = StringUtil.merge(colLinkedId);
-	} catch (Exception e){}
+	} else {
+		collectionId = dictCollection.getDictCollectionId();
+	}
+	String backURL = ParamUtil.getString(request, "backURL");
 %>
 
 <liferay-ui:header
@@ -78,7 +77,7 @@
 			
 			<aui:fieldset>
 				<aui:row>
-					<aui:col width="80">
+					<aui:col width="70">
 						<aui:input name="<%=DictCollectionDisplayTerms.COLLECTION_NAME %>" cssClass="input100">
 							<aui:validator name="required"/>
 							<aui:validator name="minLength">3</aui:validator>
@@ -86,7 +85,7 @@
 						</aui:input>
 					</aui:col>
 					
-					<aui:col width="20">
+					<aui:col width="30">
 						<aui:input name="<%=DictCollectionDisplayTerms.COLLECTION_CODE %>" type="text" cssClass="input100">
 							<aui:validator name="required"/>
 							<aui:validator name="maxLength">100</aui:validator>
@@ -120,7 +119,9 @@
 												label=""
 												type="checkbox" 
 												inlineField="true"
-												checked="<%=checked %>"/>
+												checked="<%=checked %>"
+												cssClass='<%=!checked ? "no-linked-to-selected-collection" : "" %>'
+											/>
 											<%=collection.getCollectionName() %>
 										</li>
 									<%
@@ -133,28 +134,9 @@
 			</aui:fieldset>
 			<aui:fieldset>
 				<aui:button type="submit" name="submit" value="submit"/>
-				<aui:button type="reset" value="clear"/>
+				<aui:button type="submit" name="cancel" value="cancel"/>
 			</aui:fieldset>	
 		</aui:form>
 	</div>
 </div>
 
-<aui:script>
-	AUI().ready(function(A){
-		var collectionsLinked = '<%=collectionsLinked %>';
-		var linkedArr = collectionsLinked.split(',');
-		var match = false;
-		A.all('#<portlet:namespace/>dictCollectionsLinked').each(function(dictCol){
-			match = false;
-			for (var i = 0; i < linkedArr.length; i++) {
-		        if (linkedArr[i] == dictCol.attr('value')) {
-		        	match = true;
-		        	break;
-		        }
-		    }
-			if (!match){
-				dictCol.attr('value', '0');
-			}
-		});
-	});
-</aui:script>

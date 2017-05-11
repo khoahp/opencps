@@ -109,6 +109,8 @@
 		<column name="treeIndex" type="String" />
 		<column name="issueStatus" type="int" />
 		<column name="dictVersionId" type="long" />
+		<column name="sibling" type="long" />
+		<column name="level" type="int" />
 
 		<!-- Order -->
 		<order by="asc">
@@ -165,6 +167,64 @@
 		
 	</entity>
 
+	<entity name="DictCollectionLink" local-service="true" remote-service="true" 
+			table="opencps_dictcollectionlink">
+		<!-- PK fields -->
+		<column name="dictCollectionLinkId" type="long" primary="true" />
+
+		<!-- Audit fields -->
+		<column name="companyId" type="long" />
+		<column name="groupId" type="long" />
+		<column name="userId" type="long" />
+		<column name="createDate" type="Date" />
+		<column name="modifiedDate" type="Date" />
+
+		<!-- Other fields -->
+		<column name="dictCollectionId" type="long" />
+		<column name="dictCollectionLinkedId" type="long" />
+		<column name="dictCollectionLinkedName" type="String" />
+		<column name="sequenceNo" type="long" />
+		
+		<!-- Order -->
+		<order by="asc">
+			<order-column name="sequenceNo" />
+		</order>
+		
+		<!-- Finder methods -->
+		<finder name="DictCollectionId" return-type="Collection">
+			<finder-column name="dictCollectionId" />
+		</finder>
+	</entity>
+	
+	<entity name="DictItemLink" local-service="true" remote-service="true" 
+			table="opencps_dictitemlink">
+		<!-- PK fields -->
+		<column name="dictItemLinkId" type="long" primary="true" />
+
+		<!-- Audit fields -->
+		<column name="companyId" type="long" />
+		<column name="groupId" type="long" />
+		<column name="userId" type="long" />
+		<column name="createDate" type="Date" />
+		<column name="modifiedDate" type="Date" />
+
+		<!-- Other fields -->
+		<column name="dictItemId" type="long" />
+		<column name="dictItemLinkedId" type="long" />
+		<column name="dictItemLinkedCode" type="String" />
+		<column name="dictItemLinkedName" type="String" />
+		<column name="sequenceNo" type="long" />
+		
+		<!-- Order -->
+		<order by="asc">
+			<order-column name="sequenceNo" />
+		</order>
+		
+		<!-- Finder methods -->
+		<finder name="DictItemId" return-type="Collection">
+			<finder-column name="dictItemId" />
+		</finder>
+	</entity>
 
 	<entity name="AdministrationServicedomain" local-service="true"
 		remote-service="false" table="opencps_administration_servicedomain">

@@ -19,12 +19,11 @@
 <%@page import="org.opencps.util.WebKeys"%>
 <%@page import="org.opencps.datamgt.model.DictItem"%>
 <%@page import="com.liferay.portal.kernel.dao.search.ResultRow"%>
-<%@page import="com.liferay.portal.kernel.dao.search.SearchContainer"%>
 <%@page import="org.opencps.datamgt.permissions.DictItemPermission"%>
 <%@page import="org.opencps.util.ActionKeys"%>
 <%@page import="org.opencps.datamgt.search.DictItemDisplayTerms"%>
-<%@ include file="../init.jsp"%>
 
+<%@ include file="../init.jsp"%>
  
 <%
 	ResultRow row = (ResultRow)request.getAttribute(WebKeys.SEARCH_CONTAINER_RESULT_ROW);
@@ -39,10 +38,12 @@
 			<portlet:param name="<%=DictItemDisplayTerms.DICTITEM_ID %>" value="<%=String.valueOf(dictItem.getDictItemId()) %>"/>
 			<portlet:param name="backURL" value="<%=currentURL %>"/>
 		</portlet:renderURL> 
- 		<liferay-ui:icon image="edit" 
- 						cssClass="search-container-action fa edit" 
- 						message="edit" 
- 						url="<%=updateDictItemURL.toString() %>" /> 
+ 		<liferay-ui:icon 
+ 			image="edit" 
+ 			cssClass="search-container-action fa edit" 
+ 			message="edit" 
+ 			url="<%=updateDictItemURL.toString() %>" 
+ 		/> 
  	</c:if>
  	
  	<c:if test="<%=DictItemPermission.contains(permissionChecker, scopeGroupId, ActionKeys.DELETE) %>">
@@ -50,7 +51,13 @@
 			<portlet:param name="<%=DictItemDisplayTerms.DICTITEM_ID %>" value="<%=String.valueOf(dictItem.getDictItemId()) %>"/>
 			<portlet:param name="redirectURL" value="<%=currentURL %>"/>
 		</portlet:actionURL> 
-		<liferay-ui:icon-delete cssClass="search-container-action fa delete" image="delete" confirmation="are-you-sure-delete-entry" message="delete"  url="<%=deleteDictItemURL.toString() %>" />
+		<liferay-ui:icon-delete 
+			cssClass="search-container-action fa delete" 
+			image="delete" 
+			confirmation="are-you-sure-delete-entry" 
+			message="delete"  
+			url="<%=deleteDictItemURL.toString() %>" 
+		/>
  	</c:if>
 	  
 <%-- </liferay-ui:icon-menu>  --%>

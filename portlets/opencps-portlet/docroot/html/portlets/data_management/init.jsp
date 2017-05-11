@@ -18,3 +18,7 @@
 %>
 <%@ include file="/init.jsp" %>
 
+<%
+	String viewTemplate = GetterUtil.getString(portletPreferences.getValue("view-template", "dictcollection.jsp"));
+%>
+

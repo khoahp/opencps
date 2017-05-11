@@ -1,4 +1,3 @@
-
 <%
 /**
  * OpenCPS is the open source Core Public Services software
@@ -17,6 +16,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 %>
+
+<%@page import="org.opencps.util.WebKeys"%>
+<%@page import="org.opencps.datamgt.util.DataMgtUtil"%>
+<%@page import="com.liferay.portal.kernel.dao.orm.QueryUtil"%>
 <%@page import="com.liferay.portal.kernel.log.LogFactoryUtil"%>
 <%@page import="com.liferay.portal.kernel.log.Log"%>
 <%@page import="org.opencps.datamgt.service.DictItemLocalServiceUtil"%>
@@ -31,19 +34,23 @@
 	long dictItemId = ParamUtil.getLong(request, DictItemDisplayTerms.DICTITEM_ID);
 	
 	DictItem curDictItem = null;
+	long parentId = 0;
 	List<DictItem> dictItems = new ArrayList<DictItem>();
+	List<DictItem> dictItemsOrdered = new ArrayList<DictItem>();
 
 	try{
 		if(dictItemId > 0){
 			curDictItem = DictItemLocalServiceUtil.getDictItem(dictItemId);
+			parentId = curDictItem.getParentItemId();
 		}
-	}catch(Exception e){
-		_log.error(e);
-	} 
-	
-	try{
 		if(dictCollectionId > 0){
-			dictItems = DictItemLocalServiceUtil.getDictItemsByDictCollectionId(dictCollectionId);
+			dictItems = DictItemLocalServiceUtil
+					.getBy_D_P(dictCollectionId, 0, 
+							QueryUtil.ALL_POS, QueryUtil.ALL_POS,
+							DataMgtUtil.getDictItemOrderByComparator(
+									DictItemDisplayTerms.SIBLING, WebKeys.ORDER_BY_ASC));
+			dictItemsOrdered = getDictItemsOrderBySibling(dictItemsOrdered, 
+					dictItems, dictCollectionId);
 		}
 	}catch(Exception e){
 		_log.error(e);
@@ -54,7 +61,7 @@
 	<aui:option value="0"></aui:option>
 	<%
 		if(dictItems != null){
-			for(DictItem dictItem : dictItems){
+			for(DictItem dictItem : dictItemsOrdered){
 				if((curDictItem != null && dictItem.getDictItemId() == curDictItem.getDictItemId())||
 						(curDictItem != null && dictItem.getTreeIndex().contains(curDictItem.getDictItemId() + StringPool.PERIOD))){
 					continue;
@@ -63,15 +70,37 @@
 				int level = StringUtil.count(dictItem.getTreeIndex(), StringPool.PERIOD);
 				String index = "|";
 				for(int i = 0; i < level; i++){
-					index += "_";
+					index += "__";
 				}
 				%>
-					<aui:option value="<%=dictItem.getDictItemId() %>"><%=index + dictItem.getItemName(locale) %></aui:option>
+					<aui:option 
+						value="<%=dictItem.getDictItemId() %>" 
+						selected="<%=dictItem.getDictItemId() == parentId %>"
+					>
+						<%=index + dictItem.getItemName(locale) %>
+					</aui:option>
 				<%
 			}
 		}
 	%>
 </aui:select>
 <%!
+	private List<DictItem> getDictItemsOrderBySibling(List<DictItem> result, 
+				List<DictItem> items, long dictCollectionId) 
+			throws Exception{
+		
+		for (DictItem item : items){
+			result.add(item);
+			List<DictItem> subItems = DictItemLocalServiceUtil
+					.getBy_D_P(dictCollectionId, item.getDictItemId(), 
+							QueryUtil.ALL_POS, QueryUtil.ALL_POS,
+							DataMgtUtil.getDictItemOrderByComparator(
+									DictItemDisplayTerms.SIBLING, WebKeys.ORDER_BY_ASC));
+			getDictItemsOrderBySibling(result, subItems, dictCollectionId);
+		}
+	
+		return result;
+	}
+
 	private Log _log = LogFactoryUtil.getLog("html.portlets.data_management.admin.select_dictitems.jsp");
 %>

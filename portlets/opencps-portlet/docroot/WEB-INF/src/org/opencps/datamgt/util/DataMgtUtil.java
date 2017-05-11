@@ -28,6 +28,7 @@ import org.opencps.datamgt.util.comparator.DictItemCodeComparator;
 import org.opencps.datamgt.util.comparator.DictItemCreateDateComparator;
 import org.opencps.datamgt.util.comparator.DictItemModifiedDateComparator;
 import org.opencps.datamgt.util.comparator.DictItemNameComparator;
+import org.opencps.datamgt.util.comparator.DictItemSiblingComparator;
 import org.opencps.datamgt.util.comparator.DictVersionCreateDateComparator;
 import org.opencps.datamgt.util.comparator.DictVersionModifiedDateComparator;
 import org.opencps.datamgt.util.comparator.DictVersionValidatedFromComparator;
@@ -127,6 +128,9 @@ public class DataMgtUtil {
 		}
 		else if (orderByCol.equals(DictItemDisplayTerms.USER_ID)) {
 
+		}
+		else if (orderByCol.equals(DictItemDisplayTerms.SIBLING)) {
+			orderByComparator = new DictItemSiblingComparator(orderByAsc);
 		}
 
 		return orderByComparator;

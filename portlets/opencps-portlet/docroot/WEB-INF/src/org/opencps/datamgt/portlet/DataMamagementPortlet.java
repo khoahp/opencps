@@ -18,12 +18,15 @@
 package org.opencps.datamgt.portlet;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
 import javax.portlet.PortletException;
+import javax.portlet.PortletURL;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
 
@@ -40,24 +43,36 @@ import org.opencps.datamgt.OutOfLengthCollectionNameException;
 import org.opencps.datamgt.OutOfLengthItemCodeException;
 import org.opencps.datamgt.OutOfLengthItemNameException;
 import org.opencps.datamgt.model.DictCollection;
+import org.opencps.datamgt.model.DictCollectionLink;
 import org.opencps.datamgt.model.DictItem;
+import org.opencps.datamgt.model.DictItemLink;
 import org.opencps.datamgt.model.DictVersion;
 import org.opencps.datamgt.search.DictCollectionDisplayTerms;
 import org.opencps.datamgt.search.DictItemDisplayTerms;
+import org.opencps.datamgt.search.DictItemSearch;
+import org.opencps.datamgt.service.DictCollectionLinkLocalServiceUtil;
 import org.opencps.datamgt.service.DictCollectionLocalServiceUtil;
+import org.opencps.datamgt.service.DictItemLinkLocalServiceUtil;
 import org.opencps.datamgt.service.DictItemLocalServiceUtil;
 import org.opencps.datamgt.service.DictVersionLocalServiceUtil;
+import org.opencps.datamgt.util.DataMgtUtil;
 import org.opencps.util.MessageKeys;
 import org.opencps.util.PortletPropsValues;
 import org.opencps.util.WebKeys;
 
+import com.liferay.portal.kernel.dao.orm.QueryUtil;
+import com.liferay.portal.kernel.dao.search.SearchContainer;
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.portlet.LiferayWindowState;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.servlet.SessionMessages;
 import com.liferay.portal.kernel.util.LocalizationUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.ServiceContextFactory;
@@ -110,11 +125,31 @@ public class DataMamagementPortlet extends MVCPortlet {
 			}
 		}
 	}
+	
+	public void changeStatusItemToNoUse(ActionRequest actionRequest,
+			ActionResponse actionResponse) throws IOException {
+
+		long dictItemId = ParamUtil.getLong(actionRequest,
+				DictItemDisplayTerms.DICTITEM_ID, 0L);
+		String redirectURL = ParamUtil.getString(actionRequest, "redirectURL");
+		try {
+			DictItem item = DictItemLocalServiceUtil.getDictItem(dictItemId);
+			item.setIssueStatus(2);
+			DictItemLocalServiceUtil.updateDictItem(item);
+		} catch (Exception e) {
+			SessionErrors.add(actionRequest,
+					MessageKeys.DATAMGT_SYSTEM_EXCEPTION_OCCURRED);
+			_log.error(e);
+		} finally {
+			if (Validator.isNotNull(redirectURL)) {
+				actionResponse.sendRedirect(redirectURL);
+			}
+		}
+	}
 
 	@Override
 	public void render(RenderRequest renderRequest,
-			RenderResponse renderResponse)
-			throws PortletException, IOException {
+			RenderResponse renderResponse) throws PortletException, IOException {
 
 		long dictCollectionId = ParamUtil.getLong(renderRequest,
 				DictCollectionDisplayTerms.DICTCOLLECTION_ID);
@@ -146,6 +181,28 @@ public class DataMamagementPortlet extends MVCPortlet {
 			_log.error(e);
 		}
 
+		String actionKey = ParamUtil.getString(renderRequest, "actionKey");
+		if (actionKey.equals("ajax-load-dict-items")) {
+
+			int cur = ParamUtil.getInteger(renderRequest, "cur", 1);
+			int delta = ParamUtil.getInteger(renderRequest, "delta", 20);
+
+			String itemNames = ParamUtil.getString(renderRequest, "keyword");
+			itemNames = StringPool.PERCENT + itemNames + StringPool.PERCENT;
+
+			PortletURL iteratorURL = renderResponse.createRenderURL();
+
+			iteratorURL.setWindowState(LiferayWindowState.NORMAL);
+
+			SearchContainer<DictItem> itemsListSearchContainer = new SearchContainer<DictItem>(
+					renderRequest, null, null,
+					SearchContainer.DEFAULT_CUR_PARAM, cur, delta, iteratorURL,
+					null, DictItemSearch.EMPTY_RESULTS_MESSAGE);
+
+			renderRequest.setAttribute("itemsListSearchContainer",
+					itemsListSearchContainer);
+		}
+
 		super.render(renderRequest, renderResponse);
 	}
 
@@ -165,36 +222,69 @@ public class DataMamagementPortlet extends MVCPortlet {
 
 		String collectionName = collectionNameMap
 				.get(actionRequest.getLocale());
+		
+		long[] dictCollectionsLinked = ParamUtil.getLongValues(actionRequest,
+				"dictCollectionsLinked");
 
 		for (Map.Entry<Locale, String> entry : collectionNameMap.entrySet()) {
 			if (entry.getValue().length() > collectionName.length()) {
 				collectionName = entry.getValue();
 			}
 		}
-
+		
+		if (Validator.isNull(collectionName)) {
+			collectionName = ParamUtil.getString(actionRequest,
+					DictCollectionDisplayTerms.COLLECTION_NAME);
+			Locale vnLocale = new Locale("vi", "VN");
+			collectionNameMap.put(vnLocale, collectionName);
+		}
+		
+		String collectionLinked = StringPool.BLANK;
+		if (dictCollectionsLinked.length == 0) {
+			collectionLinked = ParamUtil.getString(actionRequest,
+					"collectionLinked");
+			String[] strArr = StringUtil.split(collectionLinked);
+			dictCollectionsLinked = new long[strArr.length];
+			for (int i = 0; i < strArr.length; i++) {
+				try {
+					dictCollectionsLinked[i] = Long.parseLong(strArr[i]);
+				} catch (Exception e) {}
+			}
+		}
+		
 		String redirectURL = ParamUtil.getString(actionRequest, "redirectURL");
 		String returnURL = ParamUtil.getString(actionRequest, "returnURL");
+		
+		DictCollection dictCollection = null;
 		try {
-
 			ServiceContext serviceContext = ServiceContextFactory
 					.getInstance(actionRequest);
 			validatetDictCollection(collectionId, collectionName,
 					collectionCode, serviceContext);
 
 			if (collectionId == 0) {
-				DictCollectionLocalServiceUtil.addDictCollection(
+				dictCollection = DictCollectionLocalServiceUtil.addDictCollection(
 						serviceContext.getUserId(), collectionCode,
 						collectionNameMap, description, serviceContext);
 				SessionMessages.add(actionRequest,
 						MessageKeys.DATAMGT_ADD_SUCESS);
+				
+				updateDictCollectionsLinked(
+						dictCollection.getDictCollectionId(),
+						dictCollectionsLinked, 0, false, serviceContext);
 			} else {
-				DictCollectionLocalServiceUtil.updateDictCollection(
+				dictCollection = DictCollectionLocalServiceUtil.updateDictCollection(
 						collectionId, serviceContext.getUserId(),
 						collectionCode, collectionNameMap, description,
 						serviceContext);
 				SessionMessages.add(actionRequest,
 						MessageKeys.DATAMGT_UPDATE_SUCESS);
+				
+				updateDictCollectionsLinked(
+						dictCollection.getDictCollectionId(),
+						dictCollectionsLinked, 0, true, serviceContext);
 			}
+			
 		} catch (Exception e) {
 			if (e instanceof OutOfLengthCollectionCodeException) {
 				SessionErrors.add(actionRequest,
@@ -220,13 +310,37 @@ public class DataMamagementPortlet extends MVCPortlet {
 			}
 
 			redirectURL = returnURL;
+			
+			_log.error(e);
 
 		} finally {
 			if (Validator.isNotNull(redirectURL)) {
 				actionResponse.sendRedirect(redirectURL);
 			}
 		}
+	}
 
+	private void updateDictCollectionsLinked(long dictCollectionId,
+			long[] dictCollectionsIdLinked, long sequenceNo, boolean update,
+			ServiceContext serviceContext) throws SystemException {
+
+		// delete collection linked
+		if (update) {
+			List<DictCollectionLink> collectionTypes = DictCollectionLinkLocalServiceUtil
+					.getByDictCollectionId(dictCollectionId);
+			for (DictCollectionLink dictCollectionType : collectionTypes) {
+				DictCollectionLinkLocalServiceUtil
+						.deleteDictCollectionLink(dictCollectionType);
+			}
+		}
+
+		// add collections linked
+		for (long l : dictCollectionsIdLinked) {
+			if (l > 0) {
+				DictCollectionLinkLocalServiceUtil.addDictCollectionLink(
+						dictCollectionId, l, sequenceNo, serviceContext);
+			}
+		}
 	}
 
 	public void updateDictItem(ActionRequest actionRequest,
@@ -250,11 +364,39 @@ public class DataMamagementPortlet extends MVCPortlet {
 		String itemCode = ParamUtil.getString(actionRequest,
 				DictItemDisplayTerms.ITEM_CODE);
 
+		long[] dictItemsLinked = ParamUtil.getLongValues(actionRequest,
+				"dictItemLinked");
+		
+		long sibling = ParamUtil.getLong(actionRequest,
+				DictItemDisplayTerms.SIBLING);
+
+		int status = ParamUtil.getInteger(actionRequest, "status");
+
 		String itemName = itemNameMap.get(actionRequest.getLocale());
 
 		for (Map.Entry<Locale, String> entry : itemNameMap.entrySet()) {
 			if (entry.getValue().length() > itemName.length()) {
 				itemName = entry.getValue();
+			}
+		}
+		
+		if (Validator.isNull(itemName)) {
+			itemName = ParamUtil.getString(actionRequest,
+					DictItemDisplayTerms.ITEM_NAME);
+			Locale vnLocale = new Locale("vi", "VN");
+			itemNameMap.put(vnLocale, itemName);
+		}
+		
+		String itemsLinked = StringPool.BLANK;
+		if (dictItemsLinked.length == 0) {
+			itemsLinked = ParamUtil.getString(actionRequest,
+					"collectionLinked");
+			String[] strArr = StringUtil.split(itemsLinked);
+			dictItemsLinked = new long[strArr.length];
+			for (int i = 0; i < strArr.length; i++) {
+				try {
+					dictItemsLinked[i] = Long.parseLong(strArr[i]);
+				} catch (Exception e) {}
 			}
 		}
 
@@ -266,25 +408,45 @@ public class DataMamagementPortlet extends MVCPortlet {
 					.getInstance(actionRequest);
 			validatetDictItem(dictItemId, itemName, itemCode, serviceContext);
 
+			DictItem dictItem = null;
 			if (dictItemId == 0) {
 				if (dictVersionId == 0) {
-					DictItemLocalServiceUtil.addDictItem(
+					dictItem = DictItemLocalServiceUtil.addDictItem(
 							serviceContext.getUserId(), dictCollectionId,
-							itemCode, itemNameMap, parentItemId,
-							serviceContext);
+							itemCode, itemNameMap, itemNameMap, parentItemId,
+							sibling, status, serviceContext);
 				} else {
-					DictItemLocalServiceUtil.addDictItem(
+					dictItem = DictItemLocalServiceUtil.addDictItem(
 							serviceContext.getUserId(), dictCollectionId,
 							dictVersionId, itemCode, itemNameMap, parentItemId,
 							serviceContext);
 				}
 
+				updateSiblingTree(dictItem, null, sibling, true);
+
+				updateDictItemLinked(dictItem.getDictItemId(), dictItemsLinked,
+						0, false, serviceContext);
+
 				SessionMessages.add(actionRequest,
 						MessageKeys.DATAMGT_ADD_SUCESS);
 			} else {
-				DictItemLocalServiceUtil.updateDictItem(dictItemId,
+				DictItem dictItemBefor = DictItemLocalServiceUtil
+						.getDictItem(dictItemId);
+
+				dictItem = DictItemLocalServiceUtil.updateDictItem(dictItemId,
 						dictCollectionId, dictVersionId, itemCode, itemNameMap,
-						parentItemId, serviceContext);
+						itemNameMap, parentItemId, sibling, status, serviceContext);
+
+				boolean moveDown = true;
+				if (dictItemBefor.getSibling() > sibling) {
+					moveDown = false;
+				}
+
+				updateSiblingTree(dictItem, dictItemBefor, sibling, moveDown);
+
+				updateDictItemLinked(dictItem.getDictItemId(), dictItemsLinked,
+						0, true, serviceContext);
+
 				SessionMessages.add(actionRequest,
 						MessageKeys.DATAMGT_UPDATE_SUCESS);
 			}
@@ -310,11 +472,126 @@ public class DataMamagementPortlet extends MVCPortlet {
 			}
 
 			redirectURL = returnURL;
+			
+			_log.error(e);
 
 		} finally {
 			if (Validator.isNotNull(redirectURL)) {
 				actionResponse.sendRedirect(redirectURL);
 			}
+		}
+	}
+	
+	private void updateSiblingTree(DictItem dictItem, DictItem dictItemBefor,
+			long sibling, boolean moveDown) throws NoSuchDictItemException,
+			PortalException, SystemException {
+		List<DictItem> items = DictItemLocalServiceUtil.getBy_D_P(dictItem
+				.getDictCollectionId(), dictItem.getParentItemId(),
+				QueryUtil.ALL_POS, QueryUtil.ALL_POS, DataMgtUtil
+						.getDictItemOrderByComparator(
+								DictItemDisplayTerms.SIBLING,
+								WebKeys.ORDER_BY_ASC));
+		if (dictItemBefor == null) {
+			// new dict item
+			for (DictItem d : items) {
+				if (d.getDictItemId() != dictItem.getDictItemId()
+						&& d.getSibling() >= sibling) {
+					d.setSibling(d.getSibling() + 1);
+					DictItemLocalServiceUtil.updateDictItem(d);
+				}
+			}
+		} else {
+			// update exist dict item
+			if (dictItem.getParentItemId() == dictItemBefor.getParentItemId()) {
+				// item no change parent
+				if (dictItem.getSibling() > dictItemBefor.getSibling()) {
+					// item move down
+					for (DictItem d : items) {
+						if (d.getDictItemId() != dictItem.getDictItemId()
+								&& d.getSibling() > dictItemBefor.getSibling()
+								&& d.getSibling() <= sibling) {
+							d.setSibling(d.getSibling() - 1);
+							DictItemLocalServiceUtil.updateDictItem(d);
+						}
+					}
+				} else {
+					// item move up
+					for (DictItem d : items) {
+						if (d.getDictItemId() != dictItem.getDictItemId()
+								&& d.getSibling() >= sibling
+								&& d.getSibling() < dictItemBefor.getSibling()) {
+							d.setSibling(d.getSibling() + 1);
+							DictItemLocalServiceUtil.updateDictItem(d);
+						}
+					}
+				}
+			} else {
+				// item change parent
+				// update current tree
+				for (DictItem d : items) {
+					if (d.getDictItemId() != dictItem.getDictItemId()
+							&& d.getSibling() >= sibling) {
+						d.setSibling(d.getSibling() + 1);
+						DictItemLocalServiceUtil.updateDictItem(d);
+					}
+				}
+				// update previous tree
+				items = DictItemLocalServiceUtil.getBy_D_P(dictItemBefor
+						.getDictCollectionId(),
+						dictItemBefor.getParentItemId(), QueryUtil.ALL_POS,
+						QueryUtil.ALL_POS, DataMgtUtil
+								.getDictItemOrderByComparator(
+										DictItemDisplayTerms.SIBLING,
+										WebKeys.ORDER_BY_ASC));
+				for (DictItem d : items) {
+					if (d.getSibling() > dictItemBefor.getSibling()) {
+						d.setSibling(d.getSibling() - 1);
+						DictItemLocalServiceUtil.updateDictItem(d);
+					}
+				}
+
+				// update tree index for children tree
+				items = DictItemLocalServiceUtil
+						.getDictItemsByParentItemId(dictItem.getDictItemId());
+				updateTreeIndexChildrenTree(dictItem, items);
+			}
+		}
+	}
+
+	private void updateTreeIndexChildrenTree(DictItem parent,
+			List<DictItem> children) throws SystemException {
+		List<DictItem> subItem = new ArrayList<DictItem>();
+		String regex = "^.+" + String.valueOf(parent.getDictItemId());
+		String newTreIndex = StringPool.BLANK;
+		for (DictItem dictItem : children) {
+			newTreIndex = parent.getTreeIndex()
+					+ (StringPool.SPACE + dictItem.getTreeIndex()).replaceAll(
+							regex, StringPool.BLANK);
+			dictItem.setTreeIndex(newTreIndex);
+			DictItemLocalServiceUtil.updateDictItem(dictItem);
+			subItem = DictItemLocalServiceUtil
+					.getDictItemsByParentItemId(dictItem.getDictItemId());
+			updateTreeIndexChildrenTree(dictItem, subItem);
+		}
+	}
+
+	private void updateDictItemLinked(long dictItemId,
+			long[] dictItemsLinkedId, long sequenceNo, boolean update,
+			ServiceContext serviceContext) throws SystemException {
+
+		// delete dictItemLinked
+		if (update) {
+			List<DictItemLink> dictItemLinks = DictItemLinkLocalServiceUtil
+					.getByDictItemId(dictItemId);
+			for (DictItemLink dictItemLink : dictItemLinks) {
+				DictItemLinkLocalServiceUtil.deleteDictItemLink(dictItemLink);
+			}
+		}
+
+		// add dictItemLinked
+		for (long dictItemLinkedId : dictItemsLinkedId) {
+			DictItemLinkLocalServiceUtil.addDictItemLink(dictItemId,
+					dictItemLinkedId, sequenceNo, serviceContext);
 		}
 	}
 
@@ -396,6 +673,63 @@ public class DataMamagementPortlet extends MVCPortlet {
 			if (dictItem != null && dictItem.getDictItemId() != dictItemId) {
 				throw new DuplicateItemException();
 			}
+		}
+	}
+	
+	public void editDictItemSibling(ActionRequest actionRequest,
+			ActionResponse actionResponse) throws SystemException,
+			NoSuchDictCollectionException, PortalException {
+		int numberedMode = ParamUtil.getInteger(actionRequest,
+				"numberedSiblingMode");
+		long dictCollectionId = ParamUtil.getLong(actionRequest,
+				DictItemDisplayTerms.DICTCOLLECTION_ID);
+
+		switch (numberedMode) {
+		case 1:
+			numberedSiblingDictItems(0);
+			break;
+		case 2:
+			numberedSiblingDictItems(dictCollectionId);
+			break;
+		default:
+			break;
+		}
+	}
+
+	private void numberedSiblingDictItems(long dictCollectionId)
+			throws SystemException, NoSuchDictCollectionException,
+			PortalException {
+		List<DictCollection> dictCollections = new ArrayList<DictCollection>();
+		if (dictCollectionId > 0) {
+			dictCollections.add(DictCollectionLocalServiceUtil
+					.getDictCollection(dictCollectionId));
+		} else {
+			dictCollections = DictCollectionLocalServiceUtil
+					.getDictCollections();
+		}
+
+		for (DictCollection dictCollection : dictCollections) {
+			List<DictItem> rootItems = DictItemLocalServiceUtil
+					.getDictItemsInUseByDictCollectionIdAndParentItemId(
+							dictCollection.getDictCollectionId(), 0);
+			numberedSiblingItemsTree(dictCollection.getDictCollectionId(),
+					rootItems);
+		}
+
+	}
+
+	private void numberedSiblingItemsTree(long dictCollectionId,
+			List<DictItem> dictItems) throws SystemException {
+		long sibling = 0;
+		for (DictItem dictItem : dictItems) {
+			sibling++;
+			dictItem.setSibling(sibling);
+			DictItemLocalServiceUtil.updateDictItem(dictItem);
+
+			List<DictItem> subDictItems = DictItemLocalServiceUtil
+					.getDictItemsInUseByDictCollectionIdAndParentItemId(
+							dictCollectionId, dictItem.getDictItemId());
+			numberedSiblingItemsTree(dictCollectionId, subDictItems);
 		}
 	}
 
