@@ -17,7 +17,6 @@
 package org.opencps.dossiermgt.search;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -239,6 +238,8 @@ public class DossierIndexer extends BaseIndexer {
 			try {
 				ServiceInfo serviceInfo = ServiceInfoLocalServiceUtil
 						.getServiceInfo(dossier.getServiceInfoId());
+				document.addKeyword(DossierDisplayTerms.SERVICE_INFO_NO,
+						serviceInfo.getServiceNo());
 				document.addKeyword(DossierDisplayTerms.SERVICE_NAME,
 						serviceInfo.getServiceName());
 			} catch (Exception e) {
@@ -371,13 +372,12 @@ public class DossierIndexer extends BaseIndexer {
 				try {
 					JSONObject jsonObject = new JSONObject(
 							dossierFile.getFormData());
-					keyValues = parseJSONObject(keyValues, jsonObject);
+					parseJSONObject(keyValues, jsonObject);
 				} catch (Exception e) {
 					_log.info("Can not parse json object from FormData: =>"
 
 					+ " dossierFileId=" + dossierFile.getDossierFileId()
 							+ " : Cause " + e.getCause());
-					continue;
 				}
 			}
 
@@ -455,8 +455,6 @@ public class DossierIndexer extends BaseIndexer {
 
 	protected void reindexEntries(long companyId) throws PortalException,
 			SystemException {
-
-		final Collection<Document> documents = new ArrayList<Document>();
 
 		ActionableDynamicQuery actionableDynamicQuery = new DossierActionableDynamicQuery() {
 

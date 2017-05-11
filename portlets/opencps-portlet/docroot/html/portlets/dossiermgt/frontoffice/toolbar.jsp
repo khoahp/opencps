@@ -87,8 +87,6 @@
 	if(Validator.isNotNull(collectionDomain)) {
 		dictItems = DictItemLocalServiceUtil.getDictItemsByDictCollectionId(collectionDomain.getDictCollectionId());
 	}
-	
-	long redirectAddDossierPlid = GetterUtil.getLong(preferences.getValue("redirectAddDossierPlid", null));
 %>
 
 <aui:nav-bar cssClass="opencps-toolbar custom-toolbar">

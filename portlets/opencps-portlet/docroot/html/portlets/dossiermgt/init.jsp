@@ -114,7 +114,6 @@
 	double offsetY = GetterUtil.getDouble(preferences.getValue("offsetY", "0"), 0);
 	
 	boolean displayRecentlyResultWhenSearch = GetterUtil.getBoolean(preferences.getValue("displayRecentlyResultWhenSearch", "false"), false);
-	
-	String dklr_v10_administrationCode = preferences.getValue("dklr_v10_administrationCode", StringPool.BLANK);
+	long redirectAddDossierPlid = GetterUtil.getLong(preferences.getValue("redirectAddDossierPlid", null));
 %>
 

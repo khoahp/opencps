@@ -61,7 +61,7 @@ public class FiveMinutes implements MessageListener {
 	public void receive(Message message)
 		throws MessageListenerException {
 
-		_log.info("RUNNING _FIVE_MINUTELY $$$$$");
+		//_log.info("RUNNING _FIVE_MINUTELY $$$$$");
 
 		List<ProcessWorkflow> processWorkflows = new ArrayList<ProcessWorkflow>();
 
@@ -88,8 +88,8 @@ public class FiveMinutes implements MessageListener {
 							BackendUtils.checkPreCondition(
 								processWorkflow.getPreCondition(), processOrder.getDossierId());
 
-						_log.info("Scheduler _FIVE_MINUTELY ########" +
-							processWorkflow.getActionName() + "_" + processOrder.getDossierId());
+						/*_log.info("Scheduler _FIVE_MINUTELY ########" +
+							processWorkflow.getActionName() + "_" + processOrder.getDossierId());*/
 
 						if (preCondition) {
 							long processWorkflowId = processWorkflow.getProcessWorkflowId();

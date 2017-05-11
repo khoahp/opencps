@@ -1,4 +1,12 @@
 
+<%@page import="org.opencps.util.ActionKeys"%>
+<%@page import="org.opencps.dossiermgt.permissions.DossierPermission"%>
+<%@page import="com.liferay.portal.kernel.search.Indexer"%>
+<%@page import="com.liferay.portal.kernel.search.IndexerRegistryUtil"%>
+<%@page import="org.opencps.dossiermgt.service.DossierFileLocalServiceUtil"%>
+<%@page import="java.util.Map"%>
+<%@page import="java.util.HashMap"%>
+<%@page import="org.opencps.servicemgt.NoSuchServiceInfoException"%>
 <%@page import="org.opencps.servicemgt.model.ServiceInfo"%>
 <%@page import="org.opencps.servicemgt.service.ServiceInfoLocalServiceUtil"%>
 <%@page import="com.liferay.portal.kernel.dao.orm.QueryUtil"%>
@@ -74,30 +82,40 @@
 />
 
 <%
-	String dossierStatus = ParamUtil.getString(request, DossierDisplayTerms.DOSSIER_STATUS, StringPool.BLANK);
+	String dklr_v10_govAgencyCode = preferences.getValue("dklr_v10_govAgencyCode", StringPool.BLANK);
+	String dklr_v10_administrationCode = preferences.getValue("dklr_v10_administrationCode", StringPool.BLANK);
+	String dklr_v10_dynamicFormKeyPattern = preferences.getValue("dklr_v10_dynamicFormKeyPattern", StringPool.BLANK);	//vehicleClass#VEHICLE_CLASS#doi-tuong
 	
-	String dossierType = ParamUtil.getString(request, "dossierType", "");
-	String vehicleClass = ParamUtil.getString(request, "vehicleClass", "");
-	
-	long serviceDomainId = ParamUtil.getLong(request, "serviceDomainId");
+	String[] dynamicFormKeyPatterns = Validator.isNotNull(dklr_v10_dynamicFormKeyPattern) ? StringUtil.split(dklr_v10_dynamicFormKeyPattern, StringPool.DOLLAR) : new String[0];	// cat thanh mang cac key trong dynamicform
 
-	String serviceDomainIndex_cfg = StringPool.BLANK;
+	String receptionNo = ParamUtil.getString(request, DossierDisplayTerms.RECEPTION_NO);
+	String serviceInfoNo = ParamUtil.getString(request, DossierDisplayTerms.SERVICE_INFO_NO);
+	String dossierStatus = ParamUtil.getString(request, DossierDisplayTerms.DOSSIER_STATUS);
+	String submitDateTimeFrom = ParamUtil.getString(request, DossierDisplayTerms.SUBMIT_DATETIME_FROM);
+	String submitDateTimeTo = ParamUtil.getString(request, DossierDisplayTerms.SUBMIT_DATETIME_TO);
 	
-	if(Validator.isNotNull(itemCode_cfg)){
-		DictItem dictItem_cfg = DictItemLocalServiceUtil.getDictItemInuseByItemCode(themeDisplay.getScopeGroupId(), PortletPropsValues.DATAMGT_MASTERDATA_SERVICE_DOMAIN, itemCode_cfg);
+	Map<String, String> mapDynamicFormSelects = new HashMap<String, String>();	// Luu gia tri chon tuong ung voi key
+	Map<String, String> mapDynamicFormValues = new HashMap<String, String>();	// Luu gia tri tu index cua ho so tuong ung voi key
+	
+	for (String keyPatterns : dynamicFormKeyPatterns) {
+		String[] keys = StringUtil.split(keyPatterns, StringPool.POUND);
 		
-		if(Validator.isNotNull(dictItem_cfg)){
-			serviceDomainId = dictItem_cfg.getDictItemId();
-			serviceDomainIndex_cfg = dictItem_cfg.getTreeIndex();
-		}
+		String val = ParamUtil.getString(request, keys[0]);
 		
+		mapDynamicFormSelects.put(keys[0], val);
 	}
 	
 	PortletURL iteratorURL = renderResponse.createRenderURL();
 	iteratorURL.setParameter("mvcPath", templatePath + "frontofficedossierlist.jsp");
 	iteratorURL.setParameter("tabs1", DossierMgtUtil.TOP_TABS_DOSSIER);
-	iteratorURL.setParameter(DossierDisplayTerms.DOSSIER_STATUS, String.valueOf(dossierStatus));
-	iteratorURL.setParameter("serviceDomainId", (serviceDomainId > 0) ? String.valueOf(serviceDomainId):StringPool.BLANK);
+	iteratorURL.setParameter("receptionNo", receptionNo);
+	iteratorURL.setParameter("serviceInfoNo", serviceInfoNo);
+	iteratorURL.setParameter("dossierStatus", dossierStatus);
+	iteratorURL.setParameter("submitDateTimeFrom", submitDateTimeFrom);
+	iteratorURL.setParameter("submitDateTimeTo", submitDateTimeTo);
+	for (Map.Entry<String, String> entry : mapDynamicFormSelects.entrySet()) {
+		iteratorURL.setParameter(entry.getKey(), entry.getValue());
+	}
 	
 	List<Dossier> dossiers =  new ArrayList<Dossier>();
 	
@@ -106,34 +124,57 @@
 	List<String> headerNames = new ArrayList<String>();
 	headerNames.add("stt");
 	headerNames.add("reception-no");
-	headerNames.add("doi-tuong");
+	for (String keyPatterns : dynamicFormKeyPatterns) {
+		String[] keys = StringUtil.split(keyPatterns, StringPool.POUND);
+		
+		String keyLabel = keys[0];
+		if(keys.length > 2) {
+			keyLabel = keys[2];
+		}
+		
+		headerNames.add(keyLabel);
+	}
 	headerNames.add("service-info-name");
 	headerNames.add("submit-date-time");
 	headerNames.add("note");
 	headerNames.add("action");
 	
 	List<DictItem> listDossierStatus = DictItemLocalServiceUtil.findDictItemsByG_DC_S(scopeGroupId, "DOSSIER_STATUS");
-	List<DictItem> listVehicleClass = DictItemLocalServiceUtil.findDictItemsByG_DC_S(scopeGroupId, "VEHICLE_CLASS");
 	
 	List<ServiceInfo> listServiceInfo = ServiceInfoLocalServiceUtil.searchService(scopeGroupId, StringPool.BLANK, 
 			dklr_v10_administrationCode, StringPool.BLANK, null, -1, -1);
 	
+	Map<String, String> keywordIndexs = new HashMap<String, String>();
+	keywordIndexs.put("govAgencyCode", dklr_v10_govAgencyCode);
+	keywordIndexs.put(DossierDisplayTerms.RECEPTION_NO, receptionNo);
+	keywordIndexs.put(DossierDisplayTerms.SERVICE_INFO_NO, serviceInfoNo);
+	keywordIndexs.put(DossierDisplayTerms.DOSSIER_STATUS, dossierStatus);
+	for (Map.Entry<String, String> entry : mapDynamicFormSelects.entrySet()) {
+		keywordIndexs.put(entry.getKey(), entry.getValue());
+	}
 %>
 
-<aui:form action="<%= iteratorURL %>" method="get" name="fm">
+<liferay-portlet:renderURL varImpl="searchURL">
+	<portlet:param name="mvcPath" value='<%= templatePath + "frontofficedossierlist.jsp" %>' />
+	<portlet:param name="tabs1" value='<%= DossierMgtUtil.TOP_TABS_DOSSIER %>' />
+</liferay-portlet:renderURL>
+
+<aui:form action="<%= searchURL %>" method="get" name="fm">
+	<liferay-portlet:renderURLParams varImpl="searchURL" />
+	
 	<aui:row>
 		<aui:col width="100">
 			<h4><liferay-ui:message key="tim-kiem-ho-so" /></h4>
 			
 			<aui:row>
 				<aui:col width="100" >
-					<aui:input type="text" name="receptionNo" value="" label="so-dkkt"/>
+					<aui:input type="text" name="<%= DossierDisplayTerms.RECEPTION_NO %>" value="" label="so-dkkt"/>
 				</aui:col>
 			</aui:row>
 			
 			<aui:row>
 				<aui:col width="100" >
-					<aui:select name="serviceInfoNo" label="service-info" showEmptyOption="<%= true %>">
+					<aui:select name="<%= DossierDisplayTerms.SERVICE_INFO_NO %>" label="service-info" showEmptyOption="<%= true %>">
 						<% for(ServiceInfo serviceInfoTmp : listServiceInfo) { %>
 							<aui:option value="<%= serviceInfoTmp.getServiceNo() %>" label="<%= serviceInfoTmp.getServiceName() %>" />
 						<% } %>
@@ -143,15 +184,51 @@
 			
 			<aui:row>
 				<aui:col width="50" >
-					<aui:select name="vehicleClass" label="doi-tuong" showEmptyOption="<%= true %>">
-						<% for(DictItem itemTmp : listVehicleClass) { %>
-							<aui:option value="<%= itemTmp.getItemCode() %>" label="<%= itemTmp.getItemName(themeDisplay.getLocale()) %>" />
-						<% } %>
-					</aui:select>
+					<%
+					for (String keyPatterns : dynamicFormKeyPatterns) {
+						String[] keys = StringUtil.split(keyPatterns, StringPool.POUND);
+						
+						String key = keys[0];
+						String keyValue = mapDynamicFormSelects.get(key);
+						
+						String keyLabel = key;
+						if(keys.length > 2) {
+							keyLabel = keys[2];
+						}
+						
+						String keyDictCollectionCode = null;
+						
+						if(keys.length > 1) {
+							keyDictCollectionCode = keys[1];
+						}
+					%>
+						
+						<c:choose>
+							<c:when test="<%= Validator.isNotNull(keyDictCollectionCode) %>">
+								<!-- combobox -->
+								<%
+								List<DictItem> listDynamicKeyItem = DictItemLocalServiceUtil.findDictItemsByG_DC_S(scopeGroupId, keyDictCollectionCode);
+								%>
+								<aui:select name="<%= key %>" label="<%= keyLabel %>" showEmptyOption="<%= true %>">
+									<% for(DictItem itemTmp : listDynamicKeyItem) { %>
+										<aui:option selected='<%= itemTmp.getItemCode().equalsIgnoreCase(keyValue) %>' value="<%= itemTmp.getItemCode() %>" label="<%= itemTmp.getItemName(themeDisplay.getLocale()) %>" />
+									<% } %>
+								</aui:select>
+							</c:when>
+							
+							<c:otherwise>
+								<!-- input text -->
+								<aui:input type="text" name="<%= key %>" label="<%= keyLabel %>" value="<%= keyValue %>" />
+							</c:otherwise>
+						</c:choose>
+					<%
+					}
+					%>
+					
 				</aui:col>
 				
 				<aui:col width="50" >
-					<aui:select name="dossierStatus" showEmptyOption="<%= true %>">
+					<aui:select name="<%= DossierDisplayTerms.DOSSIER_STATUS %>" showEmptyOption="<%= true %>">
 						<% for(DictItem itemTmp : listDossierStatus) { %>
 							<aui:option value="<%= itemTmp.getItemCode() %>" label="<%= itemTmp.getItemName(themeDisplay.getLocale()) %>" />
 						<% } %>
@@ -161,18 +238,62 @@
 			
 			<aui:row>
 				<aui:col width="50" >
-					<aui:input type="text" name="submitDateTimeFrom" label="ngay-nop-ho-so" />
+					<aui:input type="text" name="<%= DossierDisplayTerms.SUBMIT_DATETIME_FROM %>" label="ngay-nop-ho-so" />
 				</aui:col>
 				
 				<aui:col width="50" >
-					<aui:input type="text" name="submitDateTimeTo" label="den-ngay" />
+					<aui:input type="text" name="<%= DossierDisplayTerms.SUBMIT_DATETIME_TO %>" label="den-ngay" />
 				</aui:col>
 			</aui:row>
 			
 			<aui:button-row>
 				<aui:button type="submit" name="search" value="search" />
 				
-				<aui:button type="button" name="add-new" value="add-new" />
+				<c:if test="<%=DossierPermission.contains(permissionChecker, scopeGroupId, ActionKeys.ADD_DOSSIER) %>">
+					
+					<%
+					// Trong truong hop cau hinh man hinh lua chon nop ho so se quay ra man hinh hien thi thu tuc hanh chinh de chon
+					// Neu khong thi toi portlet hien thi danh sach dich vu cong mac dinh
+					%>
+					<c:choose>
+						<c:when test="<%= redirectAddDossierPlid > 0 %>">
+							<liferay-portlet:renderURL var="addDossierURL" portletName="<%= WebKeys.SERVICE_MGT_DIRECTORY %>"  plid="<%= redirectAddDossierPlid %>"
+								windowState="<%=LiferayWindowState.NORMAL.toString() %>">
+								<liferay-portlet:param name="backURL" value="<%=currentURL %>"/>
+							</liferay-portlet:renderURL>
+							<aui:button icon="icon-plus" href="<%=addDossierURL %>" cssClass="action-button" value="select-service-info"/>
+						</c:when>
+						<c:otherwise>
+							<portlet:renderURL var="addDossierURL" windowState="<%=LiferayWindowState.NORMAL.toString() %>">
+								<portlet:param name="isListServiceConfig" value="<%=String.valueOf(true) %>"/>
+								<portlet:param name="tabs1" value="<%=DossierMgtUtil.TOP_TABS_DOSSIER %>"/>
+								<portlet:param name="backURL" value="<%=currentURL %>"/>
+								<%
+									if(Validator.isNotNull(itemCode_cfg) && itemCode_cfg.length() > 0){
+										
+									DictItem dictItem_cfg = DictItemLocalServiceUtil.getDictItemInuseByItemCode(themeDisplay.getScopeGroupId(), PortletPropsValues.DATAMGT_MASTERDATA_SERVICE_DOMAIN, itemCode_cfg);
+										
+									if(Validator.isNotNull(dictItem_cfg)){
+									
+								%>
+									<portlet:param name="mvcPath" value="<%=templatePath + \"display/20_80_servicelist_04.jsp\" %>"/>
+									<portlet:param name="serviceDomainId" value="<%=String.valueOf(dictItem_cfg.getDictItemId()) %>"/>
+									<portlet:param name="dictItemCode" value="<%=dictItem_cfg.getItemCode() %>"/>
+								<%
+									}
+									}else{
+								%>		
+									<portlet:param name="mvcPath" value="/html/portlets/dossiermgt/frontoffice/frontofficeservicelist.jsp"/>
+								<%
+									}
+								%>
+								<portlet:param name="backURLFromList" value="<%=currentURL %>"/>
+							</portlet:renderURL>
+							
+							<aui:button icon="icon-plus" href="<%=addDossierURL %>" cssClass="action-button" value="select-service-info"/>
+						</c:otherwise>
+					</c:choose>
+				</c:if>
 			</aui:button-row>
 		</aui:col>
 	</aui:row>
@@ -180,33 +301,10 @@
 	<aui:row>
 		<aui:col width="100" >
 			<div class="opencps-searchcontainer-wrapper default-box-shadow radius8">
-				<liferay-ui:search-container searchContainer="<%= new DossierSearch(renderRequest, SearchContainer.DEFAULT_DELTA, iteratorURL, headerNames) %>">
+				<liferay-ui:search-container searchContainer="<%= new DossierSearch(renderRequest, iteratorURL, headerNames, null) %>">
 				
 					<liferay-ui:search-container-results>
-						<%
-							DossierSearchTerms searchTerms = (DossierSearchTerms)searchContainer.getSearchTerms();
-							
-							searchTerms.setDossierStatus(dossierStatus);
-							
-							DictItem domainItem = null;
-						
-	
-							try{
-								if(serviceDomainId > 0){
-									domainItem = DictItemLocalServiceUtil.getDictItem(serviceDomainId);
-								}
-				
-								if(domainItem != null){
-									searchTerms.setServiceDomainIndex(domainItem.getTreeIndex());
-								}
-								
-								%>
-										<%@include file="/html/portlets/dossiermgt/frontoffice/dossier_search_results_index.jspf" %>
-								<%
-							}catch(Exception e){
-								_log.error(e);
-							}
-						%>
+						<%@include file="/html/portlets/dossiermgt/frontoffice/dossier_search_results_index.jspf" %>
 					</liferay-ui:search-container-results>	
 						<liferay-ui:search-container-row 
 							className="org.opencps.dossiermgt.model.Dossier" 
@@ -231,13 +329,13 @@
 								_log.error(e);
 							}
 							
-							long serviceInfoId = dossier.getServiceInfoId();
 							ServiceInfo serviceInfo = null;
 							
-							try {
-								serviceInfo = ServiceInfoLocalServiceUtil.getServiceInfo(serviceInfoId);
-							} catch(Exception e) {
-								_log.error(e);
+							if(dossier.getServiceInfoId() > 0) {
+								try {
+									serviceInfo = ServiceInfoLocalServiceUtil.getServiceInfo(dossier.getServiceInfoId());
+								} catch(NoSuchServiceInfoException e) {
+								}
 							}
 							
 							String serviceName = serviceInfo != null ? serviceInfo.getServiceName() : StringPool.BLANK;
@@ -250,10 +348,6 @@
 						
 						<liferay-util:buffer var="col2">
 							<%=dossier.getReceptionNo() %>
-						</liferay-util:buffer>
-						
-						<liferay-util:buffer var="col3">
-							<liferay-ui:message key="<%=vehicleClass %>"/>
 						</liferay-util:buffer>
 						
 						<liferay-util:buffer var="col4">
@@ -285,7 +379,13 @@
 							row.setClassName("opencps-searchcontainer-row " + cssStatusColor);
 							row.addText(col1);
 							row.addText(col2);
-							row.addText(col3);
+							
+							for (String keyPatterns : dynamicFormKeyPatterns) {
+								String[] keys = StringUtil.split(keyPatterns, StringPool.POUND);
+								
+								row.addText(mapDynamicFormValues.get(dossier.getDossierId() + StringPool.UNDERLINE + keys[0]));
+							}
+							
 							row.addText(col4);
 							row.addText(col5);
 							row.addText(col6);
@@ -307,16 +407,22 @@
  <aui:script>
 AUI().use('aui-datepicker', function(A) {
 	new A.DatePicker({
-		trigger : '#<portlet:namespace/>submitDateTimeFrom',
+		trigger : '#<%= renderResponse.getNamespace() + DossierDisplayTerms.SUBMIT_DATETIME_FROM %>',
 		popover : {
 			zIndex : 1
+		},
+		calendar: {
+			dateFormat: '%d/%m/%y'
 		}
 	});
 	
 	new A.DatePicker({
-		trigger : '#<portlet:namespace/>submitDateTimeTo',
+		trigger : '#<%= renderResponse.getNamespace() + DossierDisplayTerms.SUBMIT_DATETIME_TO %>',
 		popover : {
 			zIndex : 1
+		},
+		calendar: {
+			dateFormat: '%d/%m/%y'
 		}
 	});
 });
