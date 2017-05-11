@@ -7,6 +7,28 @@
 			<access>PROPERTY</access>
 		</persistence-unit-defaults>
 	</persistence-unit-metadata>
+	<mapped-superclass class="org.opencps.integrate.dao.model.impl.ForgotPassModelImpl">
+		<attributes>
+			<id name="id">
+				<column name="ID_" />
+			</id>
+			<basic name="createDate">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="verifyCode" />
+			<basic name="verifyDate">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="expiredDate">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="userid" />
+			<basic name="inused" />
+			<transient name="modelAttributes" />
+			<transient name="primaryKey" />
+			<transient name="primaryKeyObj" />
+		</attributes>
+	</mapped-superclass>
 	<mapped-superclass class="org.opencps.integrate.dao.model.impl.IntegrateAPIModelImpl">
 		<attributes>
 			<id name="id">
@@ -32,36 +54,12 @@
 			<transient name="userUuid" />
 		</attributes>
 	</mapped-superclass>
-	<mapped-superclass class="org.opencps.integrate.dao.model.impl.IntegrateAPILogsModelImpl">
-		<attributes>
-			<id name="id">
-				<column name="ID_" />
-			</id>
-			<basic name="companyId" />
-			<basic name="groupId" />
-			<basic name="userId" />
-			<basic name="createDate">
-				<temporal>TIMESTAMP</temporal>
-			</basic>
-			<basic name="modifiedDate">
-				<temporal>TIMESTAMP</temporal>
-			</basic>
-			<basic name="actionCode">
-				<temporal>TIMESTAMP</temporal>
-			</basic>
-			<basic name="apiKey" />
-			<transient name="modelAttributes" />
-			<transient name="primaryKey" />
-			<transient name="primaryKeyObj" />
-			<transient name="userUuid" />
-		</attributes>
-	</mapped-superclass>
-	<entity class="org.opencps.integrate.dao.model.impl.IntegrateAPIImpl" name="IntegrateAPI">
-		<table name="opencps_apikey" />
+	<entity class="org.opencps.integrate.dao.model.impl.ForgotPassImpl" name="ForgotPass">
+		<table name="opencps_verifycode" />
 		<attributes />
 	</entity>
-	<entity class="org.opencps.integrate.dao.model.impl.IntegrateAPILogsImpl" name="IntegrateAPILogs">
-		<table name="opencps_apikey_log" />
+	<entity class="org.opencps.integrate.dao.model.impl.IntegrateAPIImpl" name="IntegrateAPI">
+		<table name="opencps_apikey" />
 		<attributes />
 	</entity>
 </entity-mappings>

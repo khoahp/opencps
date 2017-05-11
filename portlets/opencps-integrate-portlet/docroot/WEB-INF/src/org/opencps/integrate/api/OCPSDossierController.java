@@ -435,7 +435,12 @@ public class OCPSDossierController {
 										"{}"))) {
 							mimeType = dfm.getDossierFileContent();
 						}
-
+						
+						serviceContext.setAddGuestPermissions(true);
+						serviceContext.setAddGroupPermissions(true);
+						
+						_log.info("DOSSIER_FILE_NAME : " + dfm.getAttachmentFileName());
+						
 						dossierFile = DossierFileLocalServiceUtil
 								.addDossierFile(
 										dossier.getUserId(),

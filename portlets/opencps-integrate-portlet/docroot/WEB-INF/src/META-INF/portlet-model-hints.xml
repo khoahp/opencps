@@ -1,6 +1,15 @@
 <?xml version="1.0"?>
 
 <model-hints>
+	<model name="org.opencps.integrate.dao.model.ForgotPass">
+		<field name="id" type="long" />
+		<field name="createDate" type="Date" />
+		<field name="verifyCode" type="String" />
+		<field name="verifyDate" type="Date" />
+		<field name="expiredDate" type="Date" />
+		<field name="userid" type="long" />
+		<field name="inused" type="boolean" />
+	</model>
 	<model name="org.opencps.integrate.dao.model.IntegrateAPI">
 		<field name="id" type="long" />
 		<field name="companyId" type="long" />
@@ -11,15 +20,5 @@
 		<field name="lastLogin" type="Date" />
 		<field name="apiKey" type="String" />
 		<field name="agency" type="String" />
-	</model>
-	<model name="org.opencps.integrate.dao.model.IntegrateAPILogs">
-		<field name="id" type="long" />
-		<field name="companyId" type="long" />
-		<field name="groupId" type="long" />
-		<field name="userId" type="long" />
-		<field name="createDate" type="Date" />
-		<field name="modifiedDate" type="Date" />
-		<field name="actionCode" type="Date" />
-		<field name="apiKey" type="String" />
 	</model>
 </model-hints>
