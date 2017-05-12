@@ -1,3 +1,4 @@
+<%@page import="java.util.ArrayList"%>
 <%
 /**
  * OpenCPS is the open source Core Public Services software
@@ -33,12 +34,17 @@
 	String collectionName = ParamUtil.getString(request, "collectionName");
 	collectionName = StringPool.PERCENT + collectionName + StringPool.PERCENT;
 	String[] collectionNames = new String[]{collectionName};
-	List<DictCollection> collections = DictCollectionLocalServiceUtil
-			.getDictCollections(scopeGroupId, collectionNames, 
-					QueryUtil.ALL_POS, QueryUtil.ALL_POS, 
-					DataMgtUtil.getDictCollectionOrderByComparator(
-						DictCollectionDisplayTerms.COLLECTION_NAME, 
-						WebKeys.ORDER_BY_ASC));
+	List<DictCollection> collections = new ArrayList<DictCollection>();
+	try {
+		collections = DictCollectionLocalServiceUtil
+				.getDictCollections(scopeGroupId, collectionNames, 
+						QueryUtil.ALL_POS, QueryUtil.ALL_POS, 
+						DataMgtUtil.getDictCollectionOrderByComparator(
+							DictCollectionDisplayTerms.COLLECTION_NAME, 
+							WebKeys.ORDER_BY_ASC));
+	} catch (Exception e){
+		_log.error(e);
+	}
 %>
 
 <ul class="tree-view-content tree-drag-drop-content tree-file tree-root-container">

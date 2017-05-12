@@ -116,13 +116,12 @@
 											<aui:input 
 												name="dictCollectionsLinked" 
 												value="<%=collection.getDictCollectionId() %>"
-												label=""
+												label="<%=collection.getCollectionName() %>"
 												type="checkbox" 
 												inlineField="true"
 												checked="<%=checked %>"
 												cssClass='<%=!checked ? "no-linked-to-selected-collection" : "" %>'
 											/>
-											<%=collection.getCollectionName() %>
 										</li>
 									<%
 								}
