@@ -36,6 +36,18 @@
 			<hint-collection name="TEXTAREA" />
 		</field>
 	</model>
+	<model name="org.opencps.datamgt.model.DictCollectionLink">
+		<field name="dictCollectionLinkId" type="long" />
+		<field name="companyId" type="long" />
+		<field name="groupId" type="long" />
+		<field name="userId" type="long" />
+		<field name="createDate" type="Date" />
+		<field name="modifiedDate" type="Date" />
+		<field name="dictCollectionId" type="long" />
+		<field name="dictCollectionLinkedId" type="long" />
+		<field name="dictCollectionLinkedName" type="String" />
+		<field name="sequenceNo" type="long" />
+	</model>
 	<model name="org.opencps.datamgt.model.DictItem">
 		<field name="dictItemId" type="long" />
 		<field name="companyId" type="long" />
@@ -57,6 +69,35 @@
 		<field name="treeIndex" type="String" />
 		<field name="issueStatus" type="int" />
 		<field name="dictVersionId" type="long" />
+		<field name="sibling" type="long" />
+		<field name="level" type="int" />
+	</model>
+	<model name="org.opencps.datamgt.model.DictItemLink">
+		<field name="dictItemLinkId" type="long" />
+		<field name="companyId" type="long" />
+		<field name="groupId" type="long" />
+		<field name="userId" type="long" />
+		<field name="createDate" type="Date" />
+		<field name="modifiedDate" type="Date" />
+		<field name="dictItemId" type="long" />
+		<field name="dictItemLinkedId" type="long" />
+		<field name="dictItemLinkedCode" type="String" />
+		<field name="dictItemLinkedName" type="String" />
+		<field name="dictCollectionId" type="long" />
+		<field name="dictCollectionLinkedId" type="long" />
+		<field name="sequenceNo" type="long" />
+	</model>
+	<model name="org.opencps.datamgt.model.DictPermissions">
+		<field name="userIdMap" type="long" />
+		<field name="dictCollectionId" type="long" />
+		<field name="companyId" type="long" />
+		<field name="groupId" type="long" />
+		<field name="userId" type="long" />
+		<field name="createDate" type="Date" />
+		<field name="view" type="boolean" />
+		<field name="add" type="boolean" />
+		<field name="edit" type="boolean" />
+		<field name="delete" type="boolean" />
 	</model>
 	<model name="org.opencps.datamgt.model.DictVersion">
 		<field name="dictVersionId" type="long" />

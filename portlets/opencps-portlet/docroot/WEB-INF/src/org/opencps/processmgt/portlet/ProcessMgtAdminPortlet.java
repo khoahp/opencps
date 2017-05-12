@@ -680,6 +680,8 @@ public class ProcessMgtAdminPortlet extends MVCPortlet {
 			if (Validator.isNotNull(returnURL)) {
 				actionResponse.sendRedirect(returnURL);
 			}
+			
+			_log.error(e);
 		}
 
 	}

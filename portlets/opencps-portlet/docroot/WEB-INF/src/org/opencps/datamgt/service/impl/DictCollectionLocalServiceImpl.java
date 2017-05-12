@@ -29,6 +29,7 @@ import org.opencps.datamgt.model.DictVersion;
 import org.opencps.datamgt.service.base.DictCollectionLocalServiceBaseImpl;
 
 import com.liferay.counter.service.CounterLocalServiceUtil;
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.service.ServiceContext;
@@ -321,5 +322,17 @@ public class DictCollectionLocalServiceImpl
 			.setDescription(description);
 		return dictCollectionPersistence
 			.update(dictCollection);
+	}
+	
+	/**
+	 * @param dictCollectionCode
+	 * @return
+	 * @throws PortalException
+	 * @throws SystemException
+	 */
+	public DictCollection getDictCollectionByCode(String dictCollectionCode)
+			throws PortalException, SystemException {
+		return dictCollectionPersistence
+				.fetchByCollectionCode(dictCollectionCode);
 	}
 }
