@@ -479,6 +479,7 @@ public class OCPSController {
 			obj.put("AgencyName", dossier.getGovAgencyName());
 			obj.put("DossierNo", dossier.getReceptionNo());
 			obj.put("DossierStatus", dossier.getDossierStatus());
+			obj.put("DossierStatusText", APIUtils.getLanguageValue(dossier.getDossierStatus()));
 
 			results.put(obj);
 		}
