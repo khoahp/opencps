@@ -947,26 +947,26 @@ public class OCPSDossierController {
 						}
 						
 						if (Validator.isNotNull(dm.getCityName())) {
-							dossier.setCityCode(dm.getCityName());
+							dossier.setCityName(dm.getCityName());
 						}
 						
 						if (Validator.isNotNull(dm.getCityCode())) {
 							dossier.setCityCode(dm.getCityCode());
 						}
 
-						if (Validator.isNotNull(dm.getDistrictCode())) {
-							dossier.setCityCode(dm.getDistrictCode());
+						if (Validator.isNotNull(dm.getDistrictName())) {
+							dossier.setDistrictName(dm.getDistrictName());
 						}
 						
-						if (Validator.isNotNull(dm.getWardCode())) {
-							dossier.setCityCode(dm.getWardCode());
+						if (Validator.isNotNull(dm.getDistrictCode())) {
+							dossier.setDistrictCode(dm.getDistrictCode());
 						}
-						if (Validator.isNotNull(dm.getDistrictName())) {
-							dossier.setCityCode(dm.getDistrictName());
+						if (Validator.isNotNull(dm.getWardCode())) {
+							dossier.setWardCode(dm.getWardCode());
 						}
 						
 						if (Validator.isNotNull(dm.getWardName())) {
-							dossier.setCityCode(dm.getWardName());
+							dossier.setWardName(dm.getWardName());
 						}
 						
 						if (Validator.isNotNull(dm.getContactTelNo())) {

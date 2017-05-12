@@ -117,7 +117,7 @@ public class OCPSNotificationController {
 											.getUserNotificationEventId());
 							userNoticeEvent.put("timeStamp",
 									userNotificationEvent.getTimestamp());
-
+							userNoticeEvent.put("read", userNotificationEvent.isArchived());
 							jsonArray.put(userNoticeEvent);
 						}
 					}
