@@ -31,7 +31,6 @@
 <%@page import="org.opencps.datamgt.model.DictCollectionLink"%>
 <%@page import="org.opencps.datamgt.service.DictCollectionLocalServiceUtil"%>
 <%@page import="java.util.List"%>
-<%@page import="java.util.ArrayList"%>
 
 <%@ include file="../../init.jsp"%>
 

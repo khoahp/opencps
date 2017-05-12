@@ -1,4 +1,3 @@
-<%@page import="java.util.ArrayList"%>
 <%
 /**
  * OpenCPS is the open source Core Public Services software
@@ -18,6 +17,7 @@
  */
 %>
 
+<%@page import="java.util.ArrayList"%>
 <%@page import="org.opencps.usermgt.service.EmployeeLocalServiceUtil"%>
 <%@page import="java.util.List"%>
 <%@page import="org.opencps.usermgt.model.Employee"%>
@@ -27,9 +27,6 @@
 <%@ include file="../../init.jsp"%>
 
 <%
-	String name = ParamUtil.getString(request, "userName");
-	_log.info("~~~~~~~~~~~~~~>>> name search: "+ name);
-	//List<Employee> employees = EmployeeLocalServiceUtil.findBy_G_N(scopeGroupId, name);
 	List<Employee> employees = new ArrayList<Employee>();
 	try {
 		employees = EmployeeLocalServiceUtil.getEmployees(scopeGroupId);

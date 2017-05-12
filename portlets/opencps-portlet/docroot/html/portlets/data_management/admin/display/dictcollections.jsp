@@ -145,10 +145,18 @@
 			portletURL.setParameter('<%=DictItemDisplayTerms.USER_ID %>', userId);
 		}
 		
-		var viewPermissionAll = false;
-		var addPermissionAll = false;
-		var editPermissionAll = false;
-		var deletePermissionAll = false;
+		var addCollectionPermission = '';
+		
+		if (A.one('#<portlet:namespace/>add-collections-permission')){
+			addCollectionPermission = A.one('#<portlet:namespace/>add-collections-permission').attr('value');
+		}
+		
+		portletURL.setParameter('addCollectionPermission', addCollectionPermission);
+		
+		var viewPermissionAll = '';
+		var addPermissionAll = '';
+		var editPermissionAll = '';
+		var deletePermissionAll = '';
 		
 		if (A.one('#<portlet:namespace/>viewPermissionAll')){
 			viewPermissionAll = A.one('#<portlet:namespace/>viewPermissionAll').attr('value');
@@ -207,6 +215,17 @@
 		portletURL.setParameter('editPermissions', editPermissions);
 		portletURL.setParameter('deletePermissions', deletePermissions);
 		
+		console.log('userId: '+userId);
+		console.log('viewPermissionAll: '+viewPermissionAll);
+		console.log('addPermissionAll: '+addPermissionAll);
+		console.log('editPermissionAll: '+editPermissionAll);
+		console.log('deletePermissionAll: '+deletePermissionAll);
+		console.log('viewPermissions: '+viewPermissions);
+		console.log('addPermissions: '+addPermissions);
+		console.log('editPermissions: '+editPermissions);
+		console.log('deletePermissions: '+deletePermissions);
+		console.log('addCollectionPermission: '+addCollectionPermission);
+		
 		A.io.request(
 			portletURL.toString(),
 			{
@@ -215,8 +234,7 @@
 			    on: {
 			        success: function(event, id, obj){
 			        	loadingMask.hide();
-			        	
-			        	//todo
+			        	alert(Liferay.Language.get('success'));
 					},
 			    	error: function(){
 			    		loadingMask.hide();
@@ -276,7 +294,42 @@
 						getUsers();
 						getDictPermissions();
 						
-						
+						// save permission
+						if (A.one('#<portlet:namespace/>save-permission-button')){
+							A.one('#<portlet:namespace/>save-permission-button').on('click', function(){
+								updateDictPermissions(selectedUserId);
+							});
+						}
+						// search collection
+						if (A.one('#<portlet:namespace/>search-collection-permission-button')){
+							A.one('#<portlet:namespace/>search-collection-permission-button').on('click', function(){
+								var keysearch = A.one('#<portlet:namespace/>collection-name-permission') ? 
+										A.one('#<portlet:namespace/>collection-name-permission').attr('value') : '';
+								searchDictPermission(keysearch);
+							});
+						}
+						if (A.one('#<portlet:namespace/>collection-name-permission')){
+							A.one('#<portlet:namespace/>collection-name-permission').on('change', function(){
+								var keysearch = A.one('#<portlet:namespace/>collection-name-permission') ? 
+										A.one('#<portlet:namespace/>collection-name-permission').attr('value') : '';
+								searchDictPermission(keysearch);
+							});
+						}
+						// search users
+						if (A.one('#<portlet:namespace/>search-users-button')){
+							A.one('#<portlet:namespace/>search-users-button').on('click', function(){
+								var keysearch = A.one('#<portlet:namespace/>user-name') ? 
+										A.one('#<portlet:namespace/>user-name').attr('value') : '';
+								searchUsers(keysearch);
+							});
+						}
+						if (A.one('#<portlet:namespace/>user-name')){
+							A.one('#<portlet:namespace/>user-name').on('change', function(){
+								var keysearch = A.one('#<portlet:namespace/>user-name') ? 
+										A.one('#<portlet:namespace/>user-name').attr('value') : '';
+								searchUsers(keysearch);
+							});
+						}
 					},
 			    	error: function(){
 			    		loadingMask.hide();
@@ -285,6 +338,68 @@
 			}
 		);
 	},['aui-base','liferay-portlet-url','aui-io']);
+	
+	Liferay.provide(window, 'searchUsers', function(keysearch){
+		if (keysearch && keysearch.length > 0){
+			if (A.all('.user-tree-node')){
+				A.all('.user-tree-node').each(function(node) {
+					var name = node.html().replace(/<span.+span> $/, '');
+					if (name.toLowerCase().includes(keysearch.toLowerCase())){
+						console.log('check hidden: '+$('#' + node.attr('id')).is(":hidden"));
+						if ($('#' + node.attr('id')).is(":hidden")){
+							$('#' + node.attr('id')) ? 
+									$('#' + node.attr('id')).slideToggle("slow") : '';
+						}
+					} else {
+						if (!$('#' + node.attr('id')).is(":hidden")){
+							$('#' + node.attr('id')) ? 
+									$('#' + node.attr('id')).slideToggle("slow") : '';
+						}
+					}
+				});
+			}
+		} else {
+			if (A.all('.user-tree-node')){
+				A.all('.user-tree-node').each(function(node) {
+					if ($('#' + node.attr('id')).is(":hidden")){
+						$('#' + node.attr('id')) ? 
+								$('#' + node.attr('id')).slideToggle("slow") : '';
+					}
+				});
+			}
+		}
+	});
+	
+	Liferay.provide(window, 'searchDictPermission', function(keysearch){
+		if (keysearch && keysearch.length > 0){
+			if (A.all('.collection-tree-node-permission')){
+				A.all('.collection-tree-node-permission').each(function(node) {
+					var name = node.html().replace(/<span.+span> $/, '');
+					if (name.toLowerCase().includes(keysearch.toLowerCase())){
+						console.log('check hidden: '+$('#' + node.attr('id')).is(":hidden"));
+						if ($('#' + node.attr('id')).is(":hidden")){
+							$('#' + node.attr('id')) ? 
+									$('#' + node.attr('id')).slideToggle("slow") : '';
+						}
+					} else {
+						if (!$('#' + node.attr('id')).is(":hidden")){
+							$('#' + node.attr('id')) ? 
+									$('#' + node.attr('id')).slideToggle("slow") : '';
+						}
+					}
+				});
+			}
+		} else {
+			if (A.all('.collection-tree-node-permission')){
+				A.all('.collection-tree-node-permission').each(function(node) {
+					if ($('#' + node.attr('id')).is(":hidden")){
+						$('#' + node.attr('id')) ? 
+								$('#' + node.attr('id')).slideToggle("slow") : '';
+					}
+				});
+			}
+		}
+	});
 	
 	Liferay.provide(window, 'getDictPermissions', function(userId){
 		if (!Liferay.ThemeDisplay.isSignedIn()){

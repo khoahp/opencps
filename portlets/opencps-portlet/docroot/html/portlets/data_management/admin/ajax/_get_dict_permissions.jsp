@@ -1,6 +1,3 @@
-<%@page import="java.util.ArrayList"%>
-<%@page import="org.opencps.datamgt.service.DictPermissionsLocalServiceUtil"%>
-<%@page import="org.opencps.datamgt.model.DictPermissions"%>
 <%
 /**
  * OpenCPS is the open source Core Public Services software
@@ -20,6 +17,10 @@
  */
 %>
 
+<%@page import="org.opencps.datamgt.service.persistence.DictPermissionsPK"%>
+<%@page import="java.util.ArrayList"%>
+<%@page import="org.opencps.datamgt.service.DictPermissionsLocalServiceUtil"%>
+<%@page import="org.opencps.datamgt.model.DictPermissions"%>
 <%@page import="org.opencps.datamgt.service.DictCollectionLocalServiceUtil"%>
 <%@page import="org.opencps.datamgt.model.DictCollection"%>
 <%@page import="java.util.List"%>
@@ -30,7 +31,6 @@
 
 <%
 	long userIdPermission = ParamUtil.getLong(request, "userIdPermission");
-	_log.info("~~~~~~~~~~~~~~>>> userIdPermission: "+ userIdPermission);
 	
 	List<DictCollection> collections = DictCollectionLocalServiceUtil
 			.getDictCollections(scopeGroupId);
@@ -69,30 +69,54 @@
 	boolean editAll = false;
 	boolean deleteAll = false;
 	
-	if (viewPermissions.size() == permissions.size()){
+	if (viewPermissions.size() == permissions.size() && permissions.size() > 0){
 		viewAll = true;
 		viewPermissions.clear();
 	}
-	if (addPermissions.size() == permissions.size()){
+	if (addPermissions.size() == permissions.size() && permissions.size() > 0){
 		addAll = true;
 		addPermissions.clear();
 	}
-	if (editPermissions.size() == permissions.size()){
+	if (editPermissions.size() == permissions.size() && permissions.size() > 0){
 		editAll = true;
 		editPermissions.clear();
 	}
-	if (deletePermissions.size() == permissions.size()){
+	if (deletePermissions.size() == permissions.size() && permissions.size() > 0){
 		deleteAll = true;
 		deletePermissions.clear();
 	}
+	
+	DictPermissionsPK dictPermissionsPK = new DictPermissionsPK(userIdPermission, -1);
+	DictPermissions permiss = null;
+	try {
+		permiss = DictPermissionsLocalServiceUtil.getDictPermissions(dictPermissionsPK);
+	} catch (Exception e){}
+	
+	boolean addCollectioinPermission = false;
+	if (Validator.isNotNull(permiss)){
+		addCollectioinPermission = true;
+	}
+	
 %>
 
 <ul class="tree-view-content tree-drag-drop-content tree-file tree-root-container">
 	<li class="tree-node collection-tree-node" >
-		<liferay-ui:message key="view" />
-		<liferay-ui:message key="add" />
-		<liferay-ui:message key="edit" />
-		<liferay-ui:message key="delete" />
+		<aui:input 
+			name="add-collections-permission" 
+			type="checkbox" 
+			label="add-collections-permission" 
+			value="1"
+			checked="<%=addCollectioinPermission %>"
+			cssClass='<%=!addCollectioinPermission ? "unchecked-checkbox" : "" %>'
+		/>
+	</li>
+	<li class="tree-node collection-tree-node" >
+		<div class="button-permission-name">
+			<div><liferay-ui:message key="view" /></div>
+			<div><liferay-ui:message key="add" /></div>
+			<div><liferay-ui:message key="edit" /></div>
+			<div><liferay-ui:message key="delete" /></div>
+		</div>
 	</li>
 	<li class="tree-node collection-tree-node" >
 		<liferay-ui:message key="all" />
@@ -100,7 +124,7 @@
 			<aui:input 
 				name="viewPermissionAll"
 				label=""
-				value=""
+				value="1"
 				inlineField="true"
 				type="checkbox"
 				checked="<%=viewAll %>"
@@ -109,7 +133,7 @@
 			<aui:input 
 				name="addPermissionAll"
 				label=""
-				value=""
+				value="1"
 				inlineField="true"
 				type="checkbox"
 				checked="<%=addAll %>"
@@ -118,7 +142,7 @@
 			<aui:input 
 				name="editPermissionAll"
 				label=""
-				value=""
+				value="1"
 				inlineField="true"
 				type="checkbox"
 				checked="<%=editAll %>"
@@ -127,7 +151,7 @@
 			<aui:input 
 				name="deletePermissionAll"
 				label=""
-				value=""
+				value="1"
 				inlineField="true"
 				type="checkbox"
 				checked="<%=deleteAll %>"
@@ -147,7 +171,9 @@
 			edit = editPermissions.contains(collection.getDictCollectionId());
 			delete = deletePermissions.contains(collection.getDictCollectionId());
 			%>
-				<li class="tree-node collection-tree-node" >
+				<li class="tree-node collection-tree-node-permission" 
+					id='<%=renderResponse.getNamespace() + "anchor_collection_" + collection.getDictCollectionId() %>'
+				>
 					<liferay-ui:message key="<%=collection.getCollectionName(locale) %>" />
 					<span class="dict-permission-container">
 						<aui:input 
