@@ -213,6 +213,8 @@
 		<column name="dictItemLinkedId" type="long" />
 		<column name="dictItemLinkedCode" type="String" />
 		<column name="dictItemLinkedName" type="String" />
+		<column name="dictCollectionId" type="long" />
+		<column name="dictCollectionLinkedId" type="long" />
 		<column name="sequenceNo" type="long" />
 		
 		<!-- Order -->
@@ -223,6 +225,11 @@
 		<!-- Finder methods -->
 		<finder name="DictItemId" return-type="Collection">
 			<finder-column name="dictItemId" />
+		</finder>
+		<finder name="IC_CI_CLI" return-type="Collection">
+			<finder-column name="dictItemLinkedCode" comparator="LIKE" />
+			<finder-column name="dictCollectionId" />
+			<finder-column name="dictCollectionLinkedId" />
 		</finder>
 	</entity>
 	
