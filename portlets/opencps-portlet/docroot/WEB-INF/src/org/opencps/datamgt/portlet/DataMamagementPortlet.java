@@ -733,6 +733,35 @@ public class DataMamagementPortlet extends MVCPortlet {
 		}
 	}
 
+	public void updateDictPermissions(ActionRequest actionRequest,
+			ActionResponse actionResponse) {
+		
+		_log.info("~~~~~~~~~~~~~>>> updateDictPermissions()");
+		
+		long userId = ParamUtil.getLong(actionRequest,
+				DictItemDisplayTerms.USER_ID);
+
+		boolean viewPermissionAll = ParamUtil.getBoolean(actionRequest,
+				"viewPermissionAll");
+		boolean addPermissionAll = ParamUtil.getBoolean(actionRequest,
+				"addPermissionAll");
+		boolean editPermissionAll = ParamUtil.getBoolean(actionRequest,
+				"editPermissionAll");
+		boolean deletePermissionAll = ParamUtil.getBoolean(actionRequest,
+				"deletePermissionAll");
+
+		String viewPermissions = ParamUtil.getString(actionRequest,
+				"viewPermissions");
+		String addPermissions = ParamUtil.getString(actionRequest,
+				"addPermissions");
+		String editPermissions = ParamUtil.getString(actionRequest,
+				"editPermissions");
+		String deletePermissions = ParamUtil.getString(actionRequest,
+				"deletePermissions");
+		
+		
+	}
+
 	private Log _log = LogFactoryUtil
 			.getLog(DataMamagementPortlet.class.getName());
 }

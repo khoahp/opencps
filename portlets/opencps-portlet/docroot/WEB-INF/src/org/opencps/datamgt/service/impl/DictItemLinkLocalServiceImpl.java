@@ -56,6 +56,8 @@ public class DictItemLinkLocalServiceImpl extends
 				.create(dictItemLinkId);
 
 		DictItem dictItem = dictItemPersistence.fetchByPrimaryKey(dictItemId);
+		DictItem dictItemLinked = dictItemPersistence
+				.fetchByPrimaryKey(dictItemLinkedId);
 
 		dictItemLink.setCompanyId(serviceContext.getCompanyId());
 		dictItemLink.setGroupId(serviceContext.getScopeGroupId());
@@ -68,6 +70,9 @@ public class DictItemLinkLocalServiceImpl extends
 		dictItemLink.setSequenceNo(sequenceNo);
 		dictItemLink.setDictItemLinkedName(dictItem.getItemName());
 		dictItemLink.setDictItemLinkedCode(dictItem.getItemCode());
+		dictItemLink.setDictCollectionId(dictItem.getDictCollectionId());
+		dictItemLink.setDictCollectionLinkedId(dictItemLinked
+				.getDictCollectionId());
 
 		return dictItemLinkPersistence.update(dictItemLink);
 	}
@@ -80,5 +85,12 @@ public class DictItemLinkLocalServiceImpl extends
 	public DictItemLink deleteDictItemLink(long dictItemLinkId)
 			throws NoSuchDictItemLinkException, SystemException {
 		return dictItemLinkPersistence.remove(dictItemLinkId);
+	}
+	
+	public List<DictItemLink> getBy_IC_CI_CLI(String dictItemLinkedCode,
+			long dictCollectionId, long dictCollectionLinkedId)
+			throws NoSuchDictItemLinkException, SystemException {
+		return dictItemLinkPersistence.findByIC_CI_CLI(dictItemLinkedCode,
+				dictCollectionId, dictCollectionLinkedId);
 	}
 }

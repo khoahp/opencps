@@ -213,6 +213,8 @@
 		<column name="dictItemLinkedId" type="long" />
 		<column name="dictItemLinkedCode" type="String" />
 		<column name="dictItemLinkedName" type="String" />
+		<column name="dictCollectionId" type="long" />
+		<column name="dictCollectionLinkedId" type="long" />
 		<column name="sequenceNo" type="long" />
 		
 		<!-- Order -->
@@ -223,6 +225,39 @@
 		<!-- Finder methods -->
 		<finder name="DictItemId" return-type="Collection">
 			<finder-column name="dictItemId" />
+		</finder>
+		<finder name="IC_CI_CLI" return-type="Collection">
+			<finder-column name="dictItemLinkedCode" comparator="LIKE" />
+			<finder-column name="dictCollectionId" />
+			<finder-column name="dictCollectionLinkedId" />
+		</finder>
+	</entity>
+	
+	<entity name="DictPermissions" local-service="true" remote-service="true" 
+			table="opencps_dictpermission">
+			
+		<!-- PK fields -->
+		<column name="userIdMap" type="long" primary="true" />
+		<column name="dictCollectionId" type="long" primary="true" />
+
+		<!-- Audit fields -->
+		<column name="companyId" type="long" />
+		<column name="groupId" type="long" />
+		<column name="userId" type="long" />
+		<column name="createDate" type="Date" />
+
+		<!-- Other fields -->
+		<column name="view" type="boolean" />
+		<column name="add" type="boolean" />
+		<column name="edit" type="boolean" />
+		<column name="delete" type="boolean" />
+		
+		<!-- Finder methods -->
+		<finder name="UserIdMap" return-type="Collection">
+			<finder-column name="userIdMap" />
+		</finder>
+		<finder name="DictCollectionId" return-type="Collection">
+			<finder-column name="dictCollectionId" />
 		</finder>
 	</entity>
 
