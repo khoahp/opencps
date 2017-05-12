@@ -347,7 +347,21 @@ portlets/opencps-portlet/docroot/WEB-INF/lib/jstl-api.jar
 
 portlets/opencps-portlet/docroot/WEB-INF/lib/jstl-impl.jar
 
-portlets/opencps-integrate-portlet/*
 themes/opencps-ux-theme/docroot/WEB-INF/lib/util-bridges.jar
 themes/opencps-ux-theme/docroot/WEB-INF/lib/util-java.jar
 themes/opencps-ux-theme/docroot/WEB-INF/lib/util-taglib.jar
+
+portlets/opencps-integrate-portlet/docroot/WEB-INF/classes/
+portlets/opencps-integrate-portlet/docroot/WEB-INF/src/service.properties
+
+portlets/opencps-integrate-portlet/docroot/css/.sass-cache/*
+portlets/opencps-integrate-portlet/.*
+portlets/vr-business-portlet/.*
+*.DS_Store
+portlets/opencps-integrate-portlet/docroot/css/.*
+portlets/opencps-integrate-portlet/docroot/WEB-INF/lib/opencps-portlet-service.jar
+portlets/opencps-integrate-portlet/docroot/WEB-INF/src/org/opencps/integrate/dao/service/*
+portlets/opencps-integrate-portlet/.classpath
+portlets/opencps-integrate-portlet/.settings/*
+portlets/vr-business-portlet/docroot/WEB-INF/classes/*
+portlets/vr-business-portlet/docroot/WEB-INF/lib/vr-business-portlet-service.jar

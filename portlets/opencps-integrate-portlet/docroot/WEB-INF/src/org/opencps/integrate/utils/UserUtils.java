@@ -4,18 +4,59 @@ import org.opencps.accountmgt.model.Business;
 import org.opencps.accountmgt.model.Citizen;
 import org.opencps.accountmgt.service.BusinessLocalServiceUtil;
 import org.opencps.accountmgt.service.CitizenLocalServiceUtil;
+import org.opencps.integrate.dao.model.ForgotPass;
+import org.opencps.integrate.dao.service.ForgotPassLocalServiceUtil;
 
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.User;
 import com.liferay.portal.service.UserLocalServiceUtil;
+import com.liferay.util.PwdGenerator;
 
 public class UserUtils {
 
 	public static final String APPLICANT_TYPE_CITY = "CMT";
 	public static final String APPLICANT_TYPE_BUSINESS = "MST";
 	private static Log _log = LogFactoryUtil.getLog(UserUtils.class);
+	
+	public static ForgotPass createVerifyCode(String verifyCode, long userid) {
+		ForgotPass fg = null;
+
+		try {
+			
+			//reset all AuthCode
+			
+			ForgotPassLocalServiceUtil.invalidCode(userid);
+			
+			while (Validator.isNull(fg)) {
+
+				ForgotPass check = null;
+				
+				try {
+					check = ForgotPassLocalServiceUtil
+							.getByVerifyCode(verifyCode);
+				} catch (Exception e) {
+					// TODO: handle exception
+				}
+				
+				if (Validator.isNull(check)) {
+					fg = ForgotPassLocalServiceUtil.addVerifyCode(verifyCode, userid);
+				}
+				
+				_log.info("FORGOTPASS ** CODE : " + verifyCode);
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+
+		return fg;
+	}
+	
+	public static String generatorVerifyCode() {
+		return PwdGenerator.getPassword(10);
+		
+	}
 	
 	/**
 	 * @param companyId
@@ -64,6 +105,7 @@ public class UserUtils {
 				am.setWardName(APIUtils.getDictItemName(ctz.getWardCode()));
 				am.setContactTelNo(ctz.getTelNo());
 				am.setContactEmail(ctz.getEmail());
+				am.setAddress(ctz.getAddress());
 				
 			}else if (Validator.isNotNull(bsn)) {
 				am.setApplicantName(bsn.getName());
@@ -80,7 +122,14 @@ public class UserUtils {
 				am.setWardName(APIUtils.getDictItemName(bsn.getWardCode()));
 				am.setContactTelNo(bsn.getTelNo());
 				am.setContactEmail(bsn.getEmail());
-			}else {
+				am.setAddress(bsn.getAddress());
+			}else if(Validator.isNotNull(user)) {
+				am.setApplicantName(user.getScreenName());
+				am.setApplicantIdDate(APIUtils.formatDateTime(user
+						.getCreateDate()));
+				am.setContactEmail(user.getEmailAddress());
+				
+			}else{
 				am = null;
 			}
 
