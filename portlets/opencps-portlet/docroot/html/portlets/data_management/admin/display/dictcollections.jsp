@@ -122,7 +122,6 @@
 	var selectedUserId = 0;
 	var needConfirnChangeView = false;
 	
-	
 	Liferay.provide(window, 'updateDictPermissions', function(userId){
 		if (!Liferay.ThemeDisplay.isSignedIn()){
 			alert(Liferay.Language.get('please-login-and-try-again'));
@@ -214,17 +213,6 @@
 		portletURL.setParameter('addPermissions', addPermissions);
 		portletURL.setParameter('editPermissions', editPermissions);
 		portletURL.setParameter('deletePermissions', deletePermissions);
-		
-		console.log('userId: '+userId);
-		console.log('viewPermissionAll: '+viewPermissionAll);
-		console.log('addPermissionAll: '+addPermissionAll);
-		console.log('editPermissionAll: '+editPermissionAll);
-		console.log('deletePermissionAll: '+deletePermissionAll);
-		console.log('viewPermissions: '+viewPermissions);
-		console.log('addPermissions: '+addPermissions);
-		console.log('editPermissions: '+editPermissions);
-		console.log('deletePermissions: '+deletePermissions);
-		console.log('addCollectionPermission: '+addCollectionPermission);
 		
 		A.io.request(
 			portletURL.toString(),
@@ -345,7 +333,6 @@
 				A.all('.user-tree-node').each(function(node) {
 					var name = node.html().replace(/<span.+span> $/, '');
 					if (name.toLowerCase().includes(keysearch.toLowerCase())){
-						console.log('check hidden: '+$('#' + node.attr('id')).is(":hidden"));
 						if ($('#' + node.attr('id')).is(":hidden")){
 							$('#' + node.attr('id')) ? 
 									$('#' + node.attr('id')).slideToggle("slow") : '';
@@ -376,7 +363,6 @@
 				A.all('.collection-tree-node-permission').each(function(node) {
 					var name = node.html().replace(/<span.+span> $/, '');
 					if (name.toLowerCase().includes(keysearch.toLowerCase())){
-						console.log('check hidden: '+$('#' + node.attr('id')).is(":hidden"));
 						if ($('#' + node.attr('id')).is(":hidden")){
 							$('#' + node.attr('id')) ? 
 									$('#' + node.attr('id')).slideToggle("slow") : '';
@@ -507,8 +493,6 @@
 									var userId = node['_node']['id'].replace(/^.+userId_/, '');
 									selectedUserId = userId;
 									
-									console.log('userId: '+userId);
-									//todo
 									getDictPermissions(userId);
 								});
 							});

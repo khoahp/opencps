@@ -17,10 +17,6 @@
  */
 %>
 
-<%@page import="com.liferay.portal.kernel.language.LanguageUtil"%>
-<%@page import="com.liferay.portal.kernel.log.LogFactoryUtil"%>
-<%@page import="com.liferay.portal.kernel.log.Log"%>
-
 <%@ include file="../../init.jsp"%>
 
 <p class="breadcrumb"><liferay-ui:message key='edit-permissions' /></p>

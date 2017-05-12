@@ -29,7 +29,7 @@
 <%@page import="com.liferay.portal.kernel.log.LogFactoryUtil"%>
 <%@page import="com.liferay.portal.kernel.log.Log"%>
 
-<%@ include file="../init.jsp"%>
+<%@ include file="../../init.jsp"%>
 
 <%
 	long dictCollectionId = ParamUtil.getLong(request, DictItemDisplayTerms.DICTCOLLECTION_ID);

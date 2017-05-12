@@ -17,16 +17,6 @@
  */
 %>
 
-<%@page import="org.opencps.datamgt.service.persistence.DictPermissionsPK"%>
-<%@page import="java.util.ArrayList"%>
-<%@page import="org.opencps.datamgt.service.DictPermissionsLocalServiceUtil"%>
-<%@page import="org.opencps.datamgt.model.DictPermissions"%>
-<%@page import="org.opencps.datamgt.service.DictCollectionLocalServiceUtil"%>
-<%@page import="org.opencps.datamgt.model.DictCollection"%>
-<%@page import="java.util.List"%>
-<%@page import="com.liferay.portal.kernel.log.LogFactoryUtil"%>
-<%@page import="com.liferay.portal.kernel.log.Log"%>
-
 <%@ include file="../../init.jsp"%>
 
 <%

@@ -17,22 +17,6 @@
  */
 %>
 
-<%@page import="java.util.ArrayList"%>
-<%@page import="org.opencps.datamgt.service.DictCollectionLinkLocalServiceUtil"%>
-<%@page import="org.opencps.datamgt.model.DictCollectionLink"%>
-<%@page import="java.util.List"%>
-<%@page import="org.opencps.util.ActionKeys"%>
-<%@page import="org.opencps.datamgt.permissions.DictCollectionPermission"%>
-<%@page import="org.opencps.util.DateTimeUtil"%>
-<%@page import="org.opencps.util.WebKeys"%>
-<%@page import="org.opencps.datamgt.search.DictCollectionDisplayTerms"%>
-<%@page import="org.opencps.datamgt.util.DataMgtUtil"%>
-<%@page import="org.opencps.datamgt.service.DictItemLocalServiceUtil"%>
-<%@page import="com.liferay.portal.kernel.log.LogFactoryUtil"%>
-<%@page import="com.liferay.portal.kernel.log.Log"%>
-<%@page import="org.opencps.datamgt.service.DictCollectionLocalServiceUtil"%>
-<%@page import="org.opencps.datamgt.model.DictCollection"%>
-
 <%@ include file="../../init.jsp"%>
 
 <%
