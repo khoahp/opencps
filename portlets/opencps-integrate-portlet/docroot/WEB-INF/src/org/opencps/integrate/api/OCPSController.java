@@ -209,7 +209,7 @@ public class OCPSController {
 				resp.put("ModifiedDate",
 						APIUtils.formatDateTime(dossier.getModifiedDate()));
 				resp.put("DossierStatus", dossier.getDossierStatus());
-				resp.put("StatusText", dossier.getDossierStatus());
+				resp.put("StatusText", APIUtils.getLanguageValue(dossier.getDossierStatus()));
 
 				return Response.status(200).entity(resp.toString()).build();
 
