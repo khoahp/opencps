@@ -30,6 +30,17 @@
 		<column name="synchDate" type="Date" db-name="synchdate"/>
 
 		<!-- Finder methods -->
+		
+		<finder return-type="Collection" name="VC_VT_SC">
+			<finder-column name="vehicleClass"/>
+			<finder-column name="vehicleType"/>
+			<finder-column name="specCategory"/>
+		</finder>
+		
+		<finder return-type="Collection" name="VC_SC">
+			<finder-column name="vehicleClass"/>
+			<finder-column name="specCategory"/>
+		</finder>
 
 	</entity>
 	
