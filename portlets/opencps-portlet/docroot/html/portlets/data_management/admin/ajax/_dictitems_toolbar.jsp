@@ -31,9 +31,9 @@
 				.getDictCollection(dictCollectionId);
 	} catch (Exception e) {}
 	
-	List<DictCollectionLink> collectionsLinked = new ArrayList<DictCollectionLink>();
+	List<DictCollectionType> collectionsTypes = new ArrayList<DictCollectionType>();
 	try {
-		collectionsLinked = DictCollectionLinkLocalServiceUtil
+		collectionsTypes = DictCollectionTypeLocalServiceUtil
 				.getByDictCollectionId(dictCollectionId);
 	} catch (Exception e){
 		_log.error(e);
@@ -51,7 +51,7 @@
 <<liferay-ui:message key="lookups-items" />
 <div>
 	<aui:row>
-		<aui:col width='<%=collectionsLinked.size() == 0 ? 50 : 30 %>' >
+		<aui:col width='<%=collectionsTypes.size() == 0 ? 50 : 30 %>' >
 			<aui:input 
 				name="item-name" 
 				value="<%=searchKeyword %>" 
@@ -59,9 +59,9 @@
 				cssClass="input100"
 			/>
 		</aui:col>
-		<aui:col width="30" cssClass='<%=collectionsLinked.size() == 0 ? "hidden" : "" %>' >
+		<aui:col width="30" cssClass='<%=collectionsTypes.size() == 0 ? "hidden" : "" %>' >
 			<%
-			if (collectionsLinked.size() > 0){
+			if (collectionsTypes.size() > 0){
 				%>
 				<aui:select name="item-linked">
 					<aui:option value="0" />
@@ -70,11 +70,11 @@
 					List<DictItem> dictItemsL = new ArrayList<DictItem>();
 					List<DictItem> dictItemsOrdered = new ArrayList<DictItem>();
 					
-					for (DictCollectionLink linked : collectionsLinked){
+					for (DictCollectionType type : collectionsTypes){
 						
 						try {
 							dictCollection = DictCollectionLocalServiceUtil
-									.getDictCollection(linked.getDictCollectionLinkedId());
+									.getDictCollection(type.getDictCollectionLinkedId());
 							%>
 							<aui:option value="0" disabled="true"><%=dictCollection.getCollectionName(locale) %></aui:option>
 							<%
@@ -114,7 +114,7 @@
 			%>
 		</aui:col>
 		
-		<aui:col width='<%=collectionsLinked.size() == 0 ? 50 : 30 %>'>
+		<aui:col width='<%=collectionsTypes.size() == 0 ? 50 : 30 %>'>
 			<aui:select name="itemsStatusInUsed" label="status">
 				<aui:option value="0" label="draf" selected="<%=itemsStatus == 0 %>" />
 				<aui:option value="1" label="in-used" selected="<%=itemsStatus == 1 %>" />

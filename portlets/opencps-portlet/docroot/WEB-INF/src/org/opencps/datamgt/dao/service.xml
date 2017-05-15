@@ -167,10 +167,10 @@
 		
 	</entity>
 
-	<entity name="DictCollectionLink" local-service="true" remote-service="true" 
-			table="opencps_dictcollectionlink">
+	<entity name="DictCollectionType" local-service="true" remote-service="true" 
+			table="opencps_dictcollectiontype">
 		<!-- PK fields -->
-		<column name="dictCollectionLinkId" type="long" primary="true" />
+		<column name="dictCollectionTypeId" type="long" primary="true" />
 
 		<!-- Audit fields -->
 		<column name="companyId" type="long" />
@@ -196,10 +196,10 @@
 		</finder>
 	</entity>
 	
-	<entity name="DictItemLink" local-service="true" remote-service="true" 
-			table="opencps_dictitemlink">
+	<entity name="DictItemType" local-service="true" remote-service="true" 
+			table="opencps_dictitemtype">
 		<!-- PK fields -->
-		<column name="dictItemLinkId" type="long" primary="true" />
+		<column name="dictItemTypeId" type="long" primary="true" />
 
 		<!-- Audit fields -->
 		<column name="companyId" type="long" />

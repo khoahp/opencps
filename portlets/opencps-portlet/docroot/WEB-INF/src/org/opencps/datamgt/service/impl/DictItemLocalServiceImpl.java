@@ -27,7 +27,7 @@ import org.opencps.datamgt.NoSuchDictItemException;
 import org.opencps.datamgt.NoSuchDictVersionException;
 import org.opencps.datamgt.model.DictCollection;
 import org.opencps.datamgt.model.DictItem;
-import org.opencps.datamgt.model.DictItemLink;
+import org.opencps.datamgt.model.DictItemType;
 import org.opencps.datamgt.model.DictVersion;
 import org.opencps.datamgt.service.base.DictItemLocalServiceBaseImpl;
 import org.opencps.datamgt.util.DataMgtUtil;
@@ -289,11 +289,11 @@ public class DictItemLocalServiceImpl extends DictItemLocalServiceBaseImpl {
 		if (dictItems == null || dictItems.isEmpty()) {
 			dictItemPersistence.remove(dictItemId);
 			
-			// delete dict items linked
-			List<DictItemLink> linked = dictItemLinkPersistence
+			// delete dict items types
+			List<DictItemType> types = dictItemTypePersistence
 					.findByDictItemId(dictItemId);
-			for (DictItemLink dictItemLink : linked) {
-				dictItemLinkPersistence.remove(dictItemLink);
+			for (DictItemType DictItemType : types) {
+				dictItemTypePersistence.remove(DictItemType);
 			}
 		}
 	}
@@ -738,6 +738,6 @@ public class DictItemLocalServiceImpl extends DictItemLocalServiceBaseImpl {
 	}
 
 	public int countAll() throws SystemException {
-		return dictItemLinkPersistence.countAll();
+		return dictItemPersistence.countAll();
 	}
 }

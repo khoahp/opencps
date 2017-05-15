@@ -14,27 +14,27 @@
 
 package org.opencps.datamgt.service.impl;
 
-import org.opencps.datamgt.service.base.DictCollectionLinkServiceBaseImpl;
+import org.opencps.datamgt.service.base.DictCollectionTypeServiceBaseImpl;
 
 /**
- * The implementation of the dict collection link remote service.
+ * The implementation of the dict collection type remote service.
  *
  * <p>
- * All custom service methods should be put in this class. Whenever methods are added, rerun ServiceBuilder to copy their definitions into the {@link org.opencps.datamgt.service.DictCollectionLinkService} interface.
+ * All custom service methods should be put in this class. Whenever methods are added, rerun ServiceBuilder to copy their definitions into the {@link org.opencps.datamgt.service.DictCollectionTypeService} interface.
  *
  * <p>
  * This is a remote service. Methods of this service are expected to have security checks based on the propagated JAAS credentials because this service can be accessed remotely.
  * </p>
  *
  * @author khoavd
- * @see org.opencps.datamgt.service.base.DictCollectionLinkServiceBaseImpl
- * @see org.opencps.datamgt.service.DictCollectionLinkServiceUtil
+ * @see org.opencps.datamgt.service.base.DictCollectionTypeServiceBaseImpl
+ * @see org.opencps.datamgt.service.DictCollectionTypeServiceUtil
  */
-public class DictCollectionLinkServiceImpl
-	extends DictCollectionLinkServiceBaseImpl {
+public class DictCollectionTypeServiceImpl
+	extends DictCollectionTypeServiceBaseImpl {
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
-	 * Never reference this interface directly. Always use {@link org.opencps.datamgt.service.DictCollectionLinkServiceUtil} to access the dict collection link remote service.
+	 * Never reference this interface directly. Always use {@link org.opencps.datamgt.service.DictCollectionTypeServiceUtil} to access the dict collection type remote service.
 	 */
 }

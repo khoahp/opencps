@@ -18,8 +18,6 @@
  */
 %>
 
-<%@page import="org.opencps.datamgt.util.DataMgtUtil"%>
-<%@page import="org.opencps.datamgt.model.impl.DictCollectionImpl"%>
 <%@page import="org.opencps.datamgt.model.DictCollection"%>
 <%@page import="org.opencps.util.MessageKeys"%>
 <%@page import="org.opencps.datamgt.EmptyItemCodeException"%>
@@ -39,9 +37,8 @@
 <%@page import="com.liferay.portal.kernel.portlet.LiferayWindowState"%>
 <%@page import="javax.portlet.PortletRequest"%>
 <%@page import="com.liferay.portlet.PortletURLFactoryUtil"%>
-<%@page import="org.opencps.datamgt.service.DictItemLocalServiceUtil"%>
-<%@page import="org.opencps.datamgt.service.DictItemLinkLocalServiceUtil"%>
-<%@page import="org.opencps.datamgt.model.DictItemLink"%>
+<%@page import="org.opencps.datamgt.service.DictItemTypeLocalServiceUtil"%>
+<%@page import="org.opencps.datamgt.model.DictItemType"%>
 
 <%@ include file="../init.jsp"%>
 
@@ -61,15 +58,15 @@
 		_log.error(e);
 	}
 	
-	List<DictItemLink> itemsLinked = new ArrayList<DictItemLink>();
-	String itemsLinkedStr = StringPool.BLANK;
+	List<DictItemType> itemsType = new ArrayList<DictItemType>();
+	String itemsTypeStr = StringPool.BLANK;
 	try {
-		itemsLinked = DictItemLinkLocalServiceUtil.getByDictItemId(dictItemId);
-		List<Long> itemsLinkedId = new ArrayList<Long>();
-		for (DictItemLink itemLinked : itemsLinked){
-			itemsLinkedId.add(itemLinked.getDictItemLinkedId());
+		itemsType = DictItemTypeLocalServiceUtil.getByDictItemId(dictItemId);
+		List<Long> itemsTypeId = new ArrayList<Long>();
+		for (DictItemType itemLinked : itemsType){
+			itemsTypeId.add(itemLinked.getDictItemLinkedId());
 		}
-		itemsLinkedStr = StringUtil.merge(itemsLinkedId);
+		itemsTypeStr = StringUtil.merge(itemsTypeId);
 	} catch (Exception e){}
 	
 %>
@@ -279,7 +276,7 @@
 						}
 						
 						// set initial value
-						var itemsLinkedStr = '<%=itemsLinkedStr %>';
+						var itemsLinkedStr = '<%=itemsTypeStr %>';
 						var itemsLinkedArr = itemsLinkedStr.split(',');
 						var match = false;
 						A.all('#<portlet:namespace/>dictItemLinked').each(function(dictItem){

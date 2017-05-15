@@ -77,12 +77,12 @@
 					<ul>
 						<%
 							List<DictCollection> dictCollections = DictCollectionLocalServiceUtil.getDictCollections();
-							List<DictCollectionLink> dictCollectionsLinked = DictCollectionLinkLocalServiceUtil.getByDictCollectionId(collectionId);
+							List<DictCollectionType> dictCollectionsTypes = DictCollectionTypeLocalServiceUtil.getByDictCollectionId(collectionId);
 							for (DictCollection collection : dictCollections){
 								if (collection.getDictCollectionId() != collectionId){
 									boolean checked = false;
-									for (DictCollectionLink linked : dictCollectionsLinked){
-										if (linked.getDictCollectionLinkedId() == collection.getDictCollectionId()){
+									for (DictCollectionType type : dictCollectionsTypes){
+										if (type.getDictCollectionLinkedId() == collection.getDictCollectionId()){
 											checked = true;
 											break;
 										}

@@ -22,14 +22,14 @@
 <%
 	long collectionId = ParamUtil.getLong(request, "collectionId");
 	DictCollection collection = null;
-	List<DictCollectionLink> collectionsLinked = new ArrayList<DictCollectionLink>();
+	List<DictCollectionType> collectionsTypes = new ArrayList<DictCollectionType>();
 	try {
 		collection = DictCollectionLocalServiceUtil.getDictCollection(collectionId);
-		collectionsLinked = DictCollectionLinkLocalServiceUtil.getByDictCollectionId(collectionId);
+		collectionsTypes = DictCollectionTypeLocalServiceUtil.getByDictCollectionId(collectionId);
 	} catch (Exception e){}
 	List<String> collectionTypes = new ArrayList<String>();
-	for (DictCollectionLink linked : collectionsLinked){
-		collectionTypes.add(linked.getDictCollectionLinkedName());
+	for (DictCollectionType type : collectionsTypes){
+		collectionTypes.add(type.getDictCollectionLinkedName());
 	}
 	String typesStr = StringUtil.merge(collectionTypes, StringPool.COMMA + StringPool.SPACE);
 	

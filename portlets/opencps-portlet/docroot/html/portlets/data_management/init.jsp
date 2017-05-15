@@ -26,8 +26,8 @@
 <%@page import="org.opencps.datamgt.service.persistence.DictPermissionsPK"%>
 <%@page import="org.opencps.datamgt.service.DictCollectionLocalServiceUtil"%>
 <%@page import="org.opencps.datamgt.model.DictCollection"%>
-<%@page import="org.opencps.datamgt.service.DictCollectionLinkLocalServiceUtil"%>
-<%@page import="org.opencps.datamgt.model.DictCollectionLink"%>
+<%@page import="org.opencps.datamgt.service.DictCollectionTypeLocalServiceUtil"%>
+<%@page import="org.opencps.datamgt.model.DictCollectionType"%>
 <%@page import="org.opencps.util.ActionKeys"%>
 <%@page import="org.opencps.datamgt.permissions.DictCollectionPermission"%>
 <%@page import="org.opencps.util.DateTimeUtil"%>
@@ -46,8 +46,8 @@
 <%@page import="org.opencps.datamgt.search.DictItemDisplayTerms"%>
 <%@page import="org.opencps.datamgt.search.DictItemSearchTerms"%>
 <%@page import="org.opencps.util.MessageKeys"%>
-<%@page import="org.opencps.datamgt.service.DictItemLinkLocalServiceUtil"%>
-<%@page import="org.opencps.datamgt.model.DictItemLink"%>
+<%@page import="org.opencps.datamgt.service.DictItemTypeLocalServiceUtil"%>
+<%@page import="org.opencps.datamgt.model.DictItemType"%>
 <%@page import="com.liferay.portal.service.UserLocalServiceUtil"%>
 <%@page import="com.liferay.portal.model.User"%>
 

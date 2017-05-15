@@ -14,26 +14,26 @@
 
 package org.opencps.datamgt.service.impl;
 
-import org.opencps.datamgt.service.base.DictItemLinkServiceBaseImpl;
+import org.opencps.datamgt.service.base.DictItemTypeServiceBaseImpl;
 
 /**
- * The implementation of the dict item link remote service.
+ * The implementation of the dict item type remote service.
  *
  * <p>
- * All custom service methods should be put in this class. Whenever methods are added, rerun ServiceBuilder to copy their definitions into the {@link org.opencps.datamgt.service.DictItemLinkService} interface.
+ * All custom service methods should be put in this class. Whenever methods are added, rerun ServiceBuilder to copy their definitions into the {@link org.opencps.datamgt.service.DictItemTypeService} interface.
  *
  * <p>
  * This is a remote service. Methods of this service are expected to have security checks based on the propagated JAAS credentials because this service can be accessed remotely.
  * </p>
  *
  * @author khoavd
- * @see org.opencps.datamgt.service.base.DictItemLinkServiceBaseImpl
- * @see org.opencps.datamgt.service.DictItemLinkServiceUtil
+ * @see org.opencps.datamgt.service.base.DictItemTypeServiceBaseImpl
+ * @see org.opencps.datamgt.service.DictItemTypeServiceUtil
  */
-public class DictItemLinkServiceImpl extends DictItemLinkServiceBaseImpl {
+public class DictItemTypeServiceImpl extends DictItemTypeServiceBaseImpl {
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
-	 * Never reference this interface directly. Always use {@link org.opencps.datamgt.service.DictItemLinkServiceUtil} to access the dict item link remote service.
+	 * Never reference this interface directly. Always use {@link org.opencps.datamgt.service.DictItemTypeServiceUtil} to access the dict item type remote service.
 	 */
 }

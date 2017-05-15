@@ -46,19 +46,19 @@ import org.opencps.datamgt.OutOfLengthCollectionNameException;
 import org.opencps.datamgt.OutOfLengthItemCodeException;
 import org.opencps.datamgt.OutOfLengthItemNameException;
 import org.opencps.datamgt.model.DictCollection;
-import org.opencps.datamgt.model.DictCollectionLink;
+import org.opencps.datamgt.model.DictCollectionType;
 import org.opencps.datamgt.model.DictItem;
-import org.opencps.datamgt.model.DictItemLink;
+import org.opencps.datamgt.model.DictItemType;
 import org.opencps.datamgt.model.DictPermissions;
 import org.opencps.datamgt.model.DictVersion;
 import org.opencps.datamgt.model.impl.DictPermissionsImpl;
 import org.opencps.datamgt.search.DictCollectionDisplayTerms;
 import org.opencps.datamgt.search.DictItemDisplayTerms;
 import org.opencps.datamgt.search.DictItemSearch;
-import org.opencps.datamgt.service.DictCollectionLinkLocalServiceUtil;
 import org.opencps.datamgt.service.DictCollectionLocalServiceUtil;
-import org.opencps.datamgt.service.DictItemLinkLocalServiceUtil;
+import org.opencps.datamgt.service.DictCollectionTypeLocalServiceUtil;
 import org.opencps.datamgt.service.DictItemLocalServiceUtil;
+import org.opencps.datamgt.service.DictItemTypeLocalServiceUtil;
 import org.opencps.datamgt.service.DictPermissionsLocalServiceUtil;
 import org.opencps.datamgt.service.DictVersionLocalServiceUtil;
 import org.opencps.datamgt.util.DataMgtUtil;
@@ -230,7 +230,7 @@ public class DataMamagementPortlet extends MVCPortlet {
 		String collectionName = collectionNameMap
 				.get(actionRequest.getLocale());
 		
-		long[] dictCollectionsLinked = ParamUtil.getLongValues(actionRequest,
+		long[] dictCollectionsType = ParamUtil.getLongValues(actionRequest,
 				"dictCollectionsLinked");
 
 		for (Map.Entry<Locale, String> entry : collectionNameMap.entrySet()) {
@@ -247,14 +247,14 @@ public class DataMamagementPortlet extends MVCPortlet {
 		}
 		
 		String collectionLinked = StringPool.BLANK;
-		if (dictCollectionsLinked.length == 0) {
+		if (dictCollectionsType.length == 0) {
 			collectionLinked = ParamUtil.getString(actionRequest,
 					"collectionLinked");
 			String[] strArr = StringUtil.split(collectionLinked);
-			dictCollectionsLinked = new long[strArr.length];
+			dictCollectionsType = new long[strArr.length];
 			for (int i = 0; i < strArr.length; i++) {
 				try {
-					dictCollectionsLinked[i] = Long.parseLong(strArr[i]);
+					dictCollectionsType[i] = Long.parseLong(strArr[i]);
 				} catch (Exception e) {}
 			}
 		}
@@ -276,9 +276,9 @@ public class DataMamagementPortlet extends MVCPortlet {
 				SessionMessages.add(actionRequest,
 						MessageKeys.DATAMGT_ADD_SUCESS);
 				
-				updateDictCollectionsLinked(
+				updateDictCollectionsType(
 						dictCollection.getDictCollectionId(),
-						dictCollectionsLinked, 0, false, serviceContext);
+						dictCollectionsType, 0, false, serviceContext);
 			} else {
 				dictCollection = DictCollectionLocalServiceUtil.updateDictCollection(
 						collectionId, serviceContext.getUserId(),
@@ -287,9 +287,9 @@ public class DataMamagementPortlet extends MVCPortlet {
 				SessionMessages.add(actionRequest,
 						MessageKeys.DATAMGT_UPDATE_SUCESS);
 				
-				updateDictCollectionsLinked(
+				updateDictCollectionsType(
 						dictCollection.getDictCollectionId(),
-						dictCollectionsLinked, 0, true, serviceContext);
+						dictCollectionsType, 0, true, serviceContext);
 			}
 			
 		} catch (Exception e) {
@@ -327,24 +327,24 @@ public class DataMamagementPortlet extends MVCPortlet {
 		}
 	}
 
-	private void updateDictCollectionsLinked(long dictCollectionId,
-			long[] dictCollectionsIdLinked, long sequenceNo, boolean update,
+	private void updateDictCollectionsType(long dictCollectionId,
+			long[] dictCollectionsIdType, long sequenceNo, boolean update,
 			ServiceContext serviceContext) throws SystemException {
 
 		// delete collection linked
 		if (update) {
-			List<DictCollectionLink> collectionTypes = DictCollectionLinkLocalServiceUtil
+			List<DictCollectionType> collectionTypes = DictCollectionTypeLocalServiceUtil
 					.getByDictCollectionId(dictCollectionId);
-			for (DictCollectionLink dictCollectionType : collectionTypes) {
-				DictCollectionLinkLocalServiceUtil
-						.deleteDictCollectionLink(dictCollectionType);
+			for (DictCollectionType dictCollectionType : collectionTypes) {
+				DictCollectionTypeLocalServiceUtil
+						.deleteDictCollectionType(dictCollectionType);
 			}
 		}
 
 		// add collections linked
-		for (long l : dictCollectionsIdLinked) {
+		for (long l : dictCollectionsIdType) {
 			if (l > 0) {
-				DictCollectionLinkLocalServiceUtil.addDictCollectionLink(
+				DictCollectionTypeLocalServiceUtil.addDictCollectionType(
 						dictCollectionId, l, sequenceNo, serviceContext);
 			}
 		}
@@ -583,22 +583,22 @@ public class DataMamagementPortlet extends MVCPortlet {
 	}
 
 	private void updateDictItemLinked(long dictItemId,
-			long[] dictItemsLinkedId, long sequenceNo, boolean update,
+			long[] dictItemsTypeId, long sequenceNo, boolean update,
 			ServiceContext serviceContext) throws SystemException {
 
 		// delete dictItemLinked
 		if (update) {
-			List<DictItemLink> dictItemLinks = DictItemLinkLocalServiceUtil
+			List<DictItemType> dictItemsType = DictItemTypeLocalServiceUtil
 					.getByDictItemId(dictItemId);
-			for (DictItemLink dictItemLink : dictItemLinks) {
-				DictItemLinkLocalServiceUtil.deleteDictItemLink(dictItemLink);
+			for (DictItemType dictItemType : dictItemsType) {
+				DictItemTypeLocalServiceUtil.deleteDictItemType(dictItemType);
 			}
 		}
 
 		// add dictItemLinked
-		for (long dictItemLinkedId : dictItemsLinkedId) {
-			DictItemLinkLocalServiceUtil.addDictItemLink(dictItemId,
-					dictItemLinkedId, sequenceNo, serviceContext);
+		for (long dictItemTypeId : dictItemsTypeId) {
+			DictItemTypeLocalServiceUtil.addDictItemType(dictItemId,
+					dictItemTypeId, sequenceNo, serviceContext);
 		}
 	}
 

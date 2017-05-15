@@ -37,15 +37,15 @@
 		_log.error(e);
 	}
 	
-	List<DictItemLink> itemsLinked = new ArrayList<DictItemLink>();
-	String itemsLinkedStr = StringPool.BLANK;
+	List<DictItemType> itemTypes = new ArrayList<DictItemType>();
+	String itemTypesStr = StringPool.BLANK;
 	try {
-		itemsLinked = DictItemLinkLocalServiceUtil.getByDictItemId(dictItemId);
-		List<Long> itemsLinkedId = new ArrayList<Long>();
-		for (DictItemLink itemLinked : itemsLinked){
-			itemsLinkedId.add(itemLinked.getDictItemLinkedId());
+		itemTypes = DictItemTypeLocalServiceUtil.getByDictItemId(dictItemId);
+		List<Long> itemsTypesId = new ArrayList<Long>();
+		for (DictItemType itemLinked : itemTypes){
+			itemsTypesId.add(itemLinked.getDictItemLinkedId());
 		}
-		itemsLinkedStr = StringUtil.merge(itemsLinkedId);
+		itemTypesStr = StringUtil.merge(itemsTypesId);
 	} catch (Exception e){}
 	
 %>
