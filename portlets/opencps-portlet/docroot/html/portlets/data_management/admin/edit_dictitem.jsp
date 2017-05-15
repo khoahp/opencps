@@ -252,7 +252,7 @@
 		var A = AUI();
 		
 		var getItemsLinkedURL = Liferay.PortletURL.createURL('<%= PortletURLFactoryUtil.create(request, WebKeys.DATA_MANAGEMENT_ADMIN_PORTLET, themeDisplay.getPlid(), PortletRequest.RENDER_PHASE) %>');
-		getItemsLinkedURL.setParameter("mvcPath", "/html/portlets/data_management/admin/ajax/_select_dictitems_linked.jsp");
+		getItemsLinkedURL.setParameter("mvcPath", "/html/portlets/data_management/admin/ajax/_select_dictitems_type.jsp");
 		getItemsLinkedURL.setWindowState("<%=LiferayWindowState.EXCLUSIVE.toString()%>"); 
 		getItemsLinkedURL.setPortletMode("normal");
 		

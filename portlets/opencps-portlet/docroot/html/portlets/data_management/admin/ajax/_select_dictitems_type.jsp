@@ -119,6 +119,6 @@
 		return result;
 	}
 
-	private Log _log = LogFactoryUtil.getLog("html.portlets.data_management.admin.ajax.select_dictitems_linked.jsp");
+	private Log _log = LogFactoryUtil.getLog("html.portlets.data_management.admin.ajax._select_dictitems_type.jsp.jsp");
 %>
 

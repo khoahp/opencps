@@ -943,7 +943,7 @@
 								event.preventDefault();
 								getDictCollectionDetail(selectedDictCollectionId);
 								// show other component
-								$('.hide-when-edit-permission').slideDown('normal');
+								$('.hide-when-add-collection').slideDown('normal');
 							});
 						}
 						// hide locate
@@ -1395,7 +1395,7 @@
 		}
 		
 		var getItemsLinkedURL = Liferay.PortletURL.createURL('<%= PortletURLFactoryUtil.create(request, WebKeys.DATA_MANAGEMENT_ADMIN_PORTLET, themeDisplay.getPlid(), PortletRequest.RENDER_PHASE) %>');
-		getItemsLinkedURL.setParameter("mvcPath", "/html/portlets/data_management/admin/select_dictitems_linked.jsp");
+		getItemsLinkedURL.setParameter("mvcPath", "/html/portlets/data_management/admin/ajax/_select_dictitems_type.jsp");
 		getItemsLinkedURL.setWindowState("<%=LiferayWindowState.EXCLUSIVE.toString()%>"); 
 		getItemsLinkedURL.setPortletMode("normal");
 		getItemsLinkedURL.setParameter("dictCollectionId", dictCollectionId);

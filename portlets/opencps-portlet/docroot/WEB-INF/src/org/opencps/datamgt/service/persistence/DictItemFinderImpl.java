@@ -241,7 +241,7 @@ public class DictItemFinderImpl extends BasePersistenceImpl<DictItem> implements
 			}
 
 			if (Validator.isNull(itemLinked)) {
-				sql = StringUtil.replace(sql, "AND dil.dictItemLinkedId = ?",
+				sql = StringUtil.replace(sql, "AND dt.dictItemTypeId = ?",
 						StringPool.BLANK);
 			}
 
@@ -300,7 +300,7 @@ public class DictItemFinderImpl extends BasePersistenceImpl<DictItem> implements
 			}
 
 			if (Validator.isNull(itemLinked)) {
-				sql = StringUtil.replace(sql, "AND dil.dictItemLinkedId = ?",
+				sql = StringUtil.replace(sql, "AND dt.dictItemTypeId = ?",
 						StringPool.BLANK);
 			}
 

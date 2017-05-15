@@ -22,8 +22,8 @@
 <p class="breadcrumb bold"><liferay-ui:message key='edit-dictcollection-permissions' /></p>
 
 <div class="row-fluid">
+	<aui:button type="submit" value="done" name="back-permission-button" cssClass="back-icon"/>
 	<aui:button type="submit" value="save" name="save-permission-button" cssClass="save-icon"/>
-	<aui:button type="submit" value="done" name="back-permission-button" cssClass="save-icon"/>
 </div>
 
 <div class="row-fluid">
