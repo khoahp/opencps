@@ -18,18 +18,6 @@
  */
 %>
 
-<%@page import="org.opencps.datamgt.model.DictCollection"%>
-<%@page import="org.opencps.util.WebKeys"%>
-<%@page import="com.liferay.portal.kernel.log.LogFactoryUtil"%>
-<%@page import="com.liferay.portal.kernel.log.Log"%>
-<%@page import="org.opencps.datamgt.service.DictCollectionLocalServiceUtil"%>
-<%@page import="java.util.ArrayList"%>
-<%@page import="java.util.List"%>
-<%@page import="org.opencps.datamgt.search.DictItemDisplayTerms"%>
-<%@page import="org.opencps.datamgt.model.DictItem"%>
-<%@page import="org.opencps.datamgt.service.DictItemLinkLocalServiceUtil"%>
-<%@page import="org.opencps.datamgt.model.DictItemLink"%>
-
 <%@ include file="../../init.jsp"%>
 
 <portlet:actionURL var="updateDictItemURL" name="updateDictItem" />

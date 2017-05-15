@@ -19,9 +19,12 @@ package org.opencps.datamgt.portlet;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
@@ -46,7 +49,9 @@ import org.opencps.datamgt.model.DictCollection;
 import org.opencps.datamgt.model.DictCollectionLink;
 import org.opencps.datamgt.model.DictItem;
 import org.opencps.datamgt.model.DictItemLink;
+import org.opencps.datamgt.model.DictPermissions;
 import org.opencps.datamgt.model.DictVersion;
+import org.opencps.datamgt.model.impl.DictPermissionsImpl;
 import org.opencps.datamgt.search.DictCollectionDisplayTerms;
 import org.opencps.datamgt.search.DictItemDisplayTerms;
 import org.opencps.datamgt.search.DictItemSearch;
@@ -54,6 +59,7 @@ import org.opencps.datamgt.service.DictCollectionLinkLocalServiceUtil;
 import org.opencps.datamgt.service.DictCollectionLocalServiceUtil;
 import org.opencps.datamgt.service.DictItemLinkLocalServiceUtil;
 import org.opencps.datamgt.service.DictItemLocalServiceUtil;
+import org.opencps.datamgt.service.DictPermissionsLocalServiceUtil;
 import org.opencps.datamgt.service.DictVersionLocalServiceUtil;
 import org.opencps.datamgt.util.DataMgtUtil;
 import org.opencps.util.MessageKeys;
@@ -69,6 +75,7 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.portlet.LiferayWindowState;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.servlet.SessionMessages;
+import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.LocalizationUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.StringPool;
@@ -734,13 +741,14 @@ public class DataMamagementPortlet extends MVCPortlet {
 	}
 
 	public void updateDictPermissions(ActionRequest actionRequest,
-			ActionResponse actionResponse) {
-		
-		_log.info("~~~~~~~~~~~~~>>> updateDictPermissions()");
-		
+			ActionResponse actionResponse) throws PortalException,
+			SystemException {
+
 		long userId = ParamUtil.getLong(actionRequest,
 				DictItemDisplayTerms.USER_ID);
 
+		boolean addCollectionPermission = ParamUtil.getBoolean(actionRequest,
+				"addCollectionPermission");
 		boolean viewPermissionAll = ParamUtil.getBoolean(actionRequest,
 				"viewPermissionAll");
 		boolean addPermissionAll = ParamUtil.getBoolean(actionRequest,
@@ -750,6 +758,38 @@ public class DataMamagementPortlet extends MVCPortlet {
 		boolean deletePermissionAll = ParamUtil.getBoolean(actionRequest,
 				"deletePermissionAll");
 
+		ServiceContext serviceContext = ServiceContextFactory
+				.getInstance(actionRequest);
+
+		if (addCollectionPermission) {
+			DictPermissionsLocalServiceUtil.addDictPermission(userId, -1, true,
+					true, true, true, serviceContext);
+		}
+
+		List<DictCollection> collections = DictCollectionLocalServiceUtil
+				.getDictCollections(serviceContext.getScopeGroupId());
+		Map<Long, DictPermissions> dictPermissMap = new HashMap<Long, DictPermissions>();
+
+		for (DictCollection col : collections) {
+
+			DictPermissions permiss = new DictPermissionsImpl();
+
+			permiss.setUserIdMap(userId);
+			permiss.setDictCollectionId(col.getDictCollectionId());
+
+			permiss.setCompanyId(serviceContext.getCompanyId());
+			permiss.setGroupId(serviceContext.getScopeGroupId());
+			permiss.setUserId(serviceContext.getUserId());
+			permiss.setCreateDate(new Date());
+
+			permiss.setView(viewPermissionAll);
+			permiss.setAdd(addPermissionAll);
+			permiss.setEdit(editPermissionAll);
+			permiss.setDelete(deletePermissionAll);
+
+			dictPermissMap.put(col.getDictCollectionId(), permiss);
+		}
+
 		String viewPermissions = ParamUtil.getString(actionRequest,
 				"viewPermissions");
 		String addPermissions = ParamUtil.getString(actionRequest,
@@ -758,8 +798,57 @@ public class DataMamagementPortlet extends MVCPortlet {
 				"editPermissions");
 		String deletePermissions = ParamUtil.getString(actionRequest,
 				"deletePermissions");
-		
-		
+
+		List<String> view = ListUtil.toList(StringUtil.split(viewPermissions));
+		List<String> add = ListUtil.toList(StringUtil.split(addPermissions));
+		List<String> edit = ListUtil.toList(StringUtil.split(editPermissions));
+		List<String> delete = ListUtil.toList(StringUtil
+				.split(deletePermissions));
+
+		DictPermissions permiss = null;
+		if (!viewPermissionAll) {
+			for (String str : view) {
+				try {
+					permiss = dictPermissMap.get(Long.parseLong(str));
+					permiss.setView(true);
+				} catch (Exception e) {
+				}
+			}
+		}
+		if (!addPermissionAll) {
+			for (String str : add) {
+				try {
+					permiss = dictPermissMap.get(Long.parseLong(str));
+					permiss.setAdd(true);
+				} catch (Exception e) {
+				}
+			}
+		}
+		if (!editPermissionAll) {
+			for (String str : edit) {
+				try {
+					permiss = dictPermissMap.get(Long.parseLong(str));
+					permiss.setEdit(true);
+				} catch (Exception e) {
+				}
+			}
+		}
+		if (!deletePermissionAll) {
+			for (String str : delete) {
+				try {
+					permiss = dictPermissMap.get(Long.parseLong(str));
+					permiss.setAdd(true);
+				} catch (Exception e) {
+				}
+			}
+		}
+
+		Set<Long> keySet = dictPermissMap.keySet();
+		DictPermissions permission = null;
+		for (Long l : keySet) {
+			permission = dictPermissMap.get(l);
+			DictPermissionsLocalServiceUtil.updateDictPermissions(permission);
+		}
 	}
 
 	private Log _log = LogFactoryUtil

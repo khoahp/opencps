@@ -18,24 +18,7 @@
  */
 %>
 
-<%@page import="org.opencps.datamgt.service.DictItemLinkLocalServiceUtil"%>
-<%@page import="org.opencps.datamgt.model.DictItemLink"%>
-<%@page import="java.util.ArrayList"%>
-<%@page import="org.opencps.datamgt.service.DictCollectionLinkLocalServiceUtil"%>
-<%@page import="org.opencps.datamgt.model.DictCollectionLink"%>
-<%@page import="org.opencps.datamgt.service.DictItemLocalServiceUtil"%>
-<%@page import="org.opencps.datamgt.model.DictItem"%>
-<%@page import="org.opencps.datamgt.service.DictCollectionLocalServiceUtil"%>
-<%@page import="org.opencps.datamgt.model.DictCollection"%>
-<%@page import="com.liferay.portal.kernel.log.LogFactoryUtil"%>
-<%@page import="com.liferay.portal.kernel.log.Log"%>
-<%@page import="java.util.List"%>
-<%@page import="org.opencps.datamgt.search.DictItemDisplayTerms"%>
-<%@page import="org.opencps.datamgt.util.DataMgtUtil"%>
-<%@page import="com.liferay.portal.kernel.dao.orm.QueryUtil"%>
-<%@page import="org.opencps.util.WebKeys"%>
-
-<%@ include file="../init.jsp"%>
+<%@ include file="../../init.jsp"%>
 
 <%
 	long dictCollectionId = ParamUtil.getLong(request, DictItemDisplayTerms.DICTCOLLECTION_ID);
