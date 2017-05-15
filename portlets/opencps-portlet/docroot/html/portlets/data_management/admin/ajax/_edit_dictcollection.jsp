@@ -16,22 +16,6 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 %>
-<%@page import="org.opencps.datamgt.search.DictItemDisplayTerms"%>
-<%@page import="org.opencps.datamgt.search.DictCollectionDisplayTerms"%>
-<%@page import="org.opencps.datamgt.model.DictCollection"%>
-<%@page import="org.opencps.util.MessageKeys"%>
-<%@page import="org.opencps.datamgt.OutOfLengthCollectionNameException"%>
-<%@page import="org.opencps.datamgt.OutOfLengthCollectionCodeException"%>
-<%@page import="org.opencps.datamgt.DuplicateCollectionException"%>
-<%@page import="org.opencps.datamgt.NoSuchDictCollectionException"%>
-<%@page import="org.opencps.datamgt.EmptyCollectionCodeException"%>
-<%@page import="org.opencps.datamgt.EmptyDictCollectionNameException"%>
-<%@page import="org.opencps.util.WebKeys"%>
-<%@page import="org.opencps.datamgt.service.DictCollectionLinkLocalServiceUtil"%>
-<%@page import="org.opencps.datamgt.model.DictCollectionLink"%>
-<%@page import="org.opencps.datamgt.service.DictCollectionLocalServiceUtil"%>
-<%@page import="java.util.List"%>
-<%@page import="java.util.ArrayList"%>
 
 <%@ include file="../../init.jsp"%>
 
@@ -60,14 +44,6 @@
 
 <div class="opencps-datamgt collection-wrapper opencps-bound-wrapper pd20 default-box-shadow"">
 	<div class="edit-form">
-		<liferay-ui:error exception="<%= OutOfLengthCollectionCodeException.class %>" message="<%=OutOfLengthCollectionCodeException.class.getName() %>" />
-		<liferay-ui:error exception="<%= OutOfLengthCollectionNameException.class %>" message="<%=OutOfLengthCollectionNameException.class.getName() %>" />
-		<liferay-ui:error exception="<%= DuplicateCollectionException.class %>" message="<%=DuplicateCollectionException.class.getName() %>" />
-		<liferay-ui:error exception="<%= NoSuchDictCollectionException.class %>" message="<%=NoSuchDictCollectionException.class.getName() %>" />
-		<liferay-ui:error exception="<%= EmptyCollectionCodeException.class %>" message="<%=EmptyCollectionCodeException.class.getName() %>" />
-		<liferay-ui:error exception="<%= EmptyDictCollectionNameException.class %>" message="<%=EmptyDictCollectionNameException.class.getName() %>" />
-		<liferay-ui:error key="<%= MessageKeys.DATAMGT_SYSTEM_EXCEPTION_OCCURRED%>" message="<%=MessageKeys.DATAMGT_SYSTEM_EXCEPTION_OCCURRED %>" />
-
 		<aui:form action="<%=updateDictCollectionURL.toString() %>" method="post" name="fm">
 			
 			<aui:model-context bean="<%=dictCollection %>" model="<%=DictCollection.class %>" />

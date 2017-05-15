@@ -1,6 +1,3 @@
-<%@page import="com.liferay.portal.kernel.language.LanguageUtil"%>
-<%@page import="com.liferay.portal.kernel.log.LogFactoryUtil"%>
-<%@page import="com.liferay.portal.kernel.log.Log"%>
 <%
 /**
  * OpenCPS is the open source Core Public Services software
@@ -22,14 +19,10 @@
 
 <%@ include file="../../init.jsp"%>
 
-<%
-	
-%>
-
 <p class="breadcrumb"><liferay-ui:message key='edit-permissions' /></p>
 
 <div class="row-fluid">
-	<aui:button type="submit" value="save" name="save-permission-button"/>
+	<aui:button type="submit" value="save" name="save-permission-button" />
 </div>
 
 <div class="row-fluid">
@@ -60,7 +53,7 @@
 						cssClass="input100" 
 						label=""
 					/>
-					<aui:button name="search-users-button" value="search" type="submit" />
+					<aui:button name="search-collection-permission-button" value="search" type="submit" />
 				</div>
 				<div id='<%=renderResponse.getNamespace() + "collection-permissions" %>' ></div>
 			</div>

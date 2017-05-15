@@ -17,27 +17,6 @@
  */
 %>
 
-<%@page import="com.liferay.portal.kernel.dao.orm.QueryUtil"%>
-<%@page import="org.opencps.datamgt.service.DictCollectionLinkLocalServiceUtil"%>
-<%@page import="org.opencps.datamgt.model.DictCollectionLink"%>
-<%@page import="org.opencps.util.WebKeys"%>
-<%@page import="org.opencps.datamgt.util.DataMgtUtil"%>
-<%@page import="com.liferay.portal.kernel.language.LanguageUtil"%>
-<%@page import="org.opencps.datamgt.service.DictCollectionLocalServiceUtil"%>
-<%@page import="org.opencps.datamgt.model.DictCollection"%>
-<%@page import="com.liferay.portal.kernel.dao.search.SearchEntry"%>
-<%@page import="java.util.List"%>
-<%@page import="javax.portlet.PortletURL"%>
-<%@page import="com.liferay.portal.kernel.dao.search.SearchContainer"%>
-<%@page import="com.liferay.portal.kernel.log.LogFactoryUtil"%>
-<%@page import="com.liferay.portal.kernel.log.Log"%>
-<%@page import="java.util.ArrayList"%>
-<%@page import="org.opencps.datamgt.search.DictItemDisplayTerms"%>
-<%@page import="org.opencps.datamgt.search.DictItemSearchTerms"%>
-<%@page import="org.opencps.datamgt.search.DictItemSearch"%>
-<%@page import="org.opencps.datamgt.model.DictItem"%>
-<%@page import="org.opencps.datamgt.service.DictItemLocalServiceUtil"%>
-
 <%@ include file="../../init.jsp"%>
 
 <%
