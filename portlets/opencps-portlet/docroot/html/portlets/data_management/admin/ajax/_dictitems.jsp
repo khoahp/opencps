@@ -47,7 +47,8 @@
 	<liferay-ui:search-container 
 		searchContainer="<%=itemsListSearchContainer == null ? 
 				new DictItemSearch(renderRequest, SearchContainer.DEFAULT_DELTA, iteratorURL) : itemsListSearchContainer %>" 
-		headerNames="STT,code,name,tree-index,action"
+		headerNames="STT,code,name,tree-index,action" 
+		deltaConfigurable="false"
 	>
 	
 		<liferay-ui:search-container-results>
@@ -79,23 +80,23 @@
 					String rowNumber = String.valueOf((row.getPos() + 1) 
 							+ (searchContainer.getCur() - 1) * searchContainer.getDelta());
 					
-					String rowNumberDisplay = "<div class=\"text-center\"><a class=\"edit_dictItem_link\" id=\""
+					String rowNumberDisplay = "<div class=\"text-center\"><a href=\"#\" class=\"edit_dictItem_link\" id=\""
 								+ renderResponse.getNamespace() + "dictItemId_" + dictItem.getDictItemId() +"\" >" + rowNumber + "</a></div>";
 					
 					row.addText(rowNumberDisplay);
 					
-					String itemCodeDisplay = "<div class=\"text-center\"><a class=\"edit_dictItem_link\" id=\""
+					String itemCodeDisplay = "<div class=\"text-center\"><a href=\"#\" class=\"edit_dictItem_link\" id=\""
 							+ renderResponse.getNamespace() + "dictItemId_" + dictItem.getDictItemId() +"\" >" + dictItem.getItemCode() + "</a></div>";
 					
 					row.addText(itemCodeDisplay);
 					
-					String itemNameDisplay = "<div class=\"text-center\"><a class=\"edit_dictItem_link\" id=\""
-							+ renderResponse.getNamespace() + "dictItemId_" + dictItem.getDictItemId() +"\" >" + dictItem.getItemName(locale) + "</a></div>";
+					String itemNameDisplay = "<a href=\"#\" class=\"edit_dictItem_link\" id=\""
+							+ renderResponse.getNamespace() + "dictItemId_" + dictItem.getDictItemId() +"\" >" + dictItem.getItemName(locale) + "</a>";
 					
 					row.addText(itemNameDisplay);
 					
-					String treeIndexDisplay = "<div class=\"text-center\"><a class=\"edit_dictItem_link\" id=\""
-							+ renderResponse.getNamespace() + "dictItemId_" + dictItem.getDictItemId() +"\" >" + dictItem.getTreeIndex() + "</a></div>";
+					String treeIndexDisplay = "<a href=\"#\" class=\"edit_dictItem_link\" id=\""
+							+ renderResponse.getNamespace() + "dictItemId_" + dictItem.getDictItemId() +"\" >" + dictItem.getTreeIndex() + "</a>";
 					
 					row.addText(treeIndexDisplay);
 					
@@ -106,7 +107,7 @@
 				%>	
 			</liferay-ui:search-container-row> 
 		
-		<liferay-ui:search-iterator type="opencs_page_iterator"/>
+		<liferay-ui:search-iterator type="opencs_page_iterator" />
 	</liferay-ui:search-container>
 </div>
 

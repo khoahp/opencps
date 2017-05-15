@@ -123,8 +123,8 @@
 		</aui:col>
 	</aui:row>
 	
-	<aui:button name="search-item-button" value="search" type="submit"/>
-	<aui:button id='<%=renderResponse.getNamespace() + "add-item" %>' type="submit" value="add-item" />
+	<aui:button name="search-item-button" value="search" type="submit" cssClass="search-icon"/>
+	<aui:button id='<%=renderResponse.getNamespace() + "add-item" %>' type="submit" value="add-item" cssClass="plus-icon"/>
 </div>
 
 <div id='<%=renderResponse.getNamespace() + "dictItems_container" %>'></div>

@@ -109,7 +109,7 @@
 		</div>
 	</li>
 	<li class="tree-node collection-tree-node" >
-		<div class="bold"><liferay-ui:message key="all" /></div>
+		<span class="bold"><liferay-ui:message key="all" /></span>
 		<span class="dict-permission-container">
 			<aui:input 
 				name="viewPermissionAll"
