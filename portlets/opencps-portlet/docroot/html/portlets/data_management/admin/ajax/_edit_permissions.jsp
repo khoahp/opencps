@@ -19,7 +19,7 @@
 
 <%@ include file="../../init.jsp"%>
 
-<p class="breadcrumb"><liferay-ui:message key='edit-permissions' /></p>
+<p class="breadcrumb bold"><liferay-ui:message key='edit-dictcollection-permissions' /></p>
 
 <div class="row-fluid">
 	<aui:button type="submit" value="save" name="save-permission-button" />

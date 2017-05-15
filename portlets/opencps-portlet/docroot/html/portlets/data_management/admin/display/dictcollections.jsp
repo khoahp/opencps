@@ -34,20 +34,20 @@
 	<div class="span3" id="<portlet:namespace/>anchor-scroll">
 		<div class="opencps-searchcontainer-wrapper default-box-shadow radius8 data-manager-action">
 			<div class="openCPSTree yui3-widget component tree-view tree-drag-drop">
-				<aui:button type="submit" value="add" onClick="editDictCollection()"/>
+				<aui:button type="submit" value="add-collection" onClick="editDictCollection()"/>
 				<c:if test="<%=permissionChecker.isOmniadmin() %>">
-					<aui:button type="submit" value="permissions" onClick="editPermission()"/>
+					<aui:button type="submit" value="collection-permissions" onClick="editPermission()"/>
 				</c:if>
 				<div>
 					<aui:input 
 						name="collection-name" 
-						placeholder='<%= LanguageUtil.get(locale, "name") %>' 
+						placeholder='<%= LanguageUtil.get(locale, "collection-name") %>' 
 						cssClass="input100" 
-						label=""
+						label="lookups-collections"
 					/>
 					<aui:button name="search-button" value="search" type="submit" />
 				</div>
-				<div id='<%=renderResponse.getNamespace() + "collections-container" %>' ></div>
+				<div id='<%=renderResponse.getNamespace() + "collections-container" %>' class="scrollbar-datamgt"></div>
 			</div>
 		</div>
 		
@@ -76,7 +76,7 @@
 	var A = AUI();
 	
 	AUI().ready('aui-base','liferay-portlet-url','aui-io', function(A){
-		checkLogined();
+		
 		getDictCollections();
 		getDictCollectionDetail();
 		
@@ -427,7 +427,6 @@
 							container.html(content);
 						}
 						
-						//todo
 						// initial value for dictcollection link checkbox
 						if (A.all('.unchecked-checkbox')){
 							A.all('.unchecked-checkbox').each(function(noSelected){
@@ -561,7 +560,6 @@
 						}
 						if (A.one('#<portlet:namespace/>delete-collection-button')){
 							A.one('#<portlet:namespace/>delete-collection-button').on('click', function(){
-								//todo
 								deleteDictCollection(selectedDictCollectionId);
 							});
 						}
@@ -643,12 +641,12 @@
 						if (A.one('#<portlet:namespace/>item-name')){
 							A.one('#<portlet:namespace/>item-name').on('keyup', function(){
 								getDictItems(selectedDictCollectionId);
-							})
+							});
 						}
 						if (A.one('#<portlet:namespace/>item-linked')){
 							A.one('#<portlet:namespace/>item-linked').on('change', function(){
 								getDictItems(selectedDictCollectionId);
-							})
+							});
 						}
 						
 					},
@@ -737,6 +735,20 @@
 								button.on('click', function(){
 									editDictItem(itemId);
 								});
+							});
+						}
+						// edit dict item link
+						console.log('8==================o');
+						console.log(A.all('.<portlet:namespace/>edit_dictItem_link'));
+						if (A.all('.<portlet:namespace/>edit_dictItem_link')){
+							A.all('.<portlet:namespace/>edit_dictItem_link').each(function(link){
+								// todo
+								console.log(link);
+								
+								/* var itemId = link.attr('id').replace(/.+dictItemId_/, '');
+								link.on('click', function(){
+									editDictItem(itemId);
+								}); */
 							});
 						}
 						// no use button dict item
@@ -917,6 +929,10 @@
 								getDictCollectionDetail(selectedDictCollectionId);
 							});
 						}
+						// hide locate
+						if (A.one('.input-localized-content')){
+							A.one('.input-localized-content').setStyle('display', 'none');
+						}
 					},
 			    	error: function(){
 			    		loadingMask.hide();
@@ -1059,6 +1075,11 @@
 								event.preventDefault();
 								getDictItemsToolbar(selectedDictCollectionId);
 							});
+						}
+						
+						// hide locate
+						if (A.one('.input-localized-content')){
+							A.one('.input-localized-content').setStyle('display', 'none');
 						}
 					},
 			    	error: function(){

@@ -37,10 +37,10 @@
 	String backURL = ParamUtil.getString(request, "backURL");
 %>
 
-<liferay-ui:header
-	backURL="<%= backURL %>"
-	title='<%= (dictCollection == null) ? "add-dictcollection" : "update-dictcollection" %>'
-/>
+<p class="breadcrumb bold">
+	<liferay-ui:message key='<%= (dictCollection == null) ? "add-dictcollection" : "update-dictcollection" %>' />
+	<liferay-ui:message key='<%= (dictCollection == null) ? "" : " > " + dictCollection.getCollectionName() %>' />
+</p>
 
 <div class="opencps-datamgt collection-wrapper opencps-bound-wrapper pd20 default-box-shadow"">
 	<div class="edit-form">
@@ -92,12 +92,13 @@
 											<aui:input 
 												name="dictCollectionsLinked" 
 												value="<%=collection.getDictCollectionId() %>"
-												label="<%=collection.getCollectionName() %>"
+												label=""
 												type="checkbox" 
 												inlineField="true"
 												checked="<%=checked %>"
 												cssClass='<%=!checked ? "no-linked-to-selected-collection" : "" %>'
 											/>
+											<liferay-ui:message key="<%=collection.getCollectionName() %>" />
 										</li>
 									<%
 								}

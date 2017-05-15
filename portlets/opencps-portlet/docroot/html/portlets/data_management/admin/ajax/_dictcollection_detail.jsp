@@ -32,10 +32,19 @@
 		collectionTypes.add(linked.getDictCollectionLinkedName());
 	}
 	String typesStr = StringUtil.merge(collectionTypes, StringPool.COMMA + StringPool.SPACE);
+	
+	boolean showDeleteButton = false;
+	List<DictItem> items = new ArrayList<DictItem>();
+	try {
+		items = DictItemLocalServiceUtil.getDictItemsByDictCollectionId(collectionId, 0, 1, null);
+	} catch (Exception e){}
+	if (items.size() == 0){
+		showDeleteButton =  true;
+	}
 %>
 
 <c:if test="<%=collection == null %>">
-	<p class="breadcrumb"><liferay-ui:message key='dictcollection-statistic' /></p>
+	<p class="breadcrumb bold"><liferay-ui:message key='dictcollection-statistic' /></p>
 	<p><span><liferay-ui:message key='dict-collection' />:</span> <%=DictCollectionLocalServiceUtil.countAll() %></p>
 	<p><span><liferay-ui:message key='tatal-dictitems' />:</span> <%=DictItemLocalServiceUtil.countAll() %></p>
 	<%
@@ -54,20 +63,24 @@
 
 <c:if test="<%=collection != null %>">
 	<div>
-		<p class="breadcrumb"><liferay-ui:message key='dict-collection' /> > <%=collection != null ? collection.getCollectionName() : StringPool.BLANK %></p>
+		<p class="breadcrumb bold">
+			<liferay-ui:message key='dict-collection' /> > <%=collection != null ? collection.getCollectionName() : StringPool.BLANK %>
+		</p>
 	</div>
 
 	<div>
 		<p><span><liferay-ui:message key='collection-code' />:</span> <%=collection.getCollectionCode() %></p>
 		<p><span><liferay-ui:message key='collection-name' />:</span> <%=collection.getCollectionName(locale) %></p>
 		<p><span><liferay-ui:message key='description' />:</span> <%=collection.getDescription() %></p>
-		<p><span><liferay-ui:message key='collection-types' />:</span> <%=typesStr %></p>
+		<c:if test="<%=Validator.isNotNull(typesStr) %>">
+			<p><span><liferay-ui:message key='collection-types' />:</span> <%=typesStr %></p>
+		</c:if>
 	</div>
 	
 	<div>
 		<aui:button 
 			name="view-items-button"
-			type="submit" cssClass="view-button" value="view"
+			type="submit" cssClass="view-button" value="view-list"
 		/>
 			
 		<c:if test="<%=DictCollectionPermission.contains(permissionChecker, scopeGroupId, ActionKeys.ADD_DICTCOLLECTION) %>">
@@ -77,7 +90,8 @@
 	 		/>
 	 	</c:if>
 		
-		<c:if test="<%=collection != null && DictCollectionPermission.contains(permissionChecker, scopeGroupId, ActionKeys.DELETE) %>">
+		<c:if test="<%=collection != null && DictCollectionPermission.contains(permissionChecker, scopeGroupId, ActionKeys.DELETE) 
+						&& showDeleteButton%>">
 			<aui:button 
 				name="delete-collection-button"
 				type="submit" cssClass="delete-button" value="delete"

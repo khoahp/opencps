@@ -101,7 +101,7 @@
 		/>
 	</li>
 	<li class="tree-node collection-tree-node" >
-		<div class="button-permission-name">
+		<div class="button-permission-name bold">
 			<div><liferay-ui:message key="view" /></div>
 			<div><liferay-ui:message key="add" /></div>
 			<div><liferay-ui:message key="edit" /></div>
@@ -109,7 +109,7 @@
 		</div>
 	</li>
 	<li class="tree-node collection-tree-node" >
-		<liferay-ui:message key="all" />
+		<div class="bold"><liferay-ui:message key="all" /></div>
 		<span class="dict-permission-container">
 			<aui:input 
 				name="viewPermissionAll"

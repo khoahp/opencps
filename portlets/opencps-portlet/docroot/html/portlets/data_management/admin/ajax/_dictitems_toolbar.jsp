@@ -41,30 +41,30 @@
 %>
 
 <div>
-	<p class="breadcrumb">
+	<p class="breadcrumb bold">
 		<liferay-ui:message key='dictcollection' /> > 
 		<%=collection != null ? collection.getCollectionName() : StringPool.BLANK %> > 
 		<liferay-ui:message key='list' />
 	</p>
 </div>
 
+<<liferay-ui:message key="lookups-items" />
 <div>
-	<aui:button id='<%=renderResponse.getNamespace() + "add-item" %>' type="submit" value="add" />
 	<aui:row>
-		<aui:col width="50">
+		<aui:col width='<%=collectionsLinked.size() == 0 ? 50 : 30 %>' >
 			<aui:input 
 				name="item-name" 
 				value="<%=searchKeyword %>" 
-				placeholder='<%= LanguageUtil.get(locale, "name") %>' 
+				placeholder='<%= LanguageUtil.get(locale, "item-name") %>' 
 				cssClass="input100"
 			/>
 		</aui:col>
-		<aui:col width="50" cssClass='<%=collectionsLinked.size() == 0 ? "hidden" : "" %>' >
+		<aui:col width="30" cssClass='<%=collectionsLinked.size() == 0 ? "hidden" : "" %>' >
 			<%
 			if (collectionsLinked.size() > 0){
 				%>
 				<aui:select name="item-linked">
-					<aui:option value="0" ></aui:option>
+					<aui:option value="0" />
 					<%
 					DictCollection dictCollection = null;
 					List<DictItem> dictItemsL = new ArrayList<DictItem>();
@@ -92,9 +92,9 @@
 							}
 							for (DictItem item : dictItemsOrdered){
 								int level = StringUtil.count(item.getTreeIndex(), StringPool.PERIOD);
-								String index = "|__";
+								String index = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
 								for(int i = 0; i < level; i++){
-									index += "__";
+									index += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
 								}
 								%>
 								<aui:option 
@@ -114,7 +114,7 @@
 			%>
 		</aui:col>
 		
-		<aui:col width="50">
+		<aui:col width='<%=collectionsLinked.size() == 0 ? 50 : 30 %>'>
 			<aui:select name="itemsStatusInUsed" label="status">
 				<aui:option value="0" label="draf" selected="<%=itemsStatus == 0 %>" />
 				<aui:option value="1" label="in-used" selected="<%=itemsStatus == 1 %>" />
@@ -124,6 +124,7 @@
 	</aui:row>
 	
 	<aui:button name="search-item-button" value="search" type="submit"/>
+	<aui:button id='<%=renderResponse.getNamespace() + "add-item" %>' type="submit" value="add-item" />
 </div>
 
 <div id='<%=renderResponse.getNamespace() + "dictItems_container" %>'></div>

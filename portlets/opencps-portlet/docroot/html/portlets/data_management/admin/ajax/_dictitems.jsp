@@ -17,6 +17,8 @@
  */
 %>
 
+<%@page import="org.opencps.datamgt.search.DictItemSearch"%>
+
 <%@ include file="../../init.jsp"%>
 
 <%
@@ -73,15 +75,29 @@
 			>
 				<%
 					row.setClassName("opencps-searchcontainer-row");
+				
+					String rowNumber = String.valueOf((row.getPos() + 1) 
+							+ (searchContainer.getCur() - 1) * searchContainer.getDelta());
 					
-					row.addText(String.valueOf((row.getPos() + 1) 
-							+ (searchContainer.getCur() - 1) * searchContainer.getDelta()));
+					String rowNumberDisplay = "<div class=\"text-center\"><a class=\"edit_dictItem_link\" id=\""
+								+ renderResponse.getNamespace() + "dictItemId_" + dictItem.getDictItemId() +"\" >" + rowNumber + "</a></div>";
 					
-					row.addText(dictItem.getItemCode());
+					row.addText(rowNumberDisplay);
 					
-					row.addText(dictItem.getItemName(locale));
+					String itemCodeDisplay = "<div class=\"text-center\"><a class=\"edit_dictItem_link\" id=\""
+							+ renderResponse.getNamespace() + "dictItemId_" + dictItem.getDictItemId() +"\" >" + dictItem.getItemCode() + "</a></div>";
 					
-					row.addText(dictItem.getTreeIndex());
+					row.addText(itemCodeDisplay);
+					
+					String itemNameDisplay = "<div class=\"text-center\"><a class=\"edit_dictItem_link\" id=\""
+							+ renderResponse.getNamespace() + "dictItemId_" + dictItem.getDictItemId() +"\" >" + dictItem.getItemName(locale) + "</a></div>";
+					
+					row.addText(itemNameDisplay);
+					
+					String treeIndexDisplay = "<div class=\"text-center\"><a class=\"edit_dictItem_link\" id=\""
+							+ renderResponse.getNamespace() + "dictItemId_" + dictItem.getDictItemId() +"\" >" + dictItem.getTreeIndex() + "</a></div>";
+					
+					row.addText(treeIndexDisplay);
 					
 					//action column
 					row.addJSP("center", SearchEntry.DEFAULT_VALIGN, 
