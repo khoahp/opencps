@@ -42,7 +42,9 @@
 	
 %>
 
-
+<div class="date-dict-items-message">
+	<b><liferay-ui:message key="data-dict-items" /></b>
+</div>
 <div class="opencps-searchcontainer-wrapper-width-header default-box-shadow radius8 items-container">
 	<liferay-ui:search-container 
 		searchContainer="<%=itemsListSearchContainer == null ? 

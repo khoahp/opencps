@@ -824,17 +824,12 @@
 							});
 						}
 						// edit dict item link
-						console.log('8==================o');
-						console.log(A.all('.<portlet:namespace/>edit_dictItem_link'));
-						if (A.all('.<portlet:namespace/>edit_dictItem_link')){
-							A.all('.<portlet:namespace/>edit_dictItem_link').each(function(link){
-								// todo
-								console.log(link);
-								
-								/* var itemId = link.attr('id').replace(/.+dictItemId_/, '');
+						if (A.all('.edit_dictItem_link')){
+							A.all('.edit_dictItem_link').each(function(link){
+								var itemId = link.attr('id').replace(/.+dictItemId_/, '');
 								link.on('click', function(){
 									editDictItem(itemId);
-								}); */
+								});
 							});
 						}
 						// no use button dict item

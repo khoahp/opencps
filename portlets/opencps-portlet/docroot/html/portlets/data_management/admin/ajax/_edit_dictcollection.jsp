@@ -53,60 +53,69 @@
 			
 			<aui:fieldset>
 				<aui:row>
-					<aui:col width="70">
-						<aui:input name="<%=DictCollectionDisplayTerms.COLLECTION_NAME %>" cssClass="input100">
-							<aui:validator name="required"/>
-							<aui:validator name="minLength">3</aui:validator>
-							<aui:validator name="maxLength">255</aui:validator>
-						</aui:input>
+					<aui:col width="50">
+						<aui:row>
+							<aui:input name="<%=DictCollectionDisplayTerms.COLLECTION_CODE %>" type="text" cssClass="input100">
+								<aui:validator name="required"/>
+								<aui:validator name="maxLength">100</aui:validator>
+							</aui:input>
+						</aui:row>
+						<aui:row>
+							<aui:input name="<%=DictCollectionDisplayTerms.COLLECTION_NAME %>" cssClass="input100">
+								<aui:validator name="required"/>
+								<aui:validator name="minLength">3</aui:validator>
+								<aui:validator name="maxLength">255</aui:validator>
+							</aui:input>
+						</aui:row>
+						<aui:row>
+							<aui:input name="<%=DictCollectionDisplayTerms.DESCRIPTION %>" type="textarea" cssClass="input100" />
+						</aui:row>
 					</aui:col>
 					
-					<aui:col width="30">
-						<aui:input name="<%=DictCollectionDisplayTerms.COLLECTION_CODE %>" type="text" cssClass="input100">
-							<aui:validator name="required"/>
-							<aui:validator name="maxLength">100</aui:validator>
-						</aui:input>
+					<aui:col width="50">
+						<aui:row>
+							<!-- dictCollections linked -->
+							<label><liferay-ui:message key="dict-collection-linked" /></label>
+							<div class="opencps-searchcontainer-wrapper default-box-shadow radius8 data-manager-action">
+								<div class="openCPSTree yui3-widget component tree-view tree-drag-drop">
+									<div class="scrollbar-datamgt">
+										<ul class="tree-view-content tree-drag-drop-content tree-file tree-root-container">
+											<%
+												List<DictCollection> dictCollections = DictCollectionLocalServiceUtil.getDictCollections();
+												List<DictCollectionType> dictCollectionsTypes = DictCollectionTypeLocalServiceUtil.getByDictCollectionId(collectionId);
+												for (DictCollection collection : dictCollections){
+													if (collection.getDictCollectionId() != collectionId){
+														boolean checked = false;
+														for (DictCollectionType type : dictCollectionsTypes){
+															if (type.getDictCollectionLinkedId() == collection.getDictCollectionId()){
+																checked = true;
+																break;
+															}
+														}
+														%>
+															<li class="tree-node collection-tree-node">
+																<aui:input 
+																	name="dictCollectionsLinked" 
+																	value="<%=collection.getDictCollectionId() %>"
+																	label=""
+																	type="checkbox" 
+																	inlineField="true"
+																	checked="<%=checked %>"
+																	cssClass='<%=!checked ? "no-linked-to-selected-collection" : "" %>'
+																/>
+																<liferay-ui:message key="<%=collection.getCollectionName() %>" />
+															</li>
+														<%
+													}
+												}
+											%>
+										</ul>
+									</div>
+								</div>
+							</div>
+						</aui:row>
 					</aui:col>
 				</aui:row>
-				
-				<aui:input name="<%=DictCollectionDisplayTerms.DESCRIPTION %>" type="textarea" cssClass="input100"/>
-				
-				<!-- dictCollections linked -->
-				<label><liferay-ui:message key="dict-collection-linked" /></label>
-				<div style="overflow-y:scroll;height:250px;width:100%;overflow-x:hidden">
-					<ul>
-						<%
-							List<DictCollection> dictCollections = DictCollectionLocalServiceUtil.getDictCollections();
-							List<DictCollectionType> dictCollectionsTypes = DictCollectionTypeLocalServiceUtil.getByDictCollectionId(collectionId);
-							for (DictCollection collection : dictCollections){
-								if (collection.getDictCollectionId() != collectionId){
-									boolean checked = false;
-									for (DictCollectionType type : dictCollectionsTypes){
-										if (type.getDictCollectionLinkedId() == collection.getDictCollectionId()){
-											checked = true;
-											break;
-										}
-									}
-									%>
-										<li>
-											<aui:input 
-												name="dictCollectionsLinked" 
-												value="<%=collection.getDictCollectionId() %>"
-												label=""
-												type="checkbox" 
-												inlineField="true"
-												checked="<%=checked %>"
-												cssClass='<%=!checked ? "no-linked-to-selected-collection" : "" %>'
-											/>
-											<liferay-ui:message key="<%=collection.getCollectionName() %>" />
-										</li>
-									<%
-								}
-							}
-						%>
-					</ul>
-				</div>
-
 			</aui:fieldset>
 			<aui:fieldset>
 				<aui:button type="submit" name="submit" value="submit"/>
