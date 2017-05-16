@@ -128,6 +128,11 @@
 			return;
 		}
 		
+		if (selectedUserId == '0'){
+			alert(Liferay.Language.get('please-select-user-admin'));
+			return;
+		}
+		
 		var loadingMask = new A.LoadingMask(
 			{
 				'strings.loading': '<%= UnicodeLanguageUtil.get(pageContext, "...") %>',
@@ -373,7 +378,8 @@
 		if (keysearch && keysearch.length > 0){
 			if (A.all('.collection-tree-node-permission')){
 				A.all('.collection-tree-node-permission').each(function(node) {
-					var name = node.html().replace(/<span.+span> $/, '');
+					var name = node.html().replace(/<\/.+> $/, '');
+					name = name.replace(/^.+>/, '');
 					if (name.toLowerCase().includes(keysearch.toLowerCase())){
 						if ($('#' + node.attr('id')).is(":hidden")){
 							$('#' + node.attr('id')) ? 
@@ -443,6 +449,58 @@
 						if (A.all('.unchecked-checkbox')){
 							A.all('.unchecked-checkbox').each(function(noSelected){
 								noSelected.ancestor().one('input[type=hidden]').attr('value', '0');
+							});
+						}
+						
+						// onclick dict collection
+						if ($('.collection-tree-node-permission-name')){
+							$('.collection-tree-node-permission-name').each(function(){
+								$(this).click(function(){
+									var li = $(this).closest('li');
+									var collectionId = $(li)['0']['id'].replace(/.+collection_/, '');
+									if (!($(li)['0'].className).includes('checked-collection')){
+										$(li).find('input[type=checkbox]').each(function(){
+											$(this).prop('checked', true);
+										});
+										$(li).find('input[type=hidden]').each(function(){
+											$(this).prop('value', collectionId);
+										});
+										$(li)['0'].className += ' checked-collection';
+									} else {
+										$(li).find('input[type=checkbox]').each(function(){
+											$(this).prop('checked', false);
+										});
+										$(li).find('input[type=hidden]').each(function(){
+											$(this).prop('value', 0);
+										});
+										$(li)['0'].className = $(li)['0'].className.replace(' checked-collection', '');
+									}
+								});
+							});
+						} 
+						// onclick dict collection
+						if ($('.collection-tree-node-permission-all')){
+							$('.collection-tree-node-permission-all').each(function(){
+								$(this).click(function(){
+									var li = $(this).closest('li');
+									if (!($(li)['0'].className).includes('checked-collection')){
+										$(li).find('input[type=checkbox]').each(function(){
+											$(this).prop('checked', true);
+										});
+										$(li).find('input[type=hidden]').each(function(){
+											$(this).prop('value', 1);
+										});
+										$(li)['0'].className += ' checked-collection';
+									} else {
+										$(li).find('input[type=checkbox]').each(function(){
+											$(this).prop('checked', false);
+										});
+										$(li).find('input[type=hidden]').each(function(){
+											$(this).prop('value', 0);
+										});
+										$(li)['0'].className = $(li)['0'].className.replace(' checked-collection', '');
+									}
+								});
 							});
 						}
 					},
