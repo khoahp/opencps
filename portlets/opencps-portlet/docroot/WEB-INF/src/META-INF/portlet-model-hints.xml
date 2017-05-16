@@ -36,8 +36,8 @@
 			<hint-collection name="TEXTAREA" />
 		</field>
 	</model>
-	<model name="org.opencps.datamgt.model.DictCollectionLink">
-		<field name="dictCollectionLinkId" type="long" />
+	<model name="org.opencps.datamgt.model.DictCollectionType">
+		<field name="dictCollectionTypeId" type="long" />
 		<field name="companyId" type="long" />
 		<field name="groupId" type="long" />
 		<field name="userId" type="long" />
@@ -72,8 +72,8 @@
 		<field name="sibling" type="long" />
 		<field name="level" type="int" />
 	</model>
-	<model name="org.opencps.datamgt.model.DictItemLink">
-		<field name="dictItemLinkId" type="long" />
+	<model name="org.opencps.datamgt.model.DictItemType">
+		<field name="dictItemTypeId" type="long" />
 		<field name="companyId" type="long" />
 		<field name="groupId" type="long" />
 		<field name="userId" type="long" />
