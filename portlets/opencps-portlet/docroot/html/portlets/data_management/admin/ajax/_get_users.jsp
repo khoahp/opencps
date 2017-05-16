@@ -17,15 +17,22 @@
  */
 %>
 
+<%@page import="com.liferay.portal.service.RoleLocalServiceUtil"%>
+
 <%@ include file="../../init.jsp"%>
 
 <%
 	List<User> users = new ArrayList<User>();
+	long roleId = 0;
 	try {
-		users = UserLocalServiceUtil.getUsers(QueryUtil.ALL_POS, QueryUtil.ALL_POS);
+		roleId = RoleLocalServiceUtil
+				.getRole(company.getCompanyId(), DictCollectionDisplayTerms.DICTCOLLECTION_ROLE)
+					.getRoleId();
+		users = UserLocalServiceUtil.getRoleUsers(roleId);
 	} catch (Exception e){
 		_log.error(e);
 	}
+	
 %>
 
 <ul class="tree-view-content tree-drag-drop-content tree-file tree-root-container">
