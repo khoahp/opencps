@@ -57,7 +57,7 @@
 			AND 
 				di.itemName LIKE ?
 			AND 
-				dt.dictItemTypeId = ?
+				dt.dictItemLinkedId = ?
 			AND	
 				di.issueStatus = ?
 			ORDER BY treeIndex
@@ -85,7 +85,7 @@
 				AND 
 					di.itemName LIKE ?
 				AND 
-					dt.dictItemTypeId = ?
+					dt.dictItemLinkedId = ?
 				AND	
 					di.issueStatus = ?
 			) AS result

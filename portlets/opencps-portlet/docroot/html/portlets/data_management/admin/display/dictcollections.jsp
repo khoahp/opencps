@@ -1000,6 +1000,8 @@
 			        	if (A.one('#<portlet:namespace/>collection-name')){
 			        		A.one('#<portlet:namespace/>collection-name').attr('value', '');
 			        	}
+			        	
+			        	alert(Liferay.Language.get('success'));
 					},
 			    	error: function(){
 			    		loadingMask.hide();
@@ -1170,8 +1172,9 @@
 			        	var collectionName = A.one('#<portlet:namespace/>collection-name') ? 
 								A.one('#<portlet:namespace/>collection-name').attr('value') : '';
 			        	getDictCollections(collectionName);
+			        	getDictCollectionDetail();
 			        	// show other component
-						$('.hide-when-edit-permission').slideDown('normal');
+						$('.hide-when-add-collection').slideDown('normal');
 						alert(Liferay.Language.get('success'));
 					},
 			    	error: function(){
