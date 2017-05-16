@@ -28,11 +28,10 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 
-@Path("/vr-app")
-public class VRTechSpecController {
-
+@Path("vr")
+public class VRController {
 	@GET
-	@Path("/techspecs/vehicletype/{vehicletype: .*}")
+	@Path("/techspecs/{vehicletype: .*}")
 	@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
 	public Response getTecSpecs(@HeaderParam("apikey") String apikey,
 			@HeaderParam("module") String module,
@@ -84,7 +83,6 @@ public class VRTechSpecController {
 				jsonTechSpec.put("Reference", false);
 				jsonTechSpec.put("placeholder", di.getItemName(locale));
 				jsonTechSpec.put("datasource", StringPool.BLANK);
-				jsonTechSpec.put("value", StringPool.BLANK);
 
 				JSONArray items = JSONFactoryUtil.createJSONArray();
 
@@ -93,17 +91,16 @@ public class VRTechSpecController {
 
 					techspec.put("key", vrConfig.getSpecificationCode());
 					techspec.put("type", Validator.isNull(vrConfig
-							.getSpecificationDataCollectionId()) ? "text"
-							: "select");
+							.getSpecificationDataCollectionId()) ? "select"
+							: "text");
 					techspec.put("title",
 							vrConfig.getSpecificationDisplayName());
 					techspec.put("required", true);
 					techspec.put("Reference", false);
-					
-					techspec.put("value", StringPool.BLANK);
+					techspec.put("value", StringPool.SPACE);
 
 					techspec.put("placeholder",
-							vrConfig.getSpecificationEntryPlaceholder());
+							vrConfig.getSpecificationDisplayName());
 					if (Validator.isNotNull(vrConfig
 							.getSpecificationDataCollectionId())) {
 						techspec.put("datasource", getDataSource(vrConfig
@@ -137,57 +134,17 @@ public class VRTechSpecController {
 	}
 
 	@GET
-	@Path("/techspecslimit/vehicletype/{vehicletype: .*}/formulatype/{formulatype: .*}")
+	@Path("/status")
 	@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
-	public Response getTecSpecsLimit(@HeaderParam("apikey") String apikey,
-			@HeaderParam("module") String module,
-			@HeaderParam("dossierId") long dossierId,
-			@HeaderParam("dossierFileId") long dossierFileId,
-			@PathParam("vehicletype") String vehicletype) {
-
+	public Response checkService() {
+		
 		JSONObject resp = JSONFactoryUtil.createJSONObject();
-
-		try {
-
-			resp.put("module", module);
-			resp.put("dossierId", dossierId);
-			resp.put("dossierFileId", dossierFileId);
-			resp.put("vehicletype", vehicletype);
-
-			return Response.status(200).entity(resp.toString()).build();
-
-		} catch (Exception e) {
-			return Response.status(404).entity(resp.toString()).build();
-		}
+		
+		resp.put("Status", "Online");
+		
+		return Response.status(200).entity(resp.toString()).build();
 	}
-
-	@GET
-	@Path("/techspecsreport")
-	@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
-	public Response getTecSpecsReport(@HeaderParam("apikey") String apikey,
-			@HeaderParam("module") String module,
-			@HeaderParam("dossierId") long dossierId,
-			@HeaderParam("templateFileNo") String templateFileNo) {
-
-		JSONObject resp = JSONFactoryUtil.createJSONObject();
-
-		try {
-
-			resp.put("module", module);
-			resp.put("dossierId", dossierId);
-			resp.put("vehicletype", templateFileNo);
-
-			return Response.status(200).entity(resp.toString()).build();
-
-		} catch (Exception e) {
-			return Response.status(404).entity(resp.toString()).build();
-		}
-	}
-
-	/**
-	 * @param dataSourceCode
-	 * @return
-	 */
+	
 	private JSONArray getDataSource(String dataSourceCode) {
 		JSONArray datasource = JSONFactoryUtil.createJSONArray();
 
@@ -216,6 +173,6 @@ public class VRTechSpecController {
 
 		return datasource;
 	}
-
-	private Log _log = LogFactoryUtil.getLog(VRTechSpecController.class);
+	
+	private Log _log = LogFactoryUtil.getLog(VRController.class);
 }
