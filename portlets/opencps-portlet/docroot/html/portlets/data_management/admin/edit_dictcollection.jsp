@@ -17,7 +17,6 @@
  */
 %>
 <%@page import="org.opencps.datamgt.search.DictCollectionDisplayTerms"%>
-<%@page import="org.opencps.datamgt.model.impl.DictCollectionImpl"%>
 <%@page import="org.opencps.datamgt.model.DictCollection"%>
 <%@page import="org.opencps.util.MessageKeys"%>
 <%@page import="org.opencps.datamgt.OutOfLengthCollectionNameException"%>
@@ -27,8 +26,6 @@
 <%@page import="org.opencps.datamgt.EmptyCollectionCodeException"%>
 <%@page import="org.opencps.datamgt.EmptyDictCollectionNameException"%>
 <%@page import="org.opencps.util.WebKeys"%>
-<%@page import="org.opencps.datamgt.service.DictCollectionLinkLocalServiceUtil"%>
-<%@page import="org.opencps.datamgt.model.DictCollectionLink"%>
 <%@page import="org.opencps.datamgt.service.DictCollectionLocalServiceUtil"%>
 <%@page import="java.util.List"%>
 <%@page import="java.util.ArrayList"%>
@@ -42,15 +39,15 @@
 	long collectionId = dictCollection != null ? dictCollection.getDictCollectionId() : 0L;
 	String backURL = ParamUtil.getString(request, "backURL");
 	
-	List<DictCollectionLink> colsLinked = new ArrayList<DictCollectionLink>();
+	List<DictCollectionType> colsTypes = new ArrayList<DictCollectionType>();
 	String collectionsLinked = StringPool.BLANK;
 	try {
-		colsLinked = DictCollectionLinkLocalServiceUtil.getByDictCollectionId(collectionId);
-		List<Long> colLinkedId = new ArrayList<Long>();
-		for (DictCollectionLink colLinked : colsLinked){
-			colLinkedId.add(colLinked.getDictCollectionLinkedId());
+		colsTypes = DictCollectionTypeLocalServiceUtil.getByDictCollectionId(collectionId);
+		List<Long> colTypesId = new ArrayList<Long>();
+		for (DictCollectionType colLinked : colsTypes){
+			colTypesId.add(colLinked.getDictCollectionLinkedId());
 		}
-		collectionsLinked = StringUtil.merge(colLinkedId);
+		collectionsLinked = StringUtil.merge(colTypesId);
 	} catch (Exception e){}
 %>
 
@@ -102,12 +99,12 @@
 					<ul>
 						<%
 							List<DictCollection> dictCollections = DictCollectionLocalServiceUtil.getDictCollections();
-							List<DictCollectionLink> dictCollectionsLinked = DictCollectionLinkLocalServiceUtil.getByDictCollectionId(collectionId);
+							List<DictCollectionType> dictCollectionTypes = DictCollectionTypeLocalServiceUtil.getByDictCollectionId(collectionId);
 							for (DictCollection collection : dictCollections){
 								if (collection.getDictCollectionId() != collectionId){
 									boolean checked = false;
-									for (DictCollectionLink linked : dictCollectionsLinked){
-										if (linked.getDictCollectionLinkedId() == collection.getDictCollectionId()){
+									for (DictCollectionType type : dictCollectionTypes){
+										if (type.getDictCollectionLinkedId() == collection.getDictCollectionId()){
 											checked = true;
 											break;
 										}

@@ -24,12 +24,12 @@
 	long dictCollectionId = ParamUtil.getLong(request, DictItemDisplayTerms.DICTCOLLECTION_ID);
 	long dictItemId = ParamUtil.getLong(request, DictItemDisplayTerms.DICTITEM_ID);
 
-	List<DictCollectionLink> collectionsLinked = new ArrayList<DictCollectionLink>();
-	List<DictItemLink> itemsLinked = new ArrayList<DictItemLink>();
+	List<DictCollectionType> collectionsTypes = new ArrayList<DictCollectionType>();
+	List<DictItemType> itemsType = new ArrayList<DictItemType>();
 	try {
-		collectionsLinked = DictCollectionLinkLocalServiceUtil
+		collectionsTypes = DictCollectionTypeLocalServiceUtil
 				.getByDictCollectionId(dictCollectionId);
-		itemsLinked = DictItemLinkLocalServiceUtil
+		itemsType = DictItemTypeLocalServiceUtil
 				.getByDictItemId(dictItemId);
 	} catch (Exception e){
 		_log.error(e);
@@ -39,13 +39,13 @@
 	List<DictItem> dictItems = new ArrayList<DictItem>();
 	List<DictItem> dictItemsOrdered = new ArrayList<DictItem>();
 	
-	for (DictCollectionLink linked : collectionsLinked){
+	for (DictCollectionType type : collectionsTypes){
 		try {
 			dictCollection = DictCollectionLocalServiceUtil
-					.getDictCollection(linked.getDictCollectionLinkedId());
+					.getDictCollection(type.getDictCollectionLinkedId());
 			%>
 				<label class="expand-anchor"
-					id='<%=renderResponse.getNamespace() + "expand-anchor_dictCollectionId_" +linked.getDictCollectionLinkedId() %>'
+					id='<%=renderResponse.getNamespace() + "expand-anchor_dictCollectionId_" + type.getDictCollectionLinkedId() %>'
 				>
 					<%=dictCollection.getCollectionName(locale) %>
 				</label>
@@ -63,12 +63,12 @@
 			}
 			
 			%>
-				<div id='<%=renderResponse.getNamespace() + "expandable_" + linked.getDictCollectionLinkedId() %>'><ul>
+				<div id='<%=renderResponse.getNamespace() + "expandable_" + type.getDictCollectionLinkedId() %>'><ul>
 			<%
 					for (DictItem item : dictItemsOrdered){
 						boolean checked = false;
-						for (DictItemLink itemLinked : itemsLinked){
-							if (item.getDictItemId() == itemLinked.getDictItemLinkedId()){
+						for (DictItemType itemType : itemsType){
+							if (item.getDictItemId() == itemType.getDictItemLinkedId()){
 								checked = true;
 								break;
 							}
@@ -119,6 +119,6 @@
 		return result;
 	}
 
-	private Log _log = LogFactoryUtil.getLog("html.portlets.data_management.admin.ajax.select_dictitems_linked.jsp");
+	private Log _log = LogFactoryUtil.getLog("html.portlets.data_management.admin.ajax._select_dictitems_type.jsp.jsp");
 %>
 

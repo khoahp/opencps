@@ -19,10 +19,11 @@
 
 <%@ include file="../../init.jsp"%>
 
-<p class="breadcrumb"><liferay-ui:message key='edit-permissions' /></p>
+<p class="breadcrumb bold"><liferay-ui:message key='edit-dictcollection-permissions' /></p>
 
 <div class="row-fluid">
-	<aui:button type="submit" value="save" name="save-permission-button" />
+	<aui:button type="submit" value="done" name="back-permission-button" cssClass="back-icon"/>
+	<aui:button type="submit" value="save" name="save-permission-button" cssClass="save-icon"/>
 </div>
 
 <div class="row-fluid">
@@ -38,7 +39,7 @@
 					/>
 					<aui:button name="search-users-button" value="search" type="submit" />
 				</div>
-				<div id='<%=renderResponse.getNamespace() + "users-container" %>'></div>
+				<div id='<%=renderResponse.getNamespace() + "users-container" %>' class="scrollbar-datamgt"></div>
 			</div>
 		</div>
 	</div>
@@ -55,7 +56,7 @@
 					/>
 					<aui:button name="search-collection-permission-button" value="search" type="submit" />
 				</div>
-				<div id='<%=renderResponse.getNamespace() + "collection-permissions" %>' ></div>
+				<div id='<%=renderResponse.getNamespace() + "collection-permissions" %>' class="scrollbar-datamgt"></div>
 			</div>
 		</div>
 	</div>

@@ -31,9 +31,9 @@
 				.getDictCollection(dictCollectionId);
 	} catch (Exception e) {}
 	
-	List<DictCollectionLink> collectionsLinked = new ArrayList<DictCollectionLink>();
+	List<DictCollectionType> collectionsTypes = new ArrayList<DictCollectionType>();
 	try {
-		collectionsLinked = DictCollectionLinkLocalServiceUtil
+		collectionsTypes = DictCollectionTypeLocalServiceUtil
 				.getByDictCollectionId(dictCollectionId);
 	} catch (Exception e){
 		_log.error(e);
@@ -41,40 +41,40 @@
 %>
 
 <div>
-	<p class="breadcrumb">
+	<p class="breadcrumb bold">
 		<liferay-ui:message key='dictcollection' /> > 
 		<%=collection != null ? collection.getCollectionName() : StringPool.BLANK %> > 
 		<liferay-ui:message key='list' />
 	</p>
 </div>
 
+<<liferay-ui:message key="lookups-items" />
 <div>
-	<aui:button id='<%=renderResponse.getNamespace() + "add-item" %>' type="submit" value="add" />
 	<aui:row>
-		<aui:col width="50">
+		<aui:col width='<%=collectionsTypes.size() == 0 ? 50 : 30 %>' >
 			<aui:input 
 				name="item-name" 
 				value="<%=searchKeyword %>" 
-				placeholder='<%= LanguageUtil.get(locale, "name") %>' 
+				placeholder='<%= LanguageUtil.get(locale, "item-name") %>' 
 				cssClass="input100"
 			/>
 		</aui:col>
-		<aui:col width="50" cssClass='<%=collectionsLinked.size() == 0 ? "hidden" : "" %>' >
+		<aui:col width="30" cssClass='<%=collectionsTypes.size() == 0 ? "hidden" : "" %>' >
 			<%
-			if (collectionsLinked.size() > 0){
+			if (collectionsTypes.size() > 0){
 				%>
 				<aui:select name="item-linked">
-					<aui:option value="0" ></aui:option>
+					<aui:option value="0" />
 					<%
 					DictCollection dictCollection = null;
 					List<DictItem> dictItemsL = new ArrayList<DictItem>();
 					List<DictItem> dictItemsOrdered = new ArrayList<DictItem>();
 					
-					for (DictCollectionLink linked : collectionsLinked){
+					for (DictCollectionType type : collectionsTypes){
 						
 						try {
 							dictCollection = DictCollectionLocalServiceUtil
-									.getDictCollection(linked.getDictCollectionLinkedId());
+									.getDictCollection(type.getDictCollectionLinkedId());
 							%>
 							<aui:option value="0" disabled="true"><%=dictCollection.getCollectionName(locale) %></aui:option>
 							<%
@@ -92,9 +92,9 @@
 							}
 							for (DictItem item : dictItemsOrdered){
 								int level = StringUtil.count(item.getTreeIndex(), StringPool.PERIOD);
-								String index = "|__";
+								String index = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
 								for(int i = 0; i < level; i++){
-									index += "__";
+									index += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
 								}
 								%>
 								<aui:option 
@@ -114,7 +114,7 @@
 			%>
 		</aui:col>
 		
-		<aui:col width="50">
+		<aui:col width='<%=collectionsTypes.size() == 0 ? 50 : 30 %>'>
 			<aui:select name="itemsStatusInUsed" label="status">
 				<aui:option value="0" label="draf" selected="<%=itemsStatus == 0 %>" />
 				<aui:option value="1" label="in-used" selected="<%=itemsStatus == 1 %>" />
@@ -123,7 +123,8 @@
 		</aui:col>
 	</aui:row>
 	
-	<aui:button name="search-item-button" value="search" type="submit"/>
+	<aui:button name="search-item-button" value="search" type="submit" cssClass="search-icon"/>
+	<aui:button id='<%=renderResponse.getNamespace() + "add-item" %>' type="submit" value="add-item" cssClass="plus-icon"/>
 </div>
 
 <div id='<%=renderResponse.getNamespace() + "dictItems_container" %>'></div>

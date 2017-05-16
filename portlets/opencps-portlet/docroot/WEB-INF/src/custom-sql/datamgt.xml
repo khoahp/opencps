@@ -47,9 +47,9 @@
 			FROM 
 				opencps_dictitem AS di 
 			LEFT JOIN
-				opencps_dictitemlink AS dil
+				opencps_dictitemtype AS dt
 			ON 
-				di.dictItemId = dil.dictItemId
+				di.dictItemId = dt.dictItemId
 			WHERE 
 				di.groupid = ?
 			AND 
@@ -57,7 +57,7 @@
 			AND 
 				di.itemName LIKE ?
 			AND 
-				dil.dictItemLinkedId = ?
+				dt.dictItemTypeId = ?
 			AND	
 				di.issueStatus = ?
 			ORDER BY treeIndex
@@ -75,9 +75,9 @@
 				FROM 
 					opencps_dictitem AS di 
 				LEFT JOIN
-					opencps_dictitemlink AS dil
+					opencps_dictitemtype AS dt
 				ON 
-					di.dictItemId = dil.dictItemId
+					di.dictItemId = dt.dictItemId
 				WHERE 
 					di.groupid = ?
 				AND 
@@ -85,7 +85,7 @@
 				AND 
 					di.itemName LIKE ?
 				AND 
-					dil.dictItemLinkedId = ?
+					dt.dictItemTypeId = ?
 				AND	
 					di.issueStatus = ?
 			) AS result

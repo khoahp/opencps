@@ -34,28 +34,28 @@
 	<div class="span3" id="<portlet:namespace/>anchor-scroll">
 		<div class="opencps-searchcontainer-wrapper default-box-shadow radius8 data-manager-action">
 			<div class="openCPSTree yui3-widget component tree-view tree-drag-drop">
-				<aui:button type="submit" value="add" onClick="editDictCollection()"/>
+				<aui:button type="submit" value="add-collection" onClick="editDictCollection()" cssClass="plus-icon hide-when-edit-permission" />
 				<c:if test="<%=permissionChecker.isOmniadmin() %>">
-					<aui:button type="submit" value="permissions" onClick="editPermission()"/>
+					<aui:button type="submit" value="collection-permissions" onClick="editPermission()" cssClass="permission-icon hide-when-add-collection"/>
 				</c:if>
-				<div>
+				<div class="hide-when-edit-permission hide-when-add-collection">
 					<aui:input 
 						name="collection-name" 
-						placeholder='<%= LanguageUtil.get(locale, "name") %>' 
+						placeholder='<%= LanguageUtil.get(locale, "collection-name") %>' 
 						cssClass="input100" 
-						label=""
+						label="lookups-collections"
 					/>
 					<aui:button name="search-button" value="search" type="submit" />
 				</div>
-				<div id='<%=renderResponse.getNamespace() + "collections-container" %>' ></div>
+				<div id='<%=renderResponse.getNamespace() + "collections-container" %>' class="scrollbar-datamgt hide-when-edit-permission hide-when-add-collection"></div>
 			</div>
 		</div>
 		
 		<!-- update items sibling -->
-		<liferay-portlet:renderURL var="updateItemsURL">
+		<%-- <liferay-portlet:renderURL var="updateItemsURL">
 			<liferay-portlet:param name="mvcPath" value="/html/portlets/data_management/admin/display/update_items.jsp"/>
 		</liferay-portlet:renderURL>
-		<aui:button href="<%=updateItemsURL.toString() %>" value="update-data-items"/>
+		<aui:button href="<%=updateItemsURL.toString() %>" value="update-data-items"/> --%>
 	</div>
 	
 	<div class="span9">
@@ -76,7 +76,7 @@
 	var A = AUI();
 	
 	AUI().ready('aui-base','liferay-portlet-url','aui-io', function(A){
-		checkLogined();
+		
 		getDictCollections();
 		getDictCollectionDetail();
 		
@@ -257,6 +257,9 @@
 		);
 		loadingMask.show();
 		
+		// hide other component
+		$('.hide-when-edit-permission').slideUp('normal');
+		
 		var portletURL = Liferay.PortletURL.createURL('<%= PortletURLFactoryUtil.create(request, WebKeys.DATA_MANAGEMENT_ADMIN_PORTLET, themeDisplay.getPlid(), PortletRequest.RENDER_PHASE) %>');
 		portletURL.setParameter("mvcPath", "/html/portlets/data_management/admin/ajax/_edit_permissions.jsp");
 		portletURL.setWindowState("<%=LiferayWindowState.EXCLUSIVE.toString()%>"); 
@@ -316,6 +319,15 @@
 								var keysearch = A.one('#<portlet:namespace/>user-name') ? 
 										A.one('#<portlet:namespace/>user-name').attr('value') : '';
 								searchUsers(keysearch);
+							});
+						}
+						// back button
+						if (A.one('#<portlet:namespace/>back-permission-button')){
+							A.one('#<portlet:namespace/>back-permission-button').on('click', function(){
+								// show other component
+								$('.hide-when-edit-permission').slideDown('normal');
+								getDictCollectionDetail();
+								getDictCollections();
 							});
 						}
 					},
@@ -427,7 +439,6 @@
 							container.html(content);
 						}
 						
-						//todo
 						// initial value for dictcollection link checkbox
 						if (A.all('.unchecked-checkbox')){
 							A.all('.unchecked-checkbox').each(function(noSelected){
@@ -561,7 +572,6 @@
 						}
 						if (A.one('#<portlet:namespace/>delete-collection-button')){
 							A.one('#<portlet:namespace/>delete-collection-button').on('click', function(){
-								//todo
 								deleteDictCollection(selectedDictCollectionId);
 							});
 						}
@@ -643,12 +653,12 @@
 						if (A.one('#<portlet:namespace/>item-name')){
 							A.one('#<portlet:namespace/>item-name').on('keyup', function(){
 								getDictItems(selectedDictCollectionId);
-							})
+							});
 						}
 						if (A.one('#<portlet:namespace/>item-linked')){
 							A.one('#<portlet:namespace/>item-linked').on('change', function(){
 								getDictItems(selectedDictCollectionId);
-							})
+							});
 						}
 						
 					},
@@ -737,6 +747,20 @@
 								button.on('click', function(){
 									editDictItem(itemId);
 								});
+							});
+						}
+						// edit dict item link
+						console.log('8==================o');
+						console.log(A.all('.<portlet:namespace/>edit_dictItem_link'));
+						if (A.all('.<portlet:namespace/>edit_dictItem_link')){
+							A.all('.<portlet:namespace/>edit_dictItem_link').each(function(link){
+								// todo
+								console.log(link);
+								
+								/* var itemId = link.attr('id').replace(/.+dictItemId_/, '');
+								link.on('click', function(){
+									editDictItem(itemId);
+								}); */
 							});
 						}
 						// no use button dict item
@@ -874,6 +898,8 @@
 			updateDictCollectionId = collectionId;
 		} else {
 			updateDictCollectionId = 0;
+			// hide other component
+			$('.hide-when-add-collection').slideUp('normal');
 		}
 		
 		A.io.request(
@@ -898,16 +924,17 @@
 								noSelected.ancestor().one('#<portlet:namespace/>dictCollectionsLinked').attr('value', '0');
 							});
 						}
+						// save button
 						if (A.one('#<portlet:namespace/>fm') 
 								&& A.one('#<portlet:namespace/>fm').one('#<portlet:namespace/>submit')){
 							A.one('#<portlet:namespace/>fm')
 								.one('#<portlet:namespace/>submit')
 									.on('click', function(event){
 								event.preventDefault();
-								var status = updateDictCollection(updateDictCollectionId);
-								//needConfirnChangeView = false;
+								updateDictCollection(updateDictCollectionId);
 							});
 						}
+						// cancel button
 						if (A.one('#<portlet:namespace/>fm')
 								&& A.one('#<portlet:namespace/>fm').one('#<portlet:namespace/>cancel')){
 							A.one('#<portlet:namespace/>fm')
@@ -915,7 +942,13 @@
 									.on('click', function(event){
 								event.preventDefault();
 								getDictCollectionDetail(selectedDictCollectionId);
+								// show other component
+								$('.hide-when-add-collection').slideDown('normal');
 							});
+						}
+						// hide locate
+						if (A.one('.input-localized-content')){
+							A.one('.input-localized-content').setStyle('display', 'none');
 						}
 					},
 			    	error: function(){
@@ -1060,6 +1093,11 @@
 								getDictItemsToolbar(selectedDictCollectionId);
 							});
 						}
+						
+						// hide locate
+						if (A.one('.input-localized-content')){
+							A.one('.input-localized-content').setStyle('display', 'none');
+						}
 					},
 			    	error: function(){
 			    		loadingMask.hide();
@@ -1132,6 +1170,8 @@
 			        	var collectionName = A.one('#<portlet:namespace/>collection-name') ? 
 								A.one('#<portlet:namespace/>collection-name').attr('value') : '';
 			        	getDictCollections(collectionName);
+			        	// show other component
+						$('.hide-when-edit-permission').slideDown('normal');
 						alert(Liferay.Language.get('success'));
 					},
 			    	error: function(){
@@ -1355,7 +1395,7 @@
 		}
 		
 		var getItemsLinkedURL = Liferay.PortletURL.createURL('<%= PortletURLFactoryUtil.create(request, WebKeys.DATA_MANAGEMENT_ADMIN_PORTLET, themeDisplay.getPlid(), PortletRequest.RENDER_PHASE) %>');
-		getItemsLinkedURL.setParameter("mvcPath", "/html/portlets/data_management/admin/select_dictitems_linked.jsp");
+		getItemsLinkedURL.setParameter("mvcPath", "/html/portlets/data_management/admin/ajax/_select_dictitems_type.jsp");
 		getItemsLinkedURL.setWindowState("<%=LiferayWindowState.EXCLUSIVE.toString()%>"); 
 		getItemsLinkedURL.setPortletMode("normal");
 		getItemsLinkedURL.setParameter("dictCollectionId", dictCollectionId);
