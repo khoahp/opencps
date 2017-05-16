@@ -209,7 +209,7 @@ public class OCPSController {
 				resp.put("ModifiedDate",
 						APIUtils.formatDateTime(dossier.getModifiedDate()));
 				resp.put("DossierStatus", dossier.getDossierStatus());
-				resp.put("StatusText", dossier.getDossierStatus());
+				resp.put("StatusText", APIUtils.getLanguageValue(dossier.getDossierStatus()));
 
 				return Response.status(200).entity(resp.toString()).build();
 
@@ -479,6 +479,7 @@ public class OCPSController {
 			obj.put("AgencyName", dossier.getGovAgencyName());
 			obj.put("DossierNo", dossier.getReceptionNo());
 			obj.put("DossierStatus", dossier.getDossierStatus());
+			obj.put("DossierStatusText", APIUtils.getLanguageValue(dossier.getDossierStatus()));
 
 			results.put(obj);
 		}

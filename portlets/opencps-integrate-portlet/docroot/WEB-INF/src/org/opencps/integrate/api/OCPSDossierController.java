@@ -4,6 +4,7 @@ import java.util.Calendar;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
@@ -60,11 +61,77 @@ import com.liferay.portal.model.User;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.UserLocalServiceUtil;
 import com.liferay.portlet.documentlibrary.model.DLFolder;
+import com.liferay.portlet.documentlibrary.service.DLAppLocalServiceUtil;
+import com.liferay.portlet.documentlibrary.service.DLAppServiceUtil;
 
 @Path("/api")
 public class OCPSDossierController {
 	
-	
+	@DELETE
+	@Path("/dossiers/{dossierid: .*}/dossierfiles/{dossierfileuid: .*}")
+	@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
+	public Response deleteDossierFile(@HeaderParam("apikey") String apikey,
+			@Context HttpServletRequest request,
+			@PathParam("dossierid") long dossierid,
+			@PathParam("dossierfileuid") String dossierfileuid) {
+
+		JSONObject resp = JSONFactoryUtil.createJSONObject();
+
+		OCPSPermission permit = new OCPSPermission();
+
+		OCPSAuth auth = new OCPSAuth();
+
+		IntegrateAPI api = auth.auth(apikey);
+
+		boolean isPermit = permit.isDossierPermission(apikey)
+				&& permit.isDossierDetailPermission(apikey, dossierid);
+
+		if (Validator.isNotNull(api)) {
+			if (isPermit) {
+				try {
+					
+					DossierFile dossierFile = DossierFileLocalServiceUtil.getByOid(dossierfileuid);
+					
+					//Delete FileEntry
+					if (dossierFile.getFileEntryId() > 0) {
+						DLAppLocalServiceUtil.deleteFileEntry(dossierFile.getFileEntryId());
+					}
+					
+					//Delete DossierFile
+					DossierFileLocalServiceUtil.deleteDossierFile(dossierFile);
+					
+					
+					resp.put("Result", "Deleted");
+					
+					return Response.status(200).entity(resp.toString()).build();
+
+				} catch (Exception e) {
+					resp.put("Result", "Error");
+					resp.put("Detail", e.toString());
+					resp.put("ErrorMessage",
+							APIUtils.getLanguageValue("invalid-input"));
+
+					return Response.status(404).entity(resp.toString()).build();
+				}
+			} else {
+				resp.put("Result", "Error");
+				resp.put(
+						"ErrorMessage",
+						APIUtils.getLanguageValue("you-dont-have-permit-to-accecss-resources"));
+
+				// Not access resources
+				return Response.status(403).entity(resp.toString()).build();
+			}
+		} else {
+			resp.put("Result", "Error");
+			resp.put("ErrorMessage",
+					APIUtils.getLanguageValue("you-dont-have-auth"));
+
+			// Not validate
+			return Response.status(401).entity(resp.toString()).build();
+		}
+	}
+
 	
 	@PUT
 	@Path("/dossiers/{dossierid: .*}/dossierfiles/{dossierfileuid: .*}")
@@ -416,6 +483,8 @@ public class OCPSDossierController {
 								.getExtensionContentType(extension);
 
 						serviceContext.setUserId(dossier.getUserId());
+						serviceContext.setAddGuestPermissions(true);
+						serviceContext.setAddGroupPermissions(true);
 
 						byte[] bytes = Base64.decode(dfm
 								.getAttachmentFileData());
@@ -436,8 +505,6 @@ public class OCPSDossierController {
 							mimeType = dfm.getDossierFileContent();
 						}
 						
-						serviceContext.setAddGuestPermissions(true);
-						serviceContext.setAddGroupPermissions(true);
 						
 						_log.info("DOSSIER_FILE_NAME : " + dfm.getAttachmentFileName());
 						
@@ -947,26 +1014,26 @@ public class OCPSDossierController {
 						}
 						
 						if (Validator.isNotNull(dm.getCityName())) {
-							dossier.setCityCode(dm.getCityName());
+							dossier.setCityName(dm.getCityName());
 						}
 						
 						if (Validator.isNotNull(dm.getCityCode())) {
 							dossier.setCityCode(dm.getCityCode());
 						}
 
-						if (Validator.isNotNull(dm.getDistrictCode())) {
-							dossier.setCityCode(dm.getDistrictCode());
+						if (Validator.isNotNull(dm.getDistrictName())) {
+							dossier.setDistrictName(dm.getDistrictName());
 						}
 						
-						if (Validator.isNotNull(dm.getWardCode())) {
-							dossier.setCityCode(dm.getWardCode());
+						if (Validator.isNotNull(dm.getDistrictCode())) {
+							dossier.setDistrictCode(dm.getDistrictCode());
 						}
-						if (Validator.isNotNull(dm.getDistrictName())) {
-							dossier.setCityCode(dm.getDistrictName());
+						if (Validator.isNotNull(dm.getWardCode())) {
+							dossier.setWardCode(dm.getWardCode());
 						}
 						
 						if (Validator.isNotNull(dm.getWardName())) {
-							dossier.setCityCode(dm.getWardName());
+							dossier.setWardName(dm.getWardName());
 						}
 						
 						if (Validator.isNotNull(dm.getContactTelNo())) {
