@@ -30,11 +30,27 @@
 
 <%@ include file="../../init.jsp"%>
 
+<%
+	boolean showAddButton = false;
+	DictPermissions permission = null;
+	DictPermissionsPK permissionPk = 
+			new DictPermissionsPK(user != null ? user.getUserId() : 0, -1);
+	try {
+		permission = DictPermissionsLocalServiceUtil
+				.getDictPermissions(permissionPk);
+	} catch (Exception e){}
+	if (permission != null){
+		showAddButton = true;
+	}
+%>
+
 <div class="row-fluid">
 	<div class="span3" id="<portlet:namespace/>anchor-scroll">
 		<div class="opencps-searchcontainer-wrapper default-box-shadow radius8 data-manager-action">
 			<div class="openCPSTree yui3-widget component tree-view tree-drag-drop">
-				<aui:button type="submit" value="add-collection" onClick="editDictCollection()" cssClass="plus-icon hide-when-edit-permission" />
+				<c:if test="<%=permissionChecker.isOmniadmin() || showAddButton %>">
+					<aui:button type="submit" value="add-collection" onClick="editDictCollection()" cssClass="plus-icon hide-when-edit-permission" />
+				</c:if>
 				<c:if test="<%=permissionChecker.isOmniadmin() %>">
 					<aui:button type="submit" value="collection-permissions" onClick="editPermission()" cssClass="permission-icon hide-when-add-collection"/>
 				</c:if>

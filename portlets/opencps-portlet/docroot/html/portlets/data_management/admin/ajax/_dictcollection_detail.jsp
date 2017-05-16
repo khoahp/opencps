@@ -41,6 +41,15 @@
 	if (items.size() == 0){
 		showDeleteButton =  true;
 	}
+	
+	DictPermissions dictPermission = null;
+	DictPermissionsPK permissionPk = 
+			new DictPermissionsPK(user != null ? user.getUserId() : 0, collectionId);
+	try {
+		dictPermission = DictPermissionsLocalServiceUtil
+				.getDictPermissions(permissionPk);
+	} catch (Exception e){}
+	
 %>
 
 <c:if test="<%=collection == null %>">
@@ -78,20 +87,24 @@
 	</div>
 	
 	<div>
-		<aui:button 
-			name="view-items-button"
-			type="submit" cssClass="view-button" value="view-list"
-		/>
+		<c:if test="<%=permissionChecker.isOmniadmin() || dictPermission.getView() %>">
+			<aui:button 
+				name="view-items-button"
+				type="submit" cssClass="view-button" value="view-list"
+			/>
+		</c:if>
 			
-		<c:if test="<%=DictCollectionPermission.contains(permissionChecker, scopeGroupId, ActionKeys.ADD_DICTCOLLECTION) %>">
+		<c:if test="<%=(DictCollectionPermission.contains(permissionChecker, scopeGroupId, ActionKeys.ADD_DICTCOLLECTION))
+						|| dictPermission.getEdit()%>">
 	 		<aui:button 
 	 			name="edit-collection-button"
 	 			type="submit" cssClass="edit-button" value="edit"
 	 		/>
 	 	</c:if>
 		
-		<c:if test="<%=collection != null && DictCollectionPermission.contains(permissionChecker, scopeGroupId, ActionKeys.DELETE) 
-						&& showDeleteButton%>">
+		<c:if test="<%=(collection != null && DictCollectionPermission.contains(permissionChecker, scopeGroupId, ActionKeys.DELETE) 
+						&& showDeleteButton)
+						|| dictPermission.getDelete()%>">
 			<aui:button 
 				name="delete-collection-button"
 				type="submit" cssClass="delete-button" value="delete"

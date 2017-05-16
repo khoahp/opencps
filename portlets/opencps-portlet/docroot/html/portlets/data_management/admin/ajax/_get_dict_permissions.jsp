@@ -163,7 +163,7 @@
 			edit = editPermissions.contains(collection.getDictCollectionId());
 			delete = deletePermissions.contains(collection.getDictCollectionId());
 			%>
-				<li class="tree-node collection-tree-node-permission" 
+				<li class='<%="tree-node collection-tree-node-permission" + (view && add && edit && delete ? " checked-collection" : "") %>' 
 					id='<%=renderResponse.getNamespace() + "anchor_collection_" + collection.getDictCollectionId() %>'
 				>
 					<span class="collection-tree-node-permission-name"><liferay-ui:message key="<%=collection.getCollectionName(locale) %>" /></span>
