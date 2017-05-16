@@ -114,7 +114,7 @@
 
 		<!-- Order -->
 		<order by="asc">
-			<order-column name="itemName" />
+			<order-column name="sibling" />
 		</order>
 
 		<!-- Finder methods -->
@@ -231,6 +231,7 @@
 			<finder-column name="dictCollectionId" />
 			<finder-column name="dictCollectionLinkedId" />
 		</finder>
+
 	</entity>
 	
 	<entity name="DictPermissions" local-service="true" remote-service="true" 

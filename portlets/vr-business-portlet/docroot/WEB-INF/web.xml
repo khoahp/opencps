@@ -6,7 +6,7 @@
 	<display-name>Archetype Created Web Application</display-name>
 
 	<servlet>
-		<servlet-name>vr-api</servlet-name>
+		<servlet-name>vr-rest</servlet-name>
 		<servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
 		<init-param>
 			<param-name>jersey.config.server.provider.packages</param-name>
@@ -16,7 +16,7 @@
 	</servlet>
 
 	<servlet-mapping>
-		<servlet-name>vr-api</servlet-name>
+		<servlet-name>vr-rest</servlet-name>
 		<url-pattern>/*</url-pattern>
 	</servlet-mapping>
 
