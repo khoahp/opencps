@@ -837,7 +837,7 @@ public class DataMamagementPortlet extends MVCPortlet {
 			for (String str : delete) {
 				try {
 					permiss = dictPermissMap.get(Long.parseLong(str));
-					permiss.setAdd(true);
+					permiss.setDelete(true);
 				} catch (Exception e) {
 				}
 			}

@@ -51,5 +51,5 @@
 </ul>
 
 <%!
-	private Log _log = LogFactoryUtil.getLog("html.portlets.data_management.admin.get_dictcollection.jsp");
+	private Log _log = LogFactoryUtil.getLog("html.portlets.data_management.admin._get_dictcollection.jsp");
 %>

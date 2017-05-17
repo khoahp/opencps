@@ -30,11 +30,27 @@
 
 <%@ include file="../../init.jsp"%>
 
+<%
+	boolean showAddButton = false;
+	DictPermissions permission = null;
+	DictPermissionsPK permissionPk = 
+			new DictPermissionsPK(user != null ? user.getUserId() : 0, -1);
+	try {
+		permission = DictPermissionsLocalServiceUtil
+				.getDictPermissions(permissionPk);
+	} catch (Exception e){}
+	if (permission != null){
+		showAddButton = true;
+	}
+%>
+
 <div class="row-fluid">
 	<div class="span3" id="<portlet:namespace/>anchor-scroll">
 		<div class="opencps-searchcontainer-wrapper default-box-shadow radius8 data-manager-action">
 			<div class="openCPSTree yui3-widget component tree-view tree-drag-drop">
-				<aui:button type="submit" value="add-collection" onClick="editDictCollection()" cssClass="plus-icon hide-when-edit-permission" />
+				<c:if test="<%=permissionChecker.isOmniadmin() || showAddButton %>">
+					<aui:button type="submit" value="add-collection" onClick="editDictCollection()" cssClass="plus-icon hide-when-edit-permission" />
+				</c:if>
 				<c:if test="<%=permissionChecker.isOmniadmin() %>">
 					<aui:button type="submit" value="collection-permissions" onClick="editPermission()" cssClass="permission-icon hide-when-add-collection"/>
 				</c:if>
@@ -125,6 +141,11 @@
 	Liferay.provide(window, 'updateDictPermissions', function(userId){
 		if (!Liferay.ThemeDisplay.isSignedIn()){
 			alert(Liferay.Language.get('please-login-and-try-again'));
+			return;
+		}
+		
+		if (selectedUserId == '0'){
+			alert(Liferay.Language.get('please-select-user-admin'));
 			return;
 		}
 		
@@ -373,7 +394,8 @@
 		if (keysearch && keysearch.length > 0){
 			if (A.all('.collection-tree-node-permission')){
 				A.all('.collection-tree-node-permission').each(function(node) {
-					var name = node.html().replace(/<span.+span> $/, '');
+					var name = node.html().replace(/<\/.+> $/, '');
+					name = name.replace(/^.+>/, '');
 					if (name.toLowerCase().includes(keysearch.toLowerCase())){
 						if ($('#' + node.attr('id')).is(":hidden")){
 							$('#' + node.attr('id')) ? 
@@ -443,6 +465,58 @@
 						if (A.all('.unchecked-checkbox')){
 							A.all('.unchecked-checkbox').each(function(noSelected){
 								noSelected.ancestor().one('input[type=hidden]').attr('value', '0');
+							});
+						}
+						
+						// onclick dict collection
+						if ($('.collection-tree-node-permission-name')){
+							$('.collection-tree-node-permission-name').each(function(){
+								$(this).click(function(){
+									var li = $(this).closest('li');
+									var collectionId = $(li)['0']['id'].replace(/.+collection_/, '');
+									if (!($(li)['0'].className).includes('checked-collection')){
+										$(li).find('input[type=checkbox]').each(function(){
+											$(this).prop('checked', true);
+										});
+										$(li).find('input[type=hidden]').each(function(){
+											$(this).prop('value', collectionId);
+										});
+										$(li)['0'].className += ' checked-collection';
+									} else {
+										$(li).find('input[type=checkbox]').each(function(){
+											$(this).prop('checked', false);
+										});
+										$(li).find('input[type=hidden]').each(function(){
+											$(this).prop('value', 0);
+										});
+										$(li)['0'].className = $(li)['0'].className.replace(' checked-collection', '');
+									}
+								});
+							});
+						} 
+						// onclick dict collection
+						if ($('.collection-tree-node-permission-all')){
+							$('.collection-tree-node-permission-all').each(function(){
+								$(this).click(function(){
+									var li = $(this).closest('li');
+									if (!($(li)['0'].className).includes('checked-collection')){
+										$(li).find('input[type=checkbox]').each(function(){
+											$(this).prop('checked', true);
+										});
+										$(li).find('input[type=hidden]').each(function(){
+											$(this).prop('value', 1);
+										});
+										$(li)['0'].className += ' checked-collection';
+									} else {
+										$(li).find('input[type=checkbox]').each(function(){
+											$(this).prop('checked', false);
+										});
+										$(li).find('input[type=hidden]').each(function(){
+											$(this).prop('value', 0);
+										});
+										$(li)['0'].className = $(li)['0'].className.replace(' checked-collection', '');
+									}
+								});
 							});
 						}
 					},
@@ -750,17 +824,12 @@
 							});
 						}
 						// edit dict item link
-						console.log('8==================o');
-						console.log(A.all('.<portlet:namespace/>edit_dictItem_link'));
-						if (A.all('.<portlet:namespace/>edit_dictItem_link')){
-							A.all('.<portlet:namespace/>edit_dictItem_link').each(function(link){
-								// todo
-								console.log(link);
-								
-								/* var itemId = link.attr('id').replace(/.+dictItemId_/, '');
+						if (A.all('.edit_dictItem_link')){
+							A.all('.edit_dictItem_link').each(function(link){
+								var itemId = link.attr('id').replace(/.+dictItemId_/, '');
 								link.on('click', function(){
 									editDictItem(itemId);
-								}); */
+								});
 							});
 						}
 						// no use button dict item
@@ -1000,6 +1069,8 @@
 			        	if (A.one('#<portlet:namespace/>collection-name')){
 			        		A.one('#<portlet:namespace/>collection-name').attr('value', '');
 			        	}
+			        	
+			        	alert(Liferay.Language.get('success'));
 					},
 			    	error: function(){
 			    		loadingMask.hide();
@@ -1170,8 +1241,9 @@
 			        	var collectionName = A.one('#<portlet:namespace/>collection-name') ? 
 								A.one('#<portlet:namespace/>collection-name').attr('value') : '';
 			        	getDictCollections(collectionName);
+			        	getDictCollectionDetail();
 			        	// show other component
-						$('.hide-when-edit-permission').slideDown('normal');
+						$('.hide-when-add-collection').slideDown('normal');
 						alert(Liferay.Language.get('success'));
 					},
 			    	error: function(){

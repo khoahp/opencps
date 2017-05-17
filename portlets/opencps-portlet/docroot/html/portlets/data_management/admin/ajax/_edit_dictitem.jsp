@@ -67,18 +67,18 @@
 			
 			<aui:fieldset>
 				<aui:row>
-					<aui:col width="70">
+					<aui:col width="50">
+						<aui:input name="<%=DictItemDisplayTerms.ITEM_CODE%>" type="text" cssClass="input20" label="item-code">
+							<aui:validator name="required"/>
+							<aui:validator name="maxLength">100</aui:validator> 
+						</aui:input>
+					</aui:col>
+					
+					<aui:col width="50">
 						<aui:input name="<%=DictItemDisplayTerms.ITEM_NAME %>" cssClass="input80" label="item-name">
 							<aui:validator name="required"/>
 							<aui:validator name="minLength">3</aui:validator>
 							<aui:validator name="maxLength">255</aui:validator>
-						</aui:input>
-					</aui:col>
-					
-					<aui:col width="30">
-						<aui:input name="<%=DictItemDisplayTerms.ITEM_CODE%>" type="text" cssClass="input20">
-							<aui:validator name="required"/>
-							<aui:validator name="maxLength">100</aui:validator> 
 						</aui:input>
 					</aui:col>
 				</aui:row>

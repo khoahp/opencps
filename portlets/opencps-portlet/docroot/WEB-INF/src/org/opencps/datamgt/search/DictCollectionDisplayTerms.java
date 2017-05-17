@@ -50,6 +50,8 @@ public class DictCollectionDisplayTerms extends DisplayTerms {
 	public static final String MODIFIED_DATE = "modifiedDate";
 
 	public static final String USER_ID = "userId";
+	
+	public static final String DICTCOLLECTION_ROLE = "OpenCPS's Admin";
 
 	public DictCollectionDisplayTerms(PortletRequest portletRequest) {
 		super(
