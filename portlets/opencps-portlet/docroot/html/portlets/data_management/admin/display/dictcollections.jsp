@@ -860,13 +860,6 @@
 								});
 							});
 						}
-						//
-						if (A.one('.lfr-pagination-delta-selector')){
-							A.one('.lfr-pagination-delta-selector').on('click', function(even){
-								even.preventDefault();
-							});
-						}
-						
 					},
 			    	error: function(){
 			    		loadingMask.hide();
@@ -1327,7 +1320,7 @@
 			        	setTimeout(function(){
 							getDictItemsToolbar(selectedDictCollectionId);
 							alert(Liferay.Language.get('success'));
-						}, 1000);
+						}, 500);
 					},
 			    	error: function(){
 			    		loadingMask.hide();
@@ -1369,7 +1362,7 @@
 			        	setTimeout(function(){
 			        		getDictItemsToolbar(selectedDictCollectionId);
 							alert(Liferay.Language.get('success'));
-						}, 1000);
+						}, 500);
 					},
 			    	error: function(){
 			    		loadingMask.hide();
@@ -1411,7 +1404,7 @@
 			        	setTimeout(function(){
 							getDictItems(selectedDictCollectionId);
 							alert(Liferay.Language.get('success'));
-						}, 1000);
+						}, 500);
 					},
 			    	error: function(){
 			    		loadingMask.hide();

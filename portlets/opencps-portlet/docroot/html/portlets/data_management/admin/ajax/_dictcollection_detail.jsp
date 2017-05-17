@@ -17,6 +17,8 @@
  */
 %>
 
+<%@page import="org.opencps.datamgt.model.impl.DictPermissionsImpl"%>
+
 <%@ include file="../../init.jsp"%>
 
 <%
@@ -42,7 +44,7 @@
 		showDeleteButton =  true;
 	}
 	
-	DictPermissions dictPermission = null;
+	DictPermissions dictPermission = new DictPermissionsImpl();
 	DictPermissionsPK permissionPk = 
 			new DictPermissionsPK(user != null ? user.getUserId() : 0, collectionId);
 	try {

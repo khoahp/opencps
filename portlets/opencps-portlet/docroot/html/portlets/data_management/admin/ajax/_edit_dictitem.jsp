@@ -68,64 +68,56 @@
 			<aui:fieldset>
 				<aui:row>
 					<aui:col width="50">
-						<aui:input name="<%=DictItemDisplayTerms.ITEM_CODE%>" type="text" cssClass="input20" label="item-code">
-							<aui:validator name="required"/>
-							<aui:validator name="maxLength">100</aui:validator> 
-						</aui:input>
-					</aui:col>
-					
-					<aui:col width="50">
-						<aui:input name="<%=DictItemDisplayTerms.ITEM_NAME %>" cssClass="input80" label="item-name">
-							<aui:validator name="required"/>
-							<aui:validator name="minLength">3</aui:validator>
-							<aui:validator name="maxLength">255</aui:validator>
-						</aui:input>
-					</aui:col>
-				</aui:row>
-				<aui:row>
-					<aui:col width="50">
-						<aui:select name="<%=DictItemDisplayTerms.DICTCOLLECTION_ID %>" label="dict-collection">
-							<aui:option value="<%=collectionId %>"><%=collection.getCollectionName(locale) %></aui:option>
-						</aui:select>
-					</aui:col>
-					
-					<aui:col width="50">
-						<div id='<%=renderResponse.getNamespace() + "parentItem" %>'>
-							<aui:select name="<%=DictItemDisplayTerms.PARENTITEM_ID %>" label="parent-item">
-								<aui:option value="0"></aui:option>
+						<aui:row>
+							<aui:input name="<%=DictItemDisplayTerms.ITEM_CODE%>" type="text" cssClass="input20" label="item-code">
+								<aui:validator name="required"/>
+								<aui:validator name="maxLength">100</aui:validator> 
+							</aui:input>
+						</aui:row>
+						<aui:row>
+							<aui:input name="<%=DictItemDisplayTerms.ITEM_NAME %>" cssClass="input80" label="item-name">
+								<aui:validator name="required"/>
+								<aui:validator name="minLength">3</aui:validator>
+								<aui:validator name="maxLength">255</aui:validator>
+							</aui:input>
+						</aui:row>
+						<aui:row>
+							<aui:select name="<%=DictItemDisplayTerms.DICTCOLLECTION_ID %>" label="dict-collection">
+								<aui:option value="<%=collectionId %>"><%=collection.getCollectionName(locale) %></aui:option>
 							</aui:select>
-						</div>
-					</aui:col>
-				</aui:row>
-				<aui:row>
-					<aui:col width="50">
-						<div id='<%=renderResponse.getNamespace() + "sibling-container" %>'>
-							<aui:select name="<%=DictItemDisplayTerms.SIBLING %>" label="sibling">
-								<aui:option value="0"></aui:option>
-							</aui:select>
-						</div>
-					</aui:col>
-					
-					<aui:col width="50">
-						<div id='<%=renderResponse.getNamespace() + "parentItem" %>'>
+						</aui:row>
+						<aui:row>
+							<div id='<%=renderResponse.getNamespace() + "parentItem" %>'>
+								<aui:select name="<%=DictItemDisplayTerms.PARENTITEM_ID %>" label="parent-item">
+									<aui:option value="0"></aui:option>
+								</aui:select>
+							</div>
+						</aui:row>
+						<aui:row>
+							<div id='<%=renderResponse.getNamespace() + "sibling-container" %>'>
+								<aui:select name="<%=DictItemDisplayTerms.SIBLING %>" label="sibling">
+									<aui:option value="0"></aui:option>
+								</aui:select>
+							</div>
+						</aui:row>
+						<aui:row>
 							<aui:select name="itemsStatusInUsed">
 								<aui:option value="0" label="draf" selected="<%=dictItem != null ? dictItem.getIssueStatus() == 0 : false %>" />
 								<aui:option value="1" label="in-used" selected="<%=(dictItem != null ? dictItem.getIssueStatus() == 1 : false) || dictItem == null%>" />
 								<aui:option value="2" label="no-used" selected="<%=dictItem != null ? dictItem.getIssueStatus() == 2 : false %>" />
 							</aui:select>
-						</div>
+						</aui:row>
+					</aui:col>
+					<aui:col width="50">
+						<label><liferay-ui:message key="dict-items-linked" /></label>
+						<div id='<%=renderResponse.getNamespace() + "itemLinkedContainer" %>' ></div>
 					</aui:col>
 				</aui:row>
-				
+			</aui:fieldset>
+			
 				<%-- <aui:select name="<%=DictItemDisplayTerms.DICTVERSION_ID %>" label="dict-version">
 					<aui:option value="0"></aui:option>
 				</aui:select> --%>
-				
-				<!-- dictItem linked -->
-				<label><liferay-ui:message key="dict-items-linked" /></label>
-				<div id='<%=renderResponse.getNamespace() + "itemLinkedContainer" %>' ></div>
-				
-			</aui:fieldset>
 			
 			<aui:fieldset>
 				<aui:button type="submit" name="submit" value="submit"/>
