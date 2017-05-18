@@ -75,7 +75,7 @@
 								id="<%=renderResponse.getNamespace() + DictCollectionDisplayTerms.DESCRIPTION %>"
 								name="<%=renderResponse.getNamespace() + DictCollectionDisplayTerms.DESCRIPTION %>" 
 								class="input100"
-							></textarea>
+							><%=dictCollection != null ? dictCollection.getDescription() : "" %></textarea>
 						</aui:row>
 					</aui:col>
 					

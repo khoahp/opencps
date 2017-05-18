@@ -68,10 +68,21 @@
 		</div>
 		
 		<!-- update items sibling -->
-		<%-- <liferay-portlet:renderURL var="updateItemsURL">
-			<liferay-portlet:param name="mvcPath" value="/html/portlets/data_management/admin/display/update_items.jsp"/>
-		</liferay-portlet:renderURL>
-		<aui:button href="<%=updateItemsURL.toString() %>" value="update-data-items"/> --%>
+		<c:if test="<%=permissionChecker.isOmniadmin() %>">
+			<liferay-portlet:renderURL var="updateItemsURL" windowState="<%=LiferayWindowState.POP_UP.toString() %>" >
+				<liferay-portlet:param name="mvcPath" value="/html/portlets/data_management/admin/display/update_items.jsp"/>
+			</liferay-portlet:renderURL>
+			<aui:button 
+				href="<%=
+						\"javascript:\" +  \"openDialog('\" + 
+						updateItemsURL + \"','\" + 
+						renderResponse.getNamespace() + \"updateItems\" + \"','\" +
+						UnicodeLanguageUtil.get(pageContext, \"update-db-items\") +
+						\"');\"  
+					%>" 
+				value="update-data-items"
+			/>
+		</c:if>
 	</div>
 	
 	<div class="span9">
