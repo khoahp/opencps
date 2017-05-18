@@ -464,10 +464,10 @@
 		<field name="createDate" type="Date" />
 		<field name="modifiedDate" type="Date" />
 		<field name="ownerOrganizationId" type="long" />
-		<field name="dossierTemplateId" type="String" />
-		<field name="serviceProcessId" type="String" />
-		<field name="dossierId" type="int" />
-		<field name="validStatus" type="String" />
+		<field name="dossierTemplateId" type="long" />
+		<field name="serviceProcessId" type="long" />
+		<field name="dossierId" type="long" />
+		<field name="validStatus" type="int" />
 	</model>
 	<model name="org.opencps.dossiermgt.model.Dossier">
 		<field name="dossierId" type="long" />
