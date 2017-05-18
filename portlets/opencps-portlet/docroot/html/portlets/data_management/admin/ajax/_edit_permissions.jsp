@@ -31,9 +31,10 @@
 		<div class="opencps-searchcontainer-wrapper default-box-shadow radius8 data-manager-action">
 			<div class="openCPSTree yui3-widget component tree-view tree-drag-drop">
 				<div>
+					<b><liferay-ui:message key="admin" /></b>
 					<aui:input 
 						name="user-name" 
-						placeholder='<%= LanguageUtil.get(locale, "name") %>' 
+						placeholder='<%= LanguageUtil.get(locale, "admin-name") %>' 
 						cssClass="input100" 
 						label=""
 					/>
@@ -48,9 +49,10 @@
 		<div class="opencps-searchcontainer-wrapper default-box-shadow radius8 data-manager-action">
 			<div class="openCPSTree yui3-widget component tree-view tree-drag-drop">
 				<div>
+					<b><liferay-ui:message key="dictcollection-list" /></b>
 					<aui:input 
 						name="collection-name-permission" 
-						placeholder='<%= LanguageUtil.get(locale, "name") %>' 
+						placeholder='<%= LanguageUtil.get(locale, "collection-name") %>' 
 						cssClass="input100" 
 						label=""
 					/>

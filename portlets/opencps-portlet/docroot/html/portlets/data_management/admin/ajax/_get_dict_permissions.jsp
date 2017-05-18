@@ -109,7 +109,9 @@
 		</div>
 	</li>
 	<li class="tree-node collection-tree-node" >
-		<span class="bold"><liferay-ui:message key="all" /></span>
+		<span class="bold collection-tree-node-permission-all">
+			<liferay-ui:message key="all" />
+		</span>
 		<span class="dict-permission-container">
 			<aui:input 
 				name="viewPermissionAll"
@@ -161,10 +163,10 @@
 			edit = editPermissions.contains(collection.getDictCollectionId());
 			delete = deletePermissions.contains(collection.getDictCollectionId());
 			%>
-				<li class="tree-node collection-tree-node-permission" 
+				<li class='<%="tree-node collection-tree-node-permission" + (view && add && edit && delete ? " checked-collection" : "") %>' 
 					id='<%=renderResponse.getNamespace() + "anchor_collection_" + collection.getDictCollectionId() %>'
 				>
-					<liferay-ui:message key="<%=collection.getCollectionName(locale) %>" />
+					<span class="collection-tree-node-permission-name"><liferay-ui:message key="<%=collection.getCollectionName(locale) %>" /></span>
 					<span class="dict-permission-container">
 						<aui:input 
 							name="viewPermission"

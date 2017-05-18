@@ -79,13 +79,15 @@ public class DictItemTypeLocalServiceImpl extends
 		dictItemType.setModifiedDate(new Date());
 
 		dictItemType.setDictItemId(dictItemId);
-		dictItemType.setDictItemLinkedId(dictItemLinkedId);
-		dictItemType.setSequenceNo(sequenceNo);
-		dictItemType.setDictItemLinkedName(dictItem.getItemName());
-		dictItemType.setDictItemLinkedCode(dictItem.getItemCode());
 		dictItemType.setDictCollectionId(dictItem.getDictCollectionId());
+		
+		dictItemType.setDictItemLinkedId(dictItemLinkedId);
+		dictItemType.setDictItemLinkedName(dictItemLinked.getItemName());
+		dictItemType.setDictItemLinkedCode(dictItemLinked.getItemCode());
 		dictItemType.setDictCollectionLinkedId(dictItemLinked
 				.getDictCollectionId());
+		
+		dictItemType.setSequenceNo(sequenceNo);
 
 		return dictItemTypePersistence.update(dictItemType);
 	}
