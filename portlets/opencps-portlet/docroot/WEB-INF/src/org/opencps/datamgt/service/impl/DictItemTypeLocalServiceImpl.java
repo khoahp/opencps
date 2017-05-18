@@ -22,6 +22,7 @@ import org.opencps.datamgt.model.DictItem;
 import org.opencps.datamgt.model.DictItemType;
 import org.opencps.datamgt.service.base.DictItemTypeLocalServiceBaseImpl;
 
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.service.ServiceContext;
 
@@ -52,7 +53,12 @@ public class DictItemTypeLocalServiceImpl extends
 	 * org.opencps.datamgt.service.DictItemTypeLocalServiceUtil} to access the
 	 * dict item type local service.
 	 */
-
+	public DictItemType getDictItemType(long dictItemId,
+			String dictItemLinkedCode) throws PortalException, SystemException {
+		return dictItemTypePersistence.fetchByDI_DL(dictItemId,
+				dictItemLinkedCode);
+	}
+	
 	public DictItemType addDictItemType(long dictItemId, long dictItemLinkedId,
 			long sequenceNo, ServiceContext serviceContext)
 			throws SystemException {
