@@ -11,6 +11,8 @@
     <bean id="opencps.listener.syncfromfrontoffice" class="org.opencps.backend.sync.SyncFromFrontOffice" />
     <bean id="opencps.listener.syncfrombackoffice" class="org.opencps.backend.sync.SyncFromBackOffice" />
 
+    <bean id="opencps.listener.syncbusinessregister" class="org.opencps.backend.sync.BusinessRegisterSync" />
+
     <bean id="opencps.listener.excoutfrontoffice" class="org.opencps.backend.exc.MsgOutFrontOffice" />
     <bean id="opencps.listener.excoutbackoffice" class="org.opencps.backend.exc.MsgOutBackOffice" />
 
@@ -20,6 +22,10 @@
     <bean id="opencps.listener.notifications" class="org.opencps.notificationmgt.engine.NotificationsListener" />
 
     <!-- Destinations -->
+    <bean id="opencps.businessregister.sync.destination" class="com.liferay.portal.kernel.messaging.SerialDestination">
+        <property name="name" value="opencps/businessregister/sync/destination" />
+    </bean>
+
     <bean id="opencps.frontoffice.out.destination" class="com.liferay.portal.kernel.messaging.SerialDestination">
         <property name="name" value="opencps/frontoffice/out/destination" />
     </bean>
@@ -44,16 +50,21 @@
     <bean id="messagingConfigurator" class="com.liferay.portal.kernel.messaging.config.PluginMessagingConfigurator">
         <property name="messageListeners">
             <map key-type="java.lang.String" value-type="java.util.List">
+                <entry key="opencps/businessregister/sync/destination">
+                    <list value-type="com.liferay.portal.kernel.messaging.MessageListener">
+                        <ref bean="opencps.listener.syncbusinessregister" />
+                    </list>
+                </entry>
                 <entry key="opencps/frontoffice/out/destination">
                     <list value-type="com.liferay.portal.kernel.messaging.MessageListener">
                         <ref bean="opencps.listener.syncfromfrontoffice" />
-                        <ref bean="opencps.listener.excoutfrontoffice" />
+						<!-- <ref bean="opencps.listener.excoutfrontoffice" /> -->
                     </list>
                 </entry>
                 <entry key="opencps/backoffice/out/destination">
                     <list value-type="com.liferay.portal.kernel.messaging.MessageListener">
                         <ref bean="opencps.listener.syncfrombackoffice" />
-                        <ref bean="opencps.listener.excoutbackoffice" />
+						<!-- <ref bean="opencps.listener.excoutbackoffice" /> -->
                     </list>
                 </entry>
                 <entry key="opencps/backoffice/engine/destination">

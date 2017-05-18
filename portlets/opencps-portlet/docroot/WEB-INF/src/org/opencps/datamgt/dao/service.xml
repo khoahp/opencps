@@ -226,6 +226,12 @@
 		<finder name="DictItemId" return-type="Collection">
 			<finder-column name="dictItemId" />
 		</finder>
+		
+		<finder name="DI_DL" return-type="DictItemType">
+			<finder-column name="dictItemId" />
+			<finder-column name="dictItemLinkedCode" />
+		</finder>
+		
 		<finder name="IC_CI_CLI" return-type="Collection">
 			<finder-column name="dictItemLinkedCode" comparator="LIKE" />
 			<finder-column name="dictCollectionId" />

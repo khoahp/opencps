@@ -12,6 +12,7 @@ import org.opencps.datamgt.service.DictItemTypeLocalServiceUtil;
 
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 
 public class DictItemsUtils {
@@ -82,6 +83,54 @@ public class DictItemsUtils {
 		}
 
 		return dictCollectionId;
+	}
+	
+	/**
+	 * @param code
+	 * @return
+	 */
+	public static DictItem getDictItemByCode(String code) {
+		DictItem dictItem = null;
+		
+		try {
+			dictItem = DictItemLocalServiceUtil.getDictItemByCode(code);
+		} catch (Exception e) {
+			_log.error(e);
+		}
+		
+		return dictItem;
+	}
+	
+	/**
+	 * @param code
+	 * @param vehicleClass
+	 * @return
+	 */
+	public static String getDictItemLinkCode(String code, String vehicleClass) {
+		String dictItemLinkCode = StringPool.BLANK;
+
+		DictItem dictItem = getDictItemByCode(code);
+
+		try {
+			if (Validator.isNotNull(dictItem)) {
+
+				List<DictItemType> dictItemsType = DictItemTypeLocalServiceUtil
+						.getByDictItemId(dictItem.getDictItemId());
+
+				DictItemType dictItemType = null;
+
+				if (dictItemsType.size() != 0) {
+					dictItemType = dictItemsType.get(0);
+
+					dictItemLinkCode = dictItemType.getDictItemLinkedCode();
+				}
+
+			}
+		} catch (Exception e) {
+			_log.error(e);
+		}
+
+		return dictItemLinkCode;
 	}
 	
 	private static Log _log = LogFactoryUtil.getLog(DictItemsUtils.class);
