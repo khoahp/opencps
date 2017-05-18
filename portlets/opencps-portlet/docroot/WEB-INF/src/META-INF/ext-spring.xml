@@ -90,6 +90,7 @@
                 <ref bean="opencps.backoffice.out.destination"/>
                 <ref bean="opencps.backoffice.engine.destination"/>
                 <ref bean="opencps.backoffice.engine.callback"/>
+                <ref bean="opencps.businessregister.sync.destination"/>
                 <ref bean="opencps.notifications"/>
             </list>
         </property>
