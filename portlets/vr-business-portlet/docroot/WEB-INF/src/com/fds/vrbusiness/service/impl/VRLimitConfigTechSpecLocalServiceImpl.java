@@ -17,7 +17,12 @@
 
 package com.fds.vrbusiness.service.impl;
 
+import java.util.List;
+
+import com.fds.vrbusiness.model.VRLimitConfigTechSpec;
 import com.fds.vrbusiness.service.base.VRLimitConfigTechSpecLocalServiceBaseImpl;
+import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 
 /**
  * The implementation of the v r limit config tech spec local service.
@@ -40,4 +45,10 @@ public class VRLimitConfigTechSpecLocalServiceImpl
 	 *
 	 * Never reference this interface directly. Always use {@link com.fds.vrbusiness.service.VRLimitConfigTechSpecLocalServiceUtil} to access the v r limit config tech spec local service.
 	 */
+	
+	public List<VRLimitConfigTechSpec> getLimitConfigs(String vehicleType,
+			String markupSMRM, long searchingDriveConfig)
+			throws PortalException, SystemException {
+		return vrLimitConfigTechSpecPersistence.findByVT_MU_DC(vehicleType, markupSMRM, searchingDriveConfig);
+	}
 }
