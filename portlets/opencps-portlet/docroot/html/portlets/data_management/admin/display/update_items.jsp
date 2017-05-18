@@ -28,11 +28,16 @@
 
 <div class="opencps-searchcontainer-wrapper default-box-shadow radius8">
 	<aui:row>
-		<liferay-ui:message key="numbered-sibling"/>
+		<h5><liferay-ui:message key="update-database-dictitems"/></h5>
 	</aui:row>
 	<div class="edit-form">
 		<aui:form action="<%=updateDatabaseDictitemsURL.toString() %>" method="POST" name="fm_editSibling">
-			<aui:input name="actionKey" value="numbered-sibling" type="hidden"/>
+			<aui:row>
+				<aui:select name="actionKey">
+					<aui:option value="numbered-sibling" label="numbered-sibling" />
+					<aui:option value="update-tree-index" label="update-tree-index" />
+				</aui:select>
+			</aui:row>
 			<aui:row>
 				<aui:select name="actionMode">
 					<aui:option value="1" label="perform-for-all-dictItems"/>
@@ -58,34 +63,3 @@
 	</div>
 </div>
 
-<div class="opencps-searchcontainer-wrapper default-box-shadow radius8">
-	<aui:row>
-		<liferay-ui:message key="update-tree-index"/>
-	</aui:row>
-	<div class="edit-form">
-		<aui:form action="<%=updateDatabaseDictitemsURL.toString() %>" method="POST" name="fm_editTreeIndex">
-			<aui:input name="actionKey" value="update-tree-index" type="hidden"/>
-			<aui:row>
-				<aui:select name="actionMode">
-					<aui:option value="1" label="perform-for-all-dictItems"/>
-					<aui:option value="2" label="perform-for-all-dictItems-in-selected-dictcollection" selected="true"/>
-				</aui:select>
-			</aui:row>
-			<aui:row>
-				<aui:select name="<%=DictItemDisplayTerms.DICTCOLLECTION_ID %>">
-					<aui:option value="0" label="select-dictcollection"/>
-					<%
-						List<DictCollection> collections = DictCollectionLocalServiceUtil.getDictCollections();
-						for (DictCollection collection : collections){
-							%>
-								<aui:option value="<%=collection.getDictCollectionId() %>" ><%=collection.getCollectionName(locale) %></aui:option>
-							<%
-						}
-					%>
-				</aui:select>
-			</aui:row>
-			
-			<aui:button type="submit"/>
-		</aui:form>
-	</div>
-</div>

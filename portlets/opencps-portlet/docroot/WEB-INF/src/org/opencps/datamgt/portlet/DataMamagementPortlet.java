@@ -700,7 +700,9 @@ public class DataMamagementPortlet extends MVCPortlet {
 				_numberedSiblingDictItems(0);
 				break;
 			case 2:
-				_numberedSiblingDictItems(dictCollectionId);
+				if (dictCollectionId > 0){
+					_numberedSiblingDictItems(dictCollectionId);
+				}
 				break;
 			default:
 				break;
@@ -712,7 +714,9 @@ public class DataMamagementPortlet extends MVCPortlet {
 				_updateTreeIndexDictItems(0);
 				break;
 			case 2:
-				_updateTreeIndexDictItems(dictCollectionId);
+				if (dictCollectionId > 0){
+					_updateTreeIndexDictItems(dictCollectionId);
+				}
 				break;
 			default:
 				break;
