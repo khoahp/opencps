@@ -24,17 +24,24 @@
 
 <%@ include file="../../init.jsp"%>
 
+<portlet:actionURL name="updateDatabaseDictitems" var="updateDatabaseDictitemsURL"/>
+
 <div class="opencps-searchcontainer-wrapper default-box-shadow radius8">
 	<aui:row>
-		<liferay-ui:message key="edit-sibling"/>
+		<h5><liferay-ui:message key="update-database-dictitems"/></h5>
 	</aui:row>
 	<div class="edit-form">
-		<portlet:actionURL name="editDictItemSibling" var="editDictItemSiblingURL"/>
-		<aui:form action="<%=editDictItemSiblingURL.toString() %>" method="POST" name="fm_editSibling">
+		<aui:form action="<%=updateDatabaseDictitemsURL.toString() %>" method="POST" name="fm_editSibling">
 			<aui:row>
-				<aui:select name="numberedSiblingMode">
-					<aui:option value="1" label="numbered-for-all-dictItems"/>
-					<aui:option value="2" label="numbered-for-all-dictItems-in-dictcollection" selected="true"/>
+				<aui:select name="actionKey">
+					<aui:option value="numbered-sibling" label="numbered-sibling" />
+					<aui:option value="update-tree-index" label="update-tree-index" />
+				</aui:select>
+			</aui:row>
+			<aui:row>
+				<aui:select name="actionMode">
+					<aui:option value="1" label="perform-for-all-dictItems"/>
+					<aui:option value="2" label="perform-for-all-dictItems-in-selected-dictcollection" selected="true"/>
 				</aui:select>
 			</aui:row>
 			<aui:row>
@@ -55,3 +62,4 @@
 		</aui:form>
 	</div>
 </div>
+

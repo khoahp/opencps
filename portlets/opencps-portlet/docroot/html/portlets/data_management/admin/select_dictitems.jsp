@@ -68,9 +68,9 @@
 				}
 				
 				int level = StringUtil.count(dictItem.getTreeIndex(), StringPool.PERIOD);
-				String index = "|";
+				String index = "";
 				for(int i = 0; i < level; i++){
-					index += "__";
+					index += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
 				}
 				%>
 					<aui:option 
