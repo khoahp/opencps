@@ -205,6 +205,10 @@
 			<finder-column name="serviceLevel"></finder-column>
 		</finder>
 
+		<finder name="S_P" return-type="ServiceConfig">
+			<finder-column name="serviceProcessId"/>
+		</finder>
+
 	</entity>
 
 

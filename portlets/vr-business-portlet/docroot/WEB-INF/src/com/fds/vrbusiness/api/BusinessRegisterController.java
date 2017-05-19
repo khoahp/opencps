@@ -8,9 +8,13 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.opencps.dossiermgt.model.BusinessRegister;
+import org.opencps.dossiermgt.model.ServiceConfig;
 import org.opencps.dossiermgt.model.ServiceOption;
 import org.opencps.dossiermgt.service.BusinessRegisterLocalServiceUtil;
+import org.opencps.dossiermgt.service.ServiceConfigLocalServiceUtil;
 import org.opencps.dossiermgt.service.ServiceOptionLocalServiceUtil;
+import org.opencps.processmgt.model.ServiceProcess;
+import org.opencps.processmgt.service.ServiceProcessLocalServiceUtil;
 
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
@@ -51,23 +55,28 @@ public class BusinessRegisterController {
 				isRequire = true;
 			}
 			
+			long serviceConfigId = getServiceConfigIdBusinessReg(groupid, BUSINESS_REGISTER);
+			
 			if (isRequire ) {
 				if (regStatus == 1) {
 					
 					resp.put("StatusCode", "REG_DONE");
+					resp.put("ServiceConfigId", serviceConfigId);
 					isValid = true;
 				} else if (regStatus == 0){
 					resp.put("StatusCode", "REG_VERIFYING");
-					
+					resp.put("ServiceConfigId", serviceConfigId);
+
 					isValid = false;
 				} else {
 					resp.put("StatusCode", "REG_REQUIRE");
-					
+					resp.put("ServiceConfigId", serviceConfigId);
+
 					isValid = false;
 				}
 			} else {
 				resp.put("StatusCode", "BY_PASS");
-
+				resp.put("ServiceConfigId", serviceConfigId);
 				isValid = true;
 			}
 			
@@ -109,6 +118,27 @@ public class BusinessRegisterController {
 		}
 		
 		return status;
+	}
+	
+	/**
+	 * @param groupId
+	 * @param processNo
+	 * @return
+	 */
+	private long getServiceConfigIdBusinessReg(long groupId, String processNo) {
+		long serviceConfigId = 0;
+		
+		try {
+			ServiceProcess sp = ServiceProcessLocalServiceUtil.getServiceProcess(groupId, processNo);
+			
+			ServiceConfig sc = ServiceConfigLocalServiceUtil.getByServiceProcess(sp.getServiceProcessId());
+			
+			serviceConfigId = sc.getServiceConfigId();
+		} catch (Exception e) {
+			//Nothing to do
+		}
+		
+		return serviceConfigId;
 	}
 
 }
