@@ -100,10 +100,14 @@
 %>
 
 <aui:script>
+	
+	Liferay.on('getDictItemId', function(event) {
+		alert('item id: '+ event.dictItemId);
+	});
+	
 	var A = AUI();
 	
 	AUI().ready('aui-base','liferay-portlet-url','aui-io', function(A){
-		
 		getDictCollections();
 		getDictCollectionDetail();
 		
@@ -137,7 +141,7 @@
 // 	Liferay.provide(window, 'deleteDictItem', function(dictItemId){
 // 	Liferay.provide(window, 'getSelectSibling', function(dictCollectionId, parentItemId, dictItemId){
 // 	Liferay.provide(window, 'getDictItemsLinked', function(dictCollectionId, dictItemId){
-// 	Liferay.provide(window, 'getDictItemsList', function(dictCollectionId, dictItemId){
+// 	Liferay.provide(window, 'getParentDictItemsList', function(dictCollectionId, dictItemId){
 // 	Liferay.provide(window, 'editPermission', function(collectionId){
 //  Liferay.provide(window, 'getUsers', function(name){
 //	Liferay.provide(window, 'getDictPermissions', function(userId){
@@ -1137,14 +1141,42 @@
 						if (dictCollection){
 							var dictCollectionId = dictCollection.val();
 							var dictItemId = selectedDictItemId;
-							getDictItemsList(dictCollectionId, dictItemId);
+							getParentDictItemsList(dictCollectionId, dictItemId);
 							getDictItemsLinked(dictCollectionId, dictItemId);
 							getSelectSibling(dictCollectionId, 0, dictItemId);
 							dictCollection.on('change', function(){
 								dictCollectionId = dictCollection.val();
-								getDictItemsList(dictCollectionId, dictItemId);
+								getParentDictItemsList(dictCollectionId, dictItemId);
 								getDictItemsLinked(dictCollectionId, dictItemId);
 								getSelectSibling(dictCollectionId, 0, 0);
+							});
+						}
+						
+						getParentDictItemsList(dictCollectionId, dictItemId);
+						if (A.one('#<portlet:namespace/>parentItemShow')){
+							A.one('#<portlet:namespace/>parentItemShow')
+									.on('keyup', function(event){
+								var keyword = A.one('#<portlet:namespace/>parentItemShow').val();
+								getParentDictItemsList(dictCollectionId, dictItemId, keyword);
+							});
+							A.one('#<portlet:namespace/>parentItemShow')
+									.on('click', function(event){
+								A.one('#<portlet:namespace/>parentItem').removeClass('hide-when-focusout-datamgt');
+								A.one('#<portlet:namespace/>parentItem').addClass('show-when-focus-datamgt');
+							});
+							A.one('#<portlet:namespace/>parentItemShow')
+									.on('blur', function(event){
+								if (!A.one('#<portlet:namespace/>parentItem').hasClass('no-touch-by-blur')){
+									console.log('mountout');
+									A.one('#<portlet:namespace/>parentItem').removeClass('show-when-focus-datamgt');
+									A.one('#<portlet:namespace/>parentItem').addClass('hide-when-focusout-datamgt');
+									if (A.one('#<portlet:namespace/>parentItemShow')){
+										var value = A.one('#<portlet:namespace/>parentItemShow').val();
+										if (value == '0' || value == ''){
+											A.one('#<portlet:namespace/>parentItemId').attr('value', '0')
+										}
+									}
+								}
 							});
 						}
 						
@@ -1529,18 +1561,21 @@
 		);
 	},['aui-base','liferay-portlet-url','aui-io']);
 	
-	Liferay.provide(window, 'getDictItemsList', function(dictCollectionId, dictItemId){
+	Liferay.provide(window, 'getParentDictItemsList', function(dictCollectionId, dictItemId, keyword){
 		if (!Liferay.ThemeDisplay.isSignedIn()){
 			alert(Liferay.Language.get('please-login-and-try-again'));
 			return;
 		}
 		
 		var portletURL = Liferay.PortletURL.createURL('<%= PortletURLFactoryUtil.create(request, WebKeys.DATA_MANAGEMENT_ADMIN_PORTLET, themeDisplay.getPlid(), PortletRequest.RENDER_PHASE) %>');
-		portletURL.setParameter("mvcPath", "/html/portlets/data_management/admin/select_dictitems.jsp");
+		portletURL.setParameter("mvcPath", "/html/portlets/data_management/admin/ajax/_select_parent_dictitem.jsp");
 		portletURL.setWindowState("<%=LiferayWindowState.EXCLUSIVE.toString()%>"); 
 		portletURL.setPortletMode("normal");
 		portletURL.setParameter("dictCollectionId", dictCollectionId);
 		portletURL.setParameter("dictItemId", dictItemId);
+		if (keyword){
+			portletURL.setParameter("keywordSearchItemParent", keyword);
+		}
 		
 		A.io.request(
 			portletURL.toString(),
@@ -1567,6 +1602,38 @@
 								parentItemId = parentItem.val();
 								
 								getSelectSibling(dictCollectionId, parentItemId, 0);
+							});
+						}
+						
+						if (A.all('.select-dict-item-parent')){
+							A.all('.select-dict-item-parent').each(function(item){
+								item.on('click', function(event){
+									event.preventDefault();
+									var itemId = A.one(this)['_node']['id'].replace(/^.+parentItemId_/, '');
+									var name = A.one(this).one('a').html().replace(/^&nbsp;.+&nbsp;/, '');
+									
+									var parent = A.one('#<portlet:namespace/>parentItemId');
+									var parentShow = A.one('#<portlet:namespace/>parentItemShow');
+									parent.attr('value', itemId);
+									parentShow.attr('value', name);
+									
+									if (A.one('#<portlet:namespace/>parentItem')){
+										A.one('#<portlet:namespace/>parentItem').removeClass('show-when-focus-datamgt');
+										A.one('#<portlet:namespace/>parentItem').addClass('hide-when-focusout-datamgt');
+									}
+								});
+								item.on('mouseover', function(event){
+									event.preventDefault();
+									if (A.one('#<portlet:namespace/>parentItem')){
+										A.one('#<portlet:namespace/>parentItem').addClass('no-touch-by-blur');
+									}
+								});
+								item.on('mouseout', function(event){
+									event.preventDefault();
+									if (A.one('#<portlet:namespace/>parentItem')){
+										A.one('#<portlet:namespace/>parentItem').removeClass('no-touch-by-blur');
+									}
+								});
 							});
 						}
 					},

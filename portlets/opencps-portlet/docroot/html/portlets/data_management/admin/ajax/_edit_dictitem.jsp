@@ -87,10 +87,10 @@
 							</aui:select>
 						</aui:row>
 						<aui:row>
-							<div id='<%=renderResponse.getNamespace() + "parentItem" %>'>
-								<aui:select name="<%=DictItemDisplayTerms.PARENTITEM_ID %>" label="parent-item">
-									<aui:option value="0"></aui:option>
-								</aui:select>
+							<aui:input name="<%=DictItemDisplayTerms.PARENTITEM_ID %>" type="hidden" value=""/>
+							<div class="show-when-focus-wrapper">
+								<aui:input name="parentItemShow" type="text" label="parent-item" />
+								<div id='<%=renderResponse.getNamespace() + "parentItem" %>' class="hide-when-focusout-datamgt"></div>
 							</div>
 						</aui:row>
 						<aui:row>
