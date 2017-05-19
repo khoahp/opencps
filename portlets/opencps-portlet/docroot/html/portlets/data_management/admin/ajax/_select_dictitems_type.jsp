@@ -39,68 +39,72 @@
 	List<DictItem> dictItems = new ArrayList<DictItem>();
 	List<DictItem> dictItemsOrdered = new ArrayList<DictItem>();
 	
-	for (DictCollectionType type : collectionsTypes){
-		try {
-			dictCollection = DictCollectionLocalServiceUtil
-					.getDictCollection(type.getDictCollectionLinkedId());
-			%>
-				<label class="expand-anchor"
-					id='<%=renderResponse.getNamespace() + "expand-anchor_dictCollectionId_" + type.getDictCollectionLinkedId() %>'
-				>
-					<%=dictCollection.getCollectionName(locale) %>
-				</label>
+%>
+
+<div class="opencps-searchcontainer-wrapper default-box-shadow radius8 data-manager-action">
+	<div class="openCPSTree yui3-widget component tree-view tree-drag-drop">
+		<div class="scrollbar-datamgt">
+			<ul class="tree-view-content tree-drag-drop-content tree-file tree-root-container" >
 			<%
-			try {
-				dictItems = DictItemLocalServiceUtil
-						.getBy_D_P(dictCollection.getDictCollectionId(), 0, 
-								QueryUtil.ALL_POS, QueryUtil.ALL_POS,
-								DataMgtUtil.getDictItemOrderByComparator(DictItemDisplayTerms.SIBLING, WebKeys.ORDER_BY_ASC));
-				dictItemsOrdered.clear();
-				dictItemsOrdered = getDictItemsOrderBySibling(dictItemsOrdered, 
-						dictItems, dictCollection.getDictCollectionId());
-			} catch (Exception e){
-				_log.error(e);
-			}
-			
-			%>
-				<div id='<%=renderResponse.getNamespace() + "expandable_" + type.getDictCollectionLinkedId() %>'><ul>
-			<%
-					for (DictItem item : dictItemsOrdered){
-						boolean checked = false;
-						for (DictItemType itemType : itemsType){
-							if (item.getDictItemId() == itemType.getDictItemLinkedId()){
-								checked = true;
-								break;
-							}
-						}
-						int level = StringUtil.count(item.getTreeIndex(), StringPool.PERIOD);
-						String index = "|";
-						for(int i = 0; i < level; i++){
-							index += "__";
-						}
+				for (DictCollectionType type : collectionsTypes){
+					try {
+						dictCollection = DictCollectionLocalServiceUtil
+								.getDictCollection(type.getDictCollectionLinkedId());
 						%>
-							<li>
-								<aui:input 
-									name="dictItemLinked" 
-									value="<%=item.getDictItemId() %>"
-									label=""
-									type="checkbox" 
-									inlineField="true"
-									checked="<%=checked %>"
-									cssClass='<%=!checked ? "no-linked-to-selected-item" : "" %>'
-								/>
-								<%=index + item.getItemName(locale) %>
+							<li class="tree-node bold" >
+								<%=dictCollection.getCollectionName(locale) %>
 							</li>
 						<%
+						try {
+							dictItems = DictItemLocalServiceUtil
+									.getBy_D_P(dictCollection.getDictCollectionId(), 0, 
+											QueryUtil.ALL_POS, QueryUtil.ALL_POS,
+											DataMgtUtil.getDictItemOrderByComparator(DictItemDisplayTerms.SIBLING, WebKeys.ORDER_BY_ASC));
+							dictItemsOrdered.clear();
+							dictItemsOrdered = getDictItemsOrderBySibling(dictItemsOrdered, 
+									dictItems, dictCollection.getDictCollectionId());
+						} catch (Exception e){
+							_log.error(e);
+						}
+						
+						for (DictItem item : dictItemsOrdered){
+							boolean checked = false;
+							for (DictItemType itemType : itemsType){
+								if (item.getDictItemId() == itemType.getDictItemLinkedId()){
+									checked = true;
+									break;
+								}
+							}
+							int level = StringUtil.count(item.getTreeIndex(), StringPool.PERIOD);
+							String index = "";
+							for(int i = 0; i < level; i++){
+								index += "&&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+							}
+							%>
+								<li class="tree-node" >
+									<aui:input 
+										name="dictItemLinked" 
+										value="<%=item.getDictItemId() %>"
+										label=""
+										type="checkbox" 
+										inlineField="true"
+										inlineLabel="true"
+										checked="<%=checked %>"
+										cssClass='<%=!checked ? "no-linked-to-selected-item" : "" %>'
+									/>
+									<liferay-ui:message key="<%=index + item.getItemName(locale) %>" />
+								</li>
+							<%
+						}
+					} catch (Exception e){
+						_log.error(e);
 					}
+				}
 			%>
-				</ul></div>
-			<%
-		} catch (Exception e){
-			_log.error(e);
-		}
-	}
-%>
+			</ul>
+		</div>
+	</div>
+</div>
 
 <%!
 	private List<DictItem> getDictItemsOrderBySibling(List<DictItem> result, 

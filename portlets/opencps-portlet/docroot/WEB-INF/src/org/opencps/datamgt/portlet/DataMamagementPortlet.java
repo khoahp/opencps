@@ -683,30 +683,102 @@ public class DataMamagementPortlet extends MVCPortlet {
 		}
 	}
 	
-	public void editDictItemSibling(ActionRequest actionRequest,
+	public void updateDatabaseDictitems(ActionRequest actionRequest,
 			ActionResponse actionResponse) throws SystemException,
 			NoSuchDictCollectionException, PortalException {
-		int numberedMode = ParamUtil.getInteger(actionRequest,
-				"numberedSiblingMode");
+
+		String actionKey = ParamUtil.getString(actionRequest, "actionKey");
+		
+		int actionMode = ParamUtil.getInteger(actionRequest,
+				"actionMode");
 		long dictCollectionId = ParamUtil.getLong(actionRequest,
 				DictItemDisplayTerms.DICTCOLLECTION_ID);
 
-		switch (numberedMode) {
-		case 1:
-			numberedSiblingDictItems(0);
-			break;
-		case 2:
-			numberedSiblingDictItems(dictCollectionId);
-			break;
-		default:
-			break;
+		if (actionKey.equals("numbered-sibling")) {
+			switch (actionMode) {
+			case 1:
+				_numberedSiblingDictItems(0);
+				break;
+			case 2:
+				if (dictCollectionId > 0){
+					_numberedSiblingDictItems(dictCollectionId);
+				}
+				break;
+			default:
+				break;
+			}
+		} 
+		else if (actionKey.equals("update-tree-index")) {
+			switch (actionMode) {
+			case 1:
+				_updateTreeIndexDictItems(0);
+				break;
+			case 2:
+				if (dictCollectionId > 0){
+					_updateTreeIndexDictItems(dictCollectionId);
+				}
+				break;
+			default:
+				break;
+			}
+		}
+		
+		actionResponse
+				.setRenderParameter("mvcPath",
+						"/html/portlets/data_management/admin/display/update_items.jsp");
+	}
+	
+	private void _updateTreeIndexDictItems(long dictCollectionId)
+			throws SystemException, NoSuchDictCollectionException,
+			PortalException {
+
+		List<DictCollection> dictCollections = new ArrayList<DictCollection>();
+
+		if (dictCollectionId > 0) {
+			dictCollections.add(DictCollectionLocalServiceUtil
+					.getDictCollection(dictCollectionId));
+		} else {
+			dictCollections = DictCollectionLocalServiceUtil
+					.getDictCollections();
+		}
+		_log.info("~~~~~~~~~~~~~~~>>> update treeIndex for items in dictCollectionId: "
+				+ dictCollectionId);
+		for (DictCollection dictCollection : dictCollections) {
+			List<DictItem> rootItems = DictItemLocalServiceUtil
+					.getDictItemsInUseByDictCollectionIdAndParentItemId(
+							dictCollection.getDictCollectionId(), 0);
+			_updateTreeIndexDictItem(dictCollection.getDictCollectionId(),
+					rootItems, StringPool.BLANK);
+		}
+
+	}
+
+	private void _updateTreeIndexDictItem(long dictCollectionId,
+			List<DictItem> dictItems, String preTreeIndex)
+			throws SystemException {
+
+		for (DictItem dictItem : dictItems) {
+
+			dictItem.setTreeIndex(preTreeIndex + dictItem.getDictItemId());
+			DictItemLocalServiceUtil.updateDictItem(dictItem);
+			_log.info("~~~~~~~~~~~~~~~>>> dictItem id: "
+					+ dictItem.getDictItemId() + "  treeIndex: "
+					+ dictItem.getTreeIndex());
+
+			List<DictItem> subDictItems = DictItemLocalServiceUtil
+					.getDictItemsInUseByDictCollectionIdAndParentItemId(
+							dictCollectionId, dictItem.getDictItemId());
+			_updateTreeIndexDictItem(dictCollectionId, subDictItems,
+					dictItem.getTreeIndex() + StringPool.PERIOD);
 		}
 	}
 
-	private void numberedSiblingDictItems(long dictCollectionId)
+	private void _numberedSiblingDictItems(long dictCollectionId)
 			throws SystemException, NoSuchDictCollectionException,
 			PortalException {
+		
 		List<DictCollection> dictCollections = new ArrayList<DictCollection>();
+		
 		if (dictCollectionId > 0) {
 			dictCollections.add(DictCollectionLocalServiceUtil
 					.getDictCollection(dictCollectionId));
@@ -719,13 +791,13 @@ public class DataMamagementPortlet extends MVCPortlet {
 			List<DictItem> rootItems = DictItemLocalServiceUtil
 					.getDictItemsInUseByDictCollectionIdAndParentItemId(
 							dictCollection.getDictCollectionId(), 0);
-			numberedSiblingItemsTree(dictCollection.getDictCollectionId(),
+			_numberedSiblingItemsTree(dictCollection.getDictCollectionId(),
 					rootItems);
 		}
 
 	}
 
-	private void numberedSiblingItemsTree(long dictCollectionId,
+	private void _numberedSiblingItemsTree(long dictCollectionId,
 			List<DictItem> dictItems) throws SystemException {
 		long sibling = 0;
 		for (DictItem dictItem : dictItems) {
@@ -736,7 +808,7 @@ public class DataMamagementPortlet extends MVCPortlet {
 			List<DictItem> subDictItems = DictItemLocalServiceUtil
 					.getDictItemsInUseByDictCollectionIdAndParentItemId(
 							dictCollectionId, dictItem.getDictItemId());
-			numberedSiblingItemsTree(dictCollectionId, subDictItems);
+			_numberedSiblingItemsTree(dictCollectionId, subDictItems);
 		}
 	}
 

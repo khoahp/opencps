@@ -17,7 +17,9 @@ import org.opencps.datamgt.service.DictItemLocalServiceUtil;
 import com.fds.vrbusiness.NotAuthException;
 import com.fds.vrbusiness.OutOfScopeDataException;
 import com.fds.vrbusiness.model.VRConfigTechSpec;
+import com.fds.vrbusiness.model.VRLimitConfigTechSpec;
 import com.fds.vrbusiness.service.VRConfigTechSpecLocalServiceUtil;
+import com.fds.vrbusiness.service.VRLimitConfigTechSpecLocalServiceUtil;
 import com.fds.vrbusiness.utils.DictItemsUtils;
 import com.fds.vrbusiness.utils.VRConstants;
 import com.liferay.portal.kernel.json.JSONArray;
@@ -92,15 +94,30 @@ public class VRTechSpecController {
 					JSONObject techspec = JSONFactoryUtil.createJSONObject();
 
 					techspec.put("key", vrConfig.getSpecificationCode());
-					techspec.put("type", Validator.isNull(vrConfig
-							.getSpecificationDataCollectionId()) ? "text"
-							: "select");
+
+					/*
+					 * techspec.put("type", Validator.isNull(vrConfig
+					 * .getSpecificationDataCollectionId()) ? "text" :
+					 * "select");
+					 */
+
+					techspec.put("type", vrConfig.getSpecificationEntryType());
+
 					techspec.put("title",
 							vrConfig.getSpecificationDisplayName());
-					techspec.put("required", true);
+
+					techspec.put("required",
+							vrConfig.getSpecificationMandatory());
+
 					techspec.put("Reference", false);
-					
+
 					techspec.put("value", StringPool.BLANK);
+
+					techspec.put("standard",
+							vrConfig.getSpecificationStandard());
+
+					techspec.put("basicunit",
+							vrConfig.getSpecificationBasicUnit());
 
 					techspec.put("placeholder",
 							vrConfig.getSpecificationEntryPlaceholder());
@@ -137,26 +154,36 @@ public class VRTechSpecController {
 	}
 
 	@GET
-	@Path("/techspecslimit/vehicletype/{vehicletype: .*}/formulatype/{formulatype: .*}")
+	@Path("/techspecslimit/vehicleclass/{vehicleclass: .*}/vehicletype/{vehicletype: .*}/formulatype/{formulatype: .*}")
 	@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
 	public Response getTecSpecsLimit(@HeaderParam("apikey") String apikey,
 			@HeaderParam("module") String module,
 			@HeaderParam("dossierId") long dossierId,
 			@HeaderParam("dossierFileId") long dossierFileId,
-			@PathParam("vehicletype") String vehicletype) {
+			@PathParam("vehicleclass") String vehicleclass,
+			@PathParam("vehicletype") String vehicletype,
+			@PathParam("formulatype") long formulatype) {
 
 		JSONObject resp = JSONFactoryUtil.createJSONObject();
 
 		try {
 
-			resp.put("module", module);
-			resp.put("dossierId", dossierId);
-			resp.put("dossierFileId", dossierFileId);
-			resp.put("vehicletype", vehicletype);
+			String markupCode = DictItemsUtils.getDictItemLinkCode(vehicletype,
+					vehicleclass);
+
+			List<VRLimitConfigTechSpec> vrLimits = VRLimitConfigTechSpecLocalServiceUtil
+					.getLimitConfigs(vehicleclass, markupCode, formulatype);
+
+			JSONArray tectSpecOut = getLimitsConfig(vrLimits);
+
+			resp.put("TechSpecs", tectSpecOut);
 
 			return Response.status(200).entity(resp.toString()).build();
 
 		} catch (Exception e) {
+
+			resp.put("Exception", e.toString());
+
 			return Response.status(404).entity(resp.toString()).build();
 		}
 	}
@@ -175,13 +202,28 @@ public class VRTechSpecController {
 
 			resp.put("module", module);
 			resp.put("dossierId", dossierId);
-			resp.put("vehicletype", templateFileNo);
+			resp.put("templateFileNo", templateFileNo);
 
 			return Response.status(200).entity(resp.toString()).build();
 
 		} catch (Exception e) {
 			return Response.status(404).entity(resp.toString()).build();
 		}
+	}
+
+	private JSONArray getLimitsConfig(List<VRLimitConfigTechSpec> vrLimitConfigs) {
+		JSONArray arrOut = JSONFactoryUtil.createJSONArray();
+
+		_log.info("LIMIT_SPEC:::");
+
+		for (VRLimitConfigTechSpec vrLimit : vrLimitConfigs) {
+
+			_log.info("LIMIT_SPEC:::" + vrLimit.getSpecificationCode());
+
+			arrOut.put(vrLimit.getSpecificationCode());
+		}
+
+		return arrOut;
 	}
 
 	/**

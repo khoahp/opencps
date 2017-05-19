@@ -68,7 +68,14 @@
 							</aui:input>
 						</aui:row>
 						<aui:row>
-							<aui:input name="<%=DictCollectionDisplayTerms.DESCRIPTION %>" type="textarea" cssClass="input100" />
+							<%-- <aui:input name="<%=DictCollectionDisplayTerms.DESCRIPTION %>" type="textarea" cssClass="input100" /> --%>
+							<label><liferay-ui:message key="<%=DictCollectionDisplayTerms.DESCRIPTION %>" /></label>
+							<textarea 
+								rows="14" 
+								id="<%=renderResponse.getNamespace() + DictCollectionDisplayTerms.DESCRIPTION %>"
+								name="<%=renderResponse.getNamespace() + DictCollectionDisplayTerms.DESCRIPTION %>" 
+								class="input100"
+							><%=dictCollection != null ? dictCollection.getDescription() : "" %></textarea>
 						</aui:row>
 					</aui:col>
 					
@@ -93,7 +100,7 @@
 															}
 														}
 														%>
-															<li class="tree-node collection-tree-node">
+															<li class="tree-node">
 																<aui:input 
 																	name="dictCollectionsLinked" 
 																	value="<%=collection.getDictCollectionId() %>"

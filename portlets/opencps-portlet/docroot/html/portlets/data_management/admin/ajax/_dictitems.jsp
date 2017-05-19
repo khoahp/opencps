@@ -39,6 +39,7 @@
 	List<DictItem> dictItems = new ArrayList<DictItem>();
 
 	int totalCount = 0;
+	int delta = 10;
 	
 %>
 
@@ -48,9 +49,10 @@
 <div class="opencps-searchcontainer-wrapper-width-header default-box-shadow radius8 items-container">
 	<liferay-ui:search-container 
 		searchContainer="<%=itemsListSearchContainer == null ? 
-				new DictItemSearch(renderRequest, SearchContainer.DEFAULT_DELTA, iteratorURL) : itemsListSearchContainer %>" 
+				new DictItemSearch(renderRequest, delta, iteratorURL) : itemsListSearchContainer %>" 
 		headerNames="STT,code,name,tree-index,action" 
 		deltaConfigurable="false"
+		delta="<%=delta %>"
 	>
 	
 		<liferay-ui:search-container-results>

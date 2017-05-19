@@ -51,14 +51,20 @@
 		<column name="vehicleType" type="String" db-name="vehicletype"/>
 		<column name="vehicleTypeName" type="String" db-name="vehicletypename"/>
 		<column name="markupSMRM" type="String" db-name="markup_SMRM"/>
-		<column name="markupVKVC" type="String" db-name="markup_VKVC"/>
-		<column name="searchingDriveConfig" type="int" db-name="searching_drive_config"/>
+		<column name="searchingDriveConfig" type="long" db-name="searching_drive_config"/>
 		<column name="searchingDriveConfigDesc" type="String" db-name="searching_drive_config_desc"/>
 		<column name="sequenceNo" type="int" db-name="sequenceno"/>
 		<column name="specificationCode" type="String" db-name="specificationcode"/>
 		<column name="specificationName" type="String" db-name="specificationname"/>
 		<column name="synchDate" type="Date" db-name="synchdate"/>
-
+		
+		<!-- Finder -->
+		<finder return-type="Collection" name="VT_MU_DC">
+			<finder-column name="vehicleType"/>
+			<finder-column name="markupSMRM"/>
+			<finder-column name="searchingDriveConfig"/>
+		</finder>
+		
 	</entity>
 	
 	<entity name="APIKeys" local-service="true" table="vr_apikey"
