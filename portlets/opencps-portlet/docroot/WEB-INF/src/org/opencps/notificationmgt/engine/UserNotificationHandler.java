@@ -17,18 +17,22 @@
 
 package org.opencps.notificationmgt.engine;
 
+import java.util.Locale;
+
 import org.opencps.notificationmgt.utils.NotificationUtils;
+import org.opencps.util.PortletPropsValues;
 
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.notifications.BaseUserNotificationHandler;
-import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.model.UserNotificationEvent;
 import com.liferay.portal.service.ServiceContext;
+import com.liferay.util.ContentUtil;
 
 /**
  * @author nhanhoang
@@ -38,7 +42,7 @@ public class UserNotificationHandler extends BaseUserNotificationHandler {
 	private static Log _log = LogFactoryUtil
 			.getLog(UserNotificationHandler.class);
 
-	public static final String PORTLET_ID = "2_WAR_notificationsportlet";
+	public static final String PORTLET_ID = "113_WAR_opencpsnotificationportlet";
 
 	public UserNotificationHandler() {
 
@@ -53,22 +57,47 @@ public class UserNotificationHandler extends BaseUserNotificationHandler {
 		JSONObject jsonObject = JSONFactoryUtil
 				.createJSONObject(userNotificationEvent.getPayload());
 
-		String title = jsonObject.getString("title");
-		String bodyText = jsonObject.getString("notificationText");
+		long dossierId = 0;
+		String receptionNo = StringPool.BLANK;
 
-		String body = StringUtil.replace(getBodyTemplate(), new String[] {
-				"[$TITLE$]", "[$BODY_TEXT$]" },
-				new String[] { title, bodyText });
+		String dossierNo = StringPool.BLANK;
+		String actionName = StringPool.BLANK;
+		String note = StringPool.BLANK;
 
-		return body;
-	}
+		String title_profile = StringPool.BLANK;
+		String title_action = StringPool.BLANK;
+		String title_note = StringPool.BLANK;
 
-	protected String getBodyTemplate() throws Exception {
+		Locale locale = serviceContext.getLocale();
 
-		StringBundler sb = new StringBundler(5);
-		sb.append("<div class=\"title\">[$TITLE$]</div> ");
-		sb.append("<div class=\"body\">[$BODY_TEXT$]</div>");
-		return sb.toString();
+		try {
+
+			dossierId = jsonObject.getLong("dossierId");
+			actionName = jsonObject.getString("actionName");
+			receptionNo = jsonObject.getString("receptionNo");
+
+			if (receptionNo.length() > 0) {
+				dossierNo = receptionNo;
+			} else {
+				dossierNo = String.valueOf(dossierId);
+			}
+
+			title_profile = LanguageUtil.get(locale, "profile");
+			title_action = LanguageUtil.get(locale, "actions");
+			title_note = LanguageUtil.get(locale, "notes");
+
+		} catch (Exception e) {
+			_log.error(e);
+		}
+
+		String content = StringUtil.replace(
+				ContentUtil.get(PortletPropsValues.USER_NOTIFICATION_CONTENT),
+				new String[] { "[$PROFILE$]", "[$DOSSIER_NO$]", "[$ACTIONS$]",
+						"[$ACTION_NAME$]", "[$NOTES$]", "[$NOTE$]", },
+				new String[] { title_profile, dossierNo, title_action,
+						actionName, title_note, note });
+
+		return content;
 	}
 
 	@Override
@@ -76,8 +105,9 @@ public class UserNotificationHandler extends BaseUserNotificationHandler {
 			ServiceContext serviceContext) throws Exception {
 
 		String viewUrl = StringPool.BLANK;
-		
-		viewUrl = NotificationUtils.getLink(userNotificationEvent, serviceContext,null);
+
+		viewUrl = NotificationUtils.getLink(userNotificationEvent,
+				serviceContext, null);
 
 		return viewUrl;
 	}
