@@ -23,7 +23,7 @@ public class BusinessRegisterController {
 	public static final String BUSINESS_REGISTER = "BUSINESS_REGISTER";
 	
 	@GET
-	@Path("/status/{groupid: .*}/{orgid: .*}/{serviceconfigid: .*}/{dossiertemplateid: .*}")
+	@Path("/status/groupid/{groupid: .*}/orgid/{orgid: .*}/serviceconfigid/{serviceconfigid: .*}/dossiertemplate/{dossiertemplateid: .*}")
 	@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
 	public Response getTecSpecs(@PathParam("groupid") long groupid,
 			@PathParam("orgid") long orgid,
@@ -56,9 +56,13 @@ public class BusinessRegisterController {
 					
 					resp.put("StatusCode", "REG_DONE");
 					isValid = true;
+				} else if (regStatus == 0){
+					resp.put("StatusCode", "REG_VERIFYING");
+					
+					isValid = false;
 				} else {
 					resp.put("StatusCode", "REG_REQUIRE");
-
+					
 					isValid = false;
 				}
 			} else {
@@ -99,7 +103,7 @@ public class BusinessRegisterController {
 		
 		if (Validator.isNull(br)) {
 			//Hasn't been registered
-			status = 0;
+			status = -1;
 		} else {
 			status = br.getValidStatus();
 		}
