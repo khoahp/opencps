@@ -234,8 +234,10 @@ public class SyncFromBackOffice implements MessageListener {
 					registerContent.put("userId", dossier.getUserId());
 					registerContent.put("dossierTemplateId", dossier.getDossierTemplateId());
 					registerContent.put("serviceProcessId", order.getServiceProcessId());
-					registerContent.put("dossierId", dossier.getCompanyId());
-					registerContent.put("dossierStatus", dossier.getCompanyId());
+					registerContent.put("dossierId", dossier.getDossierId());
+					registerContent.put("dossierStatus", dossier.getDossierStatus());
+					registerContent.put("dossierSubStatus", dossier.getDossierSubStatus());
+
 					registerContent.put("ownerOrganizationId", dossier.getOwnerOrganizationId());
 					
 					businessRegister.put("content", registerContent);
