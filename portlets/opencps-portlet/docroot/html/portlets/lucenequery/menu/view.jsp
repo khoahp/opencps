@@ -42,8 +42,9 @@
 
 <%@ include file="../init.jsp"%>
 
+<!-- 
 <style>
-<!--
+
 	.menu-group.closed {
 		display: none;
 	}
@@ -67,8 +68,8 @@
 	ul.menu-group.group-level-5{
 		padding-left: 100px;
 	}
--->
-</style>
+
+</style> -->
 
 <c:if test="<%=menuGroupIds != null &&  menuGroupIds.length > 0%>">
 	<ul class="lucene-menu-wrapper">
