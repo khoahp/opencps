@@ -119,10 +119,6 @@
 
 <aui:script>
 	
-	Liferay.on('getDictItemId', function(event) {
-		alert('item id: '+ event.dictItemId);
-	});
-	
 	var A = AUI();
 	
 	AUI().ready('aui-base','liferay-portlet-url','aui-io', function(A){

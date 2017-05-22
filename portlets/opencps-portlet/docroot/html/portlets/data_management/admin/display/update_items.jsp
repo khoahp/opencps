@@ -63,14 +63,3 @@
 	</div>
 </div>
 
-<aui:button value="xxxxxxxxxx" onClick="fireEvent()"/>
-
-<aui:script>
-	Liferay.provide(window, 'fireEvent', function(){
-		console.log('~~~~~~~~~~~~~~ fire event getDictItemId');
-		Liferay.Util.getOpener().Liferay.fire('getDictItemId', {
-            dictItemId: 1111111
-		});
-	});
-	
-</aui:script>
