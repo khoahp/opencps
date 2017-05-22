@@ -139,6 +139,14 @@
 		    <td>finishDatetime</td>
 		    <td>Ngày hoàn thành</td>
 		  </tr>
+		  <tr>
+		    <td>serviceInfoNo</td>
+		    <td>Mã thủ tục hành chính cấp 2</td>
+		  </tr>
+		  <tr>
+		    <td>dossierTemplateNo</td>
+		    <td>Mã biểu mẫu</td>
+		  </tr>
 		</table>
 	</div>
 	

@@ -146,8 +146,13 @@ public class LuceneQueryUtil {
 				}
 			}
 
+			TermQuery entryClassNameTerm = TermQueryFactoryUtil.create(
+					searchContext, "entryClassName", Dossier.class.getName());
+
+			query.add(entryClassNameTerm, BooleanClauseOccur.MUST);
+
 		} catch (Exception e) {
-			_log.equals(e);
+			_log.error(e);
 		}
 
 		return query;
@@ -193,7 +198,8 @@ public class LuceneQueryUtil {
 										searchContext, key, (long) tempValue);
 							} else if (tempValue instanceof String) {
 								termQuery = TermQueryFactoryUtil.create(
-										searchContext, key, String.valueOf(tempValue));
+										searchContext, key,
+										String.valueOf(tempValue));
 							}
 
 							if (termQuery != null) {
@@ -272,7 +278,8 @@ public class LuceneQueryUtil {
 										searchContext, key, (long) tempValue);
 							} else {
 								termQuery = TermQueryFactoryUtil.create(
-										searchContext, key, String.valueOf(tempValue));
+										searchContext, key,
+										String.valueOf(tempValue));
 							}
 
 							if (termQuery != null) {
