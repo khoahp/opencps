@@ -75,12 +75,12 @@
 <c:if test="<%=collection != null %>">
 	<div>
 		<p class="breadcrumb bold">
-			<liferay-ui:message key='dict-collection' /> > <%=collection != null ? collection.getCollectionName() : StringPool.BLANK %>
+			<a href="#"><liferay-ui:message key='dict-collection-mgt' /></a> >> <%=collection != null ? collection.getCollectionName(locale) : StringPool.BLANK %>
 		</p>
 	</div>
 
 	<div>
-		<p><span><liferay-ui:message key='collection-code' />:</span> <%=collection.getCollectionCode() %></p>
+		<p><span><liferay-ui:message key='collection-sign' />:</span> <%=collection.getCollectionCode() %></p>
 		<p><span><liferay-ui:message key='collection-name' />:</span> <%=collection.getCollectionName(locale) %></p>
 		<p><span><liferay-ui:message key='description' />:</span> <%=collection.getDescription() %></p>
 		<c:if test="<%=Validator.isNotNull(typesStr) %>">
@@ -92,7 +92,8 @@
 		<c:if test="<%=permissionChecker.isOmniadmin() || dictPermission.getView() %>">
 			<aui:button 
 				name="view-items-button"
-				type="submit" cssClass="view-button" value="view-list"
+				type="submit" cssClass="view-button" 
+				value="view-list" title="<%=LanguageUtil.get(locale, \"view-list\") %>"
 			/>
 		</c:if>
 			
@@ -100,7 +101,8 @@
 						|| dictPermission.getEdit()%>">
 	 		<aui:button 
 	 			name="edit-collection-button"
-	 			type="submit" cssClass="edit-button" value="edit"
+	 			type="submit" cssClass="edit-button" 
+	 			value="edit" title="<%=LanguageUtil.get(locale, \"edit\") %>"
 	 		/>
 	 	</c:if>
 		
@@ -109,7 +111,8 @@
 						|| dictPermission.getDelete()%>">
 			<aui:button 
 				name="delete-collection-button"
-				type="submit" cssClass="delete-button" value="delete"
+				type="submit" cssClass="delete-button" 
+				value="delete" title="<%=LanguageUtil.get(locale, \"delete\") %>"
 			/>
 	 	</c:if>
 	 </div>

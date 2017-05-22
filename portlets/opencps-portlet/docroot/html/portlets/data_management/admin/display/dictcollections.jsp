@@ -49,10 +49,22 @@
 		<div class="opencps-searchcontainer-wrapper default-box-shadow radius8 data-manager-action">
 			<div class="openCPSTree yui3-widget component tree-view tree-drag-drop">
 				<c:if test="<%=permissionChecker.isOmniadmin() || showAddButton %>">
-					<aui:button type="submit" value="add-collection" onClick="editDictCollection()" cssClass="plus-icon hide-when-edit-permission" />
+					<aui:button 
+						type="submit" 
+						value="add-collection" 
+						onClick="editDictCollection()" 
+						cssClass="plus-icon hide-when-edit-permission" 
+						title="<%=LanguageUtil.get(locale, \"add-collection\") %>"
+					/>
 				</c:if>
 				<c:if test="<%=permissionChecker.isOmniadmin() %>">
-					<aui:button type="submit" value="collection-permissions" onClick="editPermission()" cssClass="permission-icon hide-when-add-collection"/>
+					<aui:button 
+						type="submit" 
+						value="collection-permissions" 
+						onClick="editPermission()" 
+						cssClass="permission-icon hide-when-add-collection"
+						title="<%=LanguageUtil.get(locale, \"collection-permissions\") %>"
+					/>
 				</c:if>
 				<div class="hide-when-edit-permission hide-when-add-collection">
 					<aui:input 
@@ -60,8 +72,14 @@
 						placeholder='<%= LanguageUtil.get(locale, "collection-name") %>' 
 						cssClass="input100" 
 						label="lookups-collections"
+						title="<%=LanguageUtil.get(locale, \"lookups-collections-is-used-in-system\") %>"
 					/>
-					<aui:button name="search-button" value="search" type="submit" />
+					<aui:button 
+						name="search-button" 
+						value="search" 
+						type="submit" 
+						title="<%=LanguageUtil.get(locale, \"search\") %>"
+					/>
 				</div>
 				<div id='<%=renderResponse.getNamespace() + "collections-container" %>' class="scrollbar-datamgt hide-when-edit-permission hide-when-add-collection"></div>
 			</div>
@@ -996,8 +1014,8 @@
 							container.html(result);
 						}
 						// initial value for dictcollection link checkbox
-						if (A.all('.no-linked-to-selected-collection')){
-							A.all('.no-linked-to-selected-collection').each(function(noSelected){
+						if (A.all('.unchecked-checkbox')){
+							A.all('.unchecked-checkbox').each(function(noSelected){
 								noSelected.ancestor().one('#<portlet:namespace/>dictCollectionsLinked').attr('value', '0');
 							});
 						}
@@ -1021,6 +1039,32 @@
 								getDictCollectionDetail(selectedDictCollectionId);
 								// show other component
 								$('.hide-when-add-collection').slideDown('normal');
+							});
+						}
+						// click to select dict collection
+						if ($('.click-select-dict-collection')){
+							$('.click-select-dict-collection').each(function(){
+								$(this).click(function(){
+									var li = $(this).closest('li');
+									var collectionId = $(li)['0']['id'].replace(/.+collectionId_/, '');
+									if (!($(li)['0'].className).includes('checked-collection')){
+										$(li).find('input[type=checkbox]').each(function(){
+											$(this).prop('checked', true);
+										});
+										$(li).find('input[type=hidden]').each(function(){
+											$(this).prop('value', collectionId);
+										});
+										$(li)['0'].className += ' checked-collection';
+									} else {
+										$(li).find('input[type=checkbox]').each(function(){
+											$(this).prop('checked', false);
+										});
+										$(li).find('input[type=hidden]').each(function(){
+											$(this).prop('value', 0);
+										});
+										$(li)['0'].className = $(li)['0'].className.replace(' checked-collection', '');
+									}
+								});
 							});
 						}
 						// hide locate

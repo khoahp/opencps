@@ -38,8 +38,9 @@
 %>
 
 <p class="breadcrumb bold">
+	<a href="#"><liferay-ui:message key='dict-collection-mgt' /></a> >> 
 	<liferay-ui:message key='<%= (dictCollection == null) ? "add-dictcollection" : "update-dictcollection" %>' />
-	<liferay-ui:message key='<%= (dictCollection == null) ? "" : " > " + dictCollection.getCollectionName() %>' />
+	<liferay-ui:message key='<%= (dictCollection == null) ? "" : " >> " + dictCollection.getCollectionName() %>' />
 </p>
 
 <div class="opencps-datamgt collection-wrapper opencps-bound-wrapper pd20 default-box-shadow"">
@@ -100,7 +101,9 @@
 															}
 														}
 														%>
-															<li class="tree-node">
+															<li class="tree-node click-select-dict-collection"
+																id='<%=renderResponse.getNamespace() + "collectionId_" + collection.getDictCollectionId() %>'
+															>
 																<aui:input 
 																	name="dictCollectionsLinked" 
 																	value="<%=collection.getDictCollectionId() %>"
@@ -108,7 +111,7 @@
 																	type="checkbox" 
 																	inlineField="true"
 																	checked="<%=checked %>"
-																	cssClass='<%=!checked ? "no-linked-to-selected-collection" : "" %>'
+																	cssClass='<%=!checked ? "unchecked-checkbox" : "" %>'
 																/>
 																<liferay-ui:message key="<%=collection.getCollectionName() %>" />
 															</li>
