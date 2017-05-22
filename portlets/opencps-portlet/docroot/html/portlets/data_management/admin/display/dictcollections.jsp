@@ -634,6 +634,11 @@
 			return;
 		}
 		
+		// show other component
+		if ($('.hide-when-add-collection')){
+			$('.hide-when-add-collection').slideDown('normal');
+		}
+		
 		if (needConfirnChangeView){
 			if (!confirm(Liferay.Language.get('confirm-change-display'))){
 				return;

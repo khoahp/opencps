@@ -39,7 +39,7 @@
 	<%
 		for (User u : users){
 			%>
-				<li class="tree-node user-tree-node" 
+				<li class='<%="tree-node user-tree-node" + (users.indexOf(u) == 0 ? " selected" : "") %>' 
 					id='<%=renderResponse.getNamespace() +  "userId_" + u.getUserId() %>'
 				>
 					<%=u.getFullName() %>

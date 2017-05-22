@@ -1,3 +1,4 @@
+<%@page import="com.liferay.portal.service.RoleLocalServiceUtil"%>
 <%
 /**
  * OpenCPS is the open source Core Public Services software
@@ -21,6 +22,21 @@
 
 <%
 	long userIdPermission = ParamUtil.getLong(request, "userIdPermission");
+	
+	// if no user selected then select first user in list
+	if (userIdPermission == 0){
+		List<User> users = new ArrayList<User>();
+		long roleId = 0;
+		try {
+			roleId = RoleLocalServiceUtil
+					.getRole(company.getCompanyId(), DictCollectionDisplayTerms.DICTCOLLECTION_ROLE)
+						.getRoleId();
+			users = UserLocalServiceUtil.getRoleUsers(roleId);
+		} catch (Exception e){
+			_log.error(e);
+		}
+		userIdPermission = users.get(0).getUserId();
+	}
 	
 	List<DictCollection> collections = DictCollectionLocalServiceUtil
 			.getDictCollections(scopeGroupId);
