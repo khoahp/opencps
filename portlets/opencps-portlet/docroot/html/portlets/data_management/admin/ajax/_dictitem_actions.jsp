@@ -29,12 +29,14 @@
 	<aui:button name='<%=renderResponse.getNamespace() + "dictItemId_" + dictItem.getDictItemId() %>'
 	 	type="submit" value="edit" 
 	 	cssClass='<%="edit-button " + renderResponse.getNamespace() + "edit_dictItem_button" %>'
+	 	title='<%=LanguageUtil.get(locale, "edit") %>'
 	/>
 </c:if>
 <c:if test="<%=DictItemPermission.contains(permissionChecker, scopeGroupId, ActionKeys.DELETE) %>">
 	<aui:button name='<%=renderResponse.getNamespace() + "dictItemId_" + dictItem.getDictItemId() %>'
 	 	type="submit" value='<%=itemsStatus != 1 ? "delete" : "no-use" %>' 
 	 	cssClass='<%="delete-button " + renderResponse.getNamespace() + (itemsStatus != 1 ? "delete_dictItem_button" : "no_use_dictItem_button") %>'
+	 	title='<%=itemsStatus != 1 ? LanguageUtil.get(locale, "delete") : LanguageUtil.get(locale, "no-use") %>'
 	/>
 </c:if>
 	  

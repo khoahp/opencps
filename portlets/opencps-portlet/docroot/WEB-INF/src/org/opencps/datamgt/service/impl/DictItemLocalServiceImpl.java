@@ -652,6 +652,7 @@ public class DictItemLocalServiceImpl extends DictItemLocalServiceBaseImpl {
 		Date now = new Date();
 
 		String treeIndex = getTreeIndex(dictItemId, parentItemId);
+		int level = StringUtil.split(treeIndex).length;
 
 		dictItem.setCompanyId(serviceContext.getCompanyId());
 		dictItem.setCreateDate(now);
@@ -669,6 +670,7 @@ public class DictItemLocalServiceImpl extends DictItemLocalServiceBaseImpl {
 		dictItem.setDictVersionId(dictVersionId);
 		dictItem.setSibling(sibling);
 		dictItem.setIssueStatus(status);
+		dictItem.setLevel(level);
 		
 		return dictItemPersistence.update(dictItem);
 	}
