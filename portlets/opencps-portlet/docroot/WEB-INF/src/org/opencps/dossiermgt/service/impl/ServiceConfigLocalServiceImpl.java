@@ -52,6 +52,11 @@ import com.liferay.portal.service.ServiceContext;
 public class ServiceConfigLocalServiceImpl extends
 		ServiceConfigLocalServiceBaseImpl {
 
+	public ServiceConfig getByServiceProcess(long serviceProcessId)
+			throws PortalException, SystemException {
+		return serviceConfigPersistence.findByS_P(serviceProcessId);
+	}
+	
 	/**
 	 * @param serviceInfoId
 	 * @param serviceAdministrationIndex
