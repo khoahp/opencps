@@ -81,7 +81,9 @@
 								index += "&&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
 							}
 							%>
-								<li class="tree-node" >
+								<li class="tree-node click-select-dict-item-type" 
+									id='<%=renderResponse.getNamespace() + "dictItemId_" + item.getDictItemId() %>'
+								>
 									<aui:input 
 										name="dictItemLinked" 
 										value="<%=item.getDictItemId() %>"
@@ -90,7 +92,7 @@
 										inlineField="true"
 										inlineLabel="true"
 										checked="<%=checked %>"
-										cssClass='<%=!checked ? "no-linked-to-selected-item" : "" %>'
+										cssClass='<%=!checked ? "unchecked-checkbox" : "" %>'
 									/>
 									<liferay-ui:message key="<%=index + item.getItemName(locale) %>" />
 								</li>

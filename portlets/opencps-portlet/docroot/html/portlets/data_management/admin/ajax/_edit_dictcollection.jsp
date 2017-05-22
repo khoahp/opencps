@@ -38,9 +38,14 @@
 %>
 
 <p class="breadcrumb bold">
-	<a href="#"><liferay-ui:message key='dict-collection-mgt' /></a> >> 
+	<a title='<%=LanguageUtil.get(locale, "dict-collection-mgt") %>' href="javascript:getDictCollectionDetail();">
+		<liferay-ui:message key='dict-collection-mgt' />
+	</a>
+	<a title='<%=(dictCollection == null) ? "" : dictCollection.getCollectionName(locale) %>' href="javascript:getDictCollectionDetail(selectedDictCollectionId);">
+		<liferay-ui:message key='<%= (dictCollection == null) ? " >> " : " >> " + dictCollection.getCollectionName(locale) + " >> "%>' />
+	</a>
 	<liferay-ui:message key='<%= (dictCollection == null) ? "add-dictcollection" : "update-dictcollection" %>' />
-	<liferay-ui:message key='<%= (dictCollection == null) ? "" : " >> " + dictCollection.getCollectionName() %>' />
+	<liferay-ui:message key='<%= (dictCollection == null) ? "" : " " + dictCollection.getCollectionName(locale) %>' />
 </p>
 
 <div class="opencps-datamgt collection-wrapper opencps-bound-wrapper pd20 default-box-shadow"">
@@ -56,7 +61,7 @@
 				<aui:row>
 					<aui:col width="50">
 						<aui:row>
-							<aui:input name="<%=DictCollectionDisplayTerms.COLLECTION_CODE %>" type="text" cssClass="input100">
+							<aui:input name="<%=DictCollectionDisplayTerms.COLLECTION_CODE %>" type="text" cssClass="input100" label="collection-sign">
 								<aui:validator name="required"/>
 								<aui:validator name="maxLength">100</aui:validator>
 							</aui:input>
@@ -89,10 +94,16 @@
 									<div class="scrollbar-datamgt">
 										<ul class="tree-view-content tree-drag-drop-content tree-file tree-root-container">
 											<%
-												List<DictCollection> dictCollections = DictCollectionLocalServiceUtil.getDictCollections();
-												List<DictCollectionType> dictCollectionsTypes = DictCollectionTypeLocalServiceUtil.getByDictCollectionId(collectionId);
+												List<DictCollection> dictCollections = DictCollectionLocalServiceUtil
+														.getDictCollections(QueryUtil.ALL_POS, QueryUtil.ALL_POS, 
+																DataMgtUtil.getDictCollectionOrderByComparator(
+																		DictCollectionDisplayTerms.COLLECTION_NAME, WebKeys.ORDER_BY_ASC));
+												List<DictCollectionType> dictCollectionsTypes = DictCollectionTypeLocalServiceUtil
+														.getByDictCollectionId(collectionId);
+												int count = 0;
 												for (DictCollection collection : dictCollections){
 													if (collection.getDictCollectionId() != collectionId){
+														count++;
 														boolean checked = false;
 														for (DictCollectionType type : dictCollectionsTypes){
 															if (type.getDictCollectionLinkedId() == collection.getDictCollectionId()){
@@ -113,7 +124,7 @@
 																	checked="<%=checked %>"
 																	cssClass='<%=!checked ? "unchecked-checkbox" : "" %>'
 																/>
-																<liferay-ui:message key="<%=collection.getCollectionName() %>" />
+																<liferay-ui:message key="<%=count + \". \" + collection.getCollectionName() %>" />
 															</li>
 														<%
 													}

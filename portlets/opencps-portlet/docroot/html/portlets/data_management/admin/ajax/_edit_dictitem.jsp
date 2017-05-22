@@ -30,9 +30,17 @@
 	
 	DictCollection collection = null;
 	List<DictItem> dictItems = new ArrayList<DictItem>();
+	DictItem parentItem = null;
 	
 	try{
 		collection = DictCollectionLocalServiceUtil.getDictCollection(collectionId);
+	}catch(Exception e){
+		_log.error(e);
+	}
+	try{
+		if (dictItem != null){
+			parentItem = DictItemLocalServiceUtil.getDictItem(dictItem.getParentItemId());
+		}
 	}catch(Exception e){
 		_log.error(e);
 	}
@@ -51,7 +59,25 @@
 %>
 
 <p class="breadcrumb bold">
-	<liferay-ui:message key='dict-collection' /> > <%=collection != null ? collection.getCollectionName() : StringPool.BLANK %> >
+	<a 
+		title='<%=LanguageUtil.get(locale, "dict-collection-mgt") %>' 
+		href="javascript:getDictCollectionDetail();"
+	>
+		<liferay-ui:message key='dict-collection-mgt' />
+	</a>
+	<a 
+		title='<%=(collection == null) ? "" : collection.getCollectionName(locale) %>' 
+		href="javascript:getDictCollectionDetail(selectedDictCollectionId);"
+	>
+		<liferay-ui:message key='<%= (collection == null) ? " >> " : " >> " + collection.getCollectionName(locale) + " >> "%>' />
+	</a>
+	<a 
+		title='<%=(collection == null) ? "" : collection.getCollectionName(locale) %>' 
+		href="javascript:getDictItemsToolbar(selectedDictCollectionId);"
+	>
+		<liferay-ui:message key='list' />
+	</a>
+	<liferay-ui:message key='<%=" >> " %>' />
 	<liferay-ui:message key='<%= (dictItem == null) ? "add-dictitem" : "update-dictitem" %>' />
 	<liferay-ui:message key='<%= (dictItem == null) ? StringPool.BLANK : dictItem.getItemName(locale) %>' />
 </p>
@@ -87,9 +113,9 @@
 							</aui:select>
 						</aui:row>
 						<aui:row>
-							<aui:input name="<%=DictItemDisplayTerms.PARENTITEM_ID %>" type="hidden" value=""/>
+							<aui:input name="<%=DictItemDisplayTerms.PARENTITEM_ID %>" type="hidden" value="<%=parentItem != null ? parentItem.getDictItemId() : 0 %>"/>
 							<div class="show-when-focus-wrapper">
-								<aui:input name="parentItemShow" type="text" label="parent-item" />
+								<aui:input name="parentItemShow" type="text" label="parent-item" value="<%=parentItem != null ? parentItem.getItemName(locale) : StringPool.BLANK %>"/>
 								<div id='<%=renderResponse.getNamespace() + "parentItem" %>' class="hide-when-focusout-datamgt"></div>
 							</div>
 						</aui:row>

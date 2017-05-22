@@ -42,8 +42,18 @@
 
 <div>
 	<p class="breadcrumb bold">
-		<liferay-ui:message key='dictcollection' /> > 
-		<%=collection != null ? collection.getCollectionName() : StringPool.BLANK %> > 
+		<a 
+			title='<%=LanguageUtil.get(locale, "dict-collection-mgt") %>' 
+			href="javascript:getDictCollectionDetail();"
+		>
+			<liferay-ui:message key='dict-collection-mgt' />
+		</a>
+		<a 
+			title='<%=(collection == null) ? "" : collection.getCollectionName(locale) %>' 
+			href="javascript:getDictCollectionDetail(selectedDictCollectionId);"
+		>
+			<liferay-ui:message key='<%= (collection == null) ? " >> " : " >> " + collection.getCollectionName(locale) + " >> "%>' />
+		</a>
 		<liferay-ui:message key='list' />
 	</p>
 </div>
@@ -57,14 +67,15 @@
 				value="<%=searchKeyword %>" 
 				placeholder='<%= LanguageUtil.get(locale, "item-name") %>' 
 				cssClass="input100"
+				title='<%= LanguageUtil.get(locale, "item-name") %>' 
 			/>
 		</aui:col>
 		<aui:col width="30" cssClass='<%=collectionsTypes.size() == 0 ? "hidden" : "" %>' >
 			<%
 			if (collectionsTypes.size() > 0){
 				%>
-				<aui:select name="item-linked">
-					<aui:option value="0" />
+				<aui:select name="item-linked" title="item-linked">
+					<aui:option value="0" label='<%="---" + LanguageUtil.get(locale, "item-linked") + "---" %>' />
 					<%
 					DictCollection dictCollection = null;
 					List<DictItem> dictItemsL = new ArrayList<DictItem>();
@@ -115,7 +126,7 @@
 		</aui:col>
 		
 		<aui:col width='<%=collectionsTypes.size() == 0 ? 50 : 30 %>'>
-			<aui:select name="itemsStatusInUsed" label="status">
+			<aui:select name="itemsStatusInUsed" label="status" title="status">
 				<aui:option value="0" label="draf" selected="<%=itemsStatus == 0 %>" />
 				<aui:option value="1" label="in-used" selected="<%=itemsStatus == 1 %>" />
 				<aui:option value="2" label="no-used" selected="<%=itemsStatus == 2 %>" />
@@ -123,8 +134,8 @@
 		</aui:col>
 	</aui:row>
 	
-	<aui:button name="search-item-button" value="search" type="submit" cssClass="search-icon"/>
-	<aui:button id='<%=renderResponse.getNamespace() + "add-item" %>' type="submit" value="add-item" cssClass="plus-icon"/>
+	<aui:button name="search-item-button" value="search" type="submit" cssClass="search-icon" title='<%=LanguageUtil.get(locale, "search") %>'/>
+	<aui:button id='<%=renderResponse.getNamespace() + "add-item" %>' type="submit" value="add-item" cssClass="plus-icon" title='<%=LanguageUtil.get(locale, "add-item") %>' />
 </div>
 
 <div id='<%=renderResponse.getNamespace() + "dictItems_container" %>'></div>

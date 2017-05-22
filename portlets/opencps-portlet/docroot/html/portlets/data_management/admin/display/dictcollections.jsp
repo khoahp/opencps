@@ -150,20 +150,24 @@
 // 	Liferay.provide(window, 'getDictItemsToolbar', function(dictCollectionId){
 // 	Liferay.provide(window, 'getDictItems', function(dictCollectionId, cur){
 // 	Liferay.provide(window, 'getDictCollections', function(collectionName){
+//	Liferay.provide(window, 'getDictPermissions', function(userId){
+// 	Liferay.provide(window, 'getDictItemsLinked', function(dictCollectionId, dictItemId){
+// 	Liferay.provide(window, 'getSelectSibling', function(dictCollectionId, parentItemId, dictItemId){
+//  Liferay.provide(window, 'getUsers', function(name){
+// 	Liferay.provide(window, 'getParentDictItemsList', function(dictCollectionId, dictItemId){
+	
 // 	Liferay.provide(window, 'editDictCollection', function(collectionId){
-// 	Liferay.provide(window, 'deleteDictCollection', function(collectionId){
 // 	Liferay.provide(window, 'editDictItem', function(itemId){
+// 	Liferay.provide(window, 'editPermission', function(collectionId){
+	
 // 	Liferay.provide(window, 'updateDictCollection', function(dictCollectionId){
 // 	Liferay.provide(window, 'updateDictItem', function(dictItemId, dictCollectionId){
-// 	Liferay.provide(window, 'changeStatusItemToNoUse', function(dictItemId){
-// 	Liferay.provide(window, 'deleteDictItem', function(dictItemId){
-// 	Liferay.provide(window, 'getSelectSibling', function(dictCollectionId, parentItemId, dictItemId){
-// 	Liferay.provide(window, 'getDictItemsLinked', function(dictCollectionId, dictItemId){
-// 	Liferay.provide(window, 'getParentDictItemsList', function(dictCollectionId, dictItemId){
-// 	Liferay.provide(window, 'editPermission', function(collectionId){
-//  Liferay.provide(window, 'getUsers', function(name){
-//	Liferay.provide(window, 'getDictPermissions', function(userId){
 //	Liferay.provide(window, 'updateDictPermissions', function(userId){
+	
+// 	Liferay.provide(window, 'deleteDictCollection', function(collectionId){
+// 	Liferay.provide(window, 'deleteDictItem', function(dictItemId){
+	
+// 	Liferay.provide(window, 'changeStatusItemToNoUse', function(dictItemId){
 	
 	var selectedDictCollectionId = 0;	
 	var updateDictCollectionId = 0;
@@ -293,7 +297,7 @@
 		}
 		
 		if (needConfirnChangeView){
-			if (!confirm(Liferay.Language.get('are-you-sure'))){
+			if (!confirm(Liferay.Language.get('confirm-change-display'))){
 				return;
 			}
 			needConfirnChangeView = false;
@@ -631,7 +635,7 @@
 		}
 		
 		if (needConfirnChangeView){
-			if (!confirm(Liferay.Language.get('are-you-sure'))){
+			if (!confirm(Liferay.Language.get('confirm-change-display'))){
 				return;
 			}
 			needConfirnChangeView = false;
@@ -784,7 +788,7 @@
 		}
 		
 		if (needConfirnChangeView){
-			if (!confirm(Liferay.Language.get('are-you-sure'))){
+			if (!confirm(Liferay.Language.get('confirm-change-display'))){
 				return;
 			}
 			needConfirnChangeView = false;
@@ -893,6 +897,11 @@
 								});
 							});
 						}
+						// 
+						if (A.one('.lfr-pagination-delta-selector')){
+							A.one('.lfr-pagination-delta-selector')
+								.html(A.one('.lfr-pagination-delta-selector').html().replace(/\D+/g, ''));
+						}
 					},
 			    	error: function(){
 			    		loadingMask.hide();
@@ -942,6 +951,15 @@
 						if (A.all('.collection-tree-node')){
 							A.all('.collection-tree-node').each(function(node){
 								node.on('click', function(){
+									
+									// todo check loggin
+									if (!Liferay.ThemeDisplay.isSignedIn()){
+										alert(Liferay.Language.get('please-login-and-try-again'));
+										return;
+									} else {
+										console.log('logined');
+									}
+								
 									if (A.one('.selected')){
 										A.one('.selected').removeClass('selected');
 									}
@@ -969,7 +987,7 @@
 		}
 		
 		if (needConfirnChangeView){
-			if (!confirm(Liferay.Language.get('are-you-sure'))){
+			if (!confirm(Liferay.Language.get('confirm-change-display'))){
 				return;
 			}
 		}
@@ -1086,7 +1104,7 @@
 			return;
 		}
 		
-		if (!confirm(Liferay.Language.get('are-you-sure'))){
+		if (!confirm(Liferay.Language.get('confirm-change-display'))){
 			return;
 		}
 		
@@ -1211,13 +1229,22 @@
 							A.one('#<portlet:namespace/>parentItemShow')
 									.on('blur', function(event){
 								if (!A.one('#<portlet:namespace/>parentItem').hasClass('no-touch-by-blur')){
-									console.log('mountout');
 									A.one('#<portlet:namespace/>parentItem').removeClass('show-when-focus-datamgt');
 									A.one('#<portlet:namespace/>parentItem').addClass('hide-when-focusout-datamgt');
 									if (A.one('#<portlet:namespace/>parentItemShow')){
 										var value = A.one('#<portlet:namespace/>parentItemShow').val();
 										if (value == '0' || value == ''){
-											A.one('#<portlet:namespace/>parentItemId').attr('value', '0')
+											A.one('#<portlet:namespace/>parentItemId').attr('value', '0');
+											// get sibling
+											var dictCollection = A.one('#<portlet:namespace/><%=DictItemDisplayTerms.DICTCOLLECTION_ID%>');
+											var parentItem = A.one('#<portlet:namespace/><%=DictItemDisplayTerms.PARENTITEM_ID%>');
+											
+											if (dictCollection && parentItem){
+												dictCollectionId = dictCollection.val();
+												parentItemId = parentItem.val();
+												
+												getSelectSibling(dictCollectionId, parentItemId, 0);
+											}
 										}
 									}
 								}
@@ -1318,13 +1345,13 @@
 			        success: function(event, id, obj){
 			        	needConfirnChangeView = false;
 			        	loadingMask.hide();
-			        	var collectionName = A.one('#<portlet:namespace/>collection-name') ? 
+			        	var collectionNameSearch = A.one('#<portlet:namespace/>collection-name') ? 
 								A.one('#<portlet:namespace/>collection-name').attr('value') : '';
-			        	getDictCollections(collectionName);
-			        	getDictCollectionDetail();
+			        	getDictCollections(collectionNameSearch);
+			        	getDictCollectionDetail(selectedDictCollectionId);
 			        	// show other component
 						$('.hide-when-add-collection').slideDown('normal');
-						alert(Liferay.Language.get('success'));
+						alert(Liferay.Language.get('update-dict-collection') + ' ' + collectionName + ' ' + Liferay.Language.get('success'));
 					},
 			    	error: function(){
 			    		loadingMask.hide();
@@ -1568,16 +1595,43 @@
 						}
 						
 						// initial value for item link checkbox
-						if (A.all('.no-linked-to-selected-item')){
-							A.all('.no-linked-to-selected-item').each(function(noSelected){
+						if (A.all('.unchecked-checkbox')){
+							A.all('.unchecked-checkbox').each(function(noSelected){
 								if (noSelected.ancestor().one('#<portlet:namespace/>dictItemLinked')){
 									noSelected.ancestor().one('#<portlet:namespace/>dictItemLinked').attr('value', '0');
 								}
 							});
 						}
 						
+						// click select checkbox dict item type
+						if ($('.click-select-dict-item-type')){
+							$('.click-select-dict-item-type').each(function(){
+								$(this).click(function(){
+									var li = $(this).closest('li');
+									var dictItemId = $(li)['0']['id'].replace(/.+dictItemId_/, '');
+									if (!($(li)['0'].className).includes('checked-collection')){
+										$(li).find('input[type=checkbox]').each(function(){
+											$(this).prop('checked', true);
+										});
+										$(li).find('input[type=hidden]').each(function(){
+											$(this).prop('value', dictItemId);
+										});
+										$(li)['0'].className += ' checked-collection';
+									} else {
+										$(li).find('input[type=checkbox]').each(function(){
+											$(this).prop('checked', false);
+										});
+										$(li).find('input[type=hidden]').each(function(){
+											$(this).prop('value', 0);
+										});
+										$(li)['0'].className = $(li)['0'].className.replace(' checked-collection', '');
+									}
+								});
+							});
+						}
+						
 						// toggle expand
-						if ($('.expand-anchor')){
+						/* if ($('.expand-anchor')){
 							for (var i = 0; i < $('.expand-anchor').length; i++){
 								var colId = $('.expand-anchor')[i]['id'].replace(/^.+dictCollectionId_/, '');
 								$('#<portlet:namespace/>expandable_' + colId) ? 
@@ -1598,7 +1652,7 @@
 									});
 								}
 							}
-						}
+						} */
 					},
 				}
 			}
@@ -1664,6 +1718,16 @@
 									if (A.one('#<portlet:namespace/>parentItem')){
 										A.one('#<portlet:namespace/>parentItem').removeClass('show-when-focus-datamgt');
 										A.one('#<portlet:namespace/>parentItem').addClass('hide-when-focusout-datamgt');
+									}
+									// get sibling
+									var dictCollection = A.one('#<portlet:namespace/><%=DictItemDisplayTerms.DICTCOLLECTION_ID%>');
+									var parentItem = A.one('#<portlet:namespace/><%=DictItemDisplayTerms.PARENTITEM_ID%>');
+									
+									if (dictCollection && parentItem){
+										dictCollectionId = dictCollection.val();
+										parentItemId = parentItem.val();
+										
+										getSelectSibling(dictCollectionId, parentItemId, 0);
 									}
 								});
 								item.on('mouseover', function(event){

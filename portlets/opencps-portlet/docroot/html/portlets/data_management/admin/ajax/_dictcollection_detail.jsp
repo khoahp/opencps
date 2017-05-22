@@ -55,7 +55,9 @@
 %>
 
 <c:if test="<%=collection == null %>">
-	<p class="breadcrumb bold"><liferay-ui:message key='dictcollection-statistic' /></p>
+	<p class="breadcrumb bold" title='<%=LanguageUtil.get(locale, "dictcollection-statistic") %>'>
+		<liferay-ui:message key='dictcollection-statistic' />
+	</p>
 	<p><span><liferay-ui:message key='dict-collection' />:</span> <%=DictCollectionLocalServiceUtil.countAll() %></p>
 	<p><span><liferay-ui:message key='tatal-dictitems' />:</span> <%=DictItemLocalServiceUtil.countAll() %></p>
 	<%
@@ -75,7 +77,10 @@
 <c:if test="<%=collection != null %>">
 	<div>
 		<p class="breadcrumb bold">
-			<a href="#"><liferay-ui:message key='dict-collection-mgt' /></a> >> <%=collection != null ? collection.getCollectionName(locale) : StringPool.BLANK %>
+			<a title='<%=LanguageUtil.get(locale, "dict-collection-mgt") %>' href="javascript:getDictCollectionDetail();" >
+				<liferay-ui:message key='dict-collection-mgt' />
+			</a>
+			<liferay-ui:message key='<%=" >> " + collection.getCollectionName(locale) %>' />
 		</p>
 	</div>
 
