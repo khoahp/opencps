@@ -83,6 +83,7 @@
 							%>
 								<li class="tree-node click-select-dict-item-type" 
 									id='<%=renderResponse.getNamespace() + "dictItemId_" + item.getDictItemId() %>'
+									title='<%=item.getItemName(locale) %>'
 								>
 									<aui:input 
 										name="dictItemLinked" 

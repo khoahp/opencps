@@ -316,7 +316,9 @@
 		loadingMask.show();
 		
 		// hide other component
-		$('.hide-when-edit-permission').slideUp('normal');
+		if ($('.hide-when-edit-permission')){
+			$('.hide-when-edit-permission').slideUp('normal');
+		}
 		
 		var portletURL = Liferay.PortletURL.createURL('<%= PortletURLFactoryUtil.create(request, WebKeys.DATA_MANAGEMENT_ADMIN_PORTLET, themeDisplay.getPlid(), PortletRequest.RENDER_PHASE) %>');
 		portletURL.setParameter("mvcPath", "/html/portlets/data_management/admin/ajax/_edit_permissions.jsp");
@@ -637,6 +639,9 @@
 		// show other component
 		if ($('.hide-when-add-collection')){
 			$('.hide-when-add-collection').slideDown('normal');
+		}
+		if ($('.hide-when-edit-permission')){
+			$('.hide-when-edit-permission').slideDown('normal');
 		}
 		
 		if (needConfirnChangeView){

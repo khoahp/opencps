@@ -61,13 +61,21 @@
 				<aui:row>
 					<aui:col width="50">
 						<aui:row>
-							<aui:input name="<%=DictCollectionDisplayTerms.COLLECTION_CODE %>" type="text" cssClass="input100" label="collection-sign">
+							<aui:input 
+								name="<%=DictCollectionDisplayTerms.COLLECTION_CODE %>" type="text" 
+								cssClass="input100" label="collection-sign"
+								title="<%=LanguageUtil.get(locale, \"collection-sign\") %>"
+							>
 								<aui:validator name="required"/>
 								<aui:validator name="maxLength">100</aui:validator>
 							</aui:input>
 						</aui:row>
 						<aui:row>
-							<aui:input name="<%=DictCollectionDisplayTerms.COLLECTION_NAME %>" cssClass="input100">
+							<aui:input 
+								name="<%=DictCollectionDisplayTerms.COLLECTION_NAME %>" 
+								cssClass="input100" 
+								title="<%=LanguageUtil.get(locale, \"collection-name\") %>"
+							>
 								<aui:validator name="required"/>
 								<aui:validator name="minLength">3</aui:validator>
 								<aui:validator name="maxLength">255</aui:validator>
@@ -81,6 +89,7 @@
 								id="<%=renderResponse.getNamespace() + DictCollectionDisplayTerms.DESCRIPTION %>"
 								name="<%=renderResponse.getNamespace() + DictCollectionDisplayTerms.DESCRIPTION %>" 
 								class="input100"
+								title="<%=LanguageUtil.get(locale, DictCollectionDisplayTerms.DESCRIPTION) %>"
 							><%=dictCollection != null ? dictCollection.getDescription() : "" %></textarea>
 						</aui:row>
 					</aui:col>
@@ -114,6 +123,7 @@
 														%>
 															<li class="tree-node click-select-dict-collection"
 																id='<%=renderResponse.getNamespace() + "collectionId_" + collection.getDictCollectionId() %>'
+																title="<%=collection.getDescription() %>"
 															>
 																<aui:input 
 																	name="dictCollectionsLinked" 
@@ -139,8 +149,8 @@
 				</aui:row>
 			</aui:fieldset>
 			<aui:fieldset>
-				<aui:button type="submit" name="submit" value="submit"/>
-				<aui:button type="submit" name="cancel" value="cancel"/>
+				<aui:button type="submit" name="submit" value="save" title='<%=LanguageUtil.get(locale, "save") %>'/>
+				<aui:button type="submit" name="cancel" value="cancel" title='<%=LanguageUtil.get(locale, "cancel") %>'/>
 			</aui:fieldset>	
 		</aui:form>
 	</div>
