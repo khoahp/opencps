@@ -34,7 +34,9 @@ import org.opencps.dossiermgt.util.ActorBean;
 import org.opencps.holidayconfig.util.HolidayCheckUtils;
 import org.opencps.jms.SyncServiceContext;
 import org.opencps.notificationmgt.message.SendNotificationMessage;
+import org.opencps.processmgt.model.ProcessOrder;
 import org.opencps.processmgt.model.WorkflowOutput;
+import org.opencps.processmgt.service.ProcessOrderLocalServiceUtil;
 import org.opencps.processmgt.service.WorkflowOutputLocalServiceUtil;
 import org.opencps.processmgt.util.OutDateStatus;
 import org.opencps.util.MessageBusKeys;
@@ -42,6 +44,8 @@ import org.opencps.util.PortletConstants;
 import org.opencps.util.PortletPropsValues;
 import org.opencps.util.WebKeys;
 
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -217,6 +221,30 @@ public class SyncFromBackOffice implements MessageListener {
 				msgNoti.put(MessageBusKeys.Message.NOTIFICATIONS, lsNotification);
 				
 				MessageBusUtil.sendMessage(MessageBusKeys.Destination.NotificationsListener, msgNoti);
+				
+				if (dossier.getOwnerOrganizationId() != 0) {
+					Message businessRegister = new Message();
+					
+					JSONObject registerContent = JSONFactoryUtil.createJSONObject();
+					
+					ProcessOrder order = ProcessOrderLocalServiceUtil.findBy_Dossier(dossier.getDossierId());
+
+					registerContent.put("companyId", dossier.getCompanyId());
+					registerContent.put("groupId", dossier.getGroupId());
+					registerContent.put("userId", dossier.getUserId());
+					registerContent.put("dossierTemplateId", dossier.getDossierTemplateId());
+					registerContent.put("serviceProcessId", order.getServiceProcessId());
+					registerContent.put("dossierId", dossier.getCompanyId());
+					registerContent.put("dossierStatus", dossier.getCompanyId());
+					registerContent.put("ownerOrganizationId", dossier.getOwnerOrganizationId());
+					
+					businessRegister.put("content", registerContent);
+
+					MessageBusUtil.sendMessage(
+							"opencps/businessregister/sync/destination", businessRegister);
+
+				}
+				
 				
 			}
 			catch (Exception e) {

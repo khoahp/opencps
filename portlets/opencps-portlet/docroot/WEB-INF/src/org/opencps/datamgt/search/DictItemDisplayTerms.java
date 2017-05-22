@@ -58,6 +58,8 @@ public class DictItemDisplayTerms extends DisplayTerms {
 	public static final String TREEINDEX = "treeIndex";
 
 	public static final String USER_ID = "userId";
+	
+	public static final String SIBLING = "sibling";
 
 	public DictItemDisplayTerms(PortletRequest portletRequest) {
 		super(

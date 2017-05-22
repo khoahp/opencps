@@ -18,6 +18,22 @@ import com.liferay.portal.service.ServiceContextFactory;
 
 public class DossierUtils {
 	
+	/**
+	 * @param dossierId
+	 * @return
+	 */
+	public static Dossier getDossierById(long dossierId) {
+		Dossier dossier = null;
+		
+		try {
+			dossier = DossierLocalServiceUtil.getDossier(dossierId);
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		
+		return dossier;
+	}
+	
 	/** 
 	 * Get DossierFile by OID
 	 * 

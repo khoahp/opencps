@@ -688,10 +688,10 @@
 
 		<!-- Data -->
 		<column name="ownerOrganizationId" type="long" />
-		<column name="dossierTemplateId" type="String"/>
-		<column name="serviceProcessId" type="String"/>
-		<column name="dossierId" type="int"/>
-		<column name="validStatus" type="String"/>
+		<column name="dossierTemplateId" type="long"/>
+		<column name="serviceProcessId" type="long"/>
+		<column name="dossierId" type="long"/>
+		<column name="validStatus" type="int"/>
 		
 		<!-- Finder -->
 		<finder name="OOI" return-type="BusinessRegister">

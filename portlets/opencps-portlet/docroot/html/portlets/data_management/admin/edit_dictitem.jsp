@@ -1,3 +1,4 @@
+
 <%
 /**
  * OpenCPS is the open source Core Public Services software
@@ -16,7 +17,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 %>
-<%@page import="org.opencps.datamgt.model.impl.DictCollectionImpl"%>
+
 <%@page import="org.opencps.datamgt.model.DictCollection"%>
 <%@page import="org.opencps.util.MessageKeys"%>
 <%@page import="org.opencps.datamgt.EmptyItemCodeException"%>
@@ -36,7 +37,9 @@
 <%@page import="com.liferay.portal.kernel.portlet.LiferayWindowState"%>
 <%@page import="javax.portlet.PortletRequest"%>
 <%@page import="com.liferay.portlet.PortletURLFactoryUtil"%>
-<%@page import="org.opencps.datamgt.service.DictItemLocalServiceUtil"%>
+<%@page import="org.opencps.datamgt.service.DictItemTypeLocalServiceUtil"%>
+<%@page import="org.opencps.datamgt.model.DictItemType"%>
+
 <%@ include file="../init.jsp"%>
 
 <portlet:actionURL var="updateDictItemURL" name="updateDictItem" />
@@ -55,11 +58,17 @@
 		_log.error(e);
 	}
 	
-	/* try{
-		dictItems = DictItemLocalServiceUtil.getDictItemsByDictCollectionId(dictCollectionId)
-	}catch(Exception e){
-		_log.error(e);
-	} */
+	List<DictItemType> itemsType = new ArrayList<DictItemType>();
+	String itemsTypeStr = StringPool.BLANK;
+	try {
+		itemsType = DictItemTypeLocalServiceUtil.getByDictItemId(dictItemId);
+		List<Long> itemsTypeId = new ArrayList<Long>();
+		for (DictItemType itemLinked : itemsType){
+			itemsTypeId.add(itemLinked.getDictItemLinkedId());
+		}
+		itemsTypeStr = StringUtil.merge(itemsTypeId);
+	} catch (Exception e){}
+	
 %>
 
 <liferay-ui:header
@@ -68,7 +77,7 @@
 />
 
 
-<div class="opencps-datamgt dictitem-wrapper opencps-bound-wrapper pd20 default-box-shadow"">
+<div class="opencps-datamgt dictitem-wrapper opencps-bound-wrapper pd20 default-box-shadow">
 	<div class="edit-form">
 		<liferay-ui:error exception="<%= EmptyItemCodeException.class %>" message="<%=EmptyItemCodeException.class.getName() %>" />
 		<liferay-ui:error exception="<%= OutOfLengthItemCodeException.class %>" message="<%=OutOfLengthItemCodeException.class.getName() %>" />
@@ -98,6 +107,7 @@
 				</aui:input>
 				
 				<aui:select name="<%=DictItemDisplayTerms.DICTCOLLECTION_ID %>" label="dict-collection">
+					<aui:option value="0"/>
 					<%
 						if(dictCollections != null){
 							for(DictCollection dictCollection : dictCollections){
@@ -115,9 +125,20 @@
 						<aui:option value="0"></aui:option>
 					</aui:select>
 				</div>
-				<aui:select name="<%=DictItemDisplayTerms.DICTVERSION_ID %>" label="dict-version">
+				<%-- <aui:select name="<%=DictItemDisplayTerms.DICTVERSION_ID %>" label="dict-version">
 					<aui:option value="0"></aui:option>
-				</aui:select>
+				</aui:select> --%>
+				
+				<!-- sibling -->
+				<div id='<%=renderResponse.getNamespace() + "sibling-container" %>'>
+					<aui:select name="<%=DictItemDisplayTerms.SIBLING %>" label="sibling">
+						<aui:option value="0"></aui:option>
+					</aui:select>
+				</div>
+				
+				<!-- dictItem linked -->
+				<label><liferay-ui:message key="dict-items-linked" /></label>
+				<div id='<%=renderResponse.getNamespace() + "itemLinkedContainer" %>' ></div>
 				
 			</aui:fieldset>
 			
@@ -128,14 +149,42 @@
 		</aui:form>
 	</div>
 </div>
+
+<!-- edit sibling -->
+<div class="opencps-datamgt dictitem-wrapper opencps-bound-wrapper pd20 default-box-shadow">
+	<aui:row>
+		<liferay-ui:message key="edit-sibling"/>
+	</aui:row>
+	<div class="edit-form">
+		<portlet:actionURL name="editDictItemSibling" var="editDictItemSiblingURL"/>
+		<aui:form action="<%=editDictItemSiblingURL.toString() %>" method="POST" name="fm_editSibling">
+			<aui:row>
+				<aui:select name="numberedSiblingMode">
+					<aui:option value="1" label="numbered-for-all-dictItems"/>
+					<aui:option value="2" label="numbered-for-all-dictItems-in-dictcollection" selected="true"/>
+				</aui:select>
+			</aui:row>
+			<aui:row>
+				<aui:select name="<%=DictItemDisplayTerms.DICTCOLLECTION_ID %>">
+					<aui:option value="0" label="select-dictcollection"/>
+					<%
+						List<DictCollection> collections = DictCollectionLocalServiceUtil.getDictCollections();
+						for (DictCollection collection : collections){
+							%>
+								<aui:option value="<%=collection.getDictCollectionId() %>" ><%=collection.getCollectionName(locale) %></aui:option>
+							<%
+						}
+					%>
+				</aui:select>
+			</aui:row>
+			
+			<aui:button type="submit"/>
+		</aui:form>
+	</div>
+</div>
+
 <aui:script>
 	AUI().ready('aui-base','liferay-portlet-url','aui-io',function(A){
-		
-		var portletURL = Liferay.PortletURL.createURL('<%= PortletURLFactoryUtil.create(request, WebKeys.DATA_MANAGEMENT_ADMIN_PORTLET, themeDisplay.getPlid(), PortletRequest.RENDER_PHASE) %>');
-		portletURL.setParameter("mvcPath", "/html/portlets/data_management/admin/select_dictitems.jsp");
-		portletURL.setWindowState("<%=LiferayWindowState.EXCLUSIVE.toString()%>"); 
-		portletURL.setPortletMode("normal");
-		
 		
 		var dictCollection = A.one('#<portlet:namespace/><%=DictItemDisplayTerms.DICTCOLLECTION_ID%>');
 		
@@ -143,26 +192,143 @@
 			
 			var dictCollectionId = dictCollection.val();
 			var dictItemId = '<%=dictItemId%>';
-			portletURL.setParameter("dictCollectionId", dictCollectionId);
-			portletURL.setParameter("dictItemId", dictItemId);
-			getDictItems(portletURL.toString());
+			
+			getDictItems(dictCollectionId, dictItemId);
+			
+			getDictItemsLinked(dictCollectionId, dictItemId);
+			
+			getSelectSibling(dictCollectionId, 0, dictItemId);
 			
 			dictCollection.on('change', function(){
-				
 				dictCollectionId = dictCollection.val();
 				
-				portletURL.setParameter("dictCollectionId", dictCollectionId);
-				portletURL.setParameter("dictItemId", dictItemId);
+				getDictItems(dictCollectionId, dictItemId);
 				
-				getDictItems(portletURL.toString());
+				getDictItemsLinked(dictCollectionId, dictItemId);
+				
+				getSelectSibling(dictCollectionId, 0, 0);
 			});
 		}
 	});
 	
-	Liferay.provide(window, 'getDictItems', function(url) {
+	Liferay.provide(window, 'getSelectSibling', function(dictCollectionId, parentItemId, dictItemId) {
 		var A = AUI();
+		
+		var getSelectSiblingURL = Liferay.PortletURL.createURL('<%= PortletURLFactoryUtil.create(request, WebKeys.DATA_MANAGEMENT_ADMIN_PORTLET, themeDisplay.getPlid(), PortletRequest.RENDER_PHASE) %>');
+		getSelectSiblingURL.setParameter("mvcPath", "/html/portlets/data_management/admin/ajax/_select_sibling.jsp");
+		getSelectSiblingURL.setWindowState("<%=LiferayWindowState.EXCLUSIVE.toString()%>"); 
+		getSelectSiblingURL.setPortletMode("normal");
+		
+		getSelectSiblingURL.setParameter("dictCollectionId", dictCollectionId);
+		getSelectSiblingURL.setParameter("parentItemId", parentItemId);
+		getSelectSiblingURL.setParameter("dictItemId", dictItemId);
+		
 		A.io.request(
-			url,
+			getSelectSiblingURL.toString(),
+			{
+			    dataType: 'json',
+			    data:{    	
+			                	
+			    },   
+			    on: {
+			        success: function(event, id, obj) {
+						var instance = this;
+						var siblings = instance.get('responseData');
+						var siblingsContainer = A.one("#<portlet:namespace/>sibling-container");
+						if(siblingsContainer){
+							siblingsContainer.html(siblings);
+						}
+					},
+			    	error: function(){}
+				}
+			}
+		);
+	},['aui-base','liferay-portlet-url','aui-io']);
+	
+	// use for toggle expand
+	var previousId = '';
+	
+	Liferay.provide(window, 'getDictItemsLinked', function(dictCollectionId, dictItemId) {
+		var A = AUI();
+		
+		var getItemsLinkedURL = Liferay.PortletURL.createURL('<%= PortletURLFactoryUtil.create(request, WebKeys.DATA_MANAGEMENT_ADMIN_PORTLET, themeDisplay.getPlid(), PortletRequest.RENDER_PHASE) %>');
+		getItemsLinkedURL.setParameter("mvcPath", "/html/portlets/data_management/admin/ajax/_select_dictitems_type.jsp");
+		getItemsLinkedURL.setWindowState("<%=LiferayWindowState.EXCLUSIVE.toString()%>"); 
+		getItemsLinkedURL.setPortletMode("normal");
+		
+		getItemsLinkedURL.setParameter("dictCollectionId", dictCollectionId);
+		getItemsLinkedURL.setParameter("dictItemId", dictItemId);
+		
+		A.io.request(
+			getItemsLinkedURL.toString(),
+			{
+			    dataType: 'json',
+			    data:{    	
+			                	
+			    },   
+			    on: {
+			        success: function(event, id, obj) {
+						var instance = this;
+						var itemsLinked = instance.get('responseData');
+						var itemsLinkedContainer = A.one("#<portlet:namespace/>itemLinkedContainer");
+						if(itemsLinkedContainer){
+							itemsLinkedContainer.html(itemsLinked);
+						}
+						
+						// set initial value
+						var itemsLinkedStr = '<%=itemsTypeStr %>';
+						var itemsLinkedArr = itemsLinkedStr.split(',');
+						var match = false;
+						A.all('#<portlet:namespace/>dictItemLinked').each(function(dictItem){
+							match = false;
+							for (var i = 0; i < itemsLinkedArr.length; i++) {
+						        if (itemsLinkedArr[i] == dictItem.attr('value')) {
+						        	match = true;
+						        	break;
+						        }
+						    }
+							if (!match){
+								dictItem.attr('value', '0');
+							}
+						});
+						
+						// toggle expand
+						for (var i = 0; i < $('.expand-anchor').length; i++){
+							var colId = $('.expand-anchor')[i].id.replace(/^.+dictCollectionId_/, '');
+							$('#<portlet:namespace/>expandable_' + colId).slideToggle( "normal");
+							A.one('#<portlet:namespace/>expand-anchor_dictCollectionId_' + colId).on('click', function(){
+								var id = this['_node']['id'].replace(/^.+dictCollectionId_/, '');
+								$('#<portlet:namespace/>expandable_' + id).slideToggle( "normal");
+								if (previousId.length > 0 && previousId != id){
+									$('#<portlet:namespace/>expandable_' + previousId).slideToggle("normal");
+								} 
+								if (previousId == id) {
+									previousId = '';
+								} else {
+									previousId = id;
+								}
+							});
+						}
+					},
+			    	error: function(){}
+				}
+			}
+		);
+	},['aui-base','liferay-portlet-url','aui-io']);
+	
+	Liferay.provide(window, 'getDictItems', function(dictCollectionId, dictItemId) {
+		var A = AUI();
+		
+		var portletURL = Liferay.PortletURL.createURL('<%= PortletURLFactoryUtil.create(request, WebKeys.DATA_MANAGEMENT_ADMIN_PORTLET, themeDisplay.getPlid(), PortletRequest.RENDER_PHASE) %>');
+		portletURL.setParameter("mvcPath", "/html/portlets/data_management/admin/select_dictitems.jsp");
+		portletURL.setWindowState("<%=LiferayWindowState.EXCLUSIVE.toString()%>"); 
+		portletURL.setPortletMode("normal");
+		
+		portletURL.setParameter("dictCollectionId", dictCollectionId);
+		portletURL.setParameter("dictItemId", dictItemId);
+		
+		A.io.request(
+			portletURL.toString(),
 			{
 			    dataType: 'json',
 			    data:{    	
@@ -173,11 +339,21 @@
 						var instance = this;
 						var dictItems = instance.get('responseData');
 						var parentItemContainer = A.one("#<portlet:namespace/>parentItem");
+						
 						if(parentItemContainer){
 							parentItemContainer.empty();
 							parentItemContainer.html(dictItems);
 						}
+						
+						var dictCollection = A.one('#<portlet:namespace/><%=DictItemDisplayTerms.DICTCOLLECTION_ID%>');
+						var parentItem = A.one('#<portlet:namespace/><%=DictItemDisplayTerms.PARENTITEM_ID%>');
+						
+						parentItem.on('change', function(){
+							dictCollectionId = dictCollection.val();
+							parentItemId = parentItem.val();
 							
+							getSelectSibling(dictCollectionId, parentItemId, 0);
+						});
 					},
 			    	error: function(){}
 				}

@@ -27,18 +27,19 @@ import org.opencps.datamgt.NoSuchDictItemException;
 import org.opencps.datamgt.NoSuchDictVersionException;
 import org.opencps.datamgt.model.DictCollection;
 import org.opencps.datamgt.model.DictItem;
+import org.opencps.datamgt.model.DictItemType;
 import org.opencps.datamgt.model.DictVersion;
 import org.opencps.datamgt.service.base.DictItemLocalServiceBaseImpl;
 import org.opencps.datamgt.util.DataMgtUtil;
 import org.opencps.util.PortletConstants;
 
-import com.itextpdf.text.pdf.PdfStructTreeController.returnType;
 import com.liferay.counter.service.CounterLocalServiceUtil;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.service.ServiceContext;
 
 /**
@@ -221,6 +222,40 @@ public class DictItemLocalServiceImpl extends DictItemLocalServiceBaseImpl {
 
 		return dictItemPersistence.update(dictItem);
 	}
+	
+	public DictItem addDictItem(long userId, long dictCollectionId,
+			String itemCode, Map<Locale, String> itemNameMap,
+			Map<Locale, String> itemDescriptionMap, long parentId,
+			long sibling, int status, ServiceContext serviceContext)
+			throws SystemException, NoSuchDictItemException {
+
+		long dictItemId = CounterLocalServiceUtil.increment(DictItem.class
+				.getName());
+
+		DictItem dictItem = dictItemPersistence.create(dictItemId);
+
+		Date now = new Date();
+		String treeIndex = getTreeIndex(dictItemId, parentId);
+		int level = StringUtil.split(treeIndex).length;
+
+		dictItem.setCompanyId(serviceContext.getCompanyId());
+		dictItem.setCreateDate(now);
+		dictItem.setDictCollectionId(dictCollectionId);
+		dictItem.setGroupId(serviceContext.getScopeGroupId());
+		dictItem.setIssueStatus(PortletConstants.INUSE);
+		dictItem.setItemCode(itemCode);
+		dictItem.setItemNameMap(itemNameMap);
+		dictItem.setItemDescriptionMap(itemDescriptionMap);
+		dictItem.setModifiedDate(now);
+		dictItem.setParentItemId(parentId);
+		dictItem.setTreeIndex(treeIndex);
+		dictItem.setUserId(userId);
+		dictItem.setSibling(sibling);
+		dictItem.setLevel(level);
+		dictItem.setIssueStatus(status);
+
+		return dictItemPersistence.update(dictItem);
+	}
 
 	public int countByDictCollectionId(long dictCollectionId)
 		throws SystemException {
@@ -246,13 +281,20 @@ public class DictItemLocalServiceImpl extends DictItemLocalServiceBaseImpl {
 	 * @throws NoSuchDictItemException
 	 *             - Loi khong tim thay DictItem voi dictItemId tuong ung
 	 */
-	public void deleteDictItemById(long dictItemId)
-		throws SystemException, NoSuchDictItemException {
+	public void deleteDictItemById(long dictItemId) throws SystemException,
+			NoSuchDictItemException {
 
-		List<DictItem> dictItems =
-			dictItemPersistence.findByTreeIndex(dictItemId + StringPool.PERIOD);
+		List<DictItem> dictItems = dictItemPersistence
+				.findByTreeIndex(dictItemId + StringPool.PERIOD);
 		if (dictItems == null || dictItems.isEmpty()) {
 			dictItemPersistence.remove(dictItemId);
+			
+			// delete dict items types
+			List<DictItemType> types = dictItemTypePersistence
+					.findByDictItemId(dictItemId);
+			for (DictItemType DictItemType : types) {
+				dictItemTypePersistence.remove(DictItemType);
+			}
 		}
 	}
 
@@ -596,6 +638,40 @@ public class DictItemLocalServiceImpl extends DictItemLocalServiceBaseImpl {
 		dictItem.setDictVersionId(dictVersionId);
 		return dictItemPersistence.update(dictItem);
 	}
+	
+	public DictItem updateDictItem(long dictItemId, long dictCollectionId,
+			long dictVersionId, String itemCode,
+			Map<Locale, String> itemNameMap,
+			Map<Locale, String> itemDescriptionMap, long parentItemId,
+			long sibling, int status, ServiceContext serviceContext)
+			throws NoSuchDictItemException, SystemException,
+			NoSuchDictVersionException {
+
+		DictItem dictItem = dictItemPersistence.findByPrimaryKey(dictItemId);
+
+		Date now = new Date();
+
+		String treeIndex = getTreeIndex(dictItemId, parentItemId);
+
+		dictItem.setCompanyId(serviceContext.getCompanyId());
+		dictItem.setCreateDate(now);
+		dictItem.setDictCollectionId(dictCollectionId);
+		dictItem.setGroupId(serviceContext.getScopeGroupId());
+		dictItem.setIssueStatus(dictVersionId > 0 ? PortletConstants.DRAFTING
+				: PortletConstants.INUSE);
+		dictItem.setItemCode(itemCode);
+		dictItem.setItemNameMap(itemNameMap);
+		dictItem.setItemDescriptionMap(itemDescriptionMap);
+		dictItem.setModifiedDate(now);
+		dictItem.setParentItemId(parentItemId);
+		dictItem.setTreeIndex(treeIndex);
+		dictItem.setUserId(serviceContext.getUserId());
+		dictItem.setDictVersionId(dictVersionId);
+		dictItem.setSibling(sibling);
+		dictItem.setIssueStatus(status);
+		
+		return dictItemPersistence.update(dictItem);
+	}
 
 	public DictItem getDictItemByCode(String itemCode)
 		throws PortalException, SystemException {
@@ -633,5 +709,35 @@ public class DictItemLocalServiceImpl extends DictItemLocalServiceBaseImpl {
 		return dictItemPersistence.findByF_TreeIndex_Status(treeIndex +
 			StringPool.PERIOD + StringPool.PERCENT, issueStatus);
 	}
+	
+	/**
+	 * @param dictCollectionId
+	 * @param parentItemId
+	 * @return
+	 * @throws SystemException
+	 */
+	public List<DictItem> getBy_D_P(long dictCollectionId, long parentItemId,
+			int start, int end, OrderByComparator orderBy)
+			throws SystemException {
+		return dictItemPersistence.findByDictCollectionId_ParentItemId(
+				dictCollectionId, parentItemId, start, end, orderBy);
+	}
 
+	public List<DictItem> searchBy_G_D_N_L_S(long groupId, long collectionId,
+			String itemName, long itemLinked, int status, int start, int end)
+			throws SystemException {
+		return dictItemFinder.searchBy_G_D_N_L_S(groupId, collectionId,
+				itemName, itemLinked, status, start, end);
+	}
+
+	public int countBy_G_D_N_L_S(long groupId, String itemName,
+			long collectionId, long itemLinked, int status)
+			throws SystemException {
+		return dictItemFinder.countBy_G_D_N_L_S(groupId, collectionId,
+				itemName, itemLinked, status);
+	}
+
+	public int countAll() throws SystemException {
+		return dictItemPersistence.countAll();
+	}
 }

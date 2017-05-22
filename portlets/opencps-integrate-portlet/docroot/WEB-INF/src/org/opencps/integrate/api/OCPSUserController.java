@@ -4,6 +4,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.UUID;
 
+import javax.mail.internet.InternetAddress;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
@@ -20,7 +21,10 @@ import org.opencps.accountmgt.model.Business;
 import org.opencps.accountmgt.model.Citizen;
 import org.opencps.accountmgt.service.BusinessLocalServiceUtil;
 import org.opencps.accountmgt.service.CitizenLocalServiceUtil;
+import org.opencps.integrate.dao.InvalidOldPassException;
+import org.opencps.integrate.dao.model.ForgotPass;
 import org.opencps.integrate.dao.model.IntegrateAPI;
+import org.opencps.integrate.dao.service.ForgotPassLocalServiceUtil;
 import org.opencps.integrate.dao.service.IntegrateAPILocalServiceUtil;
 import org.opencps.integrate.utils.APIUtils;
 import org.opencps.integrate.utils.AccountModel;
@@ -28,12 +32,14 @@ import org.opencps.integrate.utils.DossierUtils;
 import org.opencps.integrate.utils.MessageBusUtil;
 import org.opencps.integrate.utils.UserUtils;
 
+import com.liferay.mail.service.MailServiceUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.mail.MailMessage;
 import com.liferay.portal.kernel.util.PrefsPropsUtil;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.StringPool;
@@ -50,12 +56,162 @@ public class OCPSUserController {
 	
 	public static int GROUPID = 20182;
 	public static final String PORTAL_URL = "http://202.151.168.104:2180";
+	
+	@GET
+	@Path("/forgot/user/{authcode: .*}/verify")
+	@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
+	public Response verifyAuthCode(@PathParam("authcode") String authcode) {
+
+		JSONObject resp = JSONFactoryUtil.createJSONObject();
+
+		try {
+			
+			boolean valid = validateAuthCode(authcode);
+			
+			if (valid) {
+				resp.put("Result", "Validate");
+
+				return Response.status(200).entity(resp.toString()).build();
+
+			} else {
+				resp.put("Result", "ExpriedDate");
+
+				return Response.status(404).entity(resp.toString()).build();
+
+			}
+			
+
+		} catch (Exception e) {
+
+			resp.put("Result", "Fail");
+
+			return Response.status(404).entity(resp.toString()).build();
+		}
+
+	}
 
 	@PUT
-	@Path("/users")
+	@Path("/users/{userid: .*}/password")
+	@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
+	public Response changePassword(@HeaderParam("apikey") String apikey,
+			@Context HttpServletRequest request, String body,
+			@PathParam("userid") long userid) {
+
+		JSONObject resp = JSONFactoryUtil.createJSONObject();
+		
+		
+		ServiceContext context = DossierUtils.getServletContext(request);
+
+		OCPSAuth auth = new OCPSAuth();
+		
+		IntegrateAPI api = auth.auth(apikey);
+
+		if (Validator.isNotNull(api)) {
+
+			try {
+				JSONObject input = JSONFactoryUtil.createJSONObject(body);
+
+				User user = UserLocalServiceUtil.getUser(userid);
+				
+				String oldpass = input.getString("oldpass");
+				
+				String newpass = input.getString("newpass");
+				
+				User basicLogin = IntegrateAPILocalServiceUtil.basicLogin(
+						context.getCompanyId(), user.getEmailAddress(),
+						oldpass);
+				
+				if (Validator.isNull(basicLogin)) {
+					throw new InvalidOldPassException();
+				}
+				
+				UserLocalServiceUtil.updatePassword(userid, newpass, newpass, false);
+				
+				//UserServiceUtil.updatePassword(userid, newpass, newpass, false);
+				
+				resp.put("Result", "Update");
+				
+				return Response.status(200).entity(resp.toString()).build();
+			} catch (Exception e) {
+				
+				resp.put("Result", "Error");
+				
+				if (e instanceof InvalidOldPassException) {
+					resp.put("ErrorMessage",
+							APIUtils.getLanguageValue("invalid-old-pass-input"));
+
+				} else {
+					resp.put("ErrorMessage",
+							APIUtils.getLanguageValue("invalid-userid"));
+
+				}
+				
+				_log.info(e);
+				
+				return Response.status(404).entity(resp.toString()).build();
+			}
+
+		} else {
+			resp.put("Result", "Error");
+			resp.put("ErrorMessage",
+					APIUtils.getLanguageValue("you-dont-have-auth"));
+			// Not validate
+			return Response.status(401).entity(resp.toString()).build();
+		}
+	}
+
+	@PUT
+	@Path("/users/{authcode: .*}/reset")
+	@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
+	public Response resetPassword(@Context HttpServletRequest request, String body,
+			@PathParam("authcode") String authcode) {
+		
+		JSONObject resp = JSONFactoryUtil.createJSONObject();
+		
+		boolean valid = validateAuthCode(authcode);
+		
+		if (valid) {
+			
+			try {
+				
+				JSONObject obj = JSONFactoryUtil.createJSONObject(body);
+
+				ForgotPass forgot = ForgotPassLocalServiceUtil
+						.getByVerifyCode(authcode);
+
+				UserLocalServiceUtil.updatePassword(forgot.getUserid(),
+						obj.getString("newpass"), obj.getString("newpass"),
+						false);
+				
+				ForgotPassLocalServiceUtil.inuse(authcode);
+				
+				resp.put("Result", "Update");
+				
+				return Response.status(200).entity(resp.toString()).build();
+
+			} catch (Exception e) {
+				resp.put("Result", "Update");
+				
+				return Response.status(200).entity(resp.toString()).build();
+
+			}
+			
+
+		} else {
+			resp.put("Result", "InvalidAuthCode");
+			
+			return Response.status(200).entity(resp.toString()).build();
+		}
+ 		
+	}
+
+
+	@PUT
+	@Path("/users/{userid: .*}")
 	@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
 	public Response updateUser(@HeaderParam("apikey") String apikey,
-			@Context HttpServletRequest request, String body) {
+			@Context HttpServletRequest request, String body,
+			@PathParam("userid") long userid) {
 
 		JSONObject resp = JSONFactoryUtil.createJSONObject();
 
@@ -185,6 +341,7 @@ public class OCPSUserController {
 				resp.put("WardName", am.getWardName());
 				resp.put("ContactTelNo", am.getContactTelNo());
 				resp.put("ContactEmail", am.getContactEmail());
+				resp.put("Address", am.getAddress());
 
 				return Response.status(200).entity(resp.toString()).build();
 
@@ -420,7 +577,7 @@ public class OCPSUserController {
 
 				resp.put("Result", "NoExist ");
 
-				return Response.status(401).entity(resp.toString()).build();
+				return Response.status(404).entity(resp.toString()).build();
 			} else {
 
 				UserUtils userUtil = new UserUtils();
@@ -429,21 +586,71 @@ public class OCPSUserController {
 
 				if (Validator.isNotNull(acc)) {
 
-					String fromName = PrefsPropsUtil.getString(
+					/*
+					 * String fromName = PrefsPropsUtil.getString(
 							user.getCompanyId(),
 							PropsKeys.ADMIN_EMAIL_FROM_NAME);
 
+					*/
 					String fromAddress = PrefsPropsUtil.getString(
 							user.getCompanyId(),
 							PropsKeys.ADMIN_EMAIL_FROM_ADDRESS);
 
+					String verifyCode = UserUtils.generatorVerifyCode();
+					
+					ForgotPass forgot = UserUtils.createVerifyCode(verifyCode, user.getUserId());
+/*
 					UserLocalServiceUtil.sendPassword(context.getCompanyId(),
 							user.getEmailAddress(), fromName, fromAddress,
 							StringPool.BLANK, StringPool.BLANK, context);
+*/
+					if (Validator.isNotNull(forgot)) {
+						try {
+							InternetAddress toAdd = new InternetAddress(email);
+							InternetAddress fromAdd = new InternetAddress(fromAddress);
+							
+							MailMessage mailMessage = new MailMessage();
+							
+							mailMessage.setTo(toAdd);
+							mailMessage.setFrom(fromAdd);
+							mailMessage.setSubject(APIUtils.getLanguageValue("request-to-change-pass"));
+							
+							StringBuffer sb = new StringBuffer();
+							
+							sb.append(APIUtils.getLanguageValue("verify-code-to-reset-pass-is"));
+							sb.append(" : </br>");
+							sb.append(APIUtils.getLanguageValue(forgot.getVerifyCode()));
+							sb.append(" : </br>");
+							sb.append(APIUtils.getLanguageValue("date-to-expried"));
+							sb.append(APIUtils.getLanguageValue(" : "));
+							sb.append(APIUtils.formatDateTime(forgot.getExpiredDate()));
+							sb.append(" : </br>");
+							sb.append(APIUtils.getLanguageValue("Thanks!"));
 
-					resp.put("Result", "Success");
+							mailMessage.setBody(sb.toString());
+							
+							mailMessage.setHTMLFormat(true);
+							
+							MailServiceUtil.sendEmail(mailMessage);
 
-					return Response.status(200).entity(resp.toString()).build();
+							resp.put("Result", "Success");
+
+							return Response.status(200).entity(resp.toString()).build();
+							
+						} catch (Exception e) {
+							resp.put("Result", "Invalid-email");
+
+							return Response.status(200).entity(resp.toString()).build();
+
+						}
+
+					} else {
+						resp.put("Result", "Error");
+
+						return Response.status(200).entity(resp.toString()).build();
+
+					}
+					
 				} else {
 					resp.put("Result", "NoExist ");
 
@@ -456,6 +663,24 @@ public class OCPSUserController {
 			resp.put("Result", "Error");
 			return Response.status(404).entity(resp.toString()).build();
 		}
+	}
+	
+	private boolean validateAuthCode(String authCode) {
+		boolean valid = false;
+		try {
+			ForgotPass forgot = ForgotPassLocalServiceUtil.getByVerifyCode(authCode);
+			
+			Date now = new Date();
+			
+			if (forgot.getInused() && now.before(forgot.getExpiredDate())) {
+				valid = true;
+			} 
+
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		
+		return valid;
 	}
 
 	private Log _log = LogFactoryUtil.getLog(OCPSUserController.class);

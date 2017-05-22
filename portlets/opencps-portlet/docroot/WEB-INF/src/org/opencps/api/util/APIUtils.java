@@ -126,6 +126,34 @@ public class APIUtils {
 
 	}
 	
+	public static ProcessWorkflow getProcessWorkflow(long dossierId, String actionCode) {
+
+		Dossier dossier = null;
+
+		ProcessWorkflow processWorkflow = null;
+
+		ProcessOrder processOrder = null;
+
+			try {
+				dossier = DossierLocalServiceUtil.getDossier(dossierId);
+
+
+					processOrder = ProcessOrderLocalServiceUtil
+							.getProcessOrder(dossier.getDossierId(), 0);
+
+					processWorkflow = ProcessWorkflowLocalServiceUtil
+							.getProcessWorkflowByActionCodeAndPreStep(
+									actionCode, processOrder.getProcessStepId());
+			
+
+			} catch (Exception e) {
+
+			}
+		
+		return processWorkflow;
+
+	}
+	
 	/**
 	 * @param processWorkflow
 	 * @return

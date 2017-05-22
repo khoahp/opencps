@@ -18,4 +18,4 @@
 
 <portlet:defineObjects />
 
-This is the <b>Opencps Integrate</b> portlet.
+This is the <b>Opencps Integrate</b> portlet. Update 

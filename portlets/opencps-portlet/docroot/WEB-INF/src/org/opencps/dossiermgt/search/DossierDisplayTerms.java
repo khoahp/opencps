@@ -51,6 +51,7 @@ public class DossierDisplayTerms extends DisplayTerms {
 	public static final String SERVICE_CONFIG_ID = "serviceConfigId";
 	public static final String SERVICE_INFO_ID = "serviceInfoId";
 	public static final String DOSSIER_TEMPLATE_ID = "dossierTemplateId";
+	public static final String DOSSIER_TEMPLATE_NO = "dossierTemplateNo";
 	public static final String TEMPLATE_FILE_NO = "templateFileNo";
 	public static final String GOVAGENCY_ORGANIZATION_ID =
 		"govAgencyOrganizationId";
