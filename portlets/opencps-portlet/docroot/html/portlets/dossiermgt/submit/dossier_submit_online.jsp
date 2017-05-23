@@ -228,7 +228,9 @@
 					method : 'GET',
 					data:{
 						"<portlet:namespace />govAgencyCode" : govAgencyCode,
-						"<portlet:namespace />serviceInfoId" : '<%= serviceInfoIdToDetail %>'
+						"<portlet:namespace />serviceInfoId" : '<%= serviceInfoIdToDetail %>',
+						"<portlet:namespace />serviceConfigId" : '<%= serviceConfigId %>'
+							
 					},	
 					on: {
 						success: function(event, id, obj) {
