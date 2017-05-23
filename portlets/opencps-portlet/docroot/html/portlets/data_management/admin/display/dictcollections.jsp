@@ -1249,7 +1249,7 @@
 												dictCollectionId = dictCollection.val();
 												parentItemId = parentItem.val();
 												
-												getSelectSibling(dictCollectionId, parentItemId, 0);
+												getSelectSibling(dictCollectionId, parentItemId, selectedDictItemId);
 											}
 										}
 									}
