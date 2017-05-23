@@ -1,3 +1,6 @@
+<%@page import="org.opencps.dossiermgt.service.DossierTemplateLocalServiceUtil"%>
+<%@page import="org.opencps.dossiermgt.service.persistence.DossierUtil"%>
+<%@page import="org.opencps.dossiermgt.model.DossierTemplate"%>
 <%@page import="org.opencps.dossiermgt.service.ServiceOptionLocalServiceUtil"%>
 <%@page import="org.opencps.dossiermgt.model.ServiceOption"%>
 <%@page import="java.util.List"%>
@@ -34,8 +37,10 @@
 <%
 	String govAgencyCode = ParamUtil.getString(request, "govAgencyCode");
 	long serviceInfoId = ParamUtil.getLong(request, "serviceInfoId");
+	long selServiceConfigId = ParamUtil.getLong(request, "selServiceConfigId");
 	
 	List<ServiceOption> serviceOpts = ServiceOptionLocalServiceUtil.searchServiceOption(serviceInfoId, govAgencyCode);
+	
 %>
 
 <aui:select name="serviceConfigId" label="dossier-template" cssClass="submit-online input100">
@@ -43,8 +48,15 @@
 		for (ServiceOption so : serviceOpts) {
 	%>
 		<c:if test="<%= Validator.isNotNull(so) %>">
-			<aui:option value="<%= so.getServiceConfigId() %>">
-				<%= so.getOptionName() %> (<%= so.getOptionCode() %>)
+			<aui:option value="<%= so.getServiceConfigId() %>" selected="<%= so.getServiceConfigId() == selServiceConfigId ? true : false %>">
+				<%
+					DossierTemplate dt = _getDossierTemplate(so.getDossierTemplateId());
+				%>
+				
+				<c:if test="<%= Validator.isNotNull(dt) %>">
+					<%= dt.getTemplateName() %>
+				</c:if>
+				
 			</aui:option>
 		</c:if>
 	<%
@@ -52,3 +64,15 @@
 	%>
 </aui:select>
 
+
+<%!
+	private DossierTemplate _getDossierTemplate(long dossierTemplateId) {
+		DossierTemplate dt = null;
+		
+		try {
+			dt = DossierTemplateLocalServiceUtil.fetchDossierTemplate(dossierTemplateId);
+		} catch (Exception e) {}
+		
+		return dt;
+	}
+%>
