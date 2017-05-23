@@ -155,7 +155,7 @@
 			<aui:option value=""><liferay-ui:message key="select-working-unit"/></aui:option>
 			<%
 				if(mainJobPos != null){
-					WorkingUnit workingUnit = null;
+					/* WorkingUnit workingUnit = null;
 					try{
 						workingUnit = WorkingUnitLocalServiceUtil.getFirstWorkingUnitByJobPosId(mainJobPos.getJobPosId());
 					}catch(Exception e){
@@ -164,7 +164,8 @@
 					
 					if(workingUnit != null){
 						selectedMainWorkingUnitId = workingUnit.getWorkingunitId();
-					}
+					} */
+					selectedMainWorkingUnitId = mainJobPos.getWorkingUnitId();
 				}
 				if(mappingWorkingUnitId > 0){
 					List<WorkingUnit> workingUnitsTemp = UserMgtUtil.getWorkingUnitsForEmployess(scopeGroupId, mappingWorkingUnitId);
@@ -238,7 +239,7 @@
 								<%
 
 									if(jobPos != null){
-										WorkingUnit workingUnit = null;
+										/* WorkingUnit workingUnit = null;
 										try{
 											workingUnit = WorkingUnitLocalServiceUtil.getFirstWorkingUnitByJobPosId(jobPos.getJobPosId());
 										}catch(Exception e){
@@ -248,7 +249,8 @@
 										if(workingUnit != null){
 											selectedWorkingUnitId = workingUnit.getWorkingunitId();
 											
-										}
+										} */
+										selectedWorkingUnitId = jobPos.getWorkingUnitId();
 									}
 									if(mappingWorkingUnitId > 0){
 										List<WorkingUnit> workingUnitsTemp = UserMgtUtil.getWorkingUnitsForEmployess(scopeGroupId, mappingWorkingUnitId);

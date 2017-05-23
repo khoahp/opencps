@@ -173,7 +173,10 @@ public class WorkingUnitLocalServiceImpl
 			org.setParentOrganizationId(OrganizationConstants
 					.DEFAULT_PARENT_ORGANIZATION_ID);
 		} else {
-			org.setParentOrganizationId(parentWorkingUnitId);
+			WorkingUnit parentWorkingUnit = workingUnitPersistence
+					.findByPrimaryKey(parentWorkingUnitId);
+
+			org.setParentOrganizationId(parentWorkingUnit.getMappingOrganisationId());
 		}
 		
 		OrganizationLocalServiceUtil.updateOrganization(org);
