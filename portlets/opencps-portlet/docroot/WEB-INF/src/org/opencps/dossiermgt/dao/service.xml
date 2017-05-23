@@ -200,9 +200,21 @@
 			<finder-column name="serviceInfoId" />
 			<finder-column name="groupId" />
 		</finder>
+		
 		<finder name="G_SL" return-type="Collection">
 			<finder-column name="groupId"></finder-column>
 			<finder-column name="serviceLevel"></finder-column>
+		</finder>
+		
+		<finder return-type="ServiceConfig" name="G_S_G_T">
+			<finder-column name="groupId" />
+			<finder-column name="serviceInfoId" />
+			<finder-column name="govAgencyCode" />
+			<finder-column name="dossierTemplateId" />
+		</finder>
+
+		<finder name="S_P" return-type="ServiceConfig">
+			<finder-column name="serviceProcessId"/>
 		</finder>
 
 	</entity>

@@ -100,7 +100,7 @@ public class BusinessRegisterLocalServiceImpl extends
 		return businessRegister;
 	}
 
-	public BusinessRegister getBusinessRegister(long ownerOrganizationId)
+	public BusinessRegister getBusinessRegisterByOrgId(long ownerOrganizationId)
 			throws PortalException, SystemException {
 		return businessRegisterPersistence.findByOOI(ownerOrganizationId);
 	}

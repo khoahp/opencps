@@ -52,6 +52,11 @@ import com.liferay.portal.service.ServiceContext;
 public class ServiceConfigLocalServiceImpl extends
 		ServiceConfigLocalServiceBaseImpl {
 
+	public ServiceConfig getByServiceProcess(long serviceProcessId)
+			throws PortalException, SystemException {
+		return serviceConfigPersistence.findByS_P(serviceProcessId);
+	}
+	
 	/**
 	 * @param serviceInfoId
 	 * @param serviceAdministrationIndex
@@ -496,5 +501,13 @@ public class ServiceConfigLocalServiceImpl extends
 	
 	public List<ServiceConfig> getServiceConfigsByS_G(long serviceInfoId, long groupId) throws SystemException {
 		return serviceConfigPersistence.findByS_G(serviceInfoId, groupId);
+	}
+	
+	public ServiceConfig getServiceConfigsByG_S_G_T(long groupId,
+			long serviceInfoId, String govAgencyCode, long dossierTemplateId)
+			throws SystemException, PortalException {
+		
+		return serviceConfigPersistence.findByG_S_G_T(groupId, serviceInfoId,
+				govAgencyCode, dossierTemplateId);
 	}
 }

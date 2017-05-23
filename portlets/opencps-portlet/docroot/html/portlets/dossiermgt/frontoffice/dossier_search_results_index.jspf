@@ -97,13 +97,6 @@ for (com.liferay.portal.kernel.search.Document document : documents) {
 	Dossier dossier = DossierLocalServiceUtil.getDossier(dossierId);
 	
 	dossierIndexResults.add(dossier);
-	
-	// lay gia tri tuong ung voi key duoc danh index, va luu vao mang de truy xuat nhanh
-	for (String keyPatterns : dynamicFormKeyPatterns) {
-		String[] keys = StringUtil.split(keyPatterns, StringPool.POUND);
-		
-		mapDynamicFormValues.put(dossierId + StringPool.UNDERLINE + keys[0], GetterUtil.getString(document.get(keys[0])));
-	}
 }
 
 searchContainer.setResults(dossierIndexResults);
