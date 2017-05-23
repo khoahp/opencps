@@ -75,6 +75,7 @@ public class UserNotificationHandler extends BaseUserNotificationHandler {
 			dossierId = jsonObject.getLong("dossierId");
 			actionName = jsonObject.getString("actionName");
 			receptionNo = jsonObject.getString("receptionNo");
+			note  = jsonObject.getString("note");
 
 			if (receptionNo.length() > 0) {
 				dossierNo = receptionNo;
