@@ -4,7 +4,7 @@
  "http://www.liferay.com/dtd/liferay-user-notification-definitions_6_2_0.dtd">
 <user-notification-definitions>
 	<definition>
-		<notification-type>${org.opencps.notificationmgt.engine.DockBarUserNotificationHandler.PORTLET_ID}</notification-type>
+		<notification-type>${org.opencps.notificationmgt.engine.UserNotificationHandler.PORTLET_ID}</notification-type>
 		<description>receive-a-notification-when-administrator-triggered</description>
 		<delivery-type>
 			<name>email</name>
