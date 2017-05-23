@@ -139,10 +139,9 @@ public class DataMamagementPortlet extends MVCPortlet {
 		long dictItemId = ParamUtil.getLong(actionRequest,
 				DictItemDisplayTerms.DICTITEM_ID, 0L);
 		String redirectURL = ParamUtil.getString(actionRequest, "redirectURL");
+		
 		try {
-			DictItem item = DictItemLocalServiceUtil.getDictItem(dictItemId);
-			item.setIssueStatus(2);
-			DictItemLocalServiceUtil.updateDictItem(item);
+			_changeStatusItemTreeToNoUse(dictItemId);
 		} catch (Exception e) {
 			SessionErrors.add(actionRequest,
 					MessageKeys.DATAMGT_SYSTEM_EXCEPTION_OCCURRED);
@@ -151,6 +150,24 @@ public class DataMamagementPortlet extends MVCPortlet {
 			if (Validator.isNotNull(redirectURL)) {
 				actionResponse.sendRedirect(redirectURL);
 			}
+		}
+	}
+	
+	private void _changeStatusItemTreeToNoUse(long itemId)
+			throws NoSuchDictItemException, PortalException, SystemException {
+		
+		DictItem item = DictItemLocalServiceUtil.getDictItem(itemId);
+		item.setIssueStatus(2);
+		DictItemLocalServiceUtil.updateDictItem(item);
+
+		List<DictItem> children = DictItemLocalServiceUtil
+				.getDictItemsByParentItemId(itemId);
+		
+		for (DictItem child : children) {
+			child.setIssueStatus(2);
+			DictItemLocalServiceUtil.updateDictItem(child);
+			
+			_changeStatusItemTreeToNoUse(child.getDictItemId());
 		}
 	}
 

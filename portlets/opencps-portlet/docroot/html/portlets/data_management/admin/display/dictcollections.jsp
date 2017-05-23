@@ -959,8 +959,10 @@
 								node.on('click', function(){
 									
 									// todo check loggin
+									console.log('check loggined');
 									if (!Liferay.ThemeDisplay.isSignedIn()){
 										alert(Liferay.Language.get('please-login-and-try-again'));
+										console.log('not logined');
 										return;
 									} else {
 										console.log('logined');
