@@ -30,9 +30,17 @@
 	
 	DictCollection collection = null;
 	List<DictItem> dictItems = new ArrayList<DictItem>();
+	DictItem parentItem = null;
 	
 	try{
 		collection = DictCollectionLocalServiceUtil.getDictCollection(collectionId);
+	}catch(Exception e){
+		_log.error(e);
+	}
+	try{
+		if (dictItem != null){
+			parentItem = DictItemLocalServiceUtil.getDictItem(dictItem.getParentItemId());
+		}
 	}catch(Exception e){
 		_log.error(e);
 	}
@@ -51,7 +59,25 @@
 %>
 
 <p class="breadcrumb bold">
-	<liferay-ui:message key='dict-collection' /> > <%=collection != null ? collection.getCollectionName() : StringPool.BLANK %> >
+	<a 
+		title='<%=LanguageUtil.get(locale, "dict-collection-mgt") %>' 
+		href="javascript:getDictCollectionDetail();"
+	>
+		<liferay-ui:message key='dict-collection-mgt' />
+	</a>
+	<a 
+		title='<%=(collection == null) ? "" : collection.getCollectionName(locale) %>' 
+		href="javascript:getDictCollectionDetail(selectedDictCollectionId);"
+	>
+		<liferay-ui:message key='<%= (collection == null) ? " >> " : " >> " + collection.getCollectionName(locale) + " >> "%>' />
+	</a>
+	<a 
+		title='<%=(collection == null) ? "" : collection.getCollectionName(locale) %>' 
+		href="javascript:getDictItemsToolbar(selectedDictCollectionId);"
+	>
+		<liferay-ui:message key='list' />
+	</a>
+	<liferay-ui:message key='<%=" >> " %>' />
 	<liferay-ui:message key='<%= (dictItem == null) ? "add-dictitem" : "update-dictitem" %>' />
 	<liferay-ui:message key='<%= (dictItem == null) ? StringPool.BLANK : dictItem.getItemName(locale) %>' />
 </p>
@@ -68,68 +94,69 @@
 			<aui:fieldset>
 				<aui:row>
 					<aui:col width="50">
-						<aui:input name="<%=DictItemDisplayTerms.ITEM_CODE%>" type="text" cssClass="input20" label="item-code">
-							<aui:validator name="required"/>
-							<aui:validator name="maxLength">100</aui:validator> 
-						</aui:input>
-					</aui:col>
-					
-					<aui:col width="50">
-						<aui:input name="<%=DictItemDisplayTerms.ITEM_NAME %>" cssClass="input80" label="item-name">
-							<aui:validator name="required"/>
-							<aui:validator name="minLength">3</aui:validator>
-							<aui:validator name="maxLength">255</aui:validator>
-						</aui:input>
-					</aui:col>
-				</aui:row>
-				<aui:row>
-					<aui:col width="50">
-						<aui:select name="<%=DictItemDisplayTerms.DICTCOLLECTION_ID %>" label="dict-collection">
-							<aui:option value="<%=collectionId %>"><%=collection.getCollectionName(locale) %></aui:option>
-						</aui:select>
-					</aui:col>
-					
-					<aui:col width="50">
-						<div id='<%=renderResponse.getNamespace() + "parentItem" %>'>
-							<aui:select name="<%=DictItemDisplayTerms.PARENTITEM_ID %>" label="parent-item">
-								<aui:option value="0"></aui:option>
+						<aui:row>
+							<aui:input name="<%=DictItemDisplayTerms.ITEM_CODE%>" 
+								type="text" cssClass="input20" label="item-code"
+								title='<%=LanguageUtil.get(locale, "item-code") %>'	
+							>
+								<aui:validator name="required"/>
+								<aui:validator name="maxLength">100</aui:validator> 
+							</aui:input>
+						</aui:row>
+						<aui:row>
+							<aui:input name="<%=DictItemDisplayTerms.ITEM_NAME %>" cssClass="input80" label="item-name">
+								<aui:validator name="required"/>
+								<aui:validator name="minLength">3</aui:validator>
+								<aui:validator name="maxLength">255</aui:validator>
+							</aui:input>
+						</aui:row>
+						<aui:row>
+							<aui:select name="<%=DictItemDisplayTerms.DICTCOLLECTION_ID %>" 
+								label="dict-collection"
+								title='<%=LanguageUtil.get(locale, "dict-collection") %>'
+							>
+								<aui:option value="<%=collectionId %>"><%=collection.getCollectionName(locale) %></aui:option>
 							</aui:select>
-						</div>
-					</aui:col>
-				</aui:row>
-				<aui:row>
-					<aui:col width="50">
-						<div id='<%=renderResponse.getNamespace() + "sibling-container" %>'>
-							<aui:select name="<%=DictItemDisplayTerms.SIBLING %>" label="sibling">
-								<aui:option value="0"></aui:option>
-							</aui:select>
-						</div>
-					</aui:col>
-					
-					<aui:col width="50">
-						<div id='<%=renderResponse.getNamespace() + "parentItem" %>'>
-							<aui:select name="itemsStatusInUsed">
+						</aui:row>
+						<aui:row>
+							<aui:input name="<%=DictItemDisplayTerms.PARENTITEM_ID %>" type="hidden" value="<%=parentItem != null ? parentItem.getDictItemId() : 0 %>"/>
+							<div class="show-when-focus-wrapper">
+								<aui:input name="parentItemShow" type="text" label="parent-item" 
+									value="<%=parentItem != null ? parentItem.getItemName(locale) : StringPool.BLANK %>"
+									title='<%=LanguageUtil.get(locale, "parent-item") %>'
+								/>
+								<div id='<%=renderResponse.getNamespace() + "parentItem" %>' class="hide-when-focusout-datamgt"></div>
+							</div>
+						</aui:row>
+						<aui:row>
+							<div id='<%=renderResponse.getNamespace() + "sibling-container" %>'>
+								<aui:select name="<%=DictItemDisplayTerms.SIBLING %>" label="sibling" title='<%=LanguageUtil.get(locale, "sibling") %>'>
+									<aui:option value="0"></aui:option>
+								</aui:select>
+							</div>
+						</aui:row>
+						<aui:row>
+							<aui:select name="itemsStatusInUsed" title='<%=LanguageUtil.get(locale, "items-status-in-used") %>'>
 								<aui:option value="0" label="draf" selected="<%=dictItem != null ? dictItem.getIssueStatus() == 0 : false %>" />
 								<aui:option value="1" label="in-used" selected="<%=(dictItem != null ? dictItem.getIssueStatus() == 1 : false) || dictItem == null%>" />
 								<aui:option value="2" label="no-used" selected="<%=dictItem != null ? dictItem.getIssueStatus() == 2 : false %>" />
 							</aui:select>
-						</div>
+						</aui:row>
+					</aui:col>
+					<aui:col width="50">
+						<label><liferay-ui:message key="dict-items-linked" /></label>
+						<div id='<%=renderResponse.getNamespace() + "itemLinkedContainer" %>' ></div>
 					</aui:col>
 				</aui:row>
-				
+			</aui:fieldset>
+			
 				<%-- <aui:select name="<%=DictItemDisplayTerms.DICTVERSION_ID %>" label="dict-version">
 					<aui:option value="0"></aui:option>
 				</aui:select> --%>
-				
-				<!-- dictItem linked -->
-				<label><liferay-ui:message key="dict-items-linked" /></label>
-				<div id='<%=renderResponse.getNamespace() + "itemLinkedContainer" %>' ></div>
-				
-			</aui:fieldset>
 			
 			<aui:fieldset>
-				<aui:button type="submit" name="submit" value="submit"/>
-				<aui:button type="submit" name="cancel" value="cancel"/>
+				<aui:button type="submit" name="submit" value="save" title='<%=LanguageUtil.get(locale, "save") %>'/>
+				<aui:button type="submit" name="cancel" value="cancel" title='<%=LanguageUtil.get(locale, "cancel") %>'/>
 			</aui:fieldset>	
 		</aui:form>
 	</div>

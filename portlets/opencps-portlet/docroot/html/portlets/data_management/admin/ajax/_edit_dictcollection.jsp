@@ -38,8 +38,14 @@
 %>
 
 <p class="breadcrumb bold">
+	<a title='<%=LanguageUtil.get(locale, "dict-collection-mgt") %>' href="javascript:getDictCollectionDetail();">
+		<liferay-ui:message key='dict-collection-mgt' />
+	</a>
+	<a title='<%=(dictCollection == null) ? "" : dictCollection.getCollectionName(locale) %>' href="javascript:getDictCollectionDetail(selectedDictCollectionId);">
+		<liferay-ui:message key='<%= (dictCollection == null) ? " >> " : " >> " + dictCollection.getCollectionName(locale) + " >> "%>' />
+	</a>
 	<liferay-ui:message key='<%= (dictCollection == null) ? "add-dictcollection" : "update-dictcollection" %>' />
-	<liferay-ui:message key='<%= (dictCollection == null) ? "" : " > " + dictCollection.getCollectionName() %>' />
+	<liferay-ui:message key='<%= (dictCollection == null) ? "" : " " + dictCollection.getCollectionName(locale) %>' />
 </p>
 
 <div class="opencps-datamgt collection-wrapper opencps-bound-wrapper pd20 default-box-shadow"">
@@ -55,20 +61,36 @@
 				<aui:row>
 					<aui:col width="50">
 						<aui:row>
-							<aui:input name="<%=DictCollectionDisplayTerms.COLLECTION_CODE %>" type="text" cssClass="input100">
+							<aui:input 
+								name="<%=DictCollectionDisplayTerms.COLLECTION_CODE %>" type="text" 
+								cssClass="input100" label="collection-sign"
+								title="<%=LanguageUtil.get(locale, \"collection-sign\") %>"
+							>
 								<aui:validator name="required"/>
 								<aui:validator name="maxLength">100</aui:validator>
 							</aui:input>
 						</aui:row>
 						<aui:row>
-							<aui:input name="<%=DictCollectionDisplayTerms.COLLECTION_NAME %>" cssClass="input100">
+							<aui:input 
+								name="<%=DictCollectionDisplayTerms.COLLECTION_NAME %>" 
+								cssClass="input100" 
+								title="<%=LanguageUtil.get(locale, \"collection-name\") %>"
+							>
 								<aui:validator name="required"/>
 								<aui:validator name="minLength">3</aui:validator>
 								<aui:validator name="maxLength">255</aui:validator>
 							</aui:input>
 						</aui:row>
 						<aui:row>
-							<aui:input name="<%=DictCollectionDisplayTerms.DESCRIPTION %>" type="textarea" cssClass="input100" />
+							<%-- <aui:input name="<%=DictCollectionDisplayTerms.DESCRIPTION %>" type="textarea" cssClass="input100" /> --%>
+							<label><liferay-ui:message key="<%=DictCollectionDisplayTerms.DESCRIPTION %>" /></label>
+							<textarea 
+								rows="14" 
+								id="<%=renderResponse.getNamespace() + DictCollectionDisplayTerms.DESCRIPTION %>"
+								name="<%=renderResponse.getNamespace() + DictCollectionDisplayTerms.DESCRIPTION %>" 
+								class="input100"
+								title="<%=LanguageUtil.get(locale, DictCollectionDisplayTerms.DESCRIPTION) %>"
+							><%=dictCollection != null ? dictCollection.getDescription() : "" %></textarea>
 						</aui:row>
 					</aui:col>
 					
@@ -81,10 +103,16 @@
 									<div class="scrollbar-datamgt">
 										<ul class="tree-view-content tree-drag-drop-content tree-file tree-root-container">
 											<%
-												List<DictCollection> dictCollections = DictCollectionLocalServiceUtil.getDictCollections();
-												List<DictCollectionType> dictCollectionsTypes = DictCollectionTypeLocalServiceUtil.getByDictCollectionId(collectionId);
+												List<DictCollection> dictCollections = DictCollectionLocalServiceUtil
+														.getDictCollections(QueryUtil.ALL_POS, QueryUtil.ALL_POS, 
+																DataMgtUtil.getDictCollectionOrderByComparator(
+																		DictCollectionDisplayTerms.COLLECTION_NAME, WebKeys.ORDER_BY_ASC));
+												List<DictCollectionType> dictCollectionsTypes = DictCollectionTypeLocalServiceUtil
+														.getByDictCollectionId(collectionId);
+												int count = 0;
 												for (DictCollection collection : dictCollections){
 													if (collection.getDictCollectionId() != collectionId){
+														count++;
 														boolean checked = false;
 														for (DictCollectionType type : dictCollectionsTypes){
 															if (type.getDictCollectionLinkedId() == collection.getDictCollectionId()){
@@ -93,7 +121,10 @@
 															}
 														}
 														%>
-															<li class="tree-node collection-tree-node">
+															<li class="tree-node click-select-dict-collection"
+																id='<%=renderResponse.getNamespace() + "collectionId_" + collection.getDictCollectionId() %>'
+																title="<%=collection.getDescription() %>"
+															>
 																<aui:input 
 																	name="dictCollectionsLinked" 
 																	value="<%=collection.getDictCollectionId() %>"
@@ -101,9 +132,9 @@
 																	type="checkbox" 
 																	inlineField="true"
 																	checked="<%=checked %>"
-																	cssClass='<%=!checked ? "no-linked-to-selected-collection" : "" %>'
+																	cssClass='<%=!checked ? "unchecked-checkbox" : "" %>'
 																/>
-																<liferay-ui:message key="<%=collection.getCollectionName() %>" />
+																<liferay-ui:message key="<%=count + \". \" + collection.getCollectionName() %>" />
 															</li>
 														<%
 													}
@@ -118,8 +149,8 @@
 				</aui:row>
 			</aui:fieldset>
 			<aui:fieldset>
-				<aui:button type="submit" name="submit" value="submit"/>
-				<aui:button type="submit" name="cancel" value="cancel"/>
+				<aui:button type="submit" name="submit" value="save" title='<%=LanguageUtil.get(locale, "save") %>'/>
+				<aui:button type="submit" name="cancel" value="cancel" title='<%=LanguageUtil.get(locale, "cancel") %>'/>
 			</aui:fieldset>	
 		</aui:form>
 	</div>

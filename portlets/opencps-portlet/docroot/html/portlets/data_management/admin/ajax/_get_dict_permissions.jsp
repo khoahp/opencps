@@ -1,3 +1,4 @@
+<%@page import="com.liferay.portal.service.RoleLocalServiceUtil"%>
 <%
 /**
  * OpenCPS is the open source Core Public Services software
@@ -21,6 +22,21 @@
 
 <%
 	long userIdPermission = ParamUtil.getLong(request, "userIdPermission");
+	
+	// if no user selected then select first user in list
+	if (userIdPermission == 0){
+		List<User> users = new ArrayList<User>();
+		long roleId = 0;
+		try {
+			roleId = RoleLocalServiceUtil
+					.getRole(company.getCompanyId(), DictCollectionDisplayTerms.DICTCOLLECTION_ROLE)
+						.getRoleId();
+			users = UserLocalServiceUtil.getRoleUsers(roleId);
+		} catch (Exception e){
+			_log.error(e);
+		}
+		userIdPermission = users.get(0).getUserId();
+	}
 	
 	List<DictCollection> collections = DictCollectionLocalServiceUtil
 			.getDictCollections(scopeGroupId);
@@ -90,7 +106,7 @@
 %>
 
 <ul class="tree-view-content tree-drag-drop-content tree-file tree-root-container">
-	<li class="tree-node collection-tree-node" >
+	<li class="tree-node collection-tree-node" title='<%=LanguageUtil.get(locale, "add-collections-permission") %>'>
 		<aui:input 
 			name="add-collections-permission" 
 			type="checkbox" 
@@ -108,7 +124,7 @@
 			<div><liferay-ui:message key="delete" /></div>
 		</div>
 	</li>
-	<li class="tree-node collection-tree-node" >
+	<li class="tree-node collection-tree-node" title='<%=LanguageUtil.get(locale, "all") %>'>
 		<span class="bold collection-tree-node-permission-all">
 			<liferay-ui:message key="all" />
 		</span>
@@ -165,6 +181,7 @@
 			%>
 				<li class='<%="tree-node collection-tree-node-permission" + (view && add && edit && delete ? " checked-collection" : "") %>' 
 					id='<%=renderResponse.getNamespace() + "anchor_collection_" + collection.getDictCollectionId() %>'
+					title="<%=collection.getDescription() %>"
 				>
 					<span class="collection-tree-node-permission-name"><liferay-ui:message key="<%=collection.getCollectionName(locale) %>" /></span>
 					<span class="dict-permission-container">

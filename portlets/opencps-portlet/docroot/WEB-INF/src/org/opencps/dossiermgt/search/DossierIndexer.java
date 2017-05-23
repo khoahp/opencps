@@ -28,11 +28,13 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.opencps.dossiermgt.model.Dossier;
 import org.opencps.dossiermgt.model.DossierFile;
+import org.opencps.dossiermgt.model.DossierTemplate;
 import org.opencps.dossiermgt.model.FileGroup;
 import org.opencps.dossiermgt.model.ServiceConfig;
 import org.opencps.dossiermgt.permissions.DossierPermission;
 import org.opencps.dossiermgt.service.DossierFileLocalServiceUtil;
 import org.opencps.dossiermgt.service.DossierLocalServiceUtil;
+import org.opencps.dossiermgt.service.DossierTemplateLocalServiceUtil;
 import org.opencps.dossiermgt.service.FileGroupLocalServiceUtil;
 import org.opencps.dossiermgt.service.ServiceConfigLocalServiceUtil;
 import org.opencps.dossiermgt.service.persistence.DossierActionableDynamicQuery;
@@ -110,7 +112,8 @@ public class DossierIndexer extends BaseIndexer {
 		}
 		if (dossier.getModifiedDate() != null) {
 			document.addDate(Field.MODIFIED_DATE, dossier.getModifiedDate());
-			document.addDate(DossierDisplayTerms.MODIFIED_DATE, dossier.getModifiedDate());
+			document.addDate(DossierDisplayTerms.MODIFIED_DATE,
+					dossier.getModifiedDate());
 		}
 		if (dossier.getCityName() != null
 				&& !Validator.isBlank(dossier.getCityName())) {
@@ -242,6 +245,8 @@ public class DossierIndexer extends BaseIndexer {
 						serviceInfo.getServiceNo());
 				document.addKeyword(DossierDisplayTerms.SERVICE_NAME,
 						serviceInfo.getServiceName());
+				document.addNumber(DossierDisplayTerms.SERVICE_INFO_ID,
+						dossier.getServiceInfoId());
 			} catch (Exception e) {
 				_log.info("No found serviceInfo width dossier.getServiceInfoId() = "
 						+ dossier.getServiceInfoId()
@@ -250,6 +255,20 @@ public class DossierIndexer extends BaseIndexer {
 			}
 		}
 
+		if (dossier.getDossierTemplateId() > 0) {
+			try {
+				DossierTemplate template = DossierTemplateLocalServiceUtil
+						.getDossierTemplate(dossier.getDossierTemplateId());
+				document.addKeyword(DossierDisplayTerms.DOSSIER_TEMPLATE_NO,
+						template.getTemplateNo());
+
+				document.addNumber(DossierDisplayTerms.DOSSIER_TEMPLATE_ID,
+						template.getDossierTemplateId());
+
+			} catch (Exception e) {
+				// TODO: handle exception
+			}
+		}
 		// Thanh phan ho so chinh dang su dung (fileGroupId = 0, removed = 0)
 
 		List<DossierFile> dossierFiles = new ArrayList<DossierFile>();
@@ -468,7 +487,7 @@ public class DossierIndexer extends BaseIndexer {
 
 				Document document = getDocument(dossier);
 
-				//documents.add(document);
+				// documents.add(document);
 				addDocument(document);
 			}
 

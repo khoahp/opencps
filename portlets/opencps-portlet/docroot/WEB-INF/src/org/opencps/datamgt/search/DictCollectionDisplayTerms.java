@@ -51,7 +51,7 @@ public class DictCollectionDisplayTerms extends DisplayTerms {
 
 	public static final String USER_ID = "userId";
 	
-	public static final String DICTCOLLECTION_ROLE = "OpenCPS's Admin";
+	public static final String DICTCOLLECTION_ROLE = "OCPS_ADMIN";
 
 	public DictCollectionDisplayTerms(PortletRequest portletRequest) {
 		super(

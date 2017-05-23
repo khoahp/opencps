@@ -39,6 +39,7 @@
 	List<DictItem> dictItems = new ArrayList<DictItem>();
 
 	int totalCount = 0;
+	int delta = 10;
 	
 %>
 
@@ -48,9 +49,10 @@
 <div class="opencps-searchcontainer-wrapper-width-header default-box-shadow radius8 items-container">
 	<liferay-ui:search-container 
 		searchContainer="<%=itemsListSearchContainer == null ? 
-				new DictItemSearch(renderRequest, SearchContainer.DEFAULT_DELTA, iteratorURL) : itemsListSearchContainer %>" 
+				new DictItemSearch(renderRequest, delta, iteratorURL) : itemsListSearchContainer %>" 
 		headerNames="STT,code,name,tree-index,action" 
 		deltaConfigurable="false"
+		delta="<%=delta %>"
 	>
 	
 		<liferay-ui:search-container-results>
@@ -82,23 +84,23 @@
 					String rowNumber = String.valueOf((row.getPos() + 1) 
 							+ (searchContainer.getCur() - 1) * searchContainer.getDelta());
 					
-					String rowNumberDisplay = "<div class=\"text-center\"><a href=\"#\" class=\"edit_dictItem_link\" id=\""
+					String rowNumberDisplay = "<div title=\"" + dictItem.getItemName(locale) + "\" class=\"text-center\"><a href=\"#\" class=\"edit_dictItem_link\" id=\""
 								+ renderResponse.getNamespace() + "dictItemId_" + dictItem.getDictItemId() +"\" >" + rowNumber + "</a></div>";
 					
 					row.addText(rowNumberDisplay);
 					
-					String itemCodeDisplay = "<div class=\"text-center\"><a href=\"#\" class=\"edit_dictItem_link\" id=\""
+					String itemCodeDisplay = "<div title=\"" + dictItem.getItemName(locale) + "\" class=\"text-center\"><a href=\"#\" class=\"edit_dictItem_link\" id=\""
 							+ renderResponse.getNamespace() + "dictItemId_" + dictItem.getDictItemId() +"\" >" + dictItem.getItemCode() + "</a></div>";
 					
 					row.addText(itemCodeDisplay);
 					
-					String itemNameDisplay = "<a href=\"#\" class=\"edit_dictItem_link\" id=\""
-							+ renderResponse.getNamespace() + "dictItemId_" + dictItem.getDictItemId() +"\" >" + dictItem.getItemName(locale) + "</a>";
+					String itemNameDisplay = "<div title=\"" + dictItem.getItemName(locale) + "\"><a href=\"#\" class=\"edit_dictItem_link\" id=\""
+							+ renderResponse.getNamespace() + "dictItemId_" + dictItem.getDictItemId() +"\" >" + dictItem.getItemName(locale) + "</a></div>";
 					
 					row.addText(itemNameDisplay);
 					
-					String treeIndexDisplay = "<a href=\"#\" class=\"edit_dictItem_link\" id=\""
-							+ renderResponse.getNamespace() + "dictItemId_" + dictItem.getDictItemId() +"\" >" + dictItem.getTreeIndex() + "</a>";
+					String treeIndexDisplay = "<div title=\"" + dictItem.getItemName(locale) + "\"><a href=\"#\" class=\"edit_dictItem_link\" id=\""
+							+ renderResponse.getNamespace() + "dictItemId_" + dictItem.getDictItemId() +"\" >" + dictItem.getTreeIndex() + "</a></div>";
 					
 					row.addText(treeIndexDisplay);
 					
