@@ -74,7 +74,7 @@
 	</a>
 	<liferay-ui:message key='<%=" >> " %>' />
 	<a 
-		title='<%=(collection == null) ? "" : collection.getCollectionName(locale) %>' 
+		title='<%=LanguageUtil.get(locale, "list") %>' 
 		href="javascript:getDictItemsToolbar(selectedDictCollectionId);"
 	>
 		<liferay-ui:message key='list' />
