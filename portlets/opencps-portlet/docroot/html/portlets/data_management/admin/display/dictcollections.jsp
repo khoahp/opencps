@@ -1481,7 +1481,7 @@
 			        success: function(event, id, obj){
 			        	setTimeout(function(){
 			        		getDictItemsToolbar(selectedDictCollectionId);
-							alert(Liferay.Language.get('success'));
+							//alert(Liferay.Language.get('success'));
 						}, 500);
 					},
 			    	error: function(){
