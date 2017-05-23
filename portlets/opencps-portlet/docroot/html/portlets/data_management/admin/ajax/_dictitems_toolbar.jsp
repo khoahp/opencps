@@ -48,12 +48,14 @@
 		>
 			<liferay-ui:message key='dict-collection-mgt' />
 		</a>
+		<liferay-ui:message key='<%=" >> " %>' />
 		<a 
 			title='<%=(collection == null) ? "" : collection.getCollectionName(locale) %>' 
 			href="javascript:getDictCollectionDetail(selectedDictCollectionId);"
 		>
-			<liferay-ui:message key='<%= (collection == null) ? " >> " : " >> " + collection.getCollectionName(locale) + " >> "%>' />
+			<liferay-ui:message key='<%= (collection == null) ? "" : collection.getCollectionName(locale) %>' />
 		</a>
+		<liferay-ui:message key='<%=" >> " %>' />
 		<liferay-ui:message key='list' />
 	</p>
 </div>
