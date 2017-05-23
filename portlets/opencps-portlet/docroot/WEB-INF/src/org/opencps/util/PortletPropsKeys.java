@@ -149,4 +149,7 @@ public class PortletPropsKeys {
 	public static final String DM_USER_GROUP_NOTIFY = "opencps.datamgt.masterdata.notification.user.group";
 	public static final String DM_POSTAL_GATE = "opencps.datamgt.masterdata.postalgate";
 	
+	//notification
+	public static final String USER_NOTIFICATION_CONTENT = "user.notification.content";
+	
 }
