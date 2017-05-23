@@ -1,4 +1,5 @@
 
+<%@page import="com.liferay.portal.kernel.util.Constants"%>
 <%@page import="org.opencps.dossiermgt.service.ServiceConfigLocalServiceUtil"%>
 <%@page import="org.opencps.dossiermgt.model.ServiceConfig"%>
 <%@page import="com.liferay.portal.kernel.util.HtmlUtil"%>
@@ -95,6 +96,8 @@
 	String submitDateTimeFrom = ParamUtil.getString(request, DossierDisplayTerms.SUBMIT_DATETIME_FROM);
 	String submitDateTimeTo = ParamUtil.getString(request, DossierDisplayTerms.SUBMIT_DATETIME_TO);
 	
+	String headerName = ParamUtil.getString(request, "headerName");
+	
 	PortletURL iteratorURL = renderResponse.createRenderURL();
 	iteratorURL.setParameter("mvcPath", templatePath + "frontofficedossierlist.jsp");
 	iteratorURL.setParameter("tabs1", DossierMgtUtil.TOP_TABS_DOSSIER);
@@ -154,6 +157,8 @@
 			
 		}
 	}
+	
+	DictItem dossierStatusItem = PortletUtil.getDictItem("DOSSIER_STATUS", dossierStatus, scopeGroupId);
 %>
 
 <liferay-portlet:renderURL varImpl="searchURL">
@@ -166,12 +171,12 @@
 	
 	<aui:row>
 		<aui:col width="100">
-			<c:if test="<%= serviceInfo != null %>">
-				<h3 class="header-name-1"><%= HtmlUtil.escape(serviceInfo.getServiceName()) %></h3>
+			<c:if test="<%= Validator.isNotNull(headerName) %>">
+				<div class="header-name-1"><%= HtmlUtil.escape(headerName) %></div>
 			</c:if>
 			
 			<c:if test="<%= dossierTemplate != null %>">
-				<h4 class="header-name-2"><%= HtmlUtil.escape(dossierTemplate.getTemplateName()) %></h4>
+				<div class="header-name-2"><%= HtmlUtil.escape(dossierTemplate.getTemplateName()) %></div>
 			</c:if>
 			
 			<aui:row>
@@ -180,7 +185,7 @@
 				</aui:col>
 				
 				<aui:col width="50" >
-					<label class="dossier-status-label"><liferay-ui:message key="dossier-status"/>:</label> <span class="dossier-status"><%= PortletUtil.getDictItem("DOSSIER_STATUS", dossierStatus, scopeGroupId) %></span> 
+					<label class="dossier-status-label"><liferay-ui:message key="dossier-status"/>:</label> <span class="dossier-status"><%= dossierStatusItem != null ? dossierStatusItem.getItemName(locale) : "" %></span> 
 				</aui:col>
 			</aui:row>
 			
@@ -256,15 +261,6 @@
 								}
 							} catch(Exception e) {
 								_log.error(e);
-							}
-							
-							ServiceInfo serviceInfo = null;
-							
-							if(dossier.getServiceInfoId() > 0) {
-								try {
-									serviceInfo = ServiceInfoLocalServiceUtil.getServiceInfo(dossier.getServiceInfoId());
-								} catch(NoSuchServiceInfoException e) {
-								}
 							}
 							
 							String serviceName = serviceInfo != null ? serviceInfo.getServiceName() : StringPool.BLANK;
