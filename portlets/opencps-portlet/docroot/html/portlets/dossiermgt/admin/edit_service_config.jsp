@@ -381,12 +381,12 @@
 		</aui:row>
 		<aui:row>
 			<aui:col width="100">
-				<aui:input name="optionOrder" type="text" value="<%= so.getOptionCode() %>"/>
+				<aui:input name="optionOrder" type="text" value="<%= so.getOptionOrder() %>"/>
 			</aui:col>
 		</aui:row>
 		<aui:row>
 			<aui:col width="100">
-				<aui:input name="autoSelect" type="text" value="<%= so.getOptionCode() %>"/>
+				<aui:input name="autoSelect" type="text" value="<%= so.getAutoSelect() %>"/>
 			</aui:col>
 		</aui:row>
 		

@@ -213,6 +213,10 @@
 			<finder-column name="dossierTemplateId" />
 		</finder>
 
+		<finder name="S_P" return-type="ServiceConfig">
+			<finder-column name="serviceProcessId"/>
+		</finder>
+
 	</entity>
 
 

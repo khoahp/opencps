@@ -19,11 +19,17 @@
 
 <%@ include file="../../init.jsp"%>
 
-<p class="breadcrumb bold"><liferay-ui:message key='edit-dictcollection-permissions' /></p>
+<p class="breadcrumb bold">
+	<a title='<%=LanguageUtil.get(locale, "dict-collection-mgt") %>' href="javascript:getDictCollectionDetail();" >
+		<liferay-ui:message key='dict-collection-mgt' />
+	</a>
+	<liferay-ui:message key='<%=" >> " %>' />
+	<liferay-ui:message key='edit-dictcollection-permissions' />
+</p>
 
 <div class="row-fluid">
-	<aui:button type="submit" value="done" name="back-permission-button" cssClass="back-icon"/>
-	<aui:button type="submit" value="save" name="save-permission-button" cssClass="save-icon"/>
+	<aui:button type="submit" value="back" name="back-permission-button" cssClass="back-icon" title='<%=LanguageUtil.get(locale, "back") %>'/>
+	<aui:button type="submit" value="save" name="save-permission-button" cssClass="save-icon" title='<%=LanguageUtil.get(locale, "save") %>'/>
 </div>
 
 <div class="row-fluid">
@@ -37,8 +43,9 @@
 						placeholder='<%= LanguageUtil.get(locale, "admin-name") %>' 
 						cssClass="input100" 
 						label=""
+						title='<%= LanguageUtil.get(locale, "admin-name") %>' 
 					/>
-					<aui:button name="search-users-button" value="search" type="submit" />
+					<aui:button name="search-users-button" value="search" type="submit" title='<%=LanguageUtil.get(locale, "search") %>'/>
 				</div>
 				<div id='<%=renderResponse.getNamespace() + "users-container" %>' class="scrollbar-datamgt"></div>
 			</div>
@@ -55,8 +62,9 @@
 						placeholder='<%= LanguageUtil.get(locale, "collection-name") %>' 
 						cssClass="input100" 
 						label=""
+						title='<%= LanguageUtil.get(locale, "collection-name") %>' 
 					/>
-					<aui:button name="search-collection-permission-button" value="search" type="submit" />
+					<aui:button name="search-collection-permission-button" value="search" type="submit" title='<%=LanguageUtil.get(locale, "search") %>'/>
 				</div>
 				<div id='<%=renderResponse.getNamespace() + "collection-permissions" %>' class="scrollbar-datamgt"></div>
 			</div>

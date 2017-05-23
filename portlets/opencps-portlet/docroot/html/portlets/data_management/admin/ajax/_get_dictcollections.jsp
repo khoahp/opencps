@@ -42,6 +42,7 @@
 			%>
 				<li class="tree-node collection-tree-node" 
 					id='<%=renderResponse.getNamespace() +  "collectionId_" + collection.getDictCollectionId() %>'
+					title="<%=collection.getDescription() %>"
 				>
 					<%=collection.getCollectionName(locale) %>
 				</li>
