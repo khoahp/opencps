@@ -365,3 +365,17 @@ portlets/opencps-integrate-portlet/.classpath
 portlets/opencps-integrate-portlet/.settings/*
 portlets/vr-business-portlet/docroot/WEB-INF/classes/*
 portlets/vr-business-portlet/docroot/WEB-INF/lib/vr-business-portlet-service.jar
+
+portlets/opencps-portlet/docroot/WEB-INF/src/org/opencps/lucenequery/model/
+
+portlets/opencps-portlet/docroot/WEB-INF/src/org/opencps/lucenequery/service/base/
+
+portlets/opencps-portlet/docroot/WEB-INF/src/org/opencps/lucenequery/service/http/
+
+portlets/opencps-portlet/docroot/WEB-INF/src/org/opencps/lucenequery/service/persistence/LuceneMenuGroupPersistenceImpl.java
+
+portlets/opencps-portlet/docroot/WEB-INF/src/org/opencps/lucenequery/service/persistence/LuceneMenuPersistenceImpl.java
+
+portlets/opencps-portlet/docroot/WEB-INF/src/org/opencps/lucenequery/service/persistence/LuceneMenuRolePersistenceImpl.java
+
+portlets/opencps-portlet/docroot/WEB-INF/src/org/opencps/lucenequery/service/persistence/LuceneQueryPatternPersistenceImpl.java
