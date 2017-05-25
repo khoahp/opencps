@@ -17,9 +17,14 @@
 
 package org.opencps.datamgt.util;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.opencps.datamgt.model.DictItem;
 import org.opencps.datamgt.search.DictCollectionDisplayTerms;
 import org.opencps.datamgt.search.DictItemDisplayTerms;
 import org.opencps.datamgt.search.DictVersionDisplayTerms;
+import org.opencps.datamgt.service.DictItemLocalServiceUtil;
 import org.opencps.datamgt.util.comparator.DictCollectionCodeComparator;
 import org.opencps.datamgt.util.comparator.DictCollectionCreateDateComparator;
 import org.opencps.datamgt.util.comparator.DictCollectionModifiedDateComparator;
@@ -34,6 +39,8 @@ import org.opencps.datamgt.util.comparator.DictVersionValidatedFromComparator;
 import org.opencps.datamgt.util.comparator.DictVersionValidatedToComparator;
 import org.opencps.datamgt.util.comparator.DictVersionVersionComparator;
 
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
 
 /**
@@ -85,19 +92,22 @@ public class DataMgtUtil {
 		OrderByComparator orderByComparator = null;
 
 		if (orderByCol.equals(DictVersionDisplayTerms.CREATE_DATE)) {
-			orderByComparator = new DictVersionCreateDateComparator();
+			orderByComparator = new DictVersionCreateDateComparator(orderByAsc);
 		}
 		else if (orderByCol.equals(DictVersionDisplayTerms.MODIFIED_DATE)) {
-			orderByComparator = new DictVersionModifiedDateComparator();
+			orderByComparator =
+				new DictVersionModifiedDateComparator(orderByAsc);
 		}
 		else if (orderByCol.equals(DictVersionDisplayTerms.VALIDATED_FROM)) {
-			orderByComparator = new DictVersionValidatedFromComparator();
+			orderByComparator =
+				new DictVersionValidatedFromComparator(orderByAsc);
 		}
 		else if (orderByCol.equals(DictVersionDisplayTerms.VALIDATED_TO)) {
-			orderByComparator = new DictVersionValidatedToComparator();
+			orderByComparator =
+				new DictVersionValidatedToComparator(orderByAsc);
 		}
 		else if (orderByCol.equals(DictVersionDisplayTerms.VERSION)) {
-			orderByComparator = new DictVersionVersionComparator();
+			orderByComparator = new DictVersionVersionComparator(orderByAsc);
 		}
 		return orderByComparator;
 	}
@@ -132,11 +142,45 @@ public class DataMgtUtil {
 		return orderByComparator;
 	}
 
+	/**
+	 * @param tree
+	 * @param collectionId
+	 * @param parentId
+	 * @return
+	 */
+	public static List<DictItem> getDictItemTree(
+		List<DictItem> tree, long collectionId, long parentId) {
+
+		List<DictItem> dictItems = new ArrayList<DictItem>();
+		try {
+			dictItems =
+				DictItemLocalServiceUtil.getDictItemsInUseByDictCollectionIdAndParentItemId(
+					collectionId, parentId);
+		}
+		catch (Exception e) {
+			_log.info("Not found DictItem by DictCollectionId = " +
+				collectionId + " parentId = " + parentId + " Cause " +
+				e.getCause());
+		}
+
+		if (dictItems != null) {
+			for (DictItem dictItem : dictItems) {
+				tree.add(dictItem);
+				getDictItemTree(tree, collectionId, dictItem.getDictItemId());
+			}
+		}
+
+		return tree;
+	}
+	
 	public static final String TOP_TABS_DICTITEM = "dict-item";
 	public static final String TOP_TABS_DICTCOLLECTION = "dict-collection";
 	public static final String TOP_TABS_DICTVERSION = "dict-version";
-	
+
 	public static final int ISSUE_STATUS_DRAFTING = 0;
 	public static final int ISSUE_STATUS_INUSE = 1;
-	public static final int ISSUE_STATUS_EXPIRED = 2;	
+	public static final int ISSUE_STATUS_EXPIRED = 2;
+
+	private static Log _log =
+		LogFactoryUtil.getLog(DataMgtUtil.class.getName());
 }

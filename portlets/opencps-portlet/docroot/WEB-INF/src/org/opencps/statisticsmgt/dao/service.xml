@@ -34,7 +34,7 @@
         <finder name="Year" return-type="Collection">
             <finder-column name="year"></finder-column>
         </finder>
-        <finder name="G_DC_M_Y" return-type="DossiersStatistics">
+        <finder name="G_DC_M_Y" return-type="Collection">
             <finder-column name="groupId"></finder-column>
             <finder-column name="domainCode"></finder-column>
             <finder-column name="month"></finder-column>

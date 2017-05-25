@@ -2,10 +2,11 @@
 
 <%@ include file="../init.jsp" %>
 
-<liferay-portlet:actionURL var="doStatisticsURL" name="doStatistics"/>
+<liferay-portlet:actionURL var="doStatisticsURL" name="doStatistics2"/>
 
 <aui:form name="fm" action="<%=doStatisticsURL %>" method="post">
 	<aui:input name="groupId" value="<%=scopeGroupId %>" type="hidden"/>
+	<aui:input name="companyId" value="<%=company.getCompanyId() %>" type="hidden"/>
 	<aui:fieldset>
 		<aui:col width="30">
 			<aui:select name="month">

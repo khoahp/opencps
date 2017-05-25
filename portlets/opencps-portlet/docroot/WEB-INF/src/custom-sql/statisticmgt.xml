@@ -282,4 +282,261 @@
 				opencps_dossierstatistics.year ASC, opencps_dossierstatistics.month ASC;
 		]]>
 	</sql>
+	
+	<!-- new algorithm -->
+	
+	<sql id="org.opencps.statisticsmgt.service.persistence.DossiersStatisticsFinder.getStatisticsByServiceDomain.[received]">	
+		<![CDATA[
+			WHERE
+				(d.groupId = ?)
+			AND
+				(month(d.receiveDatetime) = ?)
+			AND
+				(year(d.receiveDatetime) = ?)
+			AND 
+				(sc.domainCode = ?)
+		]]>
+	</sql>
+	
+	<sql id="org.opencps.statisticsmgt.service.persistence.DossiersStatisticsFinder.getStatisticsByServiceDomain.[finished]">	
+		<![CDATA[
+			WHERE
+				(d.groupId = ?)
+			AND
+				(d.delayStatus = ?)
+			AND
+				(month(d.finishDatetime) = ?)
+			AND
+				(year(d.finishDatetime) = ?)
+			AND 
+				(sc.domainCode = ?)
+		]]>
+	</sql>
+	
+	<sql id="org.opencps.statisticsmgt.service.persistence.DossiersStatisticsFinder.getStatisticsByServiceDomain.[processing]">	
+		<![CDATA[
+			WHERE
+				(d.groupId = ?)
+			AND
+				(d.delayStatus = ?)
+			AND
+				(d.finishDatetime IS NULL)
+			AND 
+				(month(d.receiveDatetime) <= ?)
+			AND
+				(year(d.receiveDatetime) = ?)
+			AND 
+				(sc.domainCode = ?)
+		]]>
+	</sql>
+	
+	
+	<sql id="org.opencps.statisticsmgt.service.persistence.DossiersStatisticsFinder.doStatsDossierReceivedByServiceDomain">	
+		<![CDATA[
+	    	SELECT 
+				count(*) AS total, 
+				d.govAgencyCode, 
+				month(d.receiveDatetime) AS month, 
+				year(d.receiveDatetime) AS year,
+				sc.domainCode
+			FROM 
+				opencps_dossier AS d
+			INNER JOIN 
+				opencps_service_config AS sc
+			ON 
+				d.serviceConfigId = sc.serviceConfigId
+			WHERE
+				(d.groupId = ?)
+			AND
+				(month(d.receiveDatetime) = ?)
+			AND
+				(year(d.receiveDatetime) = ?)
+			AND 
+				(sc.domainCode = ?)
+			GROUP BY
+				d.govAgencyCode;
+		]]>
+	</sql>
+	
+	<sql id="org.opencps.statisticsmgt.service.persistence.DossiersStatisticsFinder.doStatsDossierProcessingByServiceDomain">	
+		<![CDATA[
+	    	SELECT 
+				count(*) AS total, 
+				d.govAgencyCode, 
+				month(d.receiveDatetime) AS month, 
+				year(d.receiveDatetime) AS year,
+				sc.domainCode
+			FROM 
+				opencps_dossier AS d
+			INNER JOIN 
+				opencps_service_config AS sc
+			ON 
+				d.serviceConfigId = sc.serviceConfigId
+			
+			WHERE
+				(d.groupId = ?)
+			AND
+				(d.finishDatetime IS NULL)
+			AND 
+				((month(d.receiveDatetime) <= ? AND year(d.receiveDatetime) = ?) OR (year(d.receiveDatetime) < ?))
+			AND 
+				(sc.domainCode = ?)
+			AND
+				(d.delayStatus = ?)
+				
+			GROUP BY
+				d.govAgencyCode;
+		]]>
+	</sql>
+	
+	
+	<sql id="org.opencps.statisticsmgt.service.persistence.DossiersStatisticsFinder.doStatsDossierProcessingButFinishedAtAnotherTime">	
+		<![CDATA[
+	    	SELECT 
+				count(*) AS total, 
+				d.govAgencyCode, 
+				month(d.receiveDatetime) AS month, 
+				year(d.receiveDatetime) AS year,
+				sc.domainCode
+			FROM 
+				opencps_dossier AS d
+			INNER JOIN 
+				opencps_service_config AS sc
+			ON 
+				d.serviceConfigId = sc.serviceConfigId
+			
+			WHERE
+				(d.groupId = ?)
+			AND
+				((month(d.finishDatetime) > ? AND year(d.finishDatetime) = ?) OR year(d.finishDatetime) > ?)
+			AND 
+				((month(d.receiveDatetime) <= ? AND year(d.receiveDatetime) = ?) OR (year(d.receiveDatetime) < ?))
+			AND 
+				(sc.domainCode = ?)
+
+			GROUP BY
+				d.govAgencyCode;
+		]]>
+	</sql>
+	
+	
+	<sql id="org.opencps.statisticsmgt.service.persistence.DossiersStatisticsFinder.doStatsDossierFinishedByServiceDomain">	
+		<![CDATA[
+	    	SELECT 
+				count(*) AS total, 
+				d.govAgencyCode, 
+				month(d.receiveDatetime) AS month, 
+				year(d.receiveDatetime) AS year,
+				sc.domainCode
+			FROM 
+				opencps_dossier AS d
+			INNER JOIN 
+				opencps_service_config AS sc
+			ON 
+				d.serviceConfigId = sc.serviceConfigId
+				
+			WHERE
+				(d.groupId = ?)
+			AND
+				(month(d.finishDatetime) = ?)
+			AND
+				(year(d.finishDatetime) = ?)
+			AND 
+				(sc.domainCode = ?)
+			AND
+				(d.delayStatus = ?)
+			
+			GROUP BY
+				d.govAgencyCode;
+		]]>
+	</sql>
+	
+	<sql id="org.opencps.statisticsmgt.service.persistence.DossiersStatisticsFinder.doStatsDossierReceivedByGovAgency">	
+		<![CDATA[
+	    	SELECT 
+				count(*) AS total, 
+				d.govAgencyCode, 
+				month(d.receiveDatetime) AS month, 
+				year(d.receiveDatetime) AS year
+			FROM 
+				opencps_dossier AS d
+			
+			WHERE
+				(d.groupId = ?)
+			AND
+				(month(d.receiveDatetime) = ?)
+			AND
+				(year(d.receiveDatetime) = ?)
+			AND 
+				(d.govAgencyCode = ?)
+		]]>
+	</sql>
+	
+	<sql id="org.opencps.statisticsmgt.service.persistence.DossiersStatisticsFinder.doStatsDossierProcessingByGovAgency">	
+		<![CDATA[
+	    	SELECT 
+				count(*) AS total, 
+				d.govAgencyCode, 
+				month(d.receiveDatetime) AS month, 
+				year(d.receiveDatetime) AS year
+				
+			FROM 
+				opencps_dossier AS d
+			WHERE
+				(d.groupId = ?)
+			AND
+				(d.finishDatetime IS NULL)
+			AND 
+				((month(d.receiveDatetime) <= ? AND year(d.receiveDatetime) = ?) OR (year(d.receiveDatetime) < ?))
+			AND 
+				(d.govAgencyCode = ?)
+			AND
+				(d.delayStatus = ?)
+		]]>
+	</sql>
+	
+	
+	<sql id="org.opencps.statisticsmgt.service.persistence.DossiersStatisticsFinder.doStatsDossierProcessingButFinishedAtAnotherTimeByGovAgency">	
+		<![CDATA[
+	    	SELECT 
+				count(*) AS total, 
+				d.govAgencyCode, 
+				month(d.receiveDatetime) AS month, 
+				year(d.receiveDatetime) AS year
+			FROM 
+				opencps_dossier AS d
+			
+			WHERE
+				(d.groupId = ?)
+			AND
+				((month(d.finishDatetime) > ? AND year(d.finishDatetime) = ?) OR year(d.finishDatetime) > ?)
+			AND 
+				((month(d.receiveDatetime) <= ? AND year(d.receiveDatetime) = ?) OR (year(d.receiveDatetime) < ?))
+			AND 
+				(d.govAgencyCode = ?)
+		]]>
+	</sql>
+	
+	
+	<sql id="org.opencps.statisticsmgt.service.persistence.DossiersStatisticsFinder.doStatsDossierFinishedByGovAgency">	
+		<![CDATA[
+	    	SELECT 
+				count(*) AS total, 
+				d.govAgencyCode, 
+				month(d.receiveDatetime) AS month, 
+				year(d.receiveDatetime) AS year
+			FROM 
+				opencps_dossier AS d
+			WHERE
+				(d.groupId = ?)
+			AND
+				(month(d.finishDatetime) = ?)
+			AND
+				(year(d.finishDatetime) = ?)
+			AND 
+				(d.govAgencyCode = ?)
+			AND
+				(d.delayStatus = ?)
+		]]>
+	</sql>
 </custom-sql>
