@@ -742,4 +742,13 @@ public class DictItemLocalServiceImpl extends DictItemLocalServiceBaseImpl {
 	public int countAll() throws SystemException {
 		return dictItemPersistence.countAll();
 	}
+	
+	public List<DictItem> getDictItemsLikeTreeIndex(String treeIndex,
+			int status, int start, int end, OrderByComparator orderByComparator)
+			throws SystemException, NoSuchDictItemException {
+
+		return dictItemPersistence.findByF_TreeIndex_Status(StringPool.PERCENT
+				+ treeIndex + StringPool.PERCENT, status, start, end,
+				orderByComparator);
+	}
 }
