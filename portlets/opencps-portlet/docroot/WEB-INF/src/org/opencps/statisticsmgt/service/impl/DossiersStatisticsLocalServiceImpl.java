@@ -374,6 +374,25 @@ public class DossiersStatisticsLocalServiceImpl
 		return dossiersStatisticsPersistence.findByG_GC_DC_Y_L(
 			groupId, govCoce, domainCode, year, level);
 	}
+	
+	
+	/**
+	 * @param groupId
+	 * @param govCoce
+	 * @param domainCode
+	 * @param month
+	 * @param year
+	 * @return
+	 * @throws SystemException
+	 */
+	public List<DossiersStatistics> getDossiersStatisticsByG_GC_DC_M_Y(
+		long groupId, String govCoce, String domainCode, int month, int year)
+		throws SystemException {
+
+		return dossiersStatisticsPersistence.findByG_GC_DC_M_Y(
+			groupId, govCoce, domainCode, month, year);
+	}
+
 
 	/**
 	 * @param groupId
@@ -673,10 +692,10 @@ public class DossiersStatisticsLocalServiceImpl
 			companyId, groupId, month, year, delayStatus, domainCode);
 	}
 
-	public List<DossiersStatistics> doStatsDossierProcessingButFinishedAtAnotherTime(
+	public List<DossiersStatistics> doStatsDossierProcessingButFinishedAtAnotherTimeByServiceDomain(
 		long companyId, long groupId, int month, int year, String domainCode) {
 
-		return dossiersStatisticsFinder.doStatsDossierProcessingButFinishedAtAnotherTime(
+		return dossiersStatisticsFinder.doStatsDossierProcessingButFinishedAtAnotherTimeByServiceDomain(
 			companyId, groupId, month, year, domainCode);
 	}
 
@@ -744,6 +763,65 @@ public class DossiersStatisticsLocalServiceImpl
 
 		return dossiersStatisticsFinder.doStatsDossierProcessingButFinishedAtAnotherTimeByGovAgency(
 			companyId, groupId, month, year, govCode);
+	}
+
+	/**
+	 * @param companyId
+	 * @param groupId
+	 * @param month
+	 * @param year
+	 * @param delayStatus
+	 * @return
+	 */
+	public List<DossiersStatistics> doStatsDossierReceived(
+		long companyId, long groupId, int month, int year, int delayStatus) {
+
+		return dossiersStatisticsFinder.doStatsDossierReceived(
+			companyId, groupId, month, year, delayStatus);
+	}
+
+	/**
+	 * @param companyId
+	 * @param groupId
+	 * @param month
+	 * @param year
+	 * @param delayStatus
+	 * @return
+	 */
+	public List<DossiersStatistics> doStatsDossierFinished(
+		long companyId, long groupId, int month, int year, int delayStatus) {
+
+		return dossiersStatisticsFinder.doStatsDossierFinished(
+			companyId, groupId, month, year, delayStatus);
+	}
+
+	/**
+	 * @param companyId
+	 * @param groupId
+	 * @param month
+	 * @param year
+	 * @param delayStatus
+	 * @return
+	 */
+	public List<DossiersStatistics> doStatsDossierProcessing(
+		long companyId, long groupId, int month, int year, int delayStatus) {
+
+		return dossiersStatisticsFinder.doStatsDossierProcessing(
+			companyId, groupId, month, year, delayStatus);
+	}
+
+	/**
+	 * @param companyId
+	 * @param groupId
+	 * @param month
+	 * @param year
+	 * @return
+	 */
+	public List<DossiersStatistics> doStatsDossierProcessingButFinishedAtAnotherTime(
+		long companyId, long groupId, int month, int year) {
+
+		return dossiersStatisticsFinder.doStatsDossierProcessingButFinishedAtAnotherTime(
+			companyId, groupId, month, year);
 	}
 
 	private Log _log =

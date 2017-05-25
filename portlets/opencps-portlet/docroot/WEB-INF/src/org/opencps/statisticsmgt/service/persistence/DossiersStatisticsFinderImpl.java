@@ -113,9 +113,9 @@ public class DossiersStatisticsFinderImpl
 		DossiersStatisticsFinder.class.getName() +
 			".doStatsDossierProcessingByServiceDomain";
 
-	private static final String SQL_STATS_DOSSIER_PROCESSING_BUT_FINISHED_AT_ANOTHER_TIME =
+	private static final String SQL_STATS_DOSSIER_PROCESSING_BUT_FINISHED_AT_ANOTHER_TIME_SERVICE_DOMAIN =
 		DossiersStatisticsFinder.class.getName() +
-			".doStatsDossierProcessingButFinishedAtAnotherTime";
+			".doStatsDossierProcessingButFinishedAtAnotherTimeByServiceDomain";
 
 	private static final String SQL_STATS_DOSSIER_FINISHED_BY_SERVICE_DOMAIN =
 		DossiersStatisticsFinder.class.getName() +
@@ -136,6 +136,19 @@ public class DossiersStatisticsFinderImpl
 	private static final String SQL_STATS_DOSSIER_FINISHED_BY_GOV_AGENCY =
 		DossiersStatisticsFinder.class.getName() +
 			".doStatsDossierFinishedByGovAgency";
+
+	private static final String SQL_STATS_DOSSIER_RECEIVED =
+		DossiersStatisticsFinder.class.getName() + ".doStatsDossierReceived";
+
+	private static final String SQL_STATS_DOSSIER_PROCESSING =
+		DossiersStatisticsFinder.class.getName() + ".doStatsDossierProcessing";
+
+	private static final String SQL_STATS_DOSSIER_PROCESSING_BUT_FINISHED_AT_ANOTHER_TIME =
+		DossiersStatisticsFinder.class.getName() +
+			".doStatsDossierProcessingButFinishedAtAnotherTime";
+
+	private static final String SQL_STATS_DOSSIER_FINISHED =
+		DossiersStatisticsFinder.class.getName() + ".doStatsDossierFinished";
 
 	/**
 	 * @param groupId
@@ -432,6 +445,7 @@ public class DossiersStatisticsFinderImpl
 		return null;
 	}
 
+	@Deprecated
 	public List<Integer> getStatisticsMonths(long groupId, int year) {
 
 		Session session = null;
@@ -719,7 +733,6 @@ public class DossiersStatisticsFinderImpl
 			q.addScalar("govAgencyCode", Type.STRING);
 			q.addScalar("month", Type.INTEGER);
 			q.addScalar("year", Type.INTEGER);
-
 			q.addScalar("domainCode", Type.STRING);
 
 			QueryPos qPos = QueryPos.getInstance(q);
@@ -747,17 +760,22 @@ public class DossiersStatisticsFinderImpl
 					int totalTemp = GetterUtil.getInteger(object[0]);
 
 					String govAgencyCodeTemp = (String) object[1];
-					int monthTemp = GetterUtil.getInteger(object[2]);
-					int yearTemp = GetterUtil.getInteger(object[3]);
+
+					if (Validator.isNull(govAgencyCodeTemp)) {
+						govAgencyCodeTemp = StringPool.BLANK;
+					}
+
+					//int monthTemp = GetterUtil.getInteger(object[2]);
+					//int yearTemp = GetterUtil.getInteger(object[3]);
 
 					dossiersStatistic.setReceivedNumber(totalTemp);
 					dossiersStatistic.setGovAgencyCode(govAgencyCodeTemp);
-					dossiersStatistic.setMonth(monthTemp);
-					dossiersStatistic.setYear(yearTemp);
+					dossiersStatistic.setMonth(month);
+					dossiersStatistic.setYear(year);
 					dossiersStatistic.setCompanyId(companyId);
 					dossiersStatistic.setGroupId(groupId);
 					dossiersStatistic.setCreateDate(new Date());
-
+					//dossiersStatistic.setDomainCode(domainCode);
 					dossiersStatistics.add(dossiersStatistic);
 				}
 			}
@@ -895,8 +913,14 @@ public class DossiersStatisticsFinderImpl
 					int totalTemp = GetterUtil.getInteger(object[0]);
 
 					String govAgencyCodeTemp = (String) object[1];
-					int monthTemp = GetterUtil.getInteger(object[2]);
-					int yearTemp = GetterUtil.getInteger(object[3]);
+					
+					if (Validator.isNull(govAgencyCodeTemp)) {
+						govAgencyCodeTemp = StringPool.BLANK;
+					}
+					
+					
+					//int monthTemp = GetterUtil.getInteger(object[2]);
+					//int yearTemp = GetterUtil.getInteger(object[3]);
 
 					if (delayStatus == PortletConstants.DOSSIER_DELAY_STATUS_ONTIME) {
 						dossiersStatistic.setOntimeNumber(totalTemp);
@@ -906,8 +930,8 @@ public class DossiersStatisticsFinderImpl
 					}
 
 					dossiersStatistic.setGovAgencyCode(govAgencyCodeTemp);
-					dossiersStatistic.setMonth(monthTemp);
-					dossiersStatistic.setYear(yearTemp);
+					dossiersStatistic.setMonth(month);
+					dossiersStatistic.setYear(year);
 					dossiersStatistic.setCompanyId(companyId);
 					dossiersStatistic.setGroupId(groupId);
 					dossiersStatistic.setCreateDate(new Date());
@@ -1026,8 +1050,12 @@ public class DossiersStatisticsFinderImpl
 		return dossiersStatistics;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.opencps.statisticsmgt.service.persistence.DossiersStatisticsFinder#doStatsDossierProcessingByServiceDomain(long, long, int, int, int, java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.opencps.statisticsmgt.service.persistence.DossiersStatisticsFinder
+	 * #doStatsDossierProcessingByServiceDomain(long, long, int, int, int,
+	 * java.lang.String)
 	 */
 	public List<DossiersStatistics> doStatsDossierProcessingByServiceDomain(
 		long companyId, long groupId, int month, int year, int delayStatus,
@@ -1043,12 +1071,6 @@ public class DossiersStatisticsFinderImpl
 
 			String sql =
 				CustomSQLUtil.get(SQL_STATS_DOSSIER_PROCESSING_BY_SERVICE_DOMAIN);
-
-			/*
-			 * _log.info("############################################# sql " +
-			 * sql); _log.info("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ " +
-			 * domainCode + "|" + month + "|" + year);
-			 */
 
 			SQLQuery q = session.createSQLQuery(sql);
 
@@ -1076,9 +1098,6 @@ public class DossiersStatisticsFinderImpl
 
 			Iterator<Object[]> itr = (Iterator<Object[]>) q.list().iterator();
 
-			_log.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> " +
-				itr.hasNext() + "|" + domainCode + "|" + delayStatus);
-
 			if (itr.hasNext()) {
 				while (itr.hasNext()) {
 					DossiersStatistics dossiersStatistic =
@@ -1089,8 +1108,14 @@ public class DossiersStatisticsFinderImpl
 					int totalTemp = GetterUtil.getInteger(object[0]);
 
 					String govAgencyCodeTemp = (String) object[1];
-					int monthTemp = GetterUtil.getInteger(object[2]);
-					int yearTemp = GetterUtil.getInteger(object[3]);
+					
+					if (Validator.isNull(govAgencyCodeTemp)) {
+						govAgencyCodeTemp = StringPool.BLANK;
+					}
+					
+					
+					//int monthTemp = GetterUtil.getInteger(object[2]);
+					//int yearTemp = GetterUtil.getInteger(object[3]);
 
 					if (delayStatus == PortletConstants.DOSSIER_DELAY_STATUS_UNEXPIRED) {
 						dossiersStatistic.setProcessingNumber(totalTemp);
@@ -1100,8 +1125,8 @@ public class DossiersStatisticsFinderImpl
 					}
 
 					dossiersStatistic.setGovAgencyCode(govAgencyCodeTemp);
-					dossiersStatistic.setMonth(monthTemp);
-					dossiersStatistic.setYear(yearTemp);
+					dossiersStatistic.setMonth(month);
+					dossiersStatistic.setYear(year);
 					dossiersStatistic.setCompanyId(companyId);
 					dossiersStatistic.setGroupId(groupId);
 					dossiersStatistic.setCreateDate(new Date());
@@ -1227,7 +1252,7 @@ public class DossiersStatisticsFinderImpl
 	 * @param domainCode
 	 * @return
 	 */
-	public List<DossiersStatistics> doStatsDossierProcessingButFinishedAtAnotherTime(
+	public List<DossiersStatistics> doStatsDossierProcessingButFinishedAtAnotherTimeByServiceDomain(
 		long companyId, long groupId, int month, int year, String domainCode) {
 
 		Session session = null;
@@ -1239,13 +1264,7 @@ public class DossiersStatisticsFinderImpl
 			session = openSession();
 
 			String sql =
-				CustomSQLUtil.get(SQL_STATS_DOSSIER_PROCESSING_BUT_FINISHED_AT_ANOTHER_TIME);
-
-			/*
-			 * _log.info("############################################# sql " +
-			 * sql); _log.info("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ " +
-			 * domainCode + "|" + month + "|" + year);
-			 */
+				CustomSQLUtil.get(SQL_STATS_DOSSIER_PROCESSING_BUT_FINISHED_AT_ANOTHER_TIME_SERVICE_DOMAIN);
 
 			SQLQuery q = session.createSQLQuery(sql);
 
@@ -1286,14 +1305,19 @@ public class DossiersStatisticsFinderImpl
 					int totalTemp = GetterUtil.getInteger(object[0]);
 
 					String govAgencyCodeTemp = (String) object[1];
-					int monthTemp = GetterUtil.getInteger(object[2]);
-					int yearTemp = GetterUtil.getInteger(object[3]);
+					
+					if (Validator.isNull(govAgencyCodeTemp)) {
+						govAgencyCodeTemp = StringPool.BLANK;
+					}
+					
+					//int monthTemp = GetterUtil.getInteger(object[2]);
+					//int yearTemp = GetterUtil.getInteger(object[3]);
 
 					dossiersStatistic.setProcessingNumber(totalTemp);
 
 					dossiersStatistic.setGovAgencyCode(govAgencyCodeTemp);
-					dossiersStatistic.setMonth(monthTemp);
-					dossiersStatistic.setYear(yearTemp);
+					dossiersStatistic.setMonth(month);
+					dossiersStatistic.setYear(year);
 					dossiersStatistic.setCompanyId(companyId);
 					dossiersStatistic.setGroupId(groupId);
 					dossiersStatistic.setCreateDate(new Date());
@@ -1428,14 +1452,15 @@ public class DossiersStatisticsFinderImpl
 
 					int totalTemp = GetterUtil.getInteger(object[0]);
 
-					String govAgencyCodeTemp = (String) object[1];
-					int monthTemp = GetterUtil.getInteger(object[2]);
-					int yearTemp = GetterUtil.getInteger(object[3]);
+					// String govAgencyCodeTemp = (String) object[1];
+
+					// int monthTemp = GetterUtil.getInteger(object[2]);
+					// int yearTemp = GetterUtil.getInteger(object[3]);
 
 					dossiersStatistic.setReceivedNumber(totalTemp);
-					dossiersStatistic.setGovAgencyCode(govAgencyCodeTemp);
-					dossiersStatistic.setMonth(monthTemp);
-					dossiersStatistic.setYear(yearTemp);
+					dossiersStatistic.setGovAgencyCode(govCode);
+					dossiersStatistic.setMonth(month);
+					dossiersStatistic.setYear(year);
 					dossiersStatistic.setCompanyId(companyId);
 					dossiersStatistic.setGroupId(groupId);
 					dossiersStatistic.setDomainCode(StringPool.BLANK);
@@ -1458,9 +1483,6 @@ public class DossiersStatisticsFinderImpl
 					catch (Exception e) {
 
 					}
-					// System.out.println(dossiersStatistic.getGovAgencyCode() +
-					// "|" + month + "|" +
-					// dossiersStatistic.getReceivedNumber());
 
 					if (temp != null) {
 						DossiersStatisticsLocalServiceUtil.updateDossiersStatistics(
@@ -1542,9 +1564,9 @@ public class DossiersStatisticsFinderImpl
 
 					int totalTemp = GetterUtil.getInteger(object[0]);
 
-					String govAgencyCodeTemp = (String) object[1];
-					int monthTemp = GetterUtil.getInteger(object[2]);
-					int yearTemp = GetterUtil.getInteger(object[3]);
+					// String govAgencyCodeTemp = (String) object[1];
+					// int monthTemp = GetterUtil.getInteger(object[2]);
+					// int yearTemp = GetterUtil.getInteger(object[3]);
 
 					if (delayStatus == PortletConstants.DOSSIER_DELAY_STATUS_ONTIME) {
 						dossiersStatistic.setOntimeNumber(totalTemp);
@@ -1553,9 +1575,9 @@ public class DossiersStatisticsFinderImpl
 						dossiersStatistic.setOvertimeNumber(totalTemp);
 					}
 
-					dossiersStatistic.setGovAgencyCode(govAgencyCodeTemp);
-					dossiersStatistic.setMonth(monthTemp);
-					dossiersStatistic.setYear(yearTemp);
+					dossiersStatistic.setGovAgencyCode(govCode);
+					dossiersStatistic.setMonth(month);
+					dossiersStatistic.setYear(year);
 					dossiersStatistic.setCompanyId(companyId);
 					dossiersStatistic.setGroupId(groupId);
 					dossiersStatistic.setCreateDate(new Date());
@@ -1578,9 +1600,6 @@ public class DossiersStatisticsFinderImpl
 						_log.info("Can not get statistic by " +
 							dossiersStatistic.getGovAgencyCode() + "|");
 					}
-					// System.out.println(dossiersStatistic.getGovAgencyCode() +
-					// "|" + month + "|" +
-					// dossiersStatistic.getReceivedNumber());
 
 					if (temp != null) {
 
@@ -1652,12 +1671,6 @@ public class DossiersStatisticsFinderImpl
 			String sql =
 				CustomSQLUtil.get(SQL_STATS_DOSSIER_PROCESSING_BY_GOV_AGENCY);
 
-			/*
-			 * _log.info("############################################# sql " +
-			 * sql); _log.info("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ " +
-			 * domainCode + "|" + month + "|" + year);
-			 */
-
 			SQLQuery q = session.createSQLQuery(sql);
 
 			q.setCacheable(false);
@@ -1672,9 +1685,6 @@ public class DossiersStatisticsFinderImpl
 			qPos.add(month);
 			qPos.add(year);
 			qPos.add(year);
-			// Bang service config luu sai domainCode -> dictItenId
-			// qPos.add(domainCode);
-
 			qPos.add(govCode);
 			qPos.add(delayStatus);
 
@@ -1689,9 +1699,9 @@ public class DossiersStatisticsFinderImpl
 
 					int totalTemp = GetterUtil.getInteger(object[0]);
 
-					String govAgencyCodeTemp = (String) object[1];
-					int monthTemp = GetterUtil.getInteger(object[2]);
-					int yearTemp = GetterUtil.getInteger(object[3]);
+					// String govAgencyCodeTemp = (String) object[1];
+					// int monthTemp = GetterUtil.getInteger(object[2]);
+					// int yearTemp = GetterUtil.getInteger(object[3]);
 
 					if (delayStatus == PortletConstants.DOSSIER_DELAY_STATUS_UNEXPIRED) {
 						dossiersStatistic.setProcessingNumber(totalTemp);
@@ -1700,9 +1710,9 @@ public class DossiersStatisticsFinderImpl
 						dossiersStatistic.setDelayingNumber(totalTemp);
 					}
 
-					dossiersStatistic.setGovAgencyCode(govAgencyCodeTemp);
-					dossiersStatistic.setMonth(monthTemp);
-					dossiersStatistic.setYear(yearTemp);
+					dossiersStatistic.setGovAgencyCode(govCode);
+					dossiersStatistic.setMonth(month);
+					dossiersStatistic.setYear(year);
 					dossiersStatistic.setCompanyId(companyId);
 					dossiersStatistic.setGroupId(groupId);
 					dossiersStatistic.setCreateDate(new Date());
@@ -1726,9 +1736,6 @@ public class DossiersStatisticsFinderImpl
 							dossiersStatistic.getGovAgencyCode() + "|" +
 							StringPool.BLANK);
 					}
-					// System.out.println(dossiersStatistic.getGovAgencyCode() +
-					// "|" + month + "|" +
-					// dossiersStatistic.getReceivedNumber());
 
 					if (temp != null) {
 
@@ -1776,7 +1783,6 @@ public class DossiersStatisticsFinderImpl
 		return dossiersStatistics;
 	}
 
-
 	/**
 	 * @param companyId
 	 * @param groupId
@@ -1799,12 +1805,6 @@ public class DossiersStatisticsFinderImpl
 			String sql =
 				CustomSQLUtil.get(SQL_STATS_DOSSIER_PROCESSING_BUT_FINISHED_AT_ANOTHER_TIME_GOV_AGENCY);
 
-			/*
-			 * _log.info("############################################# sql " +
-			 * sql); _log.info("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ " +
-			 * domainCode + "|" + month + "|" + year);
-			 */
-
 			SQLQuery q = session.createSQLQuery(sql);
 
 			q.setCacheable(false);
@@ -1823,8 +1823,6 @@ public class DossiersStatisticsFinderImpl
 			qPos.add(month);
 			qPos.add(year);
 			qPos.add(year);
-			// Bang service config luu sai domainCode -> dictItenId
-			// qPos.add(domainCode);
 
 			qPos.add(govCode);
 
@@ -1839,15 +1837,15 @@ public class DossiersStatisticsFinderImpl
 
 					int totalTemp = GetterUtil.getInteger(object[0]);
 
-					String govAgencyCodeTemp = (String) object[1];
-					int monthTemp = GetterUtil.getInteger(object[2]);
-					int yearTemp = GetterUtil.getInteger(object[3]);
+					// String govAgencyCodeTemp = (String) object[1];
+					// int monthTemp = GetterUtil.getInteger(object[2]);
+					// int yearTemp = GetterUtil.getInteger(object[3]);
 
 					dossiersStatistic.setProcessingNumber(totalTemp);
 
-					dossiersStatistic.setGovAgencyCode(govAgencyCodeTemp);
-					dossiersStatistic.setMonth(monthTemp);
-					dossiersStatistic.setYear(yearTemp);
+					dossiersStatistic.setGovAgencyCode(govCode);
+					dossiersStatistic.setMonth(month);
+					dossiersStatistic.setYear(year);
 					dossiersStatistic.setCompanyId(companyId);
 					dossiersStatistic.setGroupId(groupId);
 					dossiersStatistic.setCreateDate(new Date());
@@ -1871,9 +1869,6 @@ public class DossiersStatisticsFinderImpl
 							dossiersStatistic.getGovAgencyCode() + "|" +
 							StringPool.BLANK);
 					}
-					// System.out.println(dossiersStatistic.getGovAgencyCode() +
-					// "|" + month + "|" +
-					// dossiersStatistic.getReceivedNumber());
 
 					if (temp != null) {
 
@@ -1892,6 +1887,487 @@ public class DossiersStatisticsFinderImpl
 							dossiersStatistic.getProcessingNumber(), -1, month,
 							year, dossiersStatistic.getGovAgencyCode(),
 							StringPool.BLANK, -1);
+					}
+
+				}
+			}
+
+		}
+		catch (Exception e) {
+			_log.error(e);
+		}
+		finally {
+			closeSession(session);
+		}
+
+		return dossiersStatistics;
+	}
+
+	/**
+	 * @param companyId
+	 * @param groupId
+	 * @param month
+	 * @param year
+	 * @param delayStatus
+	 * @return
+	 */
+	public List<DossiersStatistics> doStatsDossierReceived(
+		long companyId, long groupId, int month, int year, int delayStatus) {
+
+		Session session = null;
+
+		List<DossiersStatistics> dossiersStatistics =
+			new ArrayList<DossiersStatistics>();
+
+		try {
+			session = openSession();
+
+			String sql = CustomSQLUtil.get(SQL_STATS_DOSSIER_RECEIVED);
+
+			SQLQuery q = session.createSQLQuery(sql);
+
+			q.setCacheable(false);
+
+			q.addScalar("total", Type.INTEGER);
+			q.addScalar("month", Type.INTEGER);
+			q.addScalar("year", Type.INTEGER);
+
+			QueryPos qPos = QueryPos.getInstance(q);
+			qPos.add(groupId);
+			qPos.add(month);
+			qPos.add(year);
+
+			Iterator<Object[]> itr = (Iterator<Object[]>) q.list().iterator();
+
+			if (itr.hasNext()) {
+				while (itr.hasNext()) {
+					DossiersStatistics dossiersStatistic =
+						new DossiersStatisticsImpl();
+
+					Object[] object = itr.next();
+
+					int totalTemp = GetterUtil.getInteger(object[0]);
+					//int monthTemp = GetterUtil.getInteger(object[1]);
+					//int yearTemp = GetterUtil.getInteger(object[2]);
+
+					dossiersStatistic.setReceivedNumber(totalTemp);
+					dossiersStatistic.setGovAgencyCode(StringPool.BLANK);
+					dossiersStatistic.setMonth(month);
+					dossiersStatistic.setYear(year);
+					dossiersStatistic.setCompanyId(companyId);
+					dossiersStatistic.setGroupId(groupId);
+					dossiersStatistic.setDomainCode(StringPool.BLANK);
+					dossiersStatistic.setCreateDate(new Date());
+
+					dossiersStatistics.add(dossiersStatistic);
+				}
+			}
+
+			if (dossiersStatistics != null) {
+				for (DossiersStatistics dossiersStatistic : dossiersStatistics) {
+
+					DossiersStatistics temp = null;
+					try {
+						temp =
+							DossiersStatisticsLocalServiceUtil.getDossiersStatisticsByG_GC_DC_M_Y_L(
+								groupId, dossiersStatistic.getGovAgencyCode(),
+								dossiersStatistic.getDomainCode(), month, year,
+								-1);
+					}
+					catch (Exception e) {
+
+					}
+
+					if (temp != null) {
+						DossiersStatisticsLocalServiceUtil.updateDossiersStatistics(
+							temp.getDossierStatisticId(), 0,
+							dossiersStatistic.getReceivedNumber(), -1, -1, -1,
+							-1);
+					}
+					else {
+						DossiersStatisticsLocalServiceUtil.addDossiersStatistics(
+							groupId, companyId, 0, -1,
+							dossiersStatistic.getReceivedNumber(), -1, -1, -1,
+							-1, month, year,
+							dossiersStatistic.getGovAgencyCode(),
+							dossiersStatistic.getDomainCode(), -1);
+					}
+
+				}
+			}
+
+		}
+		catch (Exception e) {
+			_log.error(e);
+		}
+		finally {
+			closeSession(session);
+		}
+
+		return null;
+	}
+
+	/**
+	 * @param companyId
+	 * @param groupId
+	 * @param month
+	 * @param year
+	 * @param delayStatus
+	 * @return
+	 */
+	public List<DossiersStatistics> doStatsDossierFinished(
+		long companyId, long groupId, int month, int year, int delayStatus) {
+
+		Session session = null;
+
+		List<DossiersStatistics> dossiersStatistics =
+			new ArrayList<DossiersStatistics>();
+
+		try {
+			session = openSession();
+
+			String sql = CustomSQLUtil.get(SQL_STATS_DOSSIER_FINISHED);
+
+			SQLQuery q = session.createSQLQuery(sql);
+
+			q.setCacheable(false);
+
+			q.addScalar("total", Type.INTEGER);
+			q.addScalar("month", Type.INTEGER);
+			q.addScalar("year", Type.INTEGER);
+
+			QueryPos qPos = QueryPos.getInstance(q);
+			qPos.add(groupId);
+			qPos.add(month);
+			qPos.add(year);
+			qPos.add(delayStatus);
+
+			Iterator<Object[]> itr = (Iterator<Object[]>) q.list().iterator();
+
+			if (itr.hasNext()) {
+				while (itr.hasNext()) {
+					DossiersStatistics dossiersStatistic =
+						new DossiersStatisticsImpl();
+
+					Object[] object = itr.next();
+
+					int totalTemp = GetterUtil.getInteger(object[0]);
+					//int monthTemp = GetterUtil.getInteger(object[1]);
+					//int yearTemp = GetterUtil.getInteger(object[2]);
+
+					if (delayStatus == PortletConstants.DOSSIER_DELAY_STATUS_ONTIME) {
+						dossiersStatistic.setOntimeNumber(totalTemp);
+					}
+					else if (delayStatus == PortletConstants.DOSSIER_DELAY_STATUS_LATE) {
+						dossiersStatistic.setOvertimeNumber(totalTemp);
+					}
+
+					dossiersStatistic.setGovAgencyCode(StringPool.BLANK);
+					dossiersStatistic.setMonth(month);
+					dossiersStatistic.setYear(year);
+					dossiersStatistic.setCompanyId(companyId);
+					dossiersStatistic.setGroupId(groupId);
+					dossiersStatistic.setCreateDate(new Date());
+					dossiersStatistic.setDomainCode(StringPool.BLANK);
+					dossiersStatistics.add(dossiersStatistic);
+				}
+			}
+
+			if (dossiersStatistics != null) {
+				for (DossiersStatistics dossiersStatistic : dossiersStatistics) {
+
+					DossiersStatistics temp = null;
+					try {
+						temp =
+							DossiersStatisticsLocalServiceUtil.getDossiersStatisticsByG_GC_DC_M_Y_L(
+								groupId, dossiersStatistic.getGovAgencyCode(),
+								dossiersStatistic.getDomainCode(), month, year,
+								-1);
+					}
+					catch (Exception e) {
+						_log.info("Can not get statistic by " +
+							dossiersStatistic.getGovAgencyCode() + "|");
+					}
+
+					if (temp != null) {
+
+						if (delayStatus == PortletConstants.DOSSIER_DELAY_STATUS_ONTIME) {
+							DossiersStatisticsLocalServiceUtil.updateDossiersStatistics(
+								temp.getDossierStatisticId(), -1, -1,
+								dossiersStatistic.getOntimeNumber(), -1, -1, -1);
+						}
+						else if (delayStatus == PortletConstants.DOSSIER_DELAY_STATUS_LATE) {
+							DossiersStatisticsLocalServiceUtil.updateDossiersStatistics(
+								temp.getDossierStatisticId(), -1, -1, -1,
+								dossiersStatistic.getOvertimeNumber(), -1, -1);
+						}
+					}
+					else {
+						if (delayStatus == PortletConstants.DOSSIER_DELAY_STATUS_ONTIME) {
+							DossiersStatisticsLocalServiceUtil.addDossiersStatistics(
+								groupId, companyId, 0, -1, -1,
+								dossiersStatistic.getOntimeNumber(), -1, -1,
+								-1, month, year,
+								dossiersStatistic.getGovAgencyCode(),
+								dossiersStatistic.getDomainCode(), -1);
+						}
+						else if (delayStatus == PortletConstants.DOSSIER_DELAY_STATUS_LATE) {
+							DossiersStatisticsLocalServiceUtil.addDossiersStatistics(
+								groupId, companyId, 0, -1, -1, -1,
+								dossiersStatistic.getOvertimeNumber(), -1, -1,
+								month, year,
+								dossiersStatistic.getGovAgencyCode(),
+								dossiersStatistic.getDomainCode(), -1);
+						}
+					}
+
+				}
+			}
+
+		}
+		catch (Exception e) {
+			_log.error(e);
+		}
+		finally {
+			closeSession(session);
+		}
+
+		return dossiersStatistics;
+	}
+
+	/**
+	 * @param companyId
+	 * @param groupId
+	 * @param month
+	 * @param year
+	 * @param delayStatus
+	 * @return
+	 */
+	public List<DossiersStatistics> doStatsDossierProcessing(
+		long companyId, long groupId, int month, int year, int delayStatus) {
+
+		Session session = null;
+
+		List<DossiersStatistics> dossiersStatistics =
+			new ArrayList<DossiersStatistics>();
+
+		try {
+			session = openSession();
+
+			String sql = CustomSQLUtil.get(SQL_STATS_DOSSIER_PROCESSING);
+
+			SQLQuery q = session.createSQLQuery(sql);
+
+			q.setCacheable(false);
+
+			q.addScalar("total", Type.INTEGER);
+			q.addScalar("month", Type.INTEGER);
+			q.addScalar("year", Type.INTEGER);
+
+			QueryPos qPos = QueryPos.getInstance(q);
+			qPos.add(groupId);
+			qPos.add(month);
+			qPos.add(year);
+			qPos.add(year);
+
+			qPos.add(delayStatus);
+
+			Iterator<Object[]> itr = (Iterator<Object[]>) q.list().iterator();
+
+			if (itr.hasNext()) {
+				while (itr.hasNext()) {
+					DossiersStatistics dossiersStatistic =
+						new DossiersStatisticsImpl();
+
+					Object[] object = itr.next();
+
+					int totalTemp = GetterUtil.getInteger(object[0]);
+					//int monthTemp = GetterUtil.getInteger(object[1]);
+					//int yearTemp = GetterUtil.getInteger(object[2]);
+
+					if (delayStatus == PortletConstants.DOSSIER_DELAY_STATUS_UNEXPIRED) {
+						dossiersStatistic.setProcessingNumber(totalTemp);
+					}
+					else if (delayStatus == PortletConstants.DOSSIER_DELAY_STATUS_EXPIRED) {
+						dossiersStatistic.setDelayingNumber(totalTemp);
+					}
+
+					dossiersStatistic.setGovAgencyCode(StringPool.BLANK);
+					dossiersStatistic.setMonth(month);
+					dossiersStatistic.setYear(year);
+					dossiersStatistic.setCompanyId(companyId);
+					dossiersStatistic.setGroupId(groupId);
+					dossiersStatistic.setCreateDate(new Date());
+					dossiersStatistic.setDomainCode(StringPool.BLANK);
+					dossiersStatistics.add(dossiersStatistic);
+				}
+			}
+
+			if (dossiersStatistics != null) {
+				for (DossiersStatistics dossiersStatistic : dossiersStatistics) {
+
+					DossiersStatistics temp = null;
+					try {
+						temp =
+							DossiersStatisticsLocalServiceUtil.getDossiersStatisticsByG_GC_DC_M_Y_L(
+								groupId, dossiersStatistic.getGovAgencyCode(),
+								dossiersStatistic.getDomainCode(), month, year,
+								-1);
+					}
+					catch (Exception e) {
+						_log.info("Can not get statistic by " +
+							dossiersStatistic.getGovAgencyCode() + "|" +
+							StringPool.BLANK);
+					}
+					// System.out.println(dossiersStatistic.getGovAgencyCode() +
+					// "|" + month + "|" +
+					// dossiersStatistic.getReceivedNumber());
+
+					if (temp != null) {
+
+						if (delayStatus == PortletConstants.DOSSIER_DELAY_STATUS_UNEXPIRED) {
+							DossiersStatisticsLocalServiceUtil.updateDossiersStatistics(
+								temp.getDossierStatisticId(), -1, -1, -1, -1,
+								dossiersStatistic.getProcessingNumber(), -1);
+						}
+						else if (delayStatus == PortletConstants.DOSSIER_DELAY_STATUS_EXPIRED) {
+							DossiersStatisticsLocalServiceUtil.updateDossiersStatistics(
+								temp.getDossierStatisticId(), -1, -1, -1, -1,
+								-1, dossiersStatistic.getDelayingNumber());
+						}
+					}
+					else {
+
+						if (delayStatus == PortletConstants.DOSSIER_DELAY_STATUS_UNEXPIRED) {
+							DossiersStatisticsLocalServiceUtil.addDossiersStatistics(
+								groupId, companyId, 0, -1, -1, -1, -1,
+								dossiersStatistic.getProcessingNumber(), -1,
+								month, year,
+								dossiersStatistic.getGovAgencyCode(),
+								dossiersStatistic.getDomainCode(), -1);
+						}
+						else if (delayStatus == PortletConstants.DOSSIER_DELAY_STATUS_EXPIRED) {
+							DossiersStatisticsLocalServiceUtil.addDossiersStatistics(
+								groupId, companyId, 0, -1, -1, -1, -1, -1,
+								dossiersStatistic.getDelayingNumber(), month,
+								year, dossiersStatistic.getGovAgencyCode(),
+								dossiersStatistic.getDomainCode(), -1);
+						}
+					}
+
+				}
+			}
+
+		}
+		catch (Exception e) {
+			_log.error(e);
+		}
+		finally {
+			closeSession(session);
+		}
+
+		return dossiersStatistics;
+	}
+
+	/**
+	 * @param companyId
+	 * @param groupId
+	 * @param month
+	 * @param year
+	 * @return
+	 */
+	public List<DossiersStatistics> doStatsDossierProcessingButFinishedAtAnotherTime(
+		long companyId, long groupId, int month, int year) {
+
+		Session session = null;
+
+		List<DossiersStatistics> dossiersStatistics =
+			new ArrayList<DossiersStatistics>();
+
+		try {
+			session = openSession();
+
+			String sql =
+				CustomSQLUtil.get(SQL_STATS_DOSSIER_PROCESSING_BUT_FINISHED_AT_ANOTHER_TIME);
+
+			SQLQuery q = session.createSQLQuery(sql);
+
+			q.setCacheable(false);
+
+			q.addScalar("total", Type.INTEGER);
+			q.addScalar("month", Type.INTEGER);
+			q.addScalar("year", Type.INTEGER);
+
+			QueryPos qPos = QueryPos.getInstance(q);
+			qPos.add(groupId);
+			qPos.add(month);
+			qPos.add(year);
+			qPos.add(year);
+
+			qPos.add(month);
+			qPos.add(year);
+			qPos.add(year);
+
+			Iterator<Object[]> itr = (Iterator<Object[]>) q.list().iterator();
+
+			if (itr.hasNext()) {
+				while (itr.hasNext()) {
+					DossiersStatistics dossiersStatistic =
+						new DossiersStatisticsImpl();
+
+					Object[] object = itr.next();
+
+					int totalTemp = GetterUtil.getInteger(object[0]);
+					//int monthTemp = GetterUtil.getInteger(object[1]);
+					//int yearTemp = GetterUtil.getInteger(object[2]);
+
+					dossiersStatistic.setProcessingNumber(totalTemp);
+
+					dossiersStatistic.setGovAgencyCode(StringPool.BLANK);
+					dossiersStatistic.setMonth(month);
+					dossiersStatistic.setYear(year);
+					dossiersStatistic.setCompanyId(companyId);
+					dossiersStatistic.setGroupId(groupId);
+					dossiersStatistic.setCreateDate(new Date());
+					dossiersStatistic.setDomainCode(StringPool.BLANK);
+					dossiersStatistics.add(dossiersStatistic);
+				}
+			}
+
+			if (dossiersStatistics != null) {
+				for (DossiersStatistics dossiersStatistic : dossiersStatistics) {
+
+					DossiersStatistics temp = null;
+					try {
+						temp =
+							DossiersStatisticsLocalServiceUtil.getDossiersStatisticsByG_GC_DC_M_Y_L(
+								groupId, dossiersStatistic.getGovAgencyCode(),
+								dossiersStatistic.getDomainCode(), month, year,
+								-1);
+					}
+					catch (Exception e) {
+						_log.info("Can not get statistic by " +
+							dossiersStatistic.getGovAgencyCode() + "|" +
+							dossiersStatistic.getDomainCode());
+					}
+
+					if (temp != null) {
+
+						DossiersStatisticsLocalServiceUtil.updateDossiersStatistics(
+							temp.getDossierStatisticId(),
+							-1,
+							-1,
+							-1,
+							-1,
+							dossiersStatistic.getProcessingNumber() +
+								temp.getProcessingNumber(), -1);
+					}
+					else {
+						DossiersStatisticsLocalServiceUtil.addDossiersStatistics(
+							groupId, companyId, 0, -1, -1, -1, -1,
+							dossiersStatistic.getProcessingNumber(), -1, month,
+							year, dossiersStatistic.getGovAgencyCode(),
+							dossiersStatistic.getDomainCode(), -1);
 					}
 
 				}

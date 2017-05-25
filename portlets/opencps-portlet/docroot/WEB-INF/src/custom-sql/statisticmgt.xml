@@ -390,7 +390,7 @@
 	</sql>
 	
 	
-	<sql id="org.opencps.statisticsmgt.service.persistence.DossiersStatisticsFinder.doStatsDossierProcessingButFinishedAtAnotherTime">	
+	<sql id="org.opencps.statisticsmgt.service.persistence.DossiersStatisticsFinder.doStatsDossierProcessingButFinishedAtAnotherTimeByServiceDomain">	
 		<![CDATA[
 	    	SELECT 
 				count(*) AS total, 
@@ -535,6 +535,87 @@
 				(year(d.finishDatetime) = ?)
 			AND 
 				(d.govAgencyCode = ?)
+			AND
+				(d.delayStatus = ?)
+		]]>
+	</sql>
+	
+	
+	
+	<sql id="org.opencps.statisticsmgt.service.persistence.DossiersStatisticsFinder.doStatsDossierReceived">	
+		<![CDATA[
+	    	SELECT 
+				count(*) AS total, 
+				month(d.receiveDatetime) AS month, 
+				year(d.receiveDatetime) AS year
+			FROM 
+				opencps_dossier AS d
+			
+			WHERE
+				(d.groupId = ?)
+			AND
+				(month(d.receiveDatetime) = ?)
+			AND
+				(year(d.receiveDatetime) = ?)
+		]]>
+	</sql>
+	
+	<sql id="org.opencps.statisticsmgt.service.persistence.DossiersStatisticsFinder.doStatsDossierProcessing">	
+		<![CDATA[
+	    	SELECT 
+				count(*) AS total, 
+				month(d.receiveDatetime) AS month, 
+				year(d.receiveDatetime) AS year
+				
+			FROM 
+				opencps_dossier AS d
+			WHERE
+				(d.groupId = ?)
+			AND
+				(d.finishDatetime IS NULL)
+			AND 
+				((month(d.receiveDatetime) <= ? AND year(d.receiveDatetime) = ?) OR (year(d.receiveDatetime) < ?))
+			AND
+				(d.delayStatus = ?)
+		]]>
+	</sql>
+	
+	
+	<sql id="org.opencps.statisticsmgt.service.persistence.DossiersStatisticsFinder.doStatsDossierProcessingButFinishedAtAnotherTime">	
+		<![CDATA[
+	    	SELECT 
+				count(*) AS total, 
+				month(d.receiveDatetime) AS month, 
+				year(d.receiveDatetime) AS year
+			FROM 
+				opencps_dossier AS d
+			
+			WHERE
+				(d.groupId = ?)
+			AND
+				((month(d.finishDatetime) > ? AND year(d.finishDatetime) = ?) OR year(d.finishDatetime) > ?)
+			AND 
+				((month(d.receiveDatetime) <= ? AND year(d.receiveDatetime) = ?) OR (year(d.receiveDatetime) < ?))
+			
+		]]>
+	</sql>
+	
+	
+	<sql id="org.opencps.statisticsmgt.service.persistence.DossiersStatisticsFinder.doStatsDossierFinished">	
+		<![CDATA[
+	    	SELECT 
+				count(*) AS total, 
+				month(d.receiveDatetime) AS month, 
+				year(d.receiveDatetime) AS year
+			FROM 
+				opencps_dossier AS d
+			WHERE
+				(d.groupId = ?)
+			AND
+				(month(d.finishDatetime) = ?)
+			AND
+				(year(d.finishDatetime) = ?)
+			
 			AND
 				(d.delayStatus = ?)
 		]]>

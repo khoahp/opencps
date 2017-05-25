@@ -44,7 +44,7 @@
 	List<DossiersStatistics> dossiersStatistics =
 					DossiersStatisticsLocalServiceUtil.getStatsByGovAndDomain(
 						scopeGroupId, startMonth, startYear, period, StringPool.BLANK,
-						StringPool.BLANK, 0, 0);
+						StringPool.BLANK, -1, 0);
 	
 	JSONArray jsonArray =
 					StatisticsUtil.renderData(
@@ -85,6 +85,7 @@
 					
 					processingNumber += dossiersStatistics.get(dossiersStatistics.size() - 1).getProcessingNumber();
 					delayingNumber += dossiersStatistics.get(dossiersStatistics.size() - 1).getDelayingNumber();
+					remainingNumber += dossiersStatistics.get(dossiersStatistics.size() - 1).getRemainingNumber();
 				%>
 				
 				

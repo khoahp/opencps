@@ -96,6 +96,8 @@
 	
 	JSONArray sortedJsonArray = StatisticsUtil.sortByCodes(jsonArray, StringUtil.split(domainCodes));
 	
+	System.out.println(sortedJsonArray);
+	
 	//System.out.println(sortedJsonArray.toString());
 	
 	//org.json.JSONArray array = new org.json.JSONArray(sortedJsonArray.toString());

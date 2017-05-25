@@ -283,6 +283,8 @@ public class StatisticsMgtAdminPortlet extends MVCPortlet {
 			doStatisticByGovAgency(
 				companyId, groupId, month, year, govAgencyTree);
 		}
+
+		doStatisticByTime(companyId, groupId, month, year);
 	}
 
 	private void doStatisticByServiceDomain(
@@ -300,8 +302,7 @@ public class StatisticsMgtAdminPortlet extends MVCPortlet {
 		// Tao bo C (LV, CQ, 0) = Tong A la con cua C
 		for (int m = firstMonth; m <= lastMonth; m++) {
 			for (DictItem dictItem : dictItems) {
-				// _log.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>.. "
-				// + dictItem.getItemCode());
+
 				long dictItemId = dictItem.getDictItemId();
 				// Bang service config dang luu sai domainCode = dictItemId
 				DossiersStatisticsLocalServiceUtil.doStatsDossierReceivedByServiceDomain(
@@ -328,12 +329,13 @@ public class StatisticsMgtAdminPortlet extends MVCPortlet {
 					PortletConstants.DOSSIER_DELAY_STATUS_EXPIRED,
 					String.valueOf(dictItemId));
 				// Ho so dang xu ly nhung da hoan thanh o thoi gian khac
-				DossiersStatisticsLocalServiceUtil.doStatsDossierProcessingButFinishedAtAnotherTime(
+				DossiersStatisticsLocalServiceUtil.doStatsDossierProcessingButFinishedAtAnotherTimeByServiceDomain(
 					companyId, groupId, m, year, String.valueOf(dictItemId));
 
 			}
 		}
 
+		// Tinh so ky truoc chuyen qua
 		for (int m = firstMonth; m <= lastMonth; m++) {
 			for (DictItem dictItem : dictItems) {
 				try {
@@ -357,6 +359,7 @@ public class StatisticsMgtAdminPortlet extends MVCPortlet {
 			}
 		}
 
+		// Tao bo C (LV, CQ, 0) = Tong A la con cua C
 		try {
 			DictCollection govAgencyDictCollection =
 				DictCollectionLocalServiceUtil.getDictCollection(
@@ -382,82 +385,82 @@ public class StatisticsMgtAdminPortlet extends MVCPortlet {
 
 			for (int m = firstMonth; m <= lastMonth; m++) {
 				for (DictItem govAgency : govAgencyTree) {
-					List<DictItem> childrens = new ArrayList<DictItem>();
-					childrens =
-						DataMgtUtil.getDictItemTree(
-							childrens,
-							govAgencyDictCollection.getDictCollectionId(),
-							govAgency.getDictItemId());
-					for (DictItem serviceDomain : serviceDomainTree) {
-						if (childrens != null && !childrens.isEmpty()) {
 
-							List<DossiersStatistics> groupStatisticByGovAgencyChildrens =
-								new ArrayList<DossiersStatistics>();
-							for (DictItem govAgencyChildren : childrens) {
-								try {
-									DossiersStatistics dossiersStatistics =
-										DossiersStatisticsLocalServiceUtil.getDossiersStatisticsByG_GC_DC_M_Y_L(
-											groupId,
-											govAgencyChildren.getItemCode(),
-											serviceDomain.getItemCode(), m,
-											year, -1);
+					for (DictItem serviceDomain : serviceDomainTree) {
+						try {
+							DossiersStatistics dossiersStatistics =
+								DossiersStatisticsLocalServiceUtil.getDossiersStatisticsByG_GC_DC_M_Y_L(
+									groupId, govAgency.getItemCode(),
+									serviceDomain.getItemCode(), m, year, -1);
+
+							List<DictItem> childrens =
+								new ArrayList<DictItem>();
+							childrens =
+								DataMgtUtil.getDictItemTree(
+									childrens,
+									govAgencyDictCollection.getDictCollectionId(),
+									govAgency.getDictItemId());
+
+							if (childrens != null) {
+
+								List<DossiersStatistics> groupStatisticByGovAgencyChildrens =
+									new ArrayList<DossiersStatistics>();
+								for (DictItem govAgencyChildren : childrens) {
+									try {
+										DossiersStatistics dossiersStatisticsChildren =
+											DossiersStatisticsLocalServiceUtil.getDossiersStatisticsByG_GC_DC_M_Y_L(
+												groupId,
+												govAgencyChildren.getItemCode(),
+												serviceDomain.getItemCode(), m,
+												year, -1);
+
+										groupStatisticByGovAgencyChildrens.add(dossiersStatisticsChildren);
+									}
+									catch (Exception e) {
+										continue;
+									}
+								}
+
+								if (groupStatisticByGovAgencyChildrens != null) {
 
 									groupStatisticByGovAgencyChildrens.add(dossiersStatistics);
-								}
-								catch (Exception e) {
-									continue;
-								}
-							}
 
-							if (groupStatisticByGovAgencyChildrens != null &&
-								!groupStatisticByGovAgencyChildrens.isEmpty()) {
-								DossiersStatistics parent = null;
-								try {
-									parent =
-										DossiersStatisticsLocalServiceUtil.getDossiersStatisticsByG_GC_DC_M_Y_L(
-											groupId, govAgency.getItemCode(),
-											serviceDomain.getItemCode(), m,
-											year, -1);
-								}
-								catch (Exception e) {
-									// TODO: handle exception
-								}
+									int receivedNumber = 0;
+									int remainingNumber = 0;
+									int processingNumber = 0;
+									int ontimeNumber = 0;
+									int delayingNumber = 0;
+									int overtimeNumber = 0;
+									for (DossiersStatistics groupStatisticByGovAgencyChildren : groupStatisticByGovAgencyChildrens) {
+										receivedNumber +=
+											groupStatisticByGovAgencyChildren.getReceivedNumber();
+										remainingNumber +=
+											groupStatisticByGovAgencyChildren.getRemainingNumber();
+										processingNumber +=
+											groupStatisticByGovAgencyChildren.getProcessingNumber();
+										ontimeNumber +=
+											groupStatisticByGovAgencyChildren.getOntimeNumber();
+										delayingNumber +=
+											groupStatisticByGovAgencyChildren.getDelayingNumber();
+										overtimeNumber +=
+											groupStatisticByGovAgencyChildren.getOvertimeNumber();
+									}
 
-								if (parent != null) {
-									groupStatisticByGovAgencyChildrens.add(parent);
+									DossiersStatisticsLocalServiceUtil.addDossiersStatistics(
+										groupId, companyId, 0, remainingNumber,
+										receivedNumber, ontimeNumber,
+										overtimeNumber, processingNumber,
+										delayingNumber, m, year,
+										govAgency.getItemCode(),
+										serviceDomain.getItemCode(), 0);
+
 								}
-
-								int receivedNumber = 0;
-								int remainingNumber = 0;
-								int processingNumber = 0;
-								int ontimeNumber = 0;
-								int delayingNumber = 0;
-								int overtimeNumber = 0;
-								for (DossiersStatistics groupStatisticByGovAgencyChildren : groupStatisticByGovAgencyChildrens) {
-									receivedNumber +=
-										groupStatisticByGovAgencyChildren.getReceivedNumber();
-									remainingNumber +=
-										groupStatisticByGovAgencyChildren.getRemainingNumber();
-									processingNumber +=
-										groupStatisticByGovAgencyChildren.getProcessingNumber();
-									ontimeNumber +=
-										groupStatisticByGovAgencyChildren.getOntimeNumber();
-									delayingNumber +=
-										groupStatisticByGovAgencyChildren.getDelayingNumber();
-									overtimeNumber +=
-										groupStatisticByGovAgencyChildren.getOvertimeNumber();
-								}
-
-								DossiersStatisticsLocalServiceUtil.addDossiersStatistics(
-									groupId, companyId, 0, remainingNumber,
-									receivedNumber, ontimeNumber,
-									overtimeNumber, processingNumber,
-									delayingNumber, m, year,
-									govAgency.getItemCode(),
-									serviceDomain.getItemCode(), 0);
-
 							}
 						}
+						catch (Exception e) {
+							continue;
+						}
+
 					}
 				}
 			}
@@ -468,6 +471,13 @@ public class StatisticsMgtAdminPortlet extends MVCPortlet {
 
 	}
 
+	/**
+	 * @param companyId
+	 * @param groupId
+	 * @param month
+	 * @param year
+	 * @param dictItems
+	 */
 	private void doStatisticByGovAgency(
 		long companyId, long groupId, int month, int year,
 		List<DictItem> dictItems) {
@@ -483,8 +493,7 @@ public class StatisticsMgtAdminPortlet extends MVCPortlet {
 
 		for (int m = firstMonth; m <= lastMonth; m++) {
 			for (DictItem dictItem : dictItems) {
-				// _log.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>.. "
-				// + dictItem.getItemCode());
+
 				String govCode = dictItem.getItemCode();
 				// Bang service config dang luu sai domainCode = dictItemId
 				DossiersStatisticsLocalServiceUtil.doStatsDossierReceivedByGovAgency(
@@ -513,12 +522,14 @@ public class StatisticsMgtAdminPortlet extends MVCPortlet {
 			}
 		}
 
+		// Tinh so ky truoc chuyen qua
 		for (int m = firstMonth; m <= lastMonth; m++) {
 			for (DictItem dictItem : dictItems) {
 				try {
 					List<DossiersStatistics> dossiersStatistics =
-						DossiersStatisticsLocalServiceUtil.getDossiersStatisticsByDC_M_Y(
-							groupId, dictItem.getItemCode(), m, year);
+						DossiersStatisticsLocalServiceUtil.getDossiersStatisticsByG_GC_DC_M_Y(
+							groupId, dictItem.getItemCode(), StringPool.BLANK,
+							m, year);
 					for (DossiersStatistics dossiersStatisticsTemp : dossiersStatistics) {
 						int remainingNumber =
 							(dossiersStatisticsTemp.getProcessingNumber() + dossiersStatisticsTemp.getDelayingNumber()) -
@@ -558,7 +569,7 @@ public class StatisticsMgtAdminPortlet extends MVCPortlet {
 							govAgencyDictCollection.getDictCollectionId(),
 							govAgency.getDictItemId());
 
-					if (childrens != null && !childrens.isEmpty()) {
+					if (childrens != null) {
 
 						List<DossiersStatistics> groupStatisticByGovAgencyChildrens =
 							new ArrayList<DossiersStatistics>();
@@ -577,8 +588,7 @@ public class StatisticsMgtAdminPortlet extends MVCPortlet {
 							}
 						}
 
-						if (groupStatisticByGovAgencyChildrens != null &&
-							!groupStatisticByGovAgencyChildrens.isEmpty()) {
+						if (groupStatisticByGovAgencyChildrens != null) {
 							DossiersStatistics parent = null;
 							try {
 								parent =
@@ -633,10 +643,71 @@ public class StatisticsMgtAdminPortlet extends MVCPortlet {
 
 	}
 
+	private void doStatisticByTime(
+		long companyId, long groupId, int month, int year) {
+
+		int firstMonth = month;
+		int lastMonth = month;
+		if (month == 0) {
+			firstMonth = 1;
+			lastMonth = 12;
+		}
+
+		for (int m = firstMonth; m <= lastMonth; m++) {
+
+			DossiersStatisticsLocalServiceUtil.doStatsDossierReceived(
+				companyId, groupId, m, year, 0);
+			// Ho so tra dung han
+			DossiersStatisticsLocalServiceUtil.doStatsDossierFinished(
+				companyId, groupId, m, year,
+				PortletConstants.DOSSIER_DELAY_STATUS_ONTIME);
+			// Ho so tra tre han
+			DossiersStatisticsLocalServiceUtil.doStatsDossierFinished(
+				companyId, groupId, m, year,
+				PortletConstants.DOSSIER_DELAY_STATUS_LATE);
+
+			// Ho so dang xu ly
+			DossiersStatisticsLocalServiceUtil.doStatsDossierProcessing(
+				companyId, groupId, m, year,
+				PortletConstants.DOSSIER_DELAY_STATUS_UNEXPIRED);
+			// Ho so dang xu ly tre han
+			DossiersStatisticsLocalServiceUtil.doStatsDossierProcessing(
+				companyId, groupId, m, year,
+				PortletConstants.DOSSIER_DELAY_STATUS_EXPIRED);
+			// Ho so dang xu ly nhung da hoan thanh o thoi gian khac
+			DossiersStatisticsLocalServiceUtil.doStatsDossierProcessingButFinishedAtAnotherTime(
+				companyId, groupId, m, year);
+		}
+
+		// Tinh so ky truoc chuyen qua
+		for (int m = firstMonth; m <= lastMonth; m++) {
+			try {
+				List<DossiersStatistics> dossiersStatistics =
+					DossiersStatisticsLocalServiceUtil.getDossiersStatisticsByG_GC_DC_M_Y(
+						groupId, StringPool.BLANK, StringPool.BLANK, m, year);
+				for (DossiersStatistics dossiersStatisticsTemp : dossiersStatistics) {
+					int remainingNumber =
+						(dossiersStatisticsTemp.getProcessingNumber() + dossiersStatisticsTemp.getDelayingNumber()) -
+							(dossiersStatisticsTemp.getOntimeNumber() + dossiersStatisticsTemp.getOvertimeNumber()) -
+							dossiersStatisticsTemp.getReceivedNumber();
+
+					DossiersStatisticsLocalServiceUtil.updateDossiersStatistics(
+						dossiersStatisticsTemp.getDossierStatisticId(),
+						remainingNumber, -1, -1, -1, -1, -1);
+				}
+			}
+			catch (Exception e) {
+				continue;
+			}
+		}
+
+	}
+
 	/**
 	 * @param total
 	 * @param dossierStatisticsBeans
 	 */
+	@Deprecated
 	public static void appendData(
 		List total, List<DossierStatisticsBean> dossierStatisticsBeans) {
 
