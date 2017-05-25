@@ -315,5 +315,8 @@ public class PortletPropsValues {
 
 	public static final String DM_PAYMENT_GATE = PortletProps
 			.get(PortletPropsKeys.DM_PAYMENT_GATE);
+	
+	public static final String USER_NOTIFICATION_CONTENT = PortletProps
+			.get(PortletPropsKeys.USER_NOTIFICATION_CONTENT);
 
 }
