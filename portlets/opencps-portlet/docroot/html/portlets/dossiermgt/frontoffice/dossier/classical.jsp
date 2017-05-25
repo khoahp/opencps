@@ -1,4 +1,19 @@
 
+<%@page import="org.opencps.dossiermgt.service.DossierFileLocalServiceUtil"%>
+<%@page import="org.opencps.dossiermgt.model.DossierFile"%>
+<%@page import="org.opencps.util.DateTimeUtil"%>
+<%@page import="org.opencps.dossiermgt.util.DossierMgtUtil"%>
+<%@page import="org.opencps.dossiermgt.service.DossierTemplateLocalServiceUtil"%>
+<%@page import="org.opencps.dossiermgt.model.DossierTemplate"%>
+<%@page import="org.opencps.dossiermgt.service.DossierPartLocalServiceUtil"%>
+<%@page import="org.opencps.servicemgt.service.ServiceInfoLocalServiceUtil"%>
+<%@page import="org.opencps.dossiermgt.model.DossierPart"%>
+<%@page import="java.util.ArrayList"%>
+<%@page import="org.opencps.dossiermgt.service.DossierLogLocalServiceUtil"%>
+<%@page import="org.opencps.dossiermgt.model.DossierLog"%>
+<%@page import="java.util.List"%>
+<%@page import="javax.portlet.PortletRequest"%>
+<%@page import="com.liferay.portlet.PortletURLFactoryUtil"%>
 <%@page import="com.liferay.portal.kernel.language.LanguageUtil"%>
 <%
 /**
@@ -60,7 +75,51 @@
 	
 	String govAgencyCode = serviceConfig.getGovAgencyCode();
 	
+	String[] actors = new String[] {};
 	
+	String[] requestCommands = new String[]{StringPool.APOSTROPHE + WebKeys.DOSSIER_LOG_RESUBMIT_REQUEST + StringPool.APOSTROPHE, 
+											StringPool.APOSTROPHE + WebKeys.DOSSIER_LOG_PAYMENT_REQUEST + StringPool.APOSTROPHE};
+	
+	List<DossierLog> dossierLogs = new ArrayList<DossierLog>();
+	
+	if (Validator.isNotNull(dossier)) {
+		dossierLogs =	DossierLogLocalServiceUtil.findRequiredProcessDossier(dossier.getDossierId(), actors, requestCommands);
+	}
+	List<DossierPart> dossierPartsLevel1 = new ArrayList<DossierPart>();
+	
+	ServiceInfo info = null;
+	String serviceInfoName = StringPool.BLANK;
+	
+	DossierTemplate dossierTemplate = null;
+	
+	try {
+		
+		info = ServiceInfoLocalServiceUtil.getServiceInfo(dossier.getServiceInfoId());
+		serviceInfoName = info.getServiceName();
+		
+		dossierTemplate = DossierTemplateLocalServiceUtil.fetchDossierTemplate(serviceConfig.getDossierTemplateId());
+		
+	} catch (Exception e) {}
+		
+	if(dossierTemplate != null){
+		
+		try{
+			List<DossierPart> lstTmp1 = DossierPartLocalServiceUtil.getDossierPartsByT_P_PT(dossierTemplate.getDossierTemplateId(), 0, PortletConstants.DOSSIER_PART_TYPE_RESULT);
+			if(lstTmp1 != null){
+				dossierPartsLevel1.addAll(lstTmp1);
+			}
+		}catch(Exception e){}
+		
+		try{
+			List<DossierPart> lstTmp2 = DossierPartLocalServiceUtil.getDossierPartsByT_P_PT(dossierTemplate.getDossierTemplateId(), 0, PortletConstants.DOSSIER_PART_TYPE_MULTIPLE_RESULT);
+			if(lstTmp2 != null){
+				dossierPartsLevel1.addAll(lstTmp2);
+			}
+		}catch(Exception e){}
+		
+		
+	}
+
 %>
 
 
@@ -134,6 +193,10 @@
 	message="<%=DuplicateFolderNameException.class.getName() %>"
 />
 
+<portlet:renderURL var="viewHistoryURL" windowState="<%=LiferayWindowState.POP_UP.toString()%>">
+	<portlet:param name="mvcPath" value='<%= templatePath + "dossier/classical_result.jsp" %>'/>
+</portlet:renderURL>
+
 <div class="fe-dossier-wrapper" style="padding: 10px;">
 	<div class="head-title">
 		<liferay-ui:message key='<%= Validator.isNotNull(dossier) ? "add-dossier" : "update-dossier" %>'/>
@@ -192,8 +255,9 @@
 							<liferay-ui:message key="dossier-status"/>
 						</span>
 						<span class="span8">
-							<%  %>
-							<%= Validator.isNotNull(dossier) ? LanguageUtil.get(locale, dossier.getDossierStatus())  : "-----" %>
+							<%= Validator.isNotNull(dossier) ? LanguageUtil.get(locale, dossier.getDossierStatus())  : "-----" %> 
+							<c:if test="<%= true %>"> <span style="font-weight: bold;">(<aui:a cssClass="dossier-his" href="#" id="viewHistory" label="view-history">)</aui:a></span></c:if>
+							
 						</span>
 					</aui:row>
 					
@@ -346,13 +410,107 @@
 			</aui:row>
 		</liferay-ui:panel>
 		
+
+		
+		<%!
+			private boolean _checkDossierPart(List<DossierPart> dps, Dossier dossier) {
+			
+			boolean check = false;
+			
+				if (Validator.isNotNull(dossier)) {
+				
+					for(DossierPart dossierPart : dps){
+						DossierFile dossierFile = null;
+						
+						try{
+							dossierFile = DossierFileLocalServiceUtil.getDossierFileInUse(dossier.getDossierId(), dossierPart.getDossierpartId());
+								
+						}catch(Exception e){
+							continue;
+						}
+							
+						if(dossierFile.getFileEntryId() != 0 || dossierFile.getSyncStatus() == PortletConstants.DOSSIER_FILE_SYNC_STATUS_SYNCSUCCESS){
+							check = true;
+							
+							continue;
+						}
+							
+					}
+				
+				}
+				
+				return check;
+			
+			}
+		
+		%>
+
+		<c:if test="<%= _checkDossierPart(dossierPartsLevel1, dossier) %>">
+			<liferay-ui:panel collapsible="<%= true %>" cssClass="dossier-files-content" extended="<%= true %>" id="dossierFilePanel" persistState="<%= true %>" title="dossier-files">
+				<liferay-util:include page='<%= templatePath + "dossier/classical_results.jsp" %>' servletContext="<%= application %>"/>
+			</liferay-ui:panel>
+		</c:if>
+		
 		<liferay-ui:panel collapsible="<%= true %>" cssClass="dossier-files-content" extended="<%= true %>" id="dossierFilePanel" persistState="<%= true %>" title="dossier-files">
 			<liferay-util:include page='<%= templatePath + "dossier/classical_dossier_part.jsp" %>' servletContext="<%= application %>"/>
 		</liferay-ui:panel>
-	
-		<liferay-ui:panel collapsible="<%= true %>" cssClass="dossier-files-content" extended="<%= true %>" id="dossierFilePanel" persistState="<%= true %>" title="dossier-files">
-			<liferay-util:include page='<%= templatePath + "dossier/classical_dossier_part.jsp" %>' servletContext="<%= application %>"/>
-		</liferay-ui:panel>
+		
+		<div class="dossier-payment-info">
+			<c:if test="<%= dossierLogs != null && !dossierLogs.isEmpty() %>">
+			
+			
+				<aui:row cssClass="pd_t20">
+				
+						<%
+							int count = 1;
+							for(DossierLog dossierLog : dossierLogs){
+								
+								%>
+									<aui:row cssClass='<%=count <  dossierLogs.size() ? "bottom-line pd_b20 pd_t20" : "pd_t20" %>'>
+										<aui:col width="30">
+											<span class="span1">
+												<i class="fa fa-circle blue sx10"></i>
+											</span>
+											
+											<span class="span2 bold">
+												<%=count %>
+											</span>
+											
+											<span class="span9">
+												<%=
+													Validator.isNotNull(dossierLog.getUpdateDatetime()) ? 
+													DateTimeUtil.convertDateToString(dossierLog.getUpdateDatetime(), DateTimeUtil._VN_DATE_TIME_FORMAT) : 
+													DateTimeUtil._EMPTY_DATE_TIME
+												%>
+											</span>
+										</aui:col>
+										<aui:col width="30">
+											<span class="span4 bold">
+												<liferay-ui:message key="request-command"/>
+											</span>
+											<span class="span8">
+												<liferay-ui:message key="<%=dossierLog.getRequestCommand() %>"/>
+											</span>
+										</aui:col>
+										<aui:col width="30">
+											<span class="span4 bold status-color-denied">
+												<liferay-ui:message key="message-info"/>
+											</span>
+											<span class="span8">
+												<%= DossierMgtUtil.getDossierLogs(PortletConstants.REQUEST_COMMAND_PAYMENT, dossierLog.getMessageInfo()) %>
+											</span>
+										</aui:col>
+									</aui:row>
+									
+								<%
+								count ++;
+							}
+						%>
+					
+				</aui:row>
+			</c:if>
+		</div>
+		
 	</liferay-ui:panel-container>
 </div>
 
@@ -423,5 +581,17 @@
 			validateOnInput: true,
 			rules: rules
 		});
+		
+		
+		var openHistoryPopup = A.one("#<portlet:namespace/>viewHistory")
+		openHistoryPopup.on('click', function() {
+			var portletURL = Liferay.PortletURL.createURL('<%= PortletURLFactoryUtil.create(request, WebKeys.DOSSIER_MGT_PORTLET, themeDisplay.getPlid(), PortletRequest.RENDER_PHASE) %>');
+			portletURL.setParameter("mvcPath", "/html/portlets/dossiermgt/frontoffice/dossier/classical_history.jsp");
+			portletURL.setWindowState("<%=LiferayWindowState.POP_UP.toString()%>"); 
+			portletURL.setPortletMode("normal");
+			portletURL.setParameter("dossierId", '<%= Validator.isNotNull(dossier) ? String.valueOf(dossier.getDossierId()) : "0" %>');
+			openDialog(portletURL.toString() , 'dossier-history', Liferay.Language.get("dossier-history"));
+		});
+		
 	});
 </aui:script>
