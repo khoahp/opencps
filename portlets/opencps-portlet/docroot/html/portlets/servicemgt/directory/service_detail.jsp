@@ -1,3 +1,5 @@
+<%@page import="javax.portlet.PortletRequest"%>
+<%@page import="com.liferay.portlet.PortletURLFactoryUtil"%>
 <%@page import="org.opencps.dossiermgt.search.DossierDisplayTerms"%>
 <%@page import="org.opencps.util.PortletPropsValues"%>
 <%@page import="org.opencps.util.PortletUtil"%>
@@ -99,40 +101,22 @@
 	}
 %>
 
-<%-- <liferay-portlet:renderURL  --%>
-<%-- 		var="renderToSubmitOnline"  --%>
-<%-- 		portletName="<%=WebKeys.P26_SUBMIT_ONLINE %>" --%>
-<%-- 		plid="<%=plidServiceDetail %>" --%>
-<%-- 		portletMode="VIEW" --%>
-<%-- 		windowState="<%=LiferayWindowState.NORMAL.toString() %>" --%>
-<%-- 	> --%>
-<%-- 	<portlet:param name="mvcPath" value="/html/portlets/dossiermgt/submit/dossier_submit_online.jsp"/> --%>
-<%-- 	<portlet:param name="serviceinfoId" value="<%=String.valueOf(serviceinfoId) %>"/> --%>
-<%-- 	<portlet:param name="backURL" value="<%=backURL %>"/> --%>
-<%-- </liferay-portlet:renderURL> --%>
 
-<%-- <liferay-portlet:renderURL  --%>
-<%-- 		var="renderToSubmitOnline"  --%>
-<%-- 		portletName='<%=WebKeys.DOSSIER_MGT_PORTLET %> %>' --%>
-<%-- 		plid="<%=plidSubmit %>" --%>
-<%-- 		portletMode="VIEW" --%>
-<%-- 		windowState="<%=LiferayWindowState.NORMAL.toString() %>" --%>
-<%-- 	> --%>
-<%-- 	<portlet:param name="mvcPath" value="/html/portlets/dossiermgt/frontoffice/edit_dossier.jsp"/> --%>
-<%-- 	<portlet:param name="backURL" value="<%=backURL %>"/> --%>
-<%-- 	<portlet:param name="<%=DossierDisplayTerms.SERVICE_CONFIG_ID %>" value="<%=String.valueOf(scf.getServiceConfigId()) %>"/> --%>
-<%-- 	<portlet:param name="<%=Constants.CMD %>" value="<%=Constants.ADD %>"/> --%>
-<%-- 	<portlet:param name="backURL" value="<%=backURL %>"/> --%>
-<%-- 	<portlet:param name="isEditDossier" value="<%=String.valueOf(true) %>"/> --%>
-<%-- </liferay-portlet:renderURL> --%>
 
-<aui:form>
-	<aui:input name="serviceInfoId" type="hidden" value="<%=serviceinfoId %>"/>
-	<aui:input name="backURL" type="hidden" value="<%=backURL %>"/>
-	<aui:input name="<%=Constants.CMD %>" type="hidden" value="<%=Constants.CMD %>"/>
-	<aui:input name="isEditDossier" type="hidden" value="<%=String.valueOf(true) %>"/>
-	<aui:input name="mvcPath" type="hidden" value="/html/portlets/dossiermgt/frontoffice/edit_dossier.jsp"/>
-</aui:form>
+<liferay-portlet:renderURL 
+ 		var="renderURL" 
+ 		portletName='<%=WebKeys.DOSSIER_MGT_PORTLET %>' 
+ 		plid="<%=plidSubmit %>"
+ 		portletMode="VIEW"
+ 		windowState="<%=LiferayWindowState.NORMAL.toString() %>"> 
+ 		
+ 	<portlet:param name="mvcPath" value="/html/portlets/dossiermgt/frontoffice/edit_dossier.jsp"/> 
+ 	<portlet:param name="isEditDossier" value="<%=String.valueOf(true) %>"/> 
+ 	<portlet:param name="<%=DossierDisplayTerms.SERVICE_CONFIG_ID %>" value="<%=String.valueOf(scf.getServiceConfigId()) %>"/>
+ 	<portlet:param name="backURL" value="<%=backURL %>"/>
+ 	<portlet:param name="<%=Constants.CMD %>" value="<%=Constants.ADD %>"/> 
+ 	
+ </liferay-portlet:renderURL>
 
 
 <div class="ocps-service-detal-bound-all">
@@ -140,9 +124,6 @@
 		<label class="opcps-label">
 			<liferay-ui:message key="service-detail" />
 		</label>
-		<span class="ocps-span">
-			<a href="<%=backURL %>"><liferay-ui:message key="back"/></a>
-		</span>
 	</div>
 	
 	<div class="ocps-hide-header">
@@ -272,8 +253,8 @@
 					</td>
 				</tr>
 				<tr>
-					<aui:row>
-						
+					<td class="col-left" colspan="2">
+						<aui:row>
 							<aui:select name="govAgencyCode" label="co-quan-thuc-hien" cssClass="submit-online input100">
 								<%
 									if(listAdmin!=null && !listAdmin.isEmpty()){
@@ -287,54 +268,63 @@
 									}
 								%>
 							</aui:select>
+						</aui:row>
 						
-					</aui:row>
-					<c:if test="<%= serviceIsConfiged %>">
-						<td class="col-left" colspan="2">
-							<aui:button  cssClass="des-sub-button radius20" value="dossier-submit-online-temp" name="btn_des"></aui:button>
+						<aui:row cssClass="serice-des">
+							<liferay-ui:message key="service-description-dvc"/>
+						</aui:row>
 							
-						</td>
-					</c:if>
+						<aui:row cssClass="des-detail">		
+							<c:choose>
+								<c:when test="<%=scf != null && scf != null %>">
+									<c:choose>
+										<c:when test="<%=scf.getServiceInstruction().equalsIgnoreCase(StringPool.BLANK) %>">
+											
+										</c:when>
+										<c:otherwise>
+											<%= scf.getServiceInstruction() %>
+										</c:otherwise>
+									</c:choose>
+								</c:when>
+								<c:otherwise>
+									<liferay-ui:message key="no-config"/>
+								</c:otherwise>
+							</c:choose>	
+						</aui:row>
+							
+						<c:if test="<%= serviceIsConfiged %>">
+							<aui:button href="<%=backURL %>" cssClass="des-sub-button radius20" value='<%=LanguageUtil.get(themeDisplay.getLocale(), "back") %>'/>
+							<aui:button  cssClass="des-sub-button radius20" value="dossier-submit-online-temp" name="btn_des" href="<%=renderURL.toString() %>"></aui:button>
+						</c:if>
+					</td>
 				</tr>
 			</table>
 		</div>
 	</c:if>
 </div>
 
-<aui:script>
-	AUI().ready('aui-base','liferay-portlet-url',function(A) {
-		var govAgencyCodeSel = A.one("#<portlet:namespace/>govAgencyCode");
-		var backUrl = A.one("#<portlet:namespace/>backURL");
-		var serviceInfoId = A.one("#<portlet:namespace/>serviceInfoId");
-		var isEditDossier = A.one("#<portlet:namespace/>isEditDossier");
-		var mvcPath = A.one("#<portlet:namespace/>mvcPath");
-		var CMD = A.one("#<portlet:namespace/>cmd");
+<aui:script use="aui-base,liferay-portlet-url">
+	AUI().ready(function(A) {
+		
+		var url = "<%=renderURL.toString() %>";
+		var govAgencyCodeSel = A.one("#<portlet:namespace/>govAgencyCode"); 
 		
 		console.log("govAgencyCodeSel:"+govAgencyCodeSel);
-		console.log("backUrl:"+backUrl);
-		console.log("serviceInfoId:"+serviceInfoId);
-		console.log("isEditDossier:"+isEditDossier);
-		console.log("mvcPath:"+mvcPath);
-		console.log("CMD:"+CMD);
 
 		if(govAgencyCodeSel) {
 			
 			govAgencyCodeSel.on('change',function() {
+				console.log("change");
 				
-				var renderUrl = new Liferay.PortletURL.createURL();
+				var renderUrlTest = Liferay.PortletURL.createURL(url);
 				
-				renderUrl.setWindowState("<%=LiferayWindowState.NORMAL.toString() %>");
-				renderUrl.setPortletId("<%=plidServiceDetail %>");
-				renderUrl.setParameter("govAgencyCode",govAgencyCodeSel);
-				renderUrl.setParameter("backURL",backUrl);
-				renderUrl.setParameter("serviceInfoId",serviceInfoId);
-				renderUrl.setParameter("isEditDossier",isEditDossier);
-				renderUrl.setParameter("mvcPath",mvcPath);
-				renderUrl.setParameter("cmd",CMD);
+				console.log("renderUrl:"+renderUrlTest);
+				renderUrlTest = renderUrlTest+'&<portlet:namespace/>govAgencyCode='+govAgencyCodeSel;
 				
-				console.log("renderUrl.toString():"+renderUrl.toString());
 				
-				A.one("#<portlet:namespace/>btn_des").set('href',renderUrl.toString());
+				console.log("renderUrl.toString():"+renderUrlTest);
+				
+				A.one("#<portlet:namespace/>btn_des").attr('href',renderUrlTest);
 				
 			});
 		}
