@@ -149,8 +149,8 @@
 				</aui:row>
 			</aui:fieldset>
 			<aui:fieldset>
-				<aui:button type="submit" name="submit" value="save" title='<%=LanguageUtil.get(locale, "save") %>'/>
-				<aui:button type="submit" name="cancel" value="cancel" title='<%=LanguageUtil.get(locale, "cancel") %>'/>
+				<aui:button type="submit" name="submit" value="save" title='<%=LanguageUtil.get(locale, "save") %>' cssClass="save-icon"/>
+				<aui:button type="submit" name="cancel" value="cancel" title='<%=LanguageUtil.get(locale, "cancel") %>' cssClass="cancel-icon"/>
 			</aui:fieldset>	
 		</aui:form>
 	</div>

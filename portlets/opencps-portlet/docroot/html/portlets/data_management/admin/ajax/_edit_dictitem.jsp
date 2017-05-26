@@ -65,14 +65,16 @@
 	>
 		<liferay-ui:message key='dict-collection-mgt' />
 	</a>
+	<liferay-ui:message key='<%=" >> " %>' />
 	<a 
 		title='<%=(collection == null) ? "" : collection.getCollectionName(locale) %>' 
 		href="javascript:getDictCollectionDetail(selectedDictCollectionId);"
 	>
-		<liferay-ui:message key='<%= (collection == null) ? " >> " : " >> " + collection.getCollectionName(locale) + " >> "%>' />
+		<liferay-ui:message key='<%= (collection == null) ? "" : collection.getCollectionName(locale) %>' />
 	</a>
+	<liferay-ui:message key='<%=" >> " %>' />
 	<a 
-		title='<%=(collection == null) ? "" : collection.getCollectionName(locale) %>' 
+		title='<%=LanguageUtil.get(locale, "list") %>' 
 		href="javascript:getDictItemsToolbar(selectedDictCollectionId);"
 	>
 		<liferay-ui:message key='list' />
@@ -155,8 +157,8 @@
 				</aui:select> --%>
 			
 			<aui:fieldset>
-				<aui:button type="submit" name="submit" value="save" title='<%=LanguageUtil.get(locale, "save") %>'/>
-				<aui:button type="submit" name="cancel" value="cancel" title='<%=LanguageUtil.get(locale, "cancel") %>'/>
+				<aui:button type="submit" name="submit" value="save" title='<%=LanguageUtil.get(locale, "save") %>' cssClass="save-icon"/>
+				<aui:button type="submit" name="cancel" value="cancel" title='<%=LanguageUtil.get(locale, "cancel") %>' cssClass="cancel-icon"/>
 			</aui:fieldset>	
 		</aui:form>
 	</div>

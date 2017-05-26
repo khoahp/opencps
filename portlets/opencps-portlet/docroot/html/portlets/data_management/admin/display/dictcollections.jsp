@@ -959,8 +959,10 @@
 								node.on('click', function(){
 									
 									// todo check loggin
+									console.log('check loggined');
 									if (!Liferay.ThemeDisplay.isSignedIn()){
 										alert(Liferay.Language.get('please-login-and-try-again'));
+										console.log('not logined');
 										return;
 									} else {
 										console.log('logined');
@@ -1249,7 +1251,7 @@
 												dictCollectionId = dictCollection.val();
 												parentItemId = parentItem.val();
 												
-												getSelectSibling(dictCollectionId, parentItemId, 0);
+												getSelectSibling(dictCollectionId, parentItemId, selectedDictItemId);
 											}
 										}
 									}
@@ -1481,7 +1483,7 @@
 			        success: function(event, id, obj){
 			        	setTimeout(function(){
 			        		getDictItemsToolbar(selectedDictCollectionId);
-							alert(Liferay.Language.get('success'));
+							//alert(Liferay.Language.get('success'));
 						}, 500);
 					},
 			    	error: function(){
