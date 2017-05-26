@@ -18,11 +18,14 @@ import java.util.Date;
 import java.util.List;
 
 import org.opencps.datamgt.model.DictItem;
+import org.opencps.datamgt.model.impl.DictItemImpl;
 import org.opencps.datamgt.service.DictItemLocalServiceUtil;
 import org.opencps.servicemgt.NoSuchServiceInfoException;
 import org.opencps.servicemgt.model.ServiceInfo;
 import org.opencps.servicemgt.service.base.ServiceInfoLocalServiceBaseImpl;
+import org.opencps.util.PortletUtil;
 
+import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.search.Indexer;
@@ -30,6 +33,7 @@ import com.liferay.portal.kernel.search.IndexerRegistryUtil;
 import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.service.ServiceContext;
 
@@ -564,12 +568,36 @@ public class ServiceInfoLocalServiceImpl
 	 * @throws PortalException
 	 * @throws SystemException
 	 */
-	public List<ServiceInfo> searchService(
-		long groupId, String keywords, String administrationCode,
-		String domainCode, Integer serviceLevel, int start, int end)
-		throws PortalException, SystemException {
+	public List<ServiceInfo> searchService(long groupId, String keywords,
+			String administrationCode, String domainCode, Integer serviceLevel,
+			int start, int end) throws PortalException, SystemException {
 
-		return serviceInfoFinder.searchService(
-			groupId, keywords, administrationCode, domainCode, serviceLevel, start, end);
+		return serviceInfoFinder.searchService(groupId, keywords,
+				administrationCode, domainCode, serviceLevel, start, end);
 	}
+	
+
+	public List<ServiceInfo> searchServiceActive(long groupId, String keywords,
+			String administrationCode, String domainCode, int serviceLevel,
+			int start, int end) throws PortalException, SystemException {
+
+		String[] dictItemIdArray = PortletUtil.getDictItemIdArrayByItemCode(
+				groupId, domainCode);
+
+		return serviceInfoFinder.searchServiceActive(groupId, keywords,
+				administrationCode, dictItemIdArray, serviceLevel, start, end);
+	}
+
+	public int countServiceActive(long groupId, String keywords,
+			String administrationCode, String domainCode, int serviceLevel)
+			throws PortalException, SystemException {
+
+		String[] dictItemIdArray = PortletUtil.getDictItemIdArrayByItemCode(
+				groupId, domainCode);
+
+		return serviceInfoFinder.countServiceActive(groupId, keywords,
+				administrationCode, dictItemIdArray, serviceLevel);
+
+	}
+	
 }

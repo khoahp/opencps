@@ -43,6 +43,12 @@ public class ServiceInfoFinderImpl extends BasePersistenceImpl<ServiceInfo>
 
 	public static final String COUNT_SERVICE_SQL =
 	    ServiceInfoFinder.class.getName() + ".countService";
+	
+	public static final String SEARCH_SERVICE_ACTIVE_SQL =
+		    ServiceInfoFinder.class.getName() + ".searchServiceActive";
+
+		public static final String COUNT_SERVICE_ACTIVE_SQL =
+		    ServiceInfoFinder.class.getName() + ".countServiceActive";
 
 	/**
 	 * @param groupId
@@ -91,6 +97,8 @@ public class ServiceInfoFinderImpl extends BasePersistenceImpl<ServiceInfo>
 		else {
 			andOperator = true;
 		}
+		
+		
 
 		return _searchService(
 		    groupId, keywords, administrationCode, domainCode, serviceLevel, andOperator, start,
@@ -140,7 +148,7 @@ public class ServiceInfoFinderImpl extends BasePersistenceImpl<ServiceInfo>
 				        StringPool.BLANK);
 			}
 			
-			if(serviceLevel == null) {
+			if(serviceLevel <=0) {
 				sql = StringUtil.replace(
 						sql, "LEFT JOIN opencps_service_config ON opencps_serviceinfo.serviceInfoId = opencps_service_config.serviceInfoId",
 						StringPool.BLANK);
@@ -181,7 +189,7 @@ public class ServiceInfoFinderImpl extends BasePersistenceImpl<ServiceInfo>
 				qPos.add(StringPool.PERCENT+domainCode+StringPool.PERIOD+StringPool.PERCENT);
 			}
 			
-			if(serviceLevel != null) {
+			if(serviceLevel > 0) {
 				qPos.add(serviceLevel);
 			}
 
@@ -240,7 +248,7 @@ public class ServiceInfoFinderImpl extends BasePersistenceImpl<ServiceInfo>
 				        StringPool.BLANK);
 			}
 			
-			if(serviceLevel == null) {
+			if(serviceLevel <= 0) {
 				sql = StringUtil.replace(
 						sql, "LEFT JOIN opencps_service_config ON opencps_serviceinfo.serviceInfoId = opencps_service_config.serviceInfoId",
 						StringPool.BLANK);
@@ -279,7 +287,7 @@ public class ServiceInfoFinderImpl extends BasePersistenceImpl<ServiceInfo>
 				qPos.add(StringPool.PERCENT+domainCode+StringPool.PERIOD+StringPool.PERCENT);
 			}
 			
-			if(serviceLevel != null) {
+			if(serviceLevel > 0) {
 				qPos.add(serviceLevel);
 			}
 
@@ -300,6 +308,271 @@ public class ServiceInfoFinderImpl extends BasePersistenceImpl<ServiceInfo>
 			_log.error(e);
 		}
 		finally {
+			closeSession(session);
+		}
+
+		return 0;
+	}
+	
+	public List<ServiceInfo> searchServiceActive(long groupId, String keywords,
+			String administrationCode, String[] domainCode,
+			Integer serviceLevel, int start, int end) {
+
+		boolean andOperator = false;
+
+		if (Validator.isNotNull(keywords)) {
+
+		} else {
+			andOperator = true;
+		}
+
+		return _searchServiceActive(groupId, keywords, administrationCode,
+				domainCode, serviceLevel, andOperator, start, end);
+	}
+
+	/**
+	 * @param groupId
+	 * @param keywords
+	 * @param adminCode
+	 * @param domainCode
+	 * @param andOperator
+	 * @param start
+	 * @param end
+	 * @return
+	 */
+	private List<ServiceInfo> _searchServiceActive(long groupId, String keyword,
+			String adminCode, String[] domainCode, Integer serviceLevel,
+			boolean andOperator, int start, int end) {
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			String sql = CustomSQLUtil.get(SEARCH_SERVICE_ACTIVE_SQL);
+
+			if (Validator.isNull(keyword)) {
+				sql = StringUtil
+						.replace(
+								sql,
+								"AND ((lower(opencps_serviceinfo.serviceName) LIKE ?) OR (lower(opencps_serviceinfo.fullName) LIKE ?))",
+								StringPool.BLANK);
+			}
+
+			// remove condition query
+			if (Validator.equals(adminCode, "0")
+					|| Validator.equals(adminCode, StringPool.BLANK)) {
+				sql = StringUtil.replace(sql,
+						"AND (opencps_serviceinfo.administrationCode = ?)",
+						StringPool.BLANK);
+			}
+
+			if (domainCode.length <= 0) {
+				sql = StringUtil
+						.replace(
+								sql,
+								"AND (opencps_serviceinfo.domainCode IN ($DOMAIN_CODE$))",
+								StringPool.BLANK);
+			}else{
+				
+				String mergeCode = StringUtil.merge(domainCode);
+				
+				sql = StringUtil.replace(sql,"$DOMAIN_CODE$",mergeCode);
+			}
+
+			if (serviceLevel <= 0) {
+				sql = StringUtil
+						.replace(
+								sql,
+								"LEFT JOIN opencps_service_config ON opencps_serviceinfo.serviceInfoId = opencps_service_config.serviceInfoId",
+								StringPool.BLANK);
+
+				sql = StringUtil.replace(sql,
+						"AND (opencps_service_config.serviceLevel = ?)",
+						StringPool.BLANK);
+
+				sql = StringUtil.replace(sql,
+						"GROUP BY opencps_serviceinfo.serviceInfoId",
+						StringPool.BLANK);
+			}
+
+			SQLQuery q = session.createSQLQuery(sql);
+
+			q.setCacheable(false);
+
+			q.addEntity("ServiceInfo", ServiceInfoImpl.class);
+
+			QueryPos qPos = QueryPos.getInstance(q);
+
+			qPos.add(groupId);
+
+			if (Validator.isNotNull(keyword)) {
+				qPos.add("%" + keyword + "%");
+
+				qPos.add("%" + keyword + "%");
+			}
+
+			if (!Validator.equals(adminCode, "0")
+					&& !Validator.equals(adminCode, StringPool.BLANK)) {
+				qPos.add(adminCode);
+			}
+
+//			if (domainCode.length > 0) {
+//				
+//				String mergeCode = StringUtil.merge(domainCode);
+//				qPos.add(mergeCode);
+//			}
+
+			if (serviceLevel > 0) {
+				qPos.add(serviceLevel);
+			}
+
+			return (List<ServiceInfo>) QueryUtil.list(q, getDialect(), start,
+					end);
+		} catch (Exception e) {
+			_log.error(e);
+		} finally {
+			closeSession(session);
+		}
+
+		return null;
+
+	}
+	
+	/**
+	 * @param groupId
+	 * @param keywords
+	 * @param administrationCode
+	 * @param domainCode
+	 * @return
+	 */
+	public int countServiceActive(long groupId, String keywords,
+			String administrationCode, String[] domainCode, int serviceLevel) {
+
+		// String[] names = null;
+		boolean andOperator = false;
+
+		if (Validator.isNotNull(keywords)) {
+			// names = CustomSQLUtil.keywords(keywords);
+		} else {
+			andOperator = true;
+		}
+
+		return _countServiceActive(groupId, keywords, administrationCode, domainCode,
+				serviceLevel, andOperator);
+	}
+
+	/**
+	 * @param groupId
+	 * @param keywords
+	 * @param adminCode
+	 * @param domainCode
+	 * @param andOperator
+	 * @return
+	 */
+	private int _countServiceActive(long groupId, String keyword,
+			String adminCode, String[] domainCode, int serviceLevel,
+			boolean andOperator) {
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			String sql = CustomSQLUtil.get(COUNT_SERVICE_ACTIVE_SQL);
+
+			if (Validator.isNull(keyword)) {
+				sql = StringUtil
+						.replace(
+								sql,
+								"AND ((lower(opencps_serviceinfo.serviceName) LIKE ?) OR (lower(opencps_serviceinfo.fullName) LIKE ?))",
+								StringPool.BLANK);
+			}
+
+			// remove condition query
+			if (Validator.equals(adminCode, "0")
+					|| Validator.equals(adminCode, StringPool.BLANK)) {
+				sql = StringUtil.replace(sql,
+						"AND (opencps_serviceinfo.administrationCode = ?)",
+						StringPool.BLANK);
+			}
+
+			if (domainCode.length <=0) {
+				sql = StringUtil
+						.replace(
+								sql,
+								"AND (opencps_serviceinfo.domainCode IN ($DOMAIN_CODE$))",
+								StringPool.BLANK);
+			}else{
+				String mergeCode = StringUtil.merge(domainCode);
+				
+				sql = StringUtil.replace(sql,"$DOMAIN_CODE$",mergeCode);
+			}
+
+			if (serviceLevel <= 0) {
+				sql = StringUtil
+						.replace(
+								sql,
+								"LEFT JOIN opencps_service_config ON opencps_serviceinfo.serviceInfoId = opencps_service_config.serviceInfoId",
+								StringPool.BLANK);
+
+				sql = StringUtil.replace(sql,
+						"AND (opencps_service_config.serviceLevel = ?)",
+						StringPool.BLANK);
+
+				sql = StringUtil.replace(sql,
+						"GROUP BY opencps_serviceinfo.serviceInfoId",
+						StringPool.BLANK);
+			}
+
+			SQLQuery q = session.createSQLQuery(sql);
+
+			q.setCacheable(false);
+
+			q.addScalar(COUNT_COLUMN_NAME, Type.INTEGER);
+
+			QueryPos qPos = QueryPos.getInstance(q);
+
+			qPos.add(groupId);
+
+			if (Validator.isNotNull(keyword)) {
+				qPos.add("%" + keyword + "%");
+
+				qPos.add("%" + keyword + "%");
+			}
+
+			if (!Validator.equals(adminCode, "0")
+					&& !Validator.equals(adminCode, StringPool.BLANK)) {
+				qPos.add(adminCode);
+			}
+
+			if (domainCode.length >0) {
+				
+				String mergeCode = StringUtil.merge(domainCode);
+				
+				qPos.add(mergeCode);
+				
+			}
+
+			if (serviceLevel > 0) {
+				qPos.add(serviceLevel);
+			}
+
+			Iterator<Integer> itr = q.iterate();
+
+			if (itr.hasNext()) {
+				Integer count = itr.next();
+
+				if (count != null) {
+					return count.intValue();
+				}
+			}
+
+			return 0;
+
+		} catch (Exception e) {
+			_log.error(e);
+		} finally {
 			closeSession(session);
 		}
 

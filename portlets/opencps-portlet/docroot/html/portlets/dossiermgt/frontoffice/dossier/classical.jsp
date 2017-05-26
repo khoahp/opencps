@@ -1,4 +1,6 @@
 
+<%@page import="org.opencps.paymentmgt.service.PaymentFileLocalServiceUtil"%>
+<%@page import="org.opencps.paymentmgt.model.PaymentFile"%>
 <%@page import="org.opencps.dossiermgt.service.DossierFileLocalServiceUtil"%>
 <%@page import="org.opencps.dossiermgt.model.DossierFile"%>
 <%@page import="org.opencps.util.DateTimeUtil"%>
@@ -193,13 +195,21 @@
 	message="<%=DuplicateFolderNameException.class.getName() %>"
 />
 
+<% 
+	String title = "add-dossier";
+	
+	if (Validator.isNotNull(dossier) && !dossier.getDossierStatus().contains("new")) {
+		title = "update-dossier-x";
+	}
+%>
+
 <portlet:renderURL var="viewHistoryURL" windowState="<%=LiferayWindowState.POP_UP.toString()%>">
 	<portlet:param name="mvcPath" value='<%= templatePath + "dossier/classical_result.jsp" %>'/>
 </portlet:renderURL>
 
 <div class="fe-dossier-wrapper" style="padding: 10px;">
 	<div class="head-title">
-		<liferay-ui:message key='<%= Validator.isNotNull(dossier) ? "add-dossier" : "update-dossier" %>'/>
+		<liferay-ui:message key='<%= title %>'/>
 	</div>
 	
 	<liferay-ui:panel-container cssClass="dossier-info-panel" extended="<%= false %>" id="dossierInfoPanelContainer" persistState="<%= true %>">
@@ -264,7 +274,7 @@
 				</aui:col>
 			</aui:row>
 			
-			<hr style="border-top: dotted 2px;" />
+			<hr style="border-top: dotted 1px;" />
 			
 			<aui:row>
 				<aui:col width="50">
@@ -446,63 +456,85 @@
 		%>
 
 		<c:if test="<%= _checkDossierPart(dossierPartsLevel1, dossier) %>">
-			<liferay-ui:panel collapsible="<%= true %>" cssClass="dossier-files-content" extended="<%= true %>" id="dossierFilePanel" persistState="<%= true %>" title="dossier-files">
+			
+			<div style="margin-top: 10px;">&nbsp;</div>
+			
+			<liferay-ui:panel collapsible="<%= true %>" cssClass="dossier-files-result" extended="<%= true %>" id="dossierFilePanel" persistState="<%= true %>" title="dossier-files">
 				<liferay-util:include page='<%= templatePath + "dossier/classical_results.jsp" %>' servletContext="<%= application %>"/>
 			</liferay-ui:panel>
 		</c:if>
+		
+		<div style="margin-top: 10px;">&nbsp;</div>
 		
 		<liferay-ui:panel collapsible="<%= true %>" cssClass="dossier-files-content" extended="<%= true %>" id="dossierFilePanel" persistState="<%= true %>" title="dossier-files">
 			<liferay-util:include page='<%= templatePath + "dossier/classical_dossier_part.jsp" %>' servletContext="<%= application %>"/>
 		</liferay-ui:panel>
 		
-		<div class="dossier-payment-info">
+		<div class="dossier-payment-info" style="margin-top: 20px;">
 			<c:if test="<%= dossierLogs != null && !dossierLogs.isEmpty() %>">
 			
 			
 				<aui:row cssClass="pd_t20">
-				
+					
 						<%
 							int count = 1;
+							int flagPayment = 0; 
+							int flagResubmit = 0;
 							for(DossierLog dossierLog : dossierLogs){
 								
 								%>
 									<aui:row cssClass='<%=count <  dossierLogs.size() ? "bottom-line pd_b20 pd_t20" : "pd_t20" %>'>
-										<aui:col width="30">
-											<span class="span1">
-												<i class="fa fa-circle blue sx10"></i>
-											</span>
-											
-											<span class="span2 bold">
-												<%=count %>
-											</span>
-											
-											<span class="span9">
-												<%=
-													Validator.isNotNull(dossierLog.getUpdateDatetime()) ? 
-													DateTimeUtil.convertDateToString(dossierLog.getUpdateDatetime(), DateTimeUtil._VN_DATE_TIME_FORMAT) : 
-													DateTimeUtil._EMPTY_DATE_TIME
-												%>
-											</span>
-										</aui:col>
-										<aui:col width="30">
+
+										<aui:col width="100">
 											<span class="span4 bold">
-												<liferay-ui:message key="request-command"/>
+												<c:if test='<%=dossierLog.getRequestCommand().contains("paymentRequest") && flagPayment == 0  %>'>
+													<i class="fa fa-bullhorn fa-lg" style="font-size: 100%; margin: 0px 5px;"></i>
+													<liferay-ui:message key="msg-request-command-payment"/>
+												</c:if>
+												<c:if test='<%=dossierLog.getRequestCommand().contains("resubmitRequest") && flagPayment == 0 %>'>
+													<i class="fa fa-bullhorn fa-lg" style="font-size: 100%; margin: 0px 5px;"></i>
+													<liferay-ui:message key="msg-request-command-update-doissier"/>
+												</c:if>
 											</span>
 											<span class="span8">
-												<liferay-ui:message key="<%=dossierLog.getRequestCommand() %>"/>
-											</span>
-										</aui:col>
-										<aui:col width="30">
-											<span class="span4 bold status-color-denied">
-												<liferay-ui:message key="message-info"/>
-											</span>
-											<span class="span8">
-												<%= DossierMgtUtil.getDossierLogs(PortletConstants.REQUEST_COMMAND_PAYMENT, dossierLog.getMessageInfo()) %>
+												<%= dossierLog.getMessageInfo() %>
+												<c:if test='<%=dossierLog.getRequestCommand().contains("paymentRequest")   && flagPayment == 0  %>'>
+													<%
+														List<PaymentFile> lsPayment = new ArrayList<PaymentFile>();
+														if (Validator.isNotNull(dossier)) {
+															try {
+																lsPayment = PaymentFileLocalServiceUtil.getPaymentFileByD_(dossier.getDossierId());
+															} catch (Exception e) {}
+														}
+													%>
+													
+													<c:if test="<%= lsPayment.size() != 0 %>">
+														<ul class="ds-payment-ls">
+														<%
+															for (PaymentFile pf : lsPayment) {
+														%>
+															<li> <strong> <%= pf.getAmount() %> </strong> <liferay-ui:message key="VND"/> <span style="font-style: italic;"> <%= pf.getPaymentName() %> </span> </li>
+														<%
+															}
+														%>
+														
+														</ul>
+													</c:if>
+													
+												</c:if>
+												<c:if test='<%=dossierLog.getRequestCommand().contains("resubmitRequest") %>'>
+													<div class="ds-request-ls"> 
+														<%= dossierLog.getMessageInfo() %>
+													</div>
+												</c:if>
+												
 											</span>
 										</aui:col>
 									</aui:row>
 									
 								<%
+								flagPayment = flagPayment + 1;
+								flagResubmit = flagResubmit + 1;
 								count ++;
 							}
 						%>

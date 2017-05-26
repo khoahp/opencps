@@ -35,6 +35,8 @@
 
 
 <%
+	int serviceLevel  = ParamUtil.getInteger(request, ServiceDisplayTerms.SERVICE_LEVEL,0);
+	
 	PortletURL iteratorURL = renderResponse.createRenderURL();
 	iteratorURL.setParameter("mvcPath", templatePath + "serviceinfodirectorylist.jsp");
 	
@@ -42,9 +44,10 @@
 	
 	headerNames.add("row-index");
 	headerNames.add("service-name");
-	headerNames.add("service-domain-service-administrator");
+	headerNames.add("service-domain");
+	headerNames.add("service-administrator");
 	headerNames.add("muc-do");
-	headerNames.add("action");
+// 	headerNames.add("template-file");
 	 
 	String headers = StringUtil.merge(headerNames, StringPool.COMMA);
 	
@@ -62,11 +65,12 @@
 	List<DictItem> dictItems = DictItemLocalServiceUtil.findDictItemsByG_DC_S(scopeGroupId, ServiceUtil.SERVICE_DOMAIN);
 	
 	String myComboTree = ProcessOrderUtils.generateComboboxTree(PortletPropsValues.DATAMGT_MASTERDATA_SERVICE_DOMAIN, PortletConstants.TREE_VIEW_ALL_ITEM, 
-			PortletConstants.TREE_VIEW_LEVER_2, false, renderRequest);
+			PortletConstants.TREE_VIEW_LEVER_3, false, renderRequest);
 	
 	iteratorURL.setParameter(ServiceDisplayTerms.SERVICE_ADMINISTRATION, administrationCode);
 	iteratorURL.setParameter(ServiceDisplayTerms.SERVICE_DOMAINCODE, domainCode);
 	iteratorURL.setParameter("keywords", ParamUtil.getString(request, "keywords"));
+	iteratorURL.setParameter(ServiceDisplayTerms.SERVICE_LEVEL, String.valueOf(serviceLevel));
 %>
 
 <aui:script use="aui-base,aui-io">
@@ -77,21 +81,21 @@ $(document).ready(function(){
 		boundingBox: 'comboboxTree',
 		name: '#<portlet:namespace /><%=ServiceDisplayTerms.SERVICE_DOMAINCODE %>',
 		form: document.<portlet:namespace />fm,
-		formSubmit: true,
+		formSubmit: false,
 		isMultiple: false,
 	    source: JSON.parse(myComboTree)
 	});
 
 	comboboxTree.setValue(domainCode);
 	
-	$("#<portlet:namespace />administrationCode").change(function() {
-		<portlet:namespace />onSelectSubmit();
-	});
-	Liferay.provide(window, '<portlet:namespace/>onSelectSubmit', function() {
-		var A = AUI();
+// 	$("#<portlet:namespace />administrationCode").change(function() {
+// 		<portlet:namespace />onSelectSubmit();
+// 	});
+// 	Liferay.provide(window, '<portlet:namespace/>onSelectSubmit', function() {
+// 		var A = AUI();
 		
-		submitForm(document.<portlet:namespace />fm);
-	});
+// 		submitForm(document.<portlet:namespace />fm);
+// 	});
 });
 
 </aui:script>
@@ -102,7 +106,7 @@ $(document).ready(function(){
 			<aui:form action="<%= searchURL %>" method="post" name="fm">
 				<div class="toolbar_search_input">
 					<aui:row>
-						<aui:col width="30" cssClass="search-col">
+						<aui:col width="20" cssClass="search-col">
 							<datamgt:ddr
 								cssClass="search-input select-box"
 								depthLevel="1" 
@@ -116,11 +120,19 @@ $(document).ready(function(){
 							</datamgt:ddr>
 
 						</aui:col>
-						<aui:col width="30" cssClass="search-col">
+						<aui:col width="20" cssClass="search-col">
 							<aui:input name="<%=ServiceDisplayTerms.SERVICE_DOMAINCODE %>" type="hidden" value="<%=domainCode %>"></aui:input>
 							<input type="text" id="comboboxTree" class="opencps-combotree" readonly="readonly" />
 						</aui:col>
-						<aui:col width="30" cssClass="search-col">
+						<aui:col width="20" cssClass="search-col">
+							<aui:select name="<%=ServiceDisplayTerms.SERVICE_LEVEL %>" label="">
+								<aui:option value="0"><liferay-ui:message key="service-level"/></aui:option>
+								<aui:option value="2" selected='<%=serviceLevel == 2 %>'><liferay-ui:message key="muc-do" /> 2</aui:option>
+								<aui:option value="3" selected='<%=serviceLevel == 3 %>'><liferay-ui:message key="muc-do" /> 3</aui:option>
+								<aui:option value="4" selected='<%=serviceLevel == 4 %>'><liferay-ui:message key="muc-do" /> 4</aui:option>
+							</aui:select>
+						</aui:col>
+						<aui:col width="40" cssClass="search-col">
 							<liferay-ui:input-search 
 								cssClass="search-input input-keyword"
 								id="keywords1"
@@ -144,14 +156,21 @@ $(document).ready(function(){
 		<liferay-ui:search-container-results>
 			<%
 				ServiceSearchTerms searchTerms = (ServiceSearchTerms) searchContainer.getSearchTerms();
-	
-				total = ServiceInfoLocalServiceUtil.countService(scopeGroupId, searchTerms.getKeywords(), 
-					searchTerms.getAdministrationCode(), searchTerms.getDomainCode(), searchTerms.getServiceLevel());
-	
-				results = ServiceInfoLocalServiceUtil.searchService(scopeGroupId, searchTerms.getKeywords(), 
-					searchTerms.getAdministrationCode(), searchTerms.getDomainCode(), searchTerms.getServiceLevel(),
-					searchContainer.getStart(), searchContainer.getEnd());
-				
+		
+				total = ServiceInfoLocalServiceUtil.countServiceActive(
+						scopeGroupId, searchTerms.getKeywords(),
+						searchTerms.getAdministrationCode(),
+						searchTerms.getDomainCode(),
+						searchTerms.getServiceLevel());
+
+				results = ServiceInfoLocalServiceUtil.searchServiceActive(
+						scopeGroupId, searchTerms.getKeywords(),
+						searchTerms.getAdministrationCode(),
+						searchTerms.getDomainCode(),
+						searchTerms.getServiceLevel(),
+						searchContainer.getStart(),
+						searchContainer.getEnd());
+
 				pageContext.setAttribute("results", results);
 				pageContext.setAttribute("total", total);
 			%>
@@ -213,38 +232,49 @@ $(document).ready(function(){
 				<liferay-util:buffer var="boundcol2">
 					<div class="row-fluid service-directory-service-info">
 						<div class="span12">
-							<a href="<%=viewURL.toString() %>"><%=DictItemUtil.getNameDictItem(service.getDomainCode())%></a> / <a href="<%=viewURL.toString() %>"><%=DictItemUtil.getNameDictItem(service.getAdministrationCode())%></a>
+							<span><%=DictItemUtil.getNameDictItem(service.getDomainCode())%></span>
 						</div>
 					</div>
 				</liferay-util:buffer>
 				
 				<liferay-util:buffer var="boundcol3">
-					<div class="row-fluid service-directory-service-level">
+					<div class="row-fluid service-directory-service-info">
 						<div class="span12">
-						<%
-						int serviceLevel = 2;
-						
-						List<ServiceConfig> serviceConfigs = ServiceConfigLocalServiceUtil.getServiceConfigsByS_G(service.getServiceinfoId(), scopeGroupId);
-						
-						if(serviceConfigs != null && serviceConfigs.size() > 0) {
-							serviceLevel = serviceConfigs.get(0).getServiceLevel();
-						}
-						%>
-						
-						<%= serviceLevel %>
+							<span><%=DictItemUtil.getNameDictItem(service.getAdministrationCode())%></span>
 						</div>
 					</div>
 				</liferay-util:buffer>
 				
 				<liferay-util:buffer var="boundcol4">
-					<div class="row-fluid service-directory-action">
+					<div class="row-fluid service-directory-service-level">
 						<div class="span12">
-							<aui:button href="<%= viewURL.toString() %>" cssClass="des-sub-button radius20" value="service-description"></aui:button>
-							
-							<aui:button href="<%= renderToSubmitOnline.toString() %>" cssClass="des-sub-button radius20" value="dossier-submit-online-temp"></aui:button>
-						</div>
+						<%
+						int serviceLevelDisplay = 2;
+
+						List<ServiceConfig> serviceConfigs = ServiceConfigLocalServiceUtil
+								.getServiceConfigsByS_G(
+										service.getServiceinfoId(),
+										scopeGroupId);
+
+						if (serviceConfigs != null && serviceConfigs.size() > 0) {
+							serviceLevelDisplay = serviceConfigs.get(0)
+									.getServiceLevel();
+						}
+						%>
+						<%=serviceLevelDisplay%>
+					</div>
 					</div>
 				</liferay-util:buffer>
+				
+<%-- 				<liferay-util:buffer var="boundcol5"> --%>
+<!-- 					<div class="row-fluid service-directory-action"> -->
+<!-- 						<div class="span12"> -->
+<%-- 							<aui:button href="<%= viewURL.toString() %>" cssClass="des-sub-button radius20" value="service-description"></aui:button> --%>
+							
+<%-- 							<aui:button href="<%= renderToSubmitOnline.toString() %>" cssClass="des-sub-button radius20" value="dossier-submit-online-temp"></aui:button> --%>
+<!-- 						</div> -->
+<!-- 					</div> -->
+<%-- 				</liferay-util:buffer> --%>
 			<%
 				if(service.getActiveStatus() !=0) {
 					row.setClassName("opencps-searchcontainer-row service-directory-display-table-row");
@@ -255,6 +285,7 @@ $(document).ready(function(){
 					row.addText(boundcol2); 
 					row.addText(boundcol3); 
 					row.addText(boundcol4); 
+// 					row.addText(boundcol5); 
 				}
 			%>	
 		

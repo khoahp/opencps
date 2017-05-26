@@ -91,4 +91,42 @@
 			GROUP BY opencps_serviceinfo.serviceInfoId
 		]]>
 	</sql>
+	
+	<sql id="org.opencps.servicemgt.service.persistence.ServiceInfoFinder.searchServiceActive">	
+		<![CDATA[
+			SELECT
+				opencps_serviceinfo.*
+			FROM
+				opencps_serviceinfo 
+			LEFT JOIN opencps_service_config ON opencps_serviceinfo.serviceInfoId = opencps_service_config.serviceInfoId 
+			WHERE
+				opencps_serviceinfo.groupId = ?
+			AND ((lower(opencps_serviceinfo.serviceName) LIKE ?) OR (lower(opencps_serviceinfo.fullName) LIKE ?))
+			AND (opencps_serviceinfo.administrationCode = ?)
+			AND (opencps_serviceinfo.domainCode IN ($DOMAIN_CODE$))
+			AND (opencps_service_config.serviceLevel = ?)
+			AND opencps_serviceinfo.activeStatus = 1
+			GROUP BY opencps_serviceinfo.serviceInfoId
+			ORDER BY opencps_serviceinfo.createDate
+			
+		]]>
+	</sql>
+	
+	<sql id="org.opencps.servicemgt.service.persistence.ServiceInfoFinder.countServiceActive">	
+		<![CDATA[
+			SELECT
+				count(*) AS COUNT_VALUE
+			FROM
+				opencps_serviceinfo 
+			LEFT JOIN opencps_service_config ON opencps_serviceinfo.serviceInfoId = opencps_service_config.serviceInfoId 
+			WHERE
+				opencps_serviceinfo.groupId = ?
+			AND ((lower(opencps_serviceinfo.serviceName) LIKE ?) OR (lower(opencps_serviceinfo.fullName) LIKE ?))
+			AND (opencps_serviceinfo.administrationCode = ?)
+			AND (opencps_serviceinfo.domainCode IN ($DOMAIN_CODE$))
+			AND (opencps_service_config.serviceLevel = ?)
+			AND opencps_serviceinfo.activeStatus = 1
+			GROUP BY opencps_serviceinfo.serviceInfoId
+		]]>
+	</sql>
 </custom-sql>
