@@ -97,6 +97,7 @@
 	<aui:select name="displayStyle" label="display-style">
 		<aui:option selected='<%= "default".equals(displayStyle) %>' value="default" label="default"/>
 		<aui:option selected='<%= "style1".equals(displayStyle) %>' value="style1" label="style1"/>
+		<aui:option selected='<%= "style2".equals(displayStyle) %>' value="style2" label="style2"/>
 	</aui:select>
     <aui:input name="action" type="hidden" id="action"></aui:input>
     <aui:button-row>
