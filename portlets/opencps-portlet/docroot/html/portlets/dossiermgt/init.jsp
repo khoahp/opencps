@@ -115,5 +115,7 @@
 	
 	boolean displayRecentlyResultWhenSearch = GetterUtil.getBoolean(preferences.getValue("displayRecentlyResultWhenSearch", "false"), false);
 	long redirectAddDossierPlid = GetterUtil.getLong(preferences.getValue("redirectAddDossierPlid", null));
+	
+	String submitDossierButtonPage = preferences.getValue("submitDossierButtonPage", StringPool.BLANK);
 %>
 
