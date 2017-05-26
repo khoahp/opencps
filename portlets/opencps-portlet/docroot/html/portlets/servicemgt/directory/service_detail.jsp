@@ -302,7 +302,7 @@
 </div>
 
 <aui:script>
-	AUI().ready("aui-base,liferay-portlet-url",function(A) {
+	AUI().ready('aui-base','liferay-portlet-url',function(A) {
 		var govAgencyCodeSel = A.one("#<portlet:namespace/>govAgencyCode");
 		var backUrl = A.one("#<portlet:namespace/>backURL");
 		var serviceInfoId = A.one("#<portlet:namespace/>serviceInfoId");
@@ -321,7 +321,7 @@
 			
 			govAgencyCodeSel.on('change',function() {
 				
-				var renderUrl = Liferay.Portlet.createURL();
+				var renderUrl = new Liferay.PortletURL.createURL();
 				
 				renderUrl.setWindowState("<%=LiferayWindowState.NORMAL.toString() %>");
 				renderUrl.setPortletId("<%=plidServiceDetail %>");
