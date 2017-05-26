@@ -18,6 +18,7 @@
  */
 %>
 
+<%@page import="org.opencps.util.DateTimeUtil"%>
 <%@page import="java.util.HashMap"%>
 <%@page import="java.util.Map"%>
 <%@page import="com.liferay.portal.kernel.json.JSONArray"%>
@@ -40,6 +41,26 @@
 	} catch (Exception e) {
 
 	} */
+	
+	if(startMonth < 0){
+		startMonth = DateTimeUtil.getMonthFromDate(new Date());
+	}
+	
+	if(startYear < 0){
+		startYear = DateTimeUtil.getYearFromDate(new Date());
+	}
+	
+	Date startDate = DateTimeUtil.getDate(01, startMonth, startYear);
+	
+	if(period < 0){
+		startDate = DateTimeUtil.incrementDate(startDate, period);
+		
+		startMonth = DateTimeUtil.getMonthFromDate(startDate);
+		
+		startYear = DateTimeUtil.getYearFromDate(startDate);
+		
+		period = -period;
+	}
 	
 	List<DossiersStatistics> dossiersStatistics =
 					DossiersStatisticsLocalServiceUtil.getStatsByGovAndDomain(

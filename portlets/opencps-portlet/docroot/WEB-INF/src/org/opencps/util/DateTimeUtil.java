@@ -65,7 +65,7 @@ public class DateTimeUtil {
 		return dateFormat;
 	}
 
-	public int getDayFromDate(Date date) {
+	public static int getDayFromDate(Date date) {
 
 		int day = 1;
 
@@ -73,38 +73,29 @@ public class DateTimeUtil {
 			Calendar calendar = Calendar.getInstance();
 			calendar.setTime(date);
 			day = calendar.get(Calendar.DAY_OF_MONTH);
-
-			calendar.setTime(date);
-			day = calendar.get(Calendar.DAY_OF_MONTH);
 		}
 
 		return day;
 	}
 
-	public int getMonthFromDate(Date date) {
+	public static int getMonthFromDate(Date date) {
 
 		int month = 1;
 
 		if (date != null) {
 			Calendar calendar = Calendar.getInstance();
 			calendar.setTime(date);
-			month = calendar.get(Calendar.MONTH);
-
-			calendar.setTime(date);
-			month = calendar.get(Calendar.MONTH);
+			month = calendar.get(Calendar.MONTH) + 1;
 		}
 
 		return month;
 	}
 
-	public int getYearFromDate(Date date) {
+	public static int getYearFromDate(Date date) {
 
 		int year = 1990;
 		if (date != null) {
 			Calendar calendar = Calendar.getInstance();
-			calendar.setTime(date);
-			year = calendar.get(Calendar.YEAR);
-
 			calendar.setTime(date);
 			year = calendar.get(Calendar.YEAR);
 		}
@@ -442,6 +433,13 @@ public class DateTimeUtil {
 		}
 
 		return null;
+	}
+
+	public static Date incrementDate(Date date, int month) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+		calendar.set(Calendar.MONTH, calendar.get(Calendar.MONTH) + month);
+		return calendar.getTime();
 	}
 
 	private static final String DAY = "{d}";

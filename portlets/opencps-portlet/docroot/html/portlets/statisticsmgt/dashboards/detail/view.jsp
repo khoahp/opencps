@@ -37,6 +37,29 @@
 <%@ include file="init.jsp" %>
 
 <%
+
+	if(startMonth < 0){
+		startMonth = DateTimeUtil.getMonthFromDate(new Date());
+	}
+	
+	if(startYear < 0){
+		startYear = DateTimeUtil.getYearFromDate(new Date());
+	}
+	
+	Date startDate = DateTimeUtil.getDate(01, startMonth, startYear);
+	
+	if(period < 0){
+		startDate = DateTimeUtil.incrementDate(startDate, period);
+		
+		startMonth = DateTimeUtil.getMonthFromDate(startDate);
+		
+		startYear = DateTimeUtil.getYearFromDate(startDate);
+		
+		period = -period;
+	}
+	
+	//System.out.println("-------------------------- " + startMonth + "|" + startYear + "|" + period);	
+
 	List<String> codes = new ArrayList<String>();
 
 	if (domainDeepLevel > 1 && Validator.isNotNull(domainCodes) &&
@@ -96,7 +119,7 @@
 	
 	JSONArray sortedJsonArray = StatisticsUtil.sortByCodes(jsonArray, StringUtil.split(domainCodes));
 	
-	System.out.println(sortedJsonArray);
+	//System.out.println(sortedJsonArray);
 	
 	//System.out.println(sortedJsonArray.toString());
 	
