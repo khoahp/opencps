@@ -89,7 +89,8 @@
         if (isThereSubs){
             itemHtml += '<span class="comboTreeParentPlus"><span class="tree-icon tree-folder tree-folder-open"></span></span>';
         }else{
-        	itemHtml += '<i class="icon-file"></i>';
+//        	itemHtml += '<i class="icon-file"></i>';
+        	
         }
         if (this.options.isMultiple)
             itemHtml += '<span data-id="' + sourceItem.id + '" data-text="'+sourceItem.text+'" class="comboTreeItemTitle"><input type="checkbox">' + sourceItem.text + '</span>';

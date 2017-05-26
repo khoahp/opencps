@@ -40,6 +40,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.opencps.datamgt.model.AdministrationServicedomain;
 import org.opencps.datamgt.model.DictCollection;
 import org.opencps.datamgt.model.DictItem;
+import org.opencps.datamgt.model.impl.DictItemImpl;
 import org.opencps.datamgt.service.AdministrationServicedomainLocalServiceUtil;
 import org.opencps.datamgt.service.DictCollectionLocalServiceUtil;
 import org.opencps.datamgt.service.DictItemLocalServiceUtil;
@@ -430,12 +431,15 @@ public class PortletUtil {
 			if (Validator.isNotNull(dictCollection)
 					&& (Validator.isNull(itemCode) || itemCode
 							.equals(PortletConstants.TREE_VIEW_DEFAULT_ITEM_CODE))) {
+				
 				result = DictItemLocalServiceUtil
 						.getDictItemsInUseByDictCollectionIdAndParentItemId(
 								dictCollection.getDictCollectionId(), 0);
+				
 			} else if (Validator.isNotNull(dictCollection)
 					&& (Validator.isNotNull(itemCode) && itemCode
 							.equals(PortletConstants.TREE_VIEW_ALL_ITEM))) {
+				
 				result = DictItemLocalServiceUtil
 						.getDictItemsInUseByDictCollectionId(dictCollection
 								.getDictCollectionId());
@@ -1483,6 +1487,46 @@ public class PortletUtil {
 		}
 
 		return sReturn;
+	}
+	
+	public static String[] getDictItemIdArrayByItemCode(long groupId,
+			String domainCode) {
+
+		try {
+			DictItem dictItemRoot = new DictItemImpl();
+
+			if (domainCode.length() > 0) {
+				dictItemRoot = DictItemLocalServiceUtil.getDictItem(Long
+						.valueOf(domainCode));
+
+				List<DictItem> dictItemList = DictItemLocalServiceUtil
+						.getDictItemsLikeTreeIndex(domainCode, 1,
+								QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
+				
+				DictItem dictItem = new DictItemImpl();
+
+				String[] dictItemIdArray = new String[dictItemList.size()];
+
+				List<String> arrayList = new ArrayList<String>();
+
+				for (int i = 0; i < dictItemList.size(); i++) {
+
+					dictItem = dictItemList.get(i);
+
+					arrayList.add(String.valueOf(dictItem.getDictItemId()));
+
+				}
+				dictItemIdArray = arrayList.toArray(dictItemIdArray);
+
+				return dictItemIdArray;
+			}
+
+		} catch (Exception e) {
+			_log.error(e);
+
+		}
+
+		return new String[0];
 	}
 
 	private static Log _log = LogFactoryUtil

@@ -521,7 +521,7 @@ public class ServiceDisplayTerms extends DisplayTerms {
 	protected int hasTemplateFiles;
 	protected String onlineUrl;
 	protected long groupId;
-	protected Integer serviceLevel;
+	protected int serviceLevel;
 
 	/**
 	 * @return the fileTemplateIds
@@ -544,11 +544,11 @@ public class ServiceDisplayTerms extends DisplayTerms {
 		return GetterUtil.getLongValues(strFileTemplateIds, new long [] {});
 	}
 
-	public Integer getServiceLevel() {
+	public int getServiceLevel() {
 		return serviceLevel;
 	}
 
-	public void setServiceLevelId(Integer serviceLevel) {
+	public void setServiceLevelId(int serviceLevel) {
 		this.serviceLevel = serviceLevel;
 	}
 
