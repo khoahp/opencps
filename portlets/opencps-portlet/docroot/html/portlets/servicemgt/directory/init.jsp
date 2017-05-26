@@ -25,7 +25,6 @@
 	if (Validator.isNotNull(portletResource)) {
 		preferencesPortlet = PortletPreferencesFactoryUtil.getPortletSetup(request, portletResource);
 	}
-		
 	long plidServiceDetail = GetterUtil.getLong(preferences.getValue("plidServiceDetail","0"));
 	
 	String style = preferences.getValue("style","default");
