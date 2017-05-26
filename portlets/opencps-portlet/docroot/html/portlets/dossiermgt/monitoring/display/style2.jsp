@@ -58,11 +58,11 @@ if(Validator.isNotNull(dossierpage)){
 				placeholder='<liferay-ui:message key="enter-dossier-no" />'
 			>
 			<liferay-ui:message key="enter-dossier-no-from-system" />
-			<button class="btn search-button" type="submit"><i></i> <liferay-ui:message key="keywords" /></button>
+			<button class="btn search-button" type="submit" title='<liferay-ui:message key="enter-dossier-no-to-lookup" />'><i></i> <liferay-ui:message key="keywords" /></button>
 		</aui:form>
 	</div>
 	<div>
-		<button class="btn submit-dossier-button" type="submit"><i></i> <liferay-ui:message key="submit-dossier-online" />
+		<button class="btn submit-dossier-button" type="submit"><i></i> <liferay-ui:message key="submit-dossier-online" /></button>
 	</div>
 </div>
 
