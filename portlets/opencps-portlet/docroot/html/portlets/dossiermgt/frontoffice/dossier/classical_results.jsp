@@ -98,7 +98,7 @@
 			
 			<c:otherwise>
 				<liferay-util:include 
-					page="/html/portlets/dossiermgt/frontoffice/dossier/result_display/result_default.jsp" 
+					page="/html/portlets/dossiermgt/frontoffice/dossier/result_display/result_classical_default.jsp" 
 					servletContext="<%=application %>" 
 			/>
 			</c:otherwise>
