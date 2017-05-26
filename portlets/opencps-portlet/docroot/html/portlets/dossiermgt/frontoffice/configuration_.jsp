@@ -593,6 +593,7 @@
 					</aui:row>
 				</liferay-ui:panel>
 			</liferay-ui:panel-container>
+			<aui:input name="hideToptabs" type="checkbox" checked="<%=hideToptabs %>"/>
 		</c:when>
 		
 		<c:otherwise>

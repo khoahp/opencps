@@ -25,23 +25,21 @@
 <%@ include file="../../init.jsp"%>
 
 <%
-String dossierpage = portletPreferences.getValue("dossierpage", null);
-long dossierPagePlid = themeDisplay.getPlid();
-
-if(Validator.isNotNull(dossierpage)){
-	try {
-		
-		Layout dossierPageLayout = LayoutLocalServiceUtil.getFriendlyURLLayout(themeDisplay.getScopeGroupId(), false, dossierpage);
-		
-		if(dossierPageLayout != null) {
-			dossierPagePlid = dossierPageLayout.getPlid();
+	String dossierpage = portletPreferences.getValue("dossierpage", null);
+	long dossierPagePlid = themeDisplay.getPlid();
+	
+	if(Validator.isNotNull(dossierpage)){
+		try {
+			Layout dossierPageLayout = LayoutLocalServiceUtil.getFriendlyURLLayout(themeDisplay.getScopeGroupId(), false, dossierpage);
+			if(dossierPageLayout != null) {
+				dossierPagePlid = dossierPageLayout.getPlid();
+			}
+		} catch (Exception e) {
+			_log.error(e);
 		}
-		
-	} catch (Exception e) {
-		_log.error(e);
-		
 	}
-}
+	
+	String submitDossierButtonPageUrl = themeDisplay.getPortalURL() + submitDossierButtonPage;
 %>
 
 <liferay-portlet:actionURL name="searchAction" var="searchUrl" plid="<%= dossierPagePlid %>"/>
@@ -54,15 +52,15 @@ if(Validator.isNotNull(dossierpage)){
 				class="search-query" 
 				name="<portlet:namespace/>keywords" 
 				type="text" 
-				title='<liferay-ui:message key="dossier-no" />'
+				title='<liferay-ui:message key="enter-dossier-no" />'
 				placeholder='<liferay-ui:message key="enter-dossier-no" />'
 			>
 			<liferay-ui:message key="enter-dossier-no-from-system" />
-			<button class="btn search-button" type="submit"><i></i> <liferay-ui:message key="keywords" /></button>
+			<button class="btn search-button" type="submit" title='<liferay-ui:message key="enter-dossier-no-to-lookup" />'><i></i><liferay-ui:message key="keywords" /></button>
 		</aui:form>
 	</div>
 	<div>
-		<button class="btn submit-dossier-button" type="submit"><i></i> <liferay-ui:message key="submit-dossier-online" />
+		<button onclick="redirectSubmit();" class="btn submit-dossier-button" type="submit" title='<liferay-ui:message key="submit-dossier-online" />'><i></i><liferay-ui:message key="submit-dossier-online" /></button>
 	</div>
 </div>
 
@@ -75,6 +73,11 @@ if(Validator.isNotNull(dossierpage)){
 			}
 		});
 	});
+	
+	var redirectSubmit = function(){
+		var url = '<%=submitDossierButtonPageUrl %>';
+		window.location.href = url;
+	};
 </aui:script>
 
 <%!
