@@ -117,5 +117,6 @@
 	long redirectAddDossierPlid = GetterUtil.getLong(preferences.getValue("redirectAddDossierPlid", null));
 	
 	String submitDossierButtonPage = preferences.getValue("submitDossierButtonPage", StringPool.BLANK);
+	boolean hideToptabs = GetterUtil.getBoolean(preferences.getValue("hideToptabs", "false"), false);
 %>
 
