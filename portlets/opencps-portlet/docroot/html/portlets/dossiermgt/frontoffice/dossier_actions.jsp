@@ -83,6 +83,7 @@
 	<portlet:param name="isEditDossier" value="<%=String.valueOf(false)%>" />
 	<portlet:param name="redirectURL" value="<%=currentURL%>" />
 	<portlet:param name="backURL" value="<%=currentURL %>"/>
+	<portlet:param name="cmdDossier" value="view"/>	
 </portlet:renderURL>
 	<c:choose>
 		<c:when test="<%=Validator.isNotNull(dossierTabFocus) %>">
@@ -132,6 +133,7 @@
 					name="isEditDossier"
 					value="<%=String.valueOf(true)%>" 
 				/>
+				<portlet:param name="cmdDossier" value="update"/>	
 			</portlet:renderURL>
 
 			<c:choose>
