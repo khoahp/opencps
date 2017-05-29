@@ -40,9 +40,15 @@
 	}
 	
 	String submitDossierButtonPageUrl = themeDisplay.getPortalURL() + submitDossierButtonPage;
+	String backURL =  themeDisplay.getPortalURL() + themeDisplay.getURLCurrent();
 %>
 
-<liferay-portlet:actionURL name="searchAction" var="searchUrl" plid="<%= dossierPagePlid %>"/>
+<%-- <liferay-portlet:actionURL name="searchAction" var="searchUrl" plid="<%= dossierPagePlid %>"/> --%>
+
+<liferay-portlet:renderURL var="searchUrl" plid="<%= dossierPagePlid %>">
+	<portlet:param name="mvcPath" value="/html/portlets/dossiermgt/monitoring/dossiermonitoringresult.jsp"/>
+	<portlet:param name="backURL" value="<%=backURL %>"/>
+</liferay-portlet:renderURL>
 
 <div class="monitoring-style2-wrapper">
 	<div class="monitoring-style2-content">
