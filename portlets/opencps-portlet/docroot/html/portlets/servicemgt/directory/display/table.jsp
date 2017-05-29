@@ -106,7 +106,7 @@ $(document).ready(function(){
 			<aui:form action="<%= searchURL %>" method="post" name="fm">
 				<div class="toolbar_search_input">
 					<aui:row>
-						<aui:col width="20" cssClass="search-col">
+						<aui:col width="25" cssClass="search-col">
 							<datamgt:ddr
 								cssClass="search-input select-box"
 								depthLevel="1" 
@@ -120,19 +120,19 @@ $(document).ready(function(){
 							</datamgt:ddr>
 
 						</aui:col>
-						<aui:col width="20" cssClass="search-col">
+						<aui:col width="25" cssClass="search-col">
 							<aui:input name="<%=ServiceDisplayTerms.SERVICE_DOMAINCODE %>" type="hidden" value="<%=domainCode %>"></aui:input>
 							<input type="text" id="comboboxTree" class="opencps-combotree" readonly="readonly" />
 						</aui:col>
-						<aui:col width="20" cssClass="search-col">
+						<aui:col width="25" cssClass="search-col">
 							<aui:select name="<%=ServiceDisplayTerms.SERVICE_LEVEL %>" label="">
-								<aui:option value="0"><liferay-ui:message key="service-level"/></aui:option>
+								<aui:option value="0"><liferay-ui:message key="muc-do"/></aui:option>
 								<aui:option value="2" selected='<%=serviceLevel == 2 %>'><liferay-ui:message key="muc-do" /> 2</aui:option>
 								<aui:option value="3" selected='<%=serviceLevel == 3 %>'><liferay-ui:message key="muc-do" /> 3</aui:option>
 								<aui:option value="4" selected='<%=serviceLevel == 4 %>'><liferay-ui:message key="muc-do" /> 4</aui:option>
 							</aui:select>
 						</aui:col>
-						<aui:col width="40" cssClass="search-col">
+						<aui:col width="25" cssClass="search-col">
 							<liferay-ui:input-search 
 								cssClass="search-input input-keyword"
 								id="keywords1"
@@ -150,6 +150,7 @@ $(document).ready(function(){
 
 
 <div class="opencps-searchcontainer-wrapper">
+	<h3 style="text-transform: uppercase;"><b><liferay-ui:message key="danh-sach-thu-tuc-hanh-chinh"/></b></h3>
 	<liferay-ui:search-container searchContainer="<%= new ServiceSearch(renderRequest, SearchContainer.DEFAULT_DELTA, iteratorURL) %>" 
 		headerNames="<%= headers %>">
 			

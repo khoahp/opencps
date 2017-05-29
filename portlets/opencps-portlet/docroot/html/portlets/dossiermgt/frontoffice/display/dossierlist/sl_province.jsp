@@ -109,8 +109,10 @@
 	headerNames.add("stt");
 	headerNames.add("reception-no");
 	headerNames.add("service-info-name");
-	headerNames.add("date");
-	headerNames.add("dossier-status");
+	headerNames.add("create-date");
+	headerNames.add("receive-datetime");
+	headerNames.add("estimate-date");
+	headerNames.add("note");
 	headerNames.add("action");
 	
 %>
@@ -264,7 +266,7 @@
 						}
 					%>
 					<liferay-util:buffer var="col1">
-						<div class="dossier-list-stt">
+						<div class="dossier-list-stt text-center">
 							<%=(searchContainer.getCur() - 1) * searchContainer.getDelta() + index + 1 %>
 						</div>
 					</liferay-util:buffer>
@@ -284,9 +286,6 @@
 					<liferay-util:buffer var="col4">
 						<div class="dossier-list-col-date">
 							<div class="row-fluid"> 
-								<div class="col-key">
-									<liferay-ui:message key="create-date"/>:
-								</div>
 								<div class="col-value">
 									<%=
 										Validator.isNotNull(dossier.getCreateDate()) ? 
@@ -295,12 +294,12 @@
 									%>
 								</div>
 							</div>
-						
+						</div>
+					</liferay-util:buffer>
+					
+					<liferay-util:buffer var="col5">
+						<div class="dossier-list-col-date">
 							<div class="row-fluid">
-								<div class="col-key">
-									 <liferay-ui:message key="receive-datetime"/>:
-								</div>
-								
 								<div class="col-value">
 									<%=
 										Validator.isNotNull(dossier.getReceiveDatetime()) ? 
@@ -309,24 +308,26 @@
 									%>
 								</div>
 							</div>
-							
+						</div>
+					</liferay-util:buffer>
+					
+					<liferay-util:buffer var="col6">
+						<div class="dossier-list-col-date">
 							<div class="row-fluid">
-								<div class="col-key">
-									<liferay-ui:message key="finish-date"/>:
-								</div>
 								<div class="col-value">
 									<%=
-										Validator.isNotNull(dossier.getFinishDatetime()) ? 
-										DateTimeUtil.convertDateToString(dossier.getFinishDatetime(), DateTimeUtil._VN_DATE_TIME_FORMAT): 
+										Validator.isNotNull(dossier.getEstimateDatetime()) ? 
+										DateTimeUtil.convertDateToString(dossier.getEstimateDatetime(), DateTimeUtil._VN_DATE_TIME_FORMAT): 
 										DateTimeUtil._EMPTY_DATE_TIME 
 									%>
 								</div>
 							</div>
-							
+						</div>
+					</liferay-util:buffer>
+					
+					<liferay-util:buffer var="col7">
+						<div class="dossier-list-col-date">
 							<div class="row-fluid dossier-list-note">
-								<div class="col-key">
-									<liferay-ui:message key="note"/>:
-								</div>
 								<div class="col-value">
 									<liferay-ui:message key="<%= noteContent  %>"/>
 								</div>
@@ -335,12 +336,6 @@
 						</div>
 					</liferay-util:buffer>
 					
-					<liferay-util:buffer var="col5">
-						<div class="dossier-list-status">
-							<%= PortletUtil.getDossierStatusLabel(dossier.getDossierStatus(), locale) %>
-						</div>
-					</liferay-util:buffer>
-						
 					<%
 						row.setClassName("opencps-searchcontainer-row " + cssStatusColor);
 						row.addText(col1);
@@ -348,6 +343,8 @@
 						row.addText(col3);
 						row.addText(col4);
 						row.addText(col5);
+						row.addText(col6);
+						row.addText(col7);
 						row.addJSP("center", SearchEntry.DEFAULT_VALIGN,"/html/portlets/dossiermgt/frontoffice/dossier_actions.jsp", 
 									config.getServletContext(), request, response);
 						
@@ -361,6 +358,18 @@
 		
 	</aui:col>
 </aui:row>
+
+<aui:script>
+	AUI().ready(function(A){
+		A.all('span').each(function(span){
+			span.on('mouseover', function(event){
+				if (A.one('.tooltip-help')){
+					A.one('.tooltip-help').setStyle('display', 'none');
+				}
+			});
+		});
+	});
+</aui:script>
 
 <%!
 	private Log _log = LogFactoryUtil.getLog("html.portlets.dossiermgt.frontoffice.display.default.jsp");
