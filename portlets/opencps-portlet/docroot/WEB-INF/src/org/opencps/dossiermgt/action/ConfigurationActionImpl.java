@@ -63,6 +63,9 @@ public class ConfigurationActionImpl implements ConfigurationAction {
 			
 			PortletPreferences prefs = PortletPreferencesFactoryUtil
 					.getPortletSetup(actionRequest, portletResource);
+					
+			String submitDossierButtonPage = ParamUtil.getString(actionRequest,
+					"submitDossierButtonPage");
 
 			prefs.setValue("servicepage", servicepage);
 			
@@ -71,6 +74,8 @@ public class ConfigurationActionImpl implements ConfigurationAction {
 			prefs.setValue("dossierfilepage", dossierfilepage);
 			
 			prefs.setValue("displayStyle", displayStyle);
+			
+			prefs.setValue("submitDossierButtonPage", submitDossierButtonPage);
 
 			prefs.store();
 

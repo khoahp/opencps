@@ -97,7 +97,27 @@
 	<aui:select name="displayStyle" label="display-style">
 		<aui:option selected='<%= "default".equals(displayStyle) %>' value="default" label="default"/>
 		<aui:option selected='<%= "style1".equals(displayStyle) %>' value="style1" label="style1"/>
+		<aui:option selected='<%= "style2".equals(displayStyle) %>' value="style2" label="style2"/>
 	</aui:select>
+	
+	<!-- config for submit-dossier-button - style 2 -->
+	<aui:select name="submitDossierButtonPage" label="submit-dossier-button-page">
+		<%
+			for (Layout l : layoutPages) {
+				if (l.getFriendlyURL().equals(submitDossierButtonPage)) {
+		%>
+		<aui:option selected="<%= true %>" value="<%= l.getFriendlyURL() %>"><%= l.getName(locale) %></aui:option>
+		<%
+				}
+				else {
+		%>
+		<aui:option selected="<%= false %>" value="<%= l.getFriendlyURL() %>"><%= l.getName(locale) %></aui:option>
+		<%
+				}
+			}
+		%>
+	</aui:select>
+	
     <aui:input name="action" type="hidden" id="action"></aui:input>
     <aui:button-row>
         <aui:button type="button" id="save" name="save" value="save" />

@@ -118,8 +118,6 @@ public class NotificationUtils {
 		String receptionNo = StringPool.BLANK;
 		String actionName = StringPool.BLANK;
 		String note = StringPool.BLANK;
-		
-		Locale locale = LocaleUtil.getDefault();
 
 		try {
 
@@ -129,17 +127,6 @@ public class NotificationUtils {
 			if (dossierId > 0) {
 
 				dossiser = DossierLocalServiceUtil.getDossier(dossierId);
-
-				title.append(StringUtil.replace(
-						LanguageUtil.get(locale, "opencps.notificationmgt.title"),
-						new String[] {"{receptionNo}", "{dossierId}"},
-						new String[] {dossiser.getReceptionNo(),
-								String.valueOf(dossierId) }));
-
-				content.append(StringUtil.replace(
-						LanguageUtil.get(locale, "opencps.notificationmgt.body"),
-						new String[] {"{actionName}","{actionNote}"},
-						new String[] {message.getEventName(),message.getNote()}));
 				
 				receptionNo = dossiser.getReceptionNo();
 				actionName = message.getEventName();
@@ -155,8 +142,6 @@ public class NotificationUtils {
 		payloadJSONObject.put("paymentFileId", message.getPaymentFileId());
 		payloadJSONObject.put("patternConfig", message.getPatternConfig());
 		payloadJSONObject.put("userIdDelivery", info.getUserId());
-		payloadJSONObject.put("title", title.toString());
-		payloadJSONObject.put("notificationText", content.toString());
 		payloadJSONObject.put("plId", plId);
 		payloadJSONObject.put("receptionNo", receptionNo);
 		payloadJSONObject.put("actionName", actionName);
@@ -380,7 +365,8 @@ public class NotificationUtils {
 										processOrderId, notiEventConfig,actionNote);
 
 								notificationList.add(notiMsgCitizen);
-							} else if (notiEventConfig.getPattern()
+							} 
+							if(notiEventConfig.getPattern()
 									.toUpperCase()
 									.contains(PortletKeys.EMPLOYEE)) {
 

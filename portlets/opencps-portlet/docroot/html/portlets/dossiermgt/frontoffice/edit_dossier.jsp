@@ -188,12 +188,14 @@
 			(accountType.equals(PortletPropsValues.USERMGT_USERGROUP_NAME_CITIZEN) || 
 			accountType.equals(PortletPropsValues.USERMGT_USERGROUP_NAME_BUSINESS))%>"
 	>
+		<c:if test='<%= !dossierDisplayStyle.contentEquals("style1") %>'>
 
-		<liferay-ui:header 
-			backURL="<%= backURL %>"
-			title=' ' 
-		/>
-
+			<liferay-ui:header 
+				backURL="<%= backURL %>"
+				title=' ' 
+			/>
+		</c:if>
+		
 		<portlet:actionURL var="updateDossierURL" name="updateDossier" />
 		
 		<portlet:actionURL var="quickUpdateDossierURL" name="quickUpdateDossier"/>
@@ -208,125 +210,176 @@
 				</div>
 			</c:if>
 		</liferay-util:buffer>
+		
 
-		<liferay-util:buffer var="htmlBottom">
-
-			<c:if test="<%= cmd.equals(Constants.VIEW) ? false : true %>">
+			<liferay-util:buffer var="htmlBottom">
+			
+				<c:choose>
+					<c:when test='<%= dossierDisplayStyle.contentEquals("style1") %>'>
+						<c:if test="<%= cmd.equals(Constants.VIEW) ? false : true %>">
+							<aui:button-row cssClass="horizontal-button">
+								<aui:button 
+									type="submit" 
+									cssClass="btn des-sub-button radius20"
+									icon="add" 
+									value="save-draft" 
+								/>
+							
+								<c:if test="<%=Validator.isNotNull(dossier)%>">
+									
+									<c:if test="<%=DossierPermission.contains(permissionChecker, scopeGroupId, ActionKeys.UPDATE) %>">
+										<c:if test="<%=dossier.getDossierStatus().equals(PortletConstants.DOSSIER_STATUS_NEW) || 
+													dossier.getDossierStatus().equals(PortletConstants.DOSSIER_STATUS_WAITING)%>">
 				
-				<c:if test="<%=Validator.isNotNull(dossier)%>">
+											<%
+												String jsUpdateDossierStatus = "javascript:" + renderResponse.getNamespace() + "updateDossierStatus()";
+											%>
+											<c:if test="<%=dossier.getDossierStatus().equals(PortletConstants.DOSSIER_STATUS_NEW) %>">
+											
+												<aui:input id="paymentFileValid" name="paymentFileValid" 
+												type="hidden" value="<%=DossierMgtUtil.validatePaymentFile(dossier.getDossierId()) %>"/>
+											
+												<liferay-ui:icon 
+													cssClass="search-container-action fa forward"
+													image="forward" message="send-dossier"
+													url="<%=jsUpdateDossierStatus %>"
+												/>
+											</c:if>
+				
+										</c:if>
+				
+											<liferay-ui:icon 
+												image="back"
+												cssClass="search-container-action fa undo input100"
+												message="back-dossier-list"
+												url="<%= backDossierList.toString() %>"
+											/>
+									</c:if>
+								</c:if>
+							</aui:button-row>
+						</c:if>
+						
+					</c:when>
 					
-					<c:if test="<%=DossierPermission.contains(permissionChecker, scopeGroupId, ActionKeys.UPDATE) %>">
-						<c:if test="<%=dossier.getDossierStatus().equals(PortletConstants.DOSSIER_STATUS_NEW) || 
-									dossier.getDossierStatus().equals(PortletConstants.DOSSIER_STATUS_WAITING)%>">
-
-							<%
-								String jsUpdateDossierStatus = "javascript:" + renderResponse.getNamespace() + "updateDossierStatus()";
-							%>
-							<c:if test="<%=dossier.getDossierStatus().equals(PortletConstants.DOSSIER_STATUS_NEW) %>">
-							
-								<aui:input id="paymentFileValid" name="paymentFileValid" 
-								type="hidden" value="<%=DossierMgtUtil.validatePaymentFile(dossier.getDossierId()) %>"/>
-							
-								<c:choose>
-									<c:when test="<%= dossierFiles.size() == 0 && showDossierSuggestionButton%>">
-										<aui:button 
-											cssClass="btn des-sub-button radius20"
-											name="submitDossierSuggestion" 
-											value="dossier-suggestion">
-										</aui:button>
-									</c:when>
-									<c:when test="<%=dossierFiles.size() == 0 %>"></c:when>
-									<c:otherwise>
+					<c:otherwise>
+							<c:if test="<%= cmd.equals(Constants.VIEW) ? false : true %>">
+								
+								<c:if test="<%=Validator.isNotNull(dossier)%>">
+									
+									<c:if test="<%=DossierPermission.contains(permissionChecker, scopeGroupId, ActionKeys.UPDATE) %>">
+										<c:if test="<%=dossier.getDossierStatus().equals(PortletConstants.DOSSIER_STATUS_NEW) || 
+													dossier.getDossierStatus().equals(PortletConstants.DOSSIER_STATUS_WAITING)%>">
+				
+											<%
+												String jsUpdateDossierStatus = "javascript:" + renderResponse.getNamespace() + "updateDossierStatus()";
+											%>
+											<c:if test="<%=dossier.getDossierStatus().equals(PortletConstants.DOSSIER_STATUS_NEW) %>">
+											
+												<aui:input id="paymentFileValid" name="paymentFileValid" 
+												type="hidden" value="<%=DossierMgtUtil.validatePaymentFile(dossier.getDossierId()) %>"/>
+											
+												<c:choose>
+													<c:when test="<%= dossierFiles.size() == 0 && showDossierSuggestionButton%>">
+														<aui:button 
+															cssClass="btn des-sub-button radius20"
+															name="submitDossierSuggestion" 
+															value="dossier-suggestion">
+														</aui:button>
+													</c:when>
+													<c:when test="<%=dossierFiles.size() == 0 %>"></c:when>
+													<c:otherwise>
+														<liferay-ui:icon-delete 
+															image="undo"
+															cssClass="search-container-action fa delete"
+															confirmation="are-you-sure-cancel-entry" message="delete-dossier-file"
+															url="<%=deleteDossierSuggesstionURL.toString() %>"
+														/>
+													</c:otherwise>
+												</c:choose>
+												
+												<liferay-ui:icon 
+													cssClass="search-container-action fa forward"
+													image="forward" message="send-dossier"
+													url="<%=jsUpdateDossierStatus %>"
+												/>
+											</c:if>
+				
+											<c:if test="<%=dossier.getDossierStatus().equals(PortletConstants.DOSSIER_STATUS_WAITING) %>">
+												<liferay-ui:icon
+													cssClass="search-container-action fa forward check-before-send"
+													image="reply" message="resend"
+													url="<%=jsUpdateDossierStatus %>"
+												/>
+											</c:if>
+										</c:if>
+				
+										<c:if test="<%=showBackToListButton %>">
+											<liferay-ui:icon 
+												image="back"
+												cssClass="search-container-action fa undo input100"
+												message="back-dossier-list"
+												url="<%= backDossierList.toString() %>"
+											/>
+										</c:if>
+				
+									</c:if>
+									
+									<c:if test="<%= (dossier.getDossierStatus().equals(PortletConstants.DOSSIER_STATUS_PROCESSING) && workFlow != null) %>">
+										<portlet:actionURL var="cancelDossierURL" name="cancelDossier">
+											<portlet:param 
+												name="<%=DossierDisplayTerms.DOSSIER_ID %>"
+												value="<%=String.valueOf(dossier.getDossierId()) %>"
+											/>
+											<portlet:param name="redirectURL" value="<%=currentURL %>" />
+										</portlet:actionURL>
+										
 										<liferay-ui:icon-delete 
 											image="undo"
-											cssClass="search-container-action fa delete"
-											confirmation="are-you-sure-cancel-entry" message="delete-dossier-file"
-											url="<%=deleteDossierSuggesstionURL.toString() %>"
+											cssClass="search-container-action fa undo"
+											confirmation="are-you-sure-cancel-entry" message="cancel"
+											url="<%=cancelDossierURL.toString() %>"
 										/>
-									</c:otherwise>
-								</c:choose>
-								
-								<liferay-ui:icon 
-									cssClass="search-container-action fa forward"
-									image="forward" message="send-dossier"
-									url="<%=jsUpdateDossierStatus %>"
-								/>
+									</c:if>
+				
+									<c:if test="<%=DossierPermission.contains(permissionChecker, scopeGroupId, ActionKeys.DELETE) && dossier.getDossierStatus().equals(PortletConstants.DOSSIER_STATUS_NEW) %>">
+										<portlet:actionURL var="deleteDossierURL" name="deleteDossier">
+											<portlet:param 
+												name="<%=DossierDisplayTerms.DOSSIER_ID %>"
+												value="<%=String.valueOf(dossier.getDossierId()) %>" 
+											/>
+											
+											<portlet:param name="redirectURL" value="<%=backDossierList %>" />
+											
+											<portlet:param 
+												name="dossierStatus"
+												value="<%=dossier.getDossierStatus() %>" 
+											/>
+										</portlet:actionURL>
+										
+										<liferay-ui:icon-delete 
+											image="delete"
+											cssClass="search-container-action fa delete"
+											confirmation="are-you-sure-delete-entry" message="delete-dossier"
+											url="<%=deleteDossierURL.toString() %>" 
+										/>
+									</c:if>
+				
+								</c:if>
+				
+								<div>
+									<aui:button 
+										type="submit" 
+										cssClass="btn des-sub-button radius20"
+										icon="add" 
+										value="edit-dossier-btn" 
+									/>
+								</div>
 							</c:if>
-
-							<c:if test="<%=dossier.getDossierStatus().equals(PortletConstants.DOSSIER_STATUS_WAITING) %>">
-								<liferay-ui:icon
-									cssClass="search-container-action fa forward check-before-send"
-									image="reply" message="resend"
-									url="<%=jsUpdateDossierStatus %>"
-								/>
-							</c:if>
-						</c:if>
-
-						<c:if test="<%=showBackToListButton %>">
-							<liferay-ui:icon 
-								image="back"
-								cssClass="search-container-action fa undo input100"
-								message="back-dossier-list"
-								url="<%= backDossierList.toString() %>"
-							/>
-						</c:if>
-
-					</c:if>
 					
-					<c:if test="<%= (dossier.getDossierStatus().equals(PortletConstants.DOSSIER_STATUS_PROCESSING) && workFlow != null) %>">
-						<portlet:actionURL var="cancelDossierURL" name="cancelDossier">
-							<portlet:param 
-								name="<%=DossierDisplayTerms.DOSSIER_ID %>"
-								value="<%=String.valueOf(dossier.getDossierId()) %>"
-							/>
-							<portlet:param name="redirectURL" value="<%=currentURL %>" />
-						</portlet:actionURL>
-						
-						<liferay-ui:icon-delete 
-							image="undo"
-							cssClass="search-container-action fa undo"
-							confirmation="are-you-sure-cancel-entry" message="cancel"
-							url="<%=cancelDossierURL.toString() %>"
-						/>
-					</c:if>
-
-					<c:if test="<%=DossierPermission.contains(permissionChecker, scopeGroupId, ActionKeys.DELETE) && dossier.getDossierStatus().equals(PortletConstants.DOSSIER_STATUS_NEW) %>">
-						<portlet:actionURL var="deleteDossierURL" name="deleteDossier">
-							<portlet:param 
-								name="<%=DossierDisplayTerms.DOSSIER_ID %>"
-								value="<%=String.valueOf(dossier.getDossierId()) %>" 
-							/>
-							
-							<portlet:param name="redirectURL" value="<%=backDossierList %>" />
-							
-							<portlet:param 
-								name="dossierStatus"
-								value="<%=dossier.getDossierStatus() %>" 
-							/>
-						</portlet:actionURL>
-						
-						<liferay-ui:icon-delete 
-							image="delete"
-							cssClass="search-container-action fa delete"
-							confirmation="are-you-sure-delete-entry" message="delete-dossier"
-							url="<%=deleteDossierURL.toString() %>" 
-						/>
-					</c:if>
-
-				</c:if>
-
-				<div>
-					<aui:button 
-						type="submit" 
-						cssClass="btn des-sub-button radius20"
-						icon="add" 
-						value="edit-dossier-btn" 
-					/>
-				</div>
-			</c:if>
-
-		</liferay-util:buffer>
-
+					</c:otherwise>
+				</c:choose>
+			</liferay-util:buffer>
+		
 		<aui:form name="fm" action="<%=(dossier == null && allowQuickCreateDossier) ? quickUpdateDossierURL :updateDossierURL %>" method="post">
 
 			<aui:model-context bean="<%= dossier %>" model="<%= Dossier.class %>" />
@@ -427,19 +480,51 @@
 				name="<%=DossierDisplayTerms.COMPANY_ID %>" type="hidden"
 				value="<%= company.getCompanyId()%>"
 			/>
-
-			<div class="opencps-form-navigator-container">
-				<liferay-ui:form-navigator 
-					displayStyle="left-navigator"
-					backURL="<%= backURL %>"
-					categoryNames="<%= DossierMgtUtil._DOSSIER_CATEGORY_NAMES %>"
-					categorySections="<%= categorySections %>"
-					htmlBottom="<%= htmlBottom %>" 
-					htmlTop="<%= htmlTop %>"
-					jspPath='<%=dossierDisplayTabPath %>' 
-					showButtons="<%=false %>"
-				/>
-			</div>
+			
+			<c:if test='<%= dossierDisplayStyle.contentEquals("style1") %>'>
+				<div class="opencps-form-navigator-container">
+					<liferay-util:include page='<%= templatePath + "dossier/classical.jsp" %>' servletContext="<%= application %>"/>
+					<%= htmlBottom %>
+				</div>
+			</c:if>	
+			
+			<c:if test='<%= !dossierDisplayStyle.contentEquals("style1") %>'>
+				<div class="opencps-form-navigator-container">
+						<liferay-ui:form-navigator 
+							displayStyle="left-navigator"
+							backURL="<%= backURL %>"
+							categoryNames="<%= DossierMgtUtil._DOSSIER_CATEGORY_NAMES %>"
+							categorySections="<%= categorySections %>"
+							htmlBottom="<%= htmlBottom %>" 
+							htmlTop="<%= htmlTop %>"
+							jspPath='<%= dossierDisplayTabPath %>' 
+							showButtons="<%=false %>"
+						/>
+				</div>
+			</c:if>
+			
+<%-- 			<c:choose> --%>
+<%-- 				<c:when test='<%= dossierDisplayStyle.contentEquals("style1") %>'> --%>
+<%-- 					<liferay-util:include page='<%= templatePath + "dossier/classical/style.jsp" %>'/> --%>
+<%-- 				</c:when> --%>
+				
+<%-- 				<c:otherwise> --%>
+<!-- 					<div class="opencps-form-navigator-container"> -->
+<%-- 						<liferay-ui:form-navigator  --%>
+<%-- 							displayStyle="left-navigator" --%>
+<%-- 							backURL="<%= backURL %>" --%>
+<%-- 							categoryNames="<%= DossierMgtUtil._DOSSIER_CATEGORY_NAMES %>" --%>
+<%-- 							categorySections="<%= categorySections %>" --%>
+<%-- 							htmlBottom="<%= htmlBottom %>"  --%>
+<%-- 							htmlTop="<%= htmlTop %>" --%>
+<%-- 							jspPath='<%= dossierDisplayTabPath %>'  --%>
+<%-- 							showButtons="<%=false %>" --%>
+<%-- 						/> --%>
+<!-- 					</div> -->
+<%-- 				</c:otherwise> --%>
+<%-- 			</c:choose> --%>
+			
+			
 		</aui:form>
 
 		<aui:script use="aui-loading-mask-deprecated">
@@ -480,12 +565,10 @@
 			submitDossierSuggestion.on('click', function() {
 				
 				var portletURL = Liferay.PortletURL.createURL('<%= PortletURLFactoryUtil.create(request, WebKeys.DOSSIER_MGT_PORTLET, themeDisplay.getPlid(), PortletRequest.RENDER_PHASE) %>');
-				portletURL.setParameter("mvcPath", "/html/portlets/dossiermgt/frontoffice/dossier_suggestion.jsp");
+				portletURL.setParameter("mvcPath", "/html/portlets/dossiermgt/frontoffice/dossier/classical_history.jsp");
 				portletURL.setWindowState("<%=LiferayWindowState.POP_UP.toString()%>"); 
 				portletURL.setPortletMode("normal");
 				portletURL.setParameter("dossierId", '<%= Validator.isNotNull(dossier) ? String.valueOf(dossier.getDossierId()) : "0" %>');
-				portletURL.setParameter("serviceConfigId", '<%= Validator.isNotNull(serviceConfig) ? String.valueOf(serviceConfig.getServiceConfigId()) : "0" %>');
-				portletURL.setParameter("dossierPartId", '<%= Validator.isNotNull(dossierPart) ? String.valueOf(dossierPart.getDossierpartId()) : "0" %>');
 				
 				openDialog(portletURL.toString(), 'submit-dossier-suggesstion', Liferay.Language.get("submit-dossier-suggesstion"));
 			});

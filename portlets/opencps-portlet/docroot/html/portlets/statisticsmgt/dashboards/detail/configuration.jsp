@@ -173,8 +173,10 @@
 			<aui:fieldset>
 				<aui:col width="30">
 					<aui:select name="startMonth">
+						<aui:option value="<%=-1 %>" selected="<%=-1 == startMonth %>"><liferay-ui:message key="current-month"/></aui:option>
 						<%
 							for(int m = 1; m <=12; m++){
+								
 								%>
 									<aui:option value="<%=m %>" selected="<%=m == startMonth %>"><liferay-ui:message key="month"/> <%=m %></aui:option>
 								<%
@@ -185,6 +187,7 @@
 				
 				<aui:col width="30">
 					<aui:select name="startYear">
+						<aui:option value="<%=-1 %>" selected="<%=-1 == startYear %>"><liferay-ui:message key="current-year"/></aui:option>
 						<%
 							for(int y = 2016; y <=2030; y++){
 								%>
@@ -197,7 +200,7 @@
 				
 				<aui:col width="30">
 					<aui:input name="period" value="<%=period %>">
-						 <aui:validator name="digits"/>
+						 <aui:validator name="number"/>
 					</aui:input>
 				</aui:col>
 			</aui:fieldset>

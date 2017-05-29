@@ -18,6 +18,7 @@
  */
 %>
 
+<%@page import="org.opencps.util.DateTimeUtil"%>
 <%@page import="java.util.HashMap"%>
 <%@page import="java.util.Map"%>
 <%@page import="com.liferay.portal.kernel.json.JSONArray"%>
@@ -41,10 +42,30 @@
 
 	} */
 	
+	if(startMonth < 0){
+		startMonth = DateTimeUtil.getMonthFromDate(new Date());
+	}
+	
+	if(startYear < 0){
+		startYear = DateTimeUtil.getYearFromDate(new Date());
+	}
+	
+	Date startDate = DateTimeUtil.getDate(01, startMonth, startYear);
+	
+	if(period < 0){
+		startDate = DateTimeUtil.incrementDate(startDate, period);
+		
+		startMonth = DateTimeUtil.getMonthFromDate(startDate);
+		
+		startYear = DateTimeUtil.getYearFromDate(startDate);
+		
+		period = -period;
+	}
+	
 	List<DossiersStatistics> dossiersStatistics =
 					DossiersStatisticsLocalServiceUtil.getStatsByGovAndDomain(
 						scopeGroupId, startMonth, startYear, period, StringPool.BLANK,
-						StringPool.BLANK, 0, 0);
+						StringPool.BLANK, -1, 0);
 	
 	JSONArray jsonArray =
 					StatisticsUtil.renderData(
@@ -85,6 +106,7 @@
 					
 					processingNumber += dossiersStatistics.get(dossiersStatistics.size() - 1).getProcessingNumber();
 					delayingNumber += dossiersStatistics.get(dossiersStatistics.size() - 1).getDelayingNumber();
+					remainingNumber += dossiersStatistics.get(dossiersStatistics.size() - 1).getRemainingNumber();
 				%>
 				
 				

@@ -246,6 +246,9 @@ public class ConfigurationImpl extends DefaultConfigurationAction {
 
 		boolean hideTabDossierFile = ParamUtil.getBoolean(actionRequest,
 				"hideTabDossierFile");
+		
+		boolean hideToptabs = ParamUtil.getBoolean(actionRequest,
+				"hideToptabs");
 
 		preferences
 				.setValue("dossierFileDisplayStyle", dossierFileDisplayStyle);
@@ -256,6 +259,8 @@ public class ConfigurationImpl extends DefaultConfigurationAction {
 				dossierFileListOrderByType);
 		preferences.setValue("hideTabDossierFile",
 				String.valueOf(hideTabDossierFile));
+		preferences.setValue("hideToptabs",
+				String.valueOf(hideToptabs));
 
 	}
 
