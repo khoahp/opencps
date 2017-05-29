@@ -1,7 +1,4 @@
 
-<%@page import="com.liferay.portal.kernel.util.Constants"%>
-<%@page import="org.opencps.jasperreport.util.JRReportUtil.DocType"%>
-<%@page import="org.opencps.util.PortletUtil"%>
 <%
 /**
  * OpenCPS is the open source Core Public Services software
@@ -21,6 +18,9 @@
  */
 %>
 
+<%@page import="com.liferay.portal.kernel.util.Constants"%>
+<%@page import="org.opencps.jasperreport.util.JRReportUtil.DocType"%>
+<%@page import="org.opencps.util.PortletUtil"%>
 <%@page import="com.liferay.portal.kernel.util.ArrayUtil"%>
 <%@page import="com.liferay.portal.kernel.util.KeyValuePair"%>
 <%@page import="org.opencps.datamgt.model.DictItem"%>
@@ -34,6 +34,7 @@
 <%@page import="org.opencps.datamgt.service.DictCollectionLocalServiceUtil"%>
 <%@page import="org.opencps.datamgt.model.DictCollection"%>
 <%@page import="org.opencps.datamgt.service.DictItemLocalServiceUtil"%>
+
 <%@ include file="../init.jsp"%>
 
 <%
@@ -154,9 +155,11 @@
 							<aui:option selected="<%= dossierListDisplayStyle.equals(\"treemenu_left_table\") %>" value="treemenu_left_table">
 								<liferay-ui:message key="treemenu-left-table"/>
 							</aui:option>
-							
 							<aui:option selected="<%= dossierListDisplayStyle.equals(\"dklr_v10\") %>" value="dklr_v10">
 								<liferay-ui:message key="dklr_v10"/>
+							</aui:option>
+							<aui:option selected="<%= dossierListDisplayStyle.equals(\"sl_province\") %>" value="sl_province">
+								<liferay-ui:message key="son-la-province"/>
 							</aui:option>
 						</aui:select>
 					</aui:fieldset>

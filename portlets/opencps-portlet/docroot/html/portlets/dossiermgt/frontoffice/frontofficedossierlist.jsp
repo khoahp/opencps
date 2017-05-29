@@ -22,7 +22,7 @@
 <%@ include file="../init.jsp"%>
 
 <div class="dossierListStyle dossierListStyle_<%= dossierListDisplayStyle %>">
-	<c:if test="<%=hideToptabs %>">
+	<c:if test="<%=!hideToptabs %>">
 		<liferay-util:include page='<%=templatePath + "toptabs.jsp" %>' servletContext="<%=application %>" />
 	</c:if>
 	
