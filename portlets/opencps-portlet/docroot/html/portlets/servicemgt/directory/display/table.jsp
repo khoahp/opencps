@@ -185,17 +185,19 @@ $(document).ready(function(){
 			indexVar="index"
 		>
 			<%
-				PortletURL viewURL = renderResponse.createRenderURL();
+				PortletURL viewURL = PortletURLFactoryUtil.create(request, WebKeys.SERVICE_MGT_DIRECTORY, plidServiceDetail, PortletRequest.RENDER_PHASE);
 				viewURL.setParameter("mvcPath", templatePath + "service_detail.jsp");
 				viewURL.setParameter("serviceinfoId", String.valueOf(service.getServiceinfoId()));
 				viewURL.setParameter("backURL", currentURL);
+				viewURL.setWindowState(LiferayWindowState.NORMAL);
+				viewURL.setPortletMode(LiferayPortletMode.VIEW);
 				
-				PortletURL renderToSubmitOnline = PortletURLFactoryUtil.create(request, WebKeys.P26_SUBMIT_ONLINE, plidServiceDetail, PortletRequest.RENDER_PHASE);
-				renderToSubmitOnline.setWindowState(LiferayWindowState.NORMAL);
-				renderToSubmitOnline.setPortletMode(LiferayPortletMode.VIEW);
-				renderToSubmitOnline.setParameter("mvcPath", "/html/portlets/dossiermgt/submit/dossier_submit_online.jsp");
-				renderToSubmitOnline.setParameter("serviceinfoId", String.valueOf(service.getServiceinfoId()));
-				renderToSubmitOnline.setParameter("backURL", currentURL);
+// 				PortletURL renderToSubmitOnline = PortletURLFactoryUtil.create(request, WebKeys.P26_SUBMIT_ONLINE, plidServiceDetail, PortletRequest.RENDER_PHASE);
+// 				renderToSubmitOnline.setWindowState(LiferayWindowState.NORMAL);
+// 				renderToSubmitOnline.setPortletMode(LiferayPortletMode.VIEW);
+// 				renderToSubmitOnline.setParameter("mvcPath", "/html/portlets/dossiermgt/submit/dossier_submit_online.jsp");
+// 				renderToSubmitOnline.setParameter("serviceinfoId", String.valueOf(service.getServiceinfoId()));
+// 				renderToSubmitOnline.setParameter("backURL", currentURL);
 			%>
 				<liferay-util:buffer var="boundcol1">
 					

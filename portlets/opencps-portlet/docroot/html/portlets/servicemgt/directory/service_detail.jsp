@@ -252,53 +252,55 @@
 						
 					</td>
 				</tr>
-				<tr>
-					<td class="col-left" colspan="2">
-						<aui:row>
-							<aui:select name="govAgencyCode" label="co-quan-thuc-hien" cssClass="submit-online input100">
-								<%
-									if(listAdmin!=null && !listAdmin.isEmpty()){
-										for(DictItem d : listAdmin){
-											%>
-												<aui:option value="<%=d.getItemCode() %>">
-													<%=d.getItemName(themeDisplay.getLocale(),true) %>
-												</aui:option>
-											<%
-										}
-									}
-								%>
-							</aui:select>
-						</aui:row>
-						
-						<aui:row cssClass="serice-des">
-							<liferay-ui:message key="service-description-dvc"/>
-						</aui:row>
-							
-						<aui:row cssClass="des-detail">		
-							<c:choose>
-								<c:when test="<%=scf != null && scf != null %>">
-									<c:choose>
-										<c:when test="<%=scf.getServiceInstruction().equalsIgnoreCase(StringPool.BLANK) %>">
-											
-										</c:when>
-										<c:otherwise>
-											<%= scf.getServiceInstruction() %>
-										</c:otherwise>
-									</c:choose>
-								</c:when>
-								<c:otherwise>
-									<liferay-ui:message key="no-config"/>
-								</c:otherwise>
-							</c:choose>	
-						</aui:row>
-							
-						<c:if test="<%= serviceIsConfiged %>">
-							<aui:button href="<%=backURL %>" cssClass="des-sub-button radius20" value='<%=LanguageUtil.get(themeDisplay.getLocale(), "back") %>'/>
-							<aui:button  cssClass="des-sub-button radius20" value="dossier-submit-online-temp" name="btn_des" href="<%=renderURL.toString() %>"></aui:button>
-						</c:if>
-					</td>
-				</tr>
 			</table>
+			
+			<aui:row>
+				<aui:col width="100">
+					<aui:select name="govAgencyCode" label="co-quan-thuc-hien" cssClass="submit-online input100">
+						<%
+							if(listAdmin!=null && !listAdmin.isEmpty()){
+								for(DictItem d : listAdmin){
+									%>
+										<aui:option value="<%=d.getItemCode() %>">
+											<%=d.getItemName(themeDisplay.getLocale(),true) %>
+										</aui:option>
+									<%
+								}
+							}
+						%>
+					</aui:select>
+				</aui:col>
+			</aui:row>
+			
+			<aui:row cssClass="serice-des">
+				<liferay-ui:message key="service-description-dvc"/>
+			</aui:row>
+				
+			<aui:row cssClass="des-detail">		
+				<c:choose>
+					<c:when test="<%=scf != null %>">
+						<c:choose>
+							<c:when test="<%=scf.getServiceInstruction().equalsIgnoreCase(StringPool.BLANK) %>">
+								
+							</c:when>
+							<c:otherwise>
+								<%= scf.getServiceInstruction() %>
+							</c:otherwise>
+						</c:choose>
+					</c:when>
+					<c:otherwise>
+						<liferay-ui:message key="no-config"/>
+					</c:otherwise>
+				</c:choose>	
+			</aui:row>
+				
+			<c:if test="<%= serviceIsConfiged %>">
+			
+				<aui:button-row>
+					<aui:button href="<%=backURL %>" cssClass="des-sub-button radius20" value='<%=LanguageUtil.get(themeDisplay.getLocale(), "back") %>'/>
+					<aui:button  cssClass="des-sub-button radius20" value="dossier-submit-online-temp" name="btn_des" href="<%=renderURL.toString() %>"></aui:button>
+				</aui:button-row>
+			</c:if>
 		</div>
 	</c:if>
 </div>
@@ -308,21 +310,14 @@
 		
 		var url = "<%=renderURL.toString() %>";
 		var govAgencyCodeSel = A.one("#<portlet:namespace/>govAgencyCode"); 
-		
-		console.log("govAgencyCodeSel:"+govAgencyCodeSel);
 
 		if(govAgencyCodeSel) {
 			
 			govAgencyCodeSel.on('change',function() {
-				console.log("change");
 				
 				var renderUrlTest = Liferay.PortletURL.createURL(url);
 				
-				console.log("renderUrl:"+renderUrlTest);
 				renderUrlTest = renderUrlTest+'&<portlet:namespace/>govAgencyCode='+govAgencyCodeSel;
-				
-				
-				console.log("renderUrl.toString():"+renderUrlTest);
 				
 				A.one("#<portlet:namespace/>btn_des").attr('href',renderUrlTest);
 				
