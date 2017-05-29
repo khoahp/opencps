@@ -195,13 +195,21 @@
 	message="<%=DuplicateFolderNameException.class.getName() %>"
 />
 
-<% 
+<%
+	String cmdDossier = ParamUtil.get(request, "cmdDossier", "new");
+
 	String title = "add-dossier";
-	
-	if (Validator.isNotNull(dossier) && !dossier.getDossierStatus().contains("new")) {
-		title = "update-dossier-x";
+
+	if (cmdDossier.contentEquals("view")) {
+		title = "view-dossier";
 	}
+
+	if (cmdDossier.contentEquals("update")) {
+		title = "update-dossier";
+	}
+	
 %>
+
 
 <portlet:renderURL var="viewHistoryURL" windowState="<%=LiferayWindowState.POP_UP.toString()%>">
 	<portlet:param name="mvcPath" value='<%= templatePath + "dossier/classical_result.jsp" %>'/>
