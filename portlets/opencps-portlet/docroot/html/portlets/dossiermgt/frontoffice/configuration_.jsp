@@ -419,7 +419,7 @@
 						cssClass="search-input select-box input100"
 					/>
 		
-					<aui:select name="plid" id="plid" title="payment-page">
+					<aui:select name="plid" title="payment-page">
 						<%
 							for (Layout layoutTemp : allLayouts) {
 						%>
@@ -429,7 +429,7 @@
 						%>
 					</aui:select>
 					
-					<aui:select name="dossierSubmitOnline" title="dossier-submit-online-page">
+					<aui:select name="addDossierPage" title="add-dossier-page">
 						<%
 							for (Layout layoutTemp : allLayouts) {
 						%>
