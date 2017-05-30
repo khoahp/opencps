@@ -636,7 +636,7 @@ public class ServiceInfoFinderImpl extends BasePersistenceImpl<ServiceInfo>
 				qPos.add("%" + keywords + "%");
 			}
 			
-			if(Validator.equals(govAgencyCode, "0")|| Validator.equals(govAgencyCode, StringPool.BLANK)){
+			if(Validator.isNotNull(govAgencyCode)){
 				qPos.add(govAgencyCode);
 			}
 			
