@@ -92,6 +92,8 @@
 	
 	String templatesToDisplay_cfg = preferences.getValue("templatesToDisplay", "default");
 	
+	List<DictItem> govAgencies = DictItemLocalServiceUtil.findDictItemsByG_DC_S(scopeGroupId, PortletPropsValues.DATAMGT_MASTERDATA_GOVERNMENT_AGENCY);
+	
 	String selGovAgencyCode = preferences.getValue("selGovAgencyCode", StringPool.BLANK);
 %>
 
@@ -306,6 +308,17 @@
 					persistState="<%= true %>" 
 					title="dklr-v10-style"
 				>
+				
+					<aui:select name="preferences--selGovAgencyCode--" showEmptyOption="<%= true %>">
+						<%
+							for (DictItem di : govAgencies) {
+						%>
+							<aui:option selected="<%= selGovAgencyCode.equals(di.getItemCode()) %>" value="<%= di.getItemCode() %>" label="<%= di.getItemName(locale) %>"/>
+						<%
+							}
+						%>
+					</aui:select>
+					
 					<aui:input 
 						type="text" 
 						name="preferences--selGovAgencyCode--"
