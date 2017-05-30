@@ -636,6 +636,10 @@ public class ServiceInfoFinderImpl extends BasePersistenceImpl<ServiceInfo>
 				qPos.add("%" + keywords + "%");
 			}
 			
+			if(Validator.equals(govAgencyCode, "0")|| Validator.equals(govAgencyCode, StringPool.BLANK)){
+				qPos.add(govAgencyCode);
+			}
+			
 			
 
 			return (List<String>) QueryUtil.list(q, getDialect(), QueryUtil.ALL_POS,
