@@ -208,6 +208,7 @@
 		title = "update-dossier";
 	}
 	
+	
 %>
 
 
@@ -215,7 +216,7 @@
 	<portlet:param name="mvcPath" value='<%= templatePath + "dossier/classical_result.jsp" %>'/>
 </portlet:renderURL>
 
-<div class="fe-dossier-wrapper" style="padding: 10px;">
+<div class="fe-dossier-wrapper" >
 	<div class="head-title">
 		<liferay-ui:message key='<%= title %>'/>
 	</div>
@@ -465,14 +466,11 @@
 
 		<c:if test="<%= _checkDossierPart(dossierPartsLevel1, dossier) %>">
 			
-			<div style="margin-top: 10px;">&nbsp;</div>
 			
 			<liferay-ui:panel collapsible="<%= true %>" cssClass="dossier-files-result" extended="<%= true %>" id="dossierFilePanel" persistState="<%= true %>" title="dossier-files">
 				<liferay-util:include page='<%= templatePath + "dossier/classical_results.jsp" %>' servletContext="<%= application %>"/>
 			</liferay-ui:panel>
 		</c:if>
-		
-		<div style="margin-top: 10px;">&nbsp;</div>
 		
 		<liferay-ui:panel collapsible="<%= true %>" cssClass="dossier-files-content" extended="<%= true %>" id="dossierFilePanel" persistState="<%= true %>" title="dossier-files">
 			<liferay-util:include page='<%= templatePath + "dossier/classical_dossier_part.jsp" %>' servletContext="<%= application %>"/>
