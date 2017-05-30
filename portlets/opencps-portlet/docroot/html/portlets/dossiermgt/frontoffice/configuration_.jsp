@@ -419,7 +419,17 @@
 						cssClass="search-input select-box input100"
 					/>
 		
-					<aui:select name="plid" id="plid">
+					<aui:select name="plid" id="plid" title="payment-page">
+						<%
+							for (Layout layoutTemp : allLayouts) {
+						%>
+							<aui:option value="<%= layoutTemp.getPlid() %>" selected="<%=layoutTemp.getPlid() == plidRes %>"><%= layoutTemp.getName(locale) %></aui:option>
+						<%
+							}
+						%>
+					</aui:select>
+					
+					<aui:select name="dossierSubmitOnline" title="dossier-submit-online-page">
 						<%
 							for (Layout layoutTemp : allLayouts) {
 						%>
