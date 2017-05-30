@@ -134,7 +134,7 @@ public class ConfigurationImpl extends DefaultConfigurationAction {
 		String maxUploadFileSizeUnit = ParamUtil.getString(actionRequest,
 				"maxUploadFileSizeUnit");
 		
-		long dossierSubmitOnline = ParamUtil.getLong(actionRequest, "dossierSubmitOnline");
+		long addDossierPage = ParamUtil.getLong(actionRequest, "addDossierPage");
 		
 		preferences.setValue("dossierDisplayStyle", dossierDisplayStyle);
 		preferences.setValue("dossierTabFocus", dossierTabFocus);
@@ -162,7 +162,7 @@ public class ConfigurationImpl extends DefaultConfigurationAction {
 		preferences.setValue("maxUploadFileSizeUnit", maxUploadFileSizeUnit);
 
 		preferences.setValue("redirectPaymentURL", redirectURL.toString());
-		preferences.setValue("dossierSubmitOnline",String.valueOf(dossierSubmitOnline));
+		preferences.setValue("addDossierPage",String.valueOf(addDossierPage));
 	}
 
 	protected void updateDossierList(PortletPreferences preferences,

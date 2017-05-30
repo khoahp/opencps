@@ -1,3 +1,4 @@
+<%@page import="com.liferay.portal.kernel.util.Constants"%>
 <%@page import="com.liferay.portal.kernel.portlet.LiferayPortletMode"%>
 <%@page import="javax.portlet.PortletRequest"%>
 <%@page import="com.liferay.portlet.PortletURLFactoryUtil"%>
@@ -76,11 +77,13 @@
 				
 				List<String> domainCodeList = ServiceInfoLocalServiceUtil.getDomainCodes(themeDisplay.getScopeGroupId(), searchTerms.getKeywords(), searchTerms.getGovAgencyCode());
 				
-				PortletURL renderToSubmitOnline = PortletURLFactoryUtil.create(request, WebKeys.P26_SUBMIT_ONLINE, plIdDossierSubmitOnline, PortletRequest.RENDER_PHASE);
+				PortletURL renderToSubmitOnline = PortletURLFactoryUtil.create(request, WebKeys.DOSSIER_MGT_PORTLET, plIdAddDossier, PortletRequest.RENDER_PHASE);
  				renderToSubmitOnline.setWindowState(LiferayWindowState.NORMAL);
 				renderToSubmitOnline.setPortletMode(LiferayPortletMode.VIEW);
-				renderToSubmitOnline.setParameter("mvcPath", "/html/portlets/dossiermgt/submit/dossier_submit_online.jsp");
+				renderToSubmitOnline.setParameter("mvcPath", "/html/portlets/dossiermgt/frontoffice/edit_dossier.jsp");
+				renderToSubmitOnline.setParameter("isEditDossier", String.valueOf(true));
  				renderToSubmitOnline.setParameter("backURL", currentURL);
+ 				renderToSubmitOnline.setParameter(Constants.CMD, Constants.ADD);
 			%>
 			
 			<liferay-ui:panel-container 
@@ -102,7 +105,7 @@
 						
 							for(ServiceInfo serviceInfoSub :serviceInfos){
 								
-								renderToSubmitOnline.setParameter("serviceinfoId", String.valueOf(serviceInfoSub.getServiceinfoId()));
+								renderToSubmitOnline.setParameter(ServiceDisplayTerms.GOVAGENCY_CODE, govAgencyCode);
 						%>
 							<aui:row>
 								<a href="<%=renderToSubmitOnline.toString()%>"><%=serviceInfoSub.getServiceName() %></a>
