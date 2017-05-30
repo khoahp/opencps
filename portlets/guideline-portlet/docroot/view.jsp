@@ -41,6 +41,10 @@
 	<c:if test='<%= dossierId != 0 %>'>
 		<img alt="" src='<%= renderRequest.getContextPath() + "/imgs/" + imgStepThree %>'>
 	</c:if>
+	
+	<c:if test='<%= dossierId == 0 %>'>
+		<img alt="" src='<%= renderRequest.getContextPath() + "/imgs/" + imgStepTwo %>'>
+	</c:if>
 </c:if>
 
 
