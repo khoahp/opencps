@@ -1,3 +1,6 @@
+<%@page import="com.liferay.portal.kernel.portlet.LiferayPortletMode"%>
+<%@page import="javax.portlet.PortletRequest"%>
+<%@page import="com.liferay.portlet.PortletURLFactoryUtil"%>
 <%@page import="org.opencps.util.PortletPropsKeys"%>
 <%@page import="org.opencps.util.DataMgtUtils"%>
 <%@page import="org.opencps.servicemgt.model.ServiceInfo"%>
@@ -63,7 +66,7 @@
 </aui:nav-bar>
 
 
-<div class="opencps-searchcontainer-wrapper">
+<div class="submit-dossier">
 	<liferay-ui:search-container searchContainer="<%= new ServiceSearch(renderRequest, SearchContainer.DEFAULT_DELTA, iteratorURL) %>" 
 		>
 			
@@ -73,7 +76,11 @@
 				
 				List<String> domainCodeList = ServiceInfoLocalServiceUtil.getDomainCodes(themeDisplay.getScopeGroupId(), searchTerms.getKeywords(), searchTerms.getGovAgencyCode());
 				
-				
+				PortletURL renderToSubmitOnline = PortletURLFactoryUtil.create(request, WebKeys.P26_SUBMIT_ONLINE, plIdDossierSubmitOnline, PortletRequest.RENDER_PHASE);
+ 				renderToSubmitOnline.setWindowState(LiferayWindowState.NORMAL);
+				renderToSubmitOnline.setPortletMode(LiferayPortletMode.VIEW);
+				renderToSubmitOnline.setParameter("mvcPath", "/html/portlets/dossiermgt/submit/dossier_submit_online.jsp");
+ 				renderToSubmitOnline.setParameter("backURL", currentURL);
 			%>
 			
 			<liferay-ui:panel-container 
@@ -94,9 +101,11 @@
 							List<ServiceInfo> serviceInfos = ServiceInfoLocalServiceUtil.getServiceInfoByDomainCode(domainCode);
 						
 							for(ServiceInfo serviceInfoSub :serviceInfos){
+								
+								renderToSubmitOnline.setParameter("serviceinfoId", String.valueOf(serviceInfoSub.getServiceinfoId()));
 						%>
 							<aui:row>
-								<a href="#"><%=serviceInfoSub.getServiceName() %></a>
+								<a href="<%=renderToSubmitOnline.toString()%>"><%=serviceInfoSub.getServiceName() %></a>
 							</aui:row>
 						<%
 							}
