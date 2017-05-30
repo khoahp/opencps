@@ -600,4 +600,10 @@ public class ServiceInfoLocalServiceImpl
 
 	}
 	
+	public List<String> getDomainCodes(long groupId, String keywords,
+			String govAgencyCode) throws PortalException, SystemException {
+
+		return serviceInfoFinder._getDomainCodes(groupId, keywords, govAgencyCode);
+	}
+	
 }

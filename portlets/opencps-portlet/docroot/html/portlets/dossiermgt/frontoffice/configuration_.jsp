@@ -161,6 +161,9 @@
 							<aui:option selected="<%= dossierListDisplayStyle.equals(\"sl_province\") %>" value="sl_province">
 								<liferay-ui:message key="son-la-province"/>
 							</aui:option>
+							<aui:option selected="<%= dossierListDisplayStyle.equals(\"servicemg_typeone\") %>" value="servicemg_typeone">
+								<liferay-ui:message key="servicemg_typeone"/>
+							</aui:option>
 						</aui:select>
 					</aui:fieldset>
 					

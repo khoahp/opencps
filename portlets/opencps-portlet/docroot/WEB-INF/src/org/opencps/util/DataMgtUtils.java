@@ -97,4 +97,27 @@ public class DataMgtUtils{
 		return StringPool.BLANK;
 	}
 
+	public static String getDictItemName(long groupId, long dictItemId,
+			Locale locale) {
+
+		try {
+
+			if (dictItemId > 0) {
+
+				DictItem dictItem = null;
+
+				dictItem = DictItemLocalServiceUtil.getDictItem(dictItemId);
+				if (Validator.isNotNull(dictItem)) {
+
+					return dictItem.getItemName(locale);
+				}
+
+			}
+		} catch (Exception e) {
+			_log.error(e);
+		}
+
+		return StringPool.BLANK;
+	}
+
 }
