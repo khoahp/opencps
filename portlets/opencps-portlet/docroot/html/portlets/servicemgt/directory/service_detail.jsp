@@ -90,15 +90,6 @@
 		//nothing to do
 	}
 	
-	long frontServicePlid = PortalUtil.getPlidFromPortletId(scopeGroupId, WebKeys.DOSSIER_MGT_PORTLET);
-
-	long plidSubmit = 0;
-	
-	if(Long.valueOf(plidRes) == 0) {
-		plidSubmit = frontServicePlid;
-	} else {
-		plidSubmit = Long.valueOf(plidRes);
-	}
 %>
 
 
@@ -106,7 +97,7 @@
 <liferay-portlet:renderURL 
  		var="renderURL" 
  		portletName='<%=WebKeys.DOSSIER_MGT_PORTLET %>' 
- 		plid="<%=plidSubmit %>"
+ 		plid="<%=plidAddDossier %>"
  		portletMode="VIEW"
  		windowState="<%=LiferayWindowState.NORMAL.toString() %>"> 
  		
@@ -297,8 +288,8 @@
 			<c:if test="<%= serviceIsConfiged %>">
 			
 				<aui:button-row>
-					<aui:button href="<%=backURL %>" cssClass="des-sub-button radius20" value='<%=LanguageUtil.get(themeDisplay.getLocale(), "back") %>'/>
-					<aui:button  cssClass="des-sub-button radius20" value="dossier-submit-online-temp" name="btn_des" href="<%=renderURL.toString() %>"></aui:button>
+					<aui:button href="<%=backURL %>" cssClass="des-sub-button radius20 back-icon" value='<%=LanguageUtil.get(themeDisplay.getLocale(), "back") %>'/>
+					<aui:button  cssClass="des-sub-button radius20 send-icon" value="dossier-submit-online-temp" name="btn_des" href="<%=renderURL.toString() %>"></aui:button>
 				</aui:button-row>
 			</c:if>
 		</div>
