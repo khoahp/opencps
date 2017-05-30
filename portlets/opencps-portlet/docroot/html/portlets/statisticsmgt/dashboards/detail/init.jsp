@@ -1,4 +1,5 @@
 
+<%@page import="org.opencps.util.DateTimeUtil"%>
 <%
 /**
  * OpenCPS is the open source Core Public Services software
@@ -45,6 +46,7 @@
 	int period =
 		GetterUtil.getInteger(portletPreferences.getValue(
 			"period", String.valueOf(1)));
+	
 
 	/* boolean notNullGov =
 		GetterUtil.getBoolean(portletPreferences.getValue(
