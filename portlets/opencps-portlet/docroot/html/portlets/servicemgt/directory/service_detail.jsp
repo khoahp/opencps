@@ -232,12 +232,12 @@
 			<c:if test="<%=listAdmin!=null && !listAdmin.isEmpty() %>">
 				<aui:row>
 					<aui:col width="100">
-						<aui:select name="govAgencyCode" label="co-quan-thuc-hien" cssClass="submit-online input100">
+						<aui:select name="<%=DossierDisplayTerms.SERVICE_CONFIG_ID %>" label="co-quan-thuc-hien" cssClass="submit-online input100" showEmptyOption="<%= (listAdmin != null && listAdmin.size() > 1) %>">
 							<%
-								
 									for(DictItem d : listAdmin){
+										ServiceConfig serviceConfig = ServiceConfigLocalServiceUtil.getServiceConfigByG_S_G(themeDisplay.getScopeGroupId(), serviceinfoId, d.getItemCode());
 										%>
-											<aui:option value="<%=d.getItemCode() %>">
+											<aui:option value="<%=serviceConfig.getServiceConfigId() %>">
 												<%=d.getItemName(themeDisplay.getLocale(),true) %>
 											</aui:option>
 										<%
@@ -276,7 +276,8 @@
 				<aui:button-row>
 					<aui:button href="<%=backURL %>" cssClass="des-sub-button radius20 back-icon" value='<%=LanguageUtil.get(themeDisplay.getLocale(), "back") %>'/>
 					<c:if test="<%= listAdmin!=null && !listAdmin.isEmpty() %>">
-						<aui:button  cssClass="des-sub-button radius20 send-icon" value="dossier-submit-online-temp" name="btn_des" href="<%=renderURL.toString() %>"></aui:button>
+						<% String jsFunc = renderResponse.getNamespace() + "selectServiceConfig();"; %>
+						<aui:button  cssClass="des-sub-button radius20 send-icon" value="dossier-submit-online-temp" name="btn_des" onClick="<%=jsFunc %>" ></aui:button>
 					</c:if>
 				</aui:button-row>
 			
@@ -285,23 +286,36 @@
 </div>
 
 <aui:script use="aui-base,liferay-portlet-url">
-	AUI().ready(function(A) {
+// 	AUI().ready(function(A) {
 		
-		var url = "<%=renderURL.toString() %>";
-		var govAgencyCodeSel = A.one("#<portlet:namespace/>govAgencyCode"); 
-
-		if(govAgencyCodeSel) {
+// 		if(govAgencyCodeSel) {
 			
-			govAgencyCodeSel.on('change',function() {
+// 			govAgencyCodeSel.on('change',function() {
 				
-				var renderUrlTest = Liferay.PortletURL.createURL(url);
+// 				var renderUrlTest = Liferay.PortletURL.createURL(url);
 				
-				renderUrlTest = renderUrlTest+'&<portlet:namespace/>govAgencyCode='+govAgencyCodeSel;
+// 				renderUrlTest = renderUrlTest+'&<portlet:namespace/>serviceConfigId='+serviceConfigIdSel;
 				
-				A.one("#<portlet:namespace/>btn_des").attr('href',renderUrlTest);
+// 				A.one("#<portlet:namespace/>btn_des").attr('href',renderUrlTest);
 				
-			});
-		}
+// 			});
+// 		}
 		
-	});
+// 	});
+	
+	Liferay.provide(window, '<portlet:namespace/>selectServiceConfig', function() {
+ 		var A = AUI();
+ 		
+ 		var serviceConfigIdSel = A.one("#<portlet:namespace/>serviceConfigId"); 
+ 		
+ 		if(serviceConfigIdSel.val() != '') {
+ 			var renderUrlTest = Liferay.PortletURL.createURL('<%=renderURL.toString() %>');
+		
+			renderUrlTest = renderUrlTest+'&_13_WAR_opencpsportlet_serviceConfigId='+serviceConfigIdSel.val();
+		
+			location.href=renderUrlTest;
+ 		} else {
+ 			alert(Liferay.Language.get('vui-long-chon-co-quan-thuc-hien'));
+ 		}
+ 	});
 </aui:script>
