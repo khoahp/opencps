@@ -318,12 +318,6 @@
 							}
 						%>
 					</aui:select>
-					
-					<aui:input 
-						type="text" 
-						name="preferences--selGovAgencyCode--"
-						value='<%= selGovAgencyCode %>'
-					/>
 				</liferay-ui:panel>
 			</liferay-ui:panel-container>
 		</c:when>
