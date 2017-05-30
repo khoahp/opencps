@@ -308,20 +308,8 @@
 				>
 					<aui:input 
 						type="text" 
-						name="preferences--dklr_v10_administrationCode--"
-						value='<%= dklr_v10_administrationCode %>'
-					/>
-					
-					<aui:input 
-						type="text" 
 						name="preferences--selGovAgencyCode--"
 						value='<%= selGovAgencyCode %>'
-					/>
-					
-					<aui:input 
-						type="text" 
-						name="preferences--dklr_v10_dynamicFormKeyPattern--"
-						value='<%= dklr_v10_dynamicFormKeyPattern %>'
 					/>
 				</liferay-ui:panel>
 			</liferay-ui:panel-container>
