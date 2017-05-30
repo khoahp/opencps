@@ -34,7 +34,7 @@
 			<aui:form action="<%= searchUrl %>" method="post" name="fm">
 				<div class="toolbar_search_input">
 					<aui:row>
-						<c:if test="<%=!hidePaymentBtutton %>">
+						<c:if test="<%=!hidePaymentButton %>">
 							<aui:col width="30">
 								<aui:button disabled="true" cssClass="paymentBtnAll" type="button" onClick='<%= renderResponse.getNamespace() + \"addPaymentItems();\" %>' name="thanhToan" value="thanh-toan" ></aui:button>
 							</aui:col>
