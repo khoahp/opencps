@@ -150,7 +150,13 @@ $(document).ready(function(){
 
 
 <div class="opencps-searchcontainer-wrapper">
-	<h3 style="text-transform: uppercase;"><b><liferay-ui:message key="danh-sach-thu-tuc-hanh-chinh"/></b></h3>
+	<div class="opcs-serviceinfo-list-label">
+		<div class="title_box">
+			<p class="file_manage_title ds">
+				<liferay-ui:message key="danh-sach-thu-tuc-hanh-chinh" />
+			</p>
+		</div>
+	</div>
 	<liferay-ui:search-container searchContainer="<%= new ServiceSearch(renderRequest, SearchContainer.DEFAULT_DELTA, iteratorURL) %>" 
 		headerNames="<%= headers %>">
 			
