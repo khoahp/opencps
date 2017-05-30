@@ -1,3 +1,6 @@
+<%@page import="java.util.ArrayList"%>
+<%@page import="org.opencps.dossiermgt.service.ServiceConfigLocalServiceUtil"%>
+<%@page import="org.opencps.dossiermgt.model.ServiceConfig"%>
 <%@page import="com.liferay.portal.kernel.util.Constants"%>
 <%@page import="com.liferay.portal.kernel.portlet.LiferayPortletMode"%>
 <%@page import="javax.portlet.PortletRequest"%>
@@ -34,7 +37,8 @@
 <%
 	String selGovAgencyCode = preferences.getValue("selGovAgencyCode", StringPool.BLANK);
 
-	String queryGovAgencyCode = ParamUtil.getString(request, ServiceDisplayTerms.GOVAGENCY_CODE,StringPool.BLANK);
+	String queryGovAgencyCode = ParamUtil.getString(request, ServiceDisplayTerms.GOVAGENCY_CODE, StringPool.BLANK);
+	String keywords = ParamUtil.getString(request, "keywords", StringPool.BLANK);
 
 	String govAgencyCode = Validator.isNotNull(queryGovAgencyCode) ? queryGovAgencyCode : selGovAgencyCode;
 
@@ -44,59 +48,56 @@
 	
 	PortletURL searchURL = renderResponse.createRenderURL();
 	
+	List<String> domainCodeList = new ArrayList<String>();
 	
+	try {
+		domainCodeList = ServiceInfoLocalServiceUtil.getDomainCodes(themeDisplay.getScopeGroupId(), keywords, govAgencyCode);
+	} catch(Exception e) {
+		
+	}
+	
+	PortletURL renderToSubmitOnline = PortletURLFactoryUtil.create(request, WebKeys.DOSSIER_MGT_PORTLET, plIdAddDossier, PortletRequest.RENDER_PHASE);
+		renderToSubmitOnline.setWindowState(LiferayWindowState.NORMAL);
+	renderToSubmitOnline.setPortletMode(LiferayPortletMode.VIEW);
+	renderToSubmitOnline.setParameter("mvcPath", "/html/portlets/dossiermgt/frontoffice/edit_dossier.jsp");
+	renderToSubmitOnline.setParameter("isEditDossier", String.valueOf(true));
+	renderToSubmitOnline.setParameter("backURL", currentURL);
+	renderToSubmitOnline.setParameter(Constants.CMD, Constants.ADD);
 %>
 
-<aui:nav-bar cssClass="opencps-toolbar custom-toolbar">
-	<aui:nav-bar-search cssClass="pull-right">
-		<div class="form-search">
-			<aui:form action="<%= searchURL %>" method="post" name="fm">
-				<div class="toolbar_search_input">
-					<aui:row>
-						
-						<aui:col width="100" cssClass="search-col">
-							<liferay-ui:input-search 
-								cssClass="search-input input-keyword"
-								id="keywords1"
-								name="keywords"
-								title='<%= LanguageUtil.get(locale, "keywords") %>'
-								placeholder='<%= LanguageUtil.get(portletConfig, locale, "put-keyword") %>' 
-							/>
-						</aui:col>
-					</aui:row>
+<c:choose>
+	<c:when test="<%= domainCodeList != null && !domainCodeList.isEmpty() %>">
+		<aui:nav-bar cssClass="opencps-toolbar custom-toolbar">
+			<aui:nav-bar-search cssClass="pull-right">
+				<div class="form-search">
+					<aui:form action="<%= searchURL %>" method="post" name="fm">
+						<div class="toolbar_search_input">
+							<aui:row>
+								
+								<aui:col width="100" cssClass="search-col">
+									<liferay-ui:input-search 
+										cssClass="search-input input-keyword"
+										id="keywords1"
+										name="keywords"
+										title='<%= LanguageUtil.get(locale, "keywords") %>'
+										placeholder='<%= LanguageUtil.get(portletConfig, locale, "put-keyword") %>' 
+									/>
+								</aui:col>
+							</aui:row>
+						</div>
+					</aui:form>
 				</div>
-			</aui:form>
-		</div>
-	</aui:nav-bar-search>
-</aui:nav-bar>
-
-
-<div class="submit-dossier">
-	<liferay-ui:search-container searchContainer="<%= new ServiceSearch(renderRequest, SearchContainer.DEFAULT_DELTA, iteratorURL) %>" 
-		>
-			
+			</aui:nav-bar-search>
+		</aui:nav-bar>
 		
-			<%
-				ServiceSearchTerms searchTerms = (ServiceSearchTerms) searchContainer.getSearchTerms();
-				
-				List<String> domainCodeList = ServiceInfoLocalServiceUtil.getDomainCodes(themeDisplay.getScopeGroupId(), searchTerms.getKeywords(), searchTerms.getGovAgencyCode());
-				
-				PortletURL renderToSubmitOnline = PortletURLFactoryUtil.create(request, WebKeys.DOSSIER_MGT_PORTLET, plIdAddDossier, PortletRequest.RENDER_PHASE);
- 				renderToSubmitOnline.setWindowState(LiferayWindowState.NORMAL);
-				renderToSubmitOnline.setPortletMode(LiferayPortletMode.VIEW);
-				renderToSubmitOnline.setParameter("mvcPath", "/html/portlets/dossiermgt/frontoffice/edit_dossier.jsp");
-				renderToSubmitOnline.setParameter("isEditDossier", String.valueOf(true));
- 				renderToSubmitOnline.setParameter("backURL", currentURL);
- 				renderToSubmitOnline.setParameter(Constants.CMD, Constants.ADD);
-			%>
-			
+		
+		<div class="submit-dossier">
 			<liferay-ui:panel-container 
 				extended="<%= true %>" 
 				persistState="<%= true %>"
 			>
-			
-				<%for(int i =0;i<domainCodeList.size();i++){ 
-					String domainCode = domainCodeList.get(i);
+				<% 
+					for(String domainCode : domainCodeList){ 
 				%>
 					<liferay-ui:panel 
 						collapsible="<%= true %>" 
@@ -108,11 +109,28 @@
 							List<ServiceInfo> serviceInfos = ServiceInfoLocalServiceUtil.getServiceInfoByDomainCode(domainCode);
 						
 							for(ServiceInfo serviceInfoSub :serviceInfos){
+								ServiceConfig serviceConfig = null;
 								
-								renderToSubmitOnline.setParameter(ServiceDisplayTerms.GOVAGENCY_CODE, govAgencyCode);
+								try {
+									serviceConfig = ServiceConfigLocalServiceUtil.getServiceConfigByG_S_G(
+										scopeGroupId, serviceInfoSub.getServiceinfoId(), govAgencyCode);
+								} catch(Exception e) {
+									
+								}
 						%>
 							<aui:row>
-								<a href="<%=renderToSubmitOnline.toString()%>"><%=serviceInfoSub.getServiceName() %></a>
+								<c:choose>
+									<c:when test="<%= serviceConfig != null && serviceConfig.getServiceLevel() >= 3 %>">
+										<%
+										renderToSubmitOnline.setParameter(ServiceDisplayTerms.SERVICE_CONFIG_ID, String.valueOf(serviceConfig.getServiceConfigId()));
+										%>
+										<a href="<%=renderToSubmitOnline.toString()%>"><%=serviceInfoSub.getServiceName() %></a>
+									</c:when>
+									
+									<c:otherwise>
+										<span><%=serviceInfoSub.getServiceName() %></span>
+									</c:otherwise>
+								</c:choose>
 							</aui:row>
 						<%
 							}
@@ -120,6 +138,11 @@
 					</liferay-ui:panel>
 				<%} %>
 			</liferay-ui:panel-container>
-
-	</liferay-ui:search-container>
-</div>
+		
+		</div>
+	</c:when>
+	
+	<c:otherwise>
+		<div class="message-content-empty"><liferay-ui:message key="no-serviceinfo-were-found" /></div>
+	</c:otherwise>
+</c:choose>
