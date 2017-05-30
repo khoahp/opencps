@@ -21,46 +21,47 @@ import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
 import javax.portlet.PortletConfig;
 import javax.portlet.PortletPreferences;
-import javax.portlet.PortletRequest;
-import javax.portlet.PortletURL;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
-
-import org.opencps.util.WebKeys;
 
 import com.liferay.portal.kernel.portlet.ConfigurationAction;
 import com.liferay.portal.kernel.servlet.SessionMessages;
 import com.liferay.portal.kernel.util.ParamUtil;
-import com.liferay.portal.util.PortalUtil;
 import com.liferay.portlet.PortletPreferencesFactoryUtil;
-import com.liferay.portlet.PortletURLFactoryUtil;
-
 
 /**
  * @author khoavd
  *
  */
-public class ConfigurationImpl implements ConfigurationAction{
+public class ConfigurationImpl implements ConfigurationAction {
 
-	/* (non-Javadoc)
-     * @see com.liferay.portal.kernel.portlet.ConfigurationAction#processAction(javax.portlet.PortletConfig, javax.portlet.ActionRequest, javax.portlet.ActionResponse)
-     */
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.liferay.portal.kernel.portlet.ConfigurationAction#processAction(javax
+	 * .portlet.PortletConfig, javax.portlet.ActionRequest,
+	 * javax.portlet.ActionResponse)
+	 */
 	@Override
-	public void processAction(
-	    PortletConfig portletConfig, ActionRequest actionRequest,
-	    ActionResponse actionResponse)
-	    throws Exception {
+	public void processAction(PortletConfig portletConfig,
+			ActionRequest actionRequest, ActionResponse actionResponse)
+			throws Exception {
 
-		long itemsToDisplay = ParamUtil.getLong(actionRequest, "itemsToDisplay");
+		long itemsToDisplay = ParamUtil
+				.getLong(actionRequest, "itemsToDisplay");
+		String portletResource = ParamUtil.getString(actionRequest,
+				"portletResource");
+		boolean hidePaymentButton = ParamUtil.getBoolean(actionRequest,
+				"hidePaymentButton");
 
-		String portletResource =
-		    ParamUtil.getString(actionRequest, "portletResource");
-
-		PortletPreferences preferences =
-		    PortletPreferencesFactoryUtil.getPortletSetup(
-		        actionRequest, portletResource);
+		PortletPreferences preferences = PortletPreferencesFactoryUtil
+				.getPortletSetup(actionRequest, portletResource);
 
 		preferences.setValue("itemsToDisplay", String.valueOf(itemsToDisplay));
+		preferences.setValue("hidePaymentButton",
+				String.valueOf(hidePaymentButton));
+
 		preferences.store();
 
 		SessionMessages.add(actionRequest, "potlet-config-saved");
@@ -69,16 +70,16 @@ public class ConfigurationImpl implements ConfigurationAction{
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see
 	 * com.liferay.portal.kernel.portlet.ConfigurationAction#render(javax.portlet
 	 * .PortletConfig, javax.portlet.RenderRequest,
 	 * javax.portlet.RenderResponse)
 	 */
 	@Override
-	public String render(
-	    PortletConfig portletConfig, RenderRequest renderRequest,
-	    RenderResponse renderResponse)
-	    throws Exception {
+	public String render(PortletConfig portletConfig,
+			RenderRequest renderRequest, RenderResponse renderResponse)
+			throws Exception {
 
 		return "/html/portlets/paymentmgt/frontoffice/configuration.jsp";
 	}

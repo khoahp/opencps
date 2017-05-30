@@ -67,3 +67,7 @@
 <%@page import="org.opencps.servicemgt.model.impl.ServiceInfoImpl"%>
 <%@page import="org.opencps.dossiermgt.model.impl.DossierImpl"%>
 <%@page import="org.opencps.paymentmgt.model.impl.PaymentFileImpl"%>
+
+<%
+	boolean hidePaymentButton = GetterUtil.getBoolean(portletPreferences.getValue("hidePaymentButton", "false"), false);
+%>
