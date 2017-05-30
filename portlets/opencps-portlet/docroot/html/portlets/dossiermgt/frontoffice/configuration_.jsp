@@ -161,6 +161,9 @@
 							<aui:option selected="<%= dossierListDisplayStyle.equals(\"sl_province\") %>" value="sl_province">
 								<liferay-ui:message key="son-la-province"/>
 							</aui:option>
+							<aui:option selected="<%= dossierListDisplayStyle.equals(\"servicemg_typeone\") %>" value="servicemg_typeone">
+								<liferay-ui:message key="servicemg_typeone"/>
+							</aui:option>
 						</aui:select>
 					</aui:fieldset>
 					
@@ -416,7 +419,17 @@
 						cssClass="search-input select-box input100"
 					/>
 		
-					<aui:select name="plid" id="plid">
+					<aui:select name="plid" title="payment-page">
+						<%
+							for (Layout layoutTemp : allLayouts) {
+						%>
+							<aui:option value="<%= layoutTemp.getPlid() %>" selected="<%=layoutTemp.getPlid() == plidRes %>"><%= layoutTemp.getName(locale) %></aui:option>
+						<%
+							}
+						%>
+					</aui:select>
+					
+					<aui:select name="addDossierPage" title="add-dossier-page">
 						<%
 							for (Layout layoutTemp : allLayouts) {
 						%>

@@ -64,8 +64,8 @@
 	
 	List<DictItem> dictItems = DictItemLocalServiceUtil.findDictItemsByG_DC_S(scopeGroupId, ServiceUtil.SERVICE_DOMAIN);
 	
-	String myComboTree = ProcessOrderUtils.generateComboboxTree(PortletPropsValues.DATAMGT_MASTERDATA_SERVICE_DOMAIN, PortletConstants.TREE_VIEW_ALL_ITEM, 
-			PortletConstants.TREE_VIEW_LEVER_3, false, renderRequest);
+// 	String myComboTree = ProcessOrderUtils.generateComboboxTree(PortletPropsValues.DATAMGT_MASTERDATA_SERVICE_DOMAIN, PortletConstants.TREE_VIEW_ALL_ITEM, 
+// 			PortletConstants.TREE_VIEW_LEVER_3, false, renderRequest);
 	
 	iteratorURL.setParameter(ServiceDisplayTerms.SERVICE_ADMINISTRATION, administrationCode);
 	iteratorURL.setParameter(ServiceDisplayTerms.SERVICE_DOMAINCODE, domainCode);
@@ -74,19 +74,19 @@
 %>
 
 <aui:script use="aui-base,aui-io">
-$(document).ready(function(){
-	var myComboTree = '<%=myComboTree %>';
-	var domainCode = '<%=HtmlUtil.escape(domainCode)%>';
-	var comboboxTree = $('#comboboxTree').comboTree({  
-		boundingBox: 'comboboxTree',
-		name: '#<portlet:namespace /><%=ServiceDisplayTerms.SERVICE_DOMAINCODE %>',
-		form: document.<portlet:namespace />fm,
-		formSubmit: false,
-		isMultiple: false,
-	    source: JSON.parse(myComboTree)
-	});
+// $(document).ready(function(){
+// 	var myComboTree = '';
+// 	var domainCode = '<%=HtmlUtil.escape(domainCode)%>';
+// 	var comboboxTree = $('#comboboxTree').comboTree({  
+// 		boundingBox: 'comboboxTree',
+// 		name: '#<portlet:namespace /><%=ServiceDisplayTerms.SERVICE_DOMAINCODE %>',
+// 		form: document.<portlet:namespace />fm,
+// 		formSubmit: false,
+// 		isMultiple: false,
+// 	    source: JSON.parse(myComboTree)
+// 	});
 
-	comboboxTree.setValue(domainCode);
+// 	comboboxTree.setValue(domainCode);
 	
 // 	$("#<portlet:namespace />administrationCode").change(function() {
 // 		<portlet:namespace />onSelectSubmit();
@@ -96,7 +96,7 @@ $(document).ready(function(){
 		
 // 		submitForm(document.<portlet:namespace />fm);
 // 	});
-});
+// });
 
 </aui:script>
 
@@ -121,8 +121,35 @@ $(document).ready(function(){
 
 						</aui:col>
 						<aui:col width="25" cssClass="search-col">
-							<aui:input name="<%=ServiceDisplayTerms.SERVICE_DOMAINCODE %>" type="hidden" value="<%=domainCode %>"></aui:input>
-							<input type="text" id="comboboxTree" class="opencps-combotree" readonly="readonly" />
+<%-- 							<aui:input name="<%=ServiceDisplayTerms.SERVICE_DOMAINCODE %>" type="hidden" value="<%=domainCode %>"></aui:input> --%>
+<!-- 							<input type="text" id="comboboxTree" class="opencps-combotree" readonly="readonly" /> -->
+							
+							<aui:select name="<%=ServiceDisplayTerms.SERVICE_DOMAINCODE %>" label="">
+								<aui:option value="">
+									<liferay-ui:message key="filter-by-service-domain"/>
+								</aui:option>
+								<%
+									if(dictItems != null){
+										DictItem curDictItem = null;
+										
+										for(DictItem dictItem : dictItems){
+											if((curDictItem != null && dictItem.getDictItemId() == curDictItem.getDictItemId())||
+													(curDictItem != null && dictItem.getTreeIndex().contains(curDictItem.getDictItemId() + StringPool.PERIOD))){
+												continue;
+											}
+											
+											int level = StringUtil.count(dictItem.getTreeIndex(), StringPool.PERIOD);
+											String index = "&nbsp;";
+											for(int i = 0; i < level; i++){
+												index += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+											}
+											%>
+												<aui:option value="<%=dictItem.getDictItemId() %>"><%=index + dictItem.getItemName(locale) %></aui:option>
+											<%
+										}
+									}
+								%>
+						</aui:select>
 						</aui:col>
 						<aui:col width="25" cssClass="search-col">
 							<aui:select name="<%=ServiceDisplayTerms.SERVICE_LEVEL %>" label="">
@@ -150,7 +177,13 @@ $(document).ready(function(){
 
 
 <div class="opencps-searchcontainer-wrapper">
-	<h3 style="text-transform: uppercase;"><b><liferay-ui:message key="danh-sach-thu-tuc-hanh-chinh"/></b></h3>
+	<div class="opcs-serviceinfo-list-label">
+		<div class="title_box">
+			<p class="file_manage_title ds">
+				<liferay-ui:message key="danh-sach-thu-tuc-hanh-chinh" />
+			</p>
+		</div>
+	</div>
 	<liferay-ui:search-container searchContainer="<%= new ServiceSearch(renderRequest, SearchContainer.DEFAULT_DELTA, iteratorURL) %>" 
 		headerNames="<%= headers %>">
 			
