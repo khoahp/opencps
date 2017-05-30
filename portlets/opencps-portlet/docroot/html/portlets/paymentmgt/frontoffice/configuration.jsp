@@ -29,7 +29,7 @@
 <liferay-portlet:actionURL var="configurationActionURL" portletConfiguration="true"/>
 
 <%
-int itemsToDisplay_cfg = GetterUtil.getInteger(portletPreferences.getValue("itemsToDisplay", "2"));
+	int itemsToDisplay_cfg = GetterUtil.getInteger(portletPreferences.getValue("itemsToDisplay", "2"));
 %>
 
 <aui:form action="<%= configurationActionURL %>" method="post" name="configurationForm">
@@ -42,6 +42,8 @@ int itemsToDisplay_cfg = GetterUtil.getInteger(portletPreferences.getValue("item
 			}
 		%>
 	</aui:select>
+	
+	<aui:input name="hidePaymentButton" type="checkbox" checked="<%=hidePaymentButton %>" />
 
 	<aui:button type="submit" name="Save" value="save"></aui:button>
 
