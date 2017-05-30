@@ -201,9 +201,9 @@
 															}
 															
 															int level = StringUtil.count(dictItem.getTreeIndex(), StringPool.PERIOD);
-															String index = "|";
+															String index = "&nbsp;";
 															for(int i = 0; i < level; i++){
-																index += "_";
+																index += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
 															}
 															%>
 																<aui:option value="<%=dictItem.getDictItemId() %>"><%=index + dictItem.getItemName(locale) %></aui:option>
