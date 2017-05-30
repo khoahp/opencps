@@ -26,6 +26,10 @@
 		preferencesPortlet = PortletPreferencesFactoryUtil.getPortletSetup(request, portletResource);
 	}
 	long plidServiceDetail = GetterUtil.getLong(preferences.getValue("plidServiceDetail","0"));
+	long plidAddDossier = GetterUtil.getLong(preferences.getValue("plidAddDossier","0"));
+	
+	System.out.println("++++plidServiceDetail:"+plidServiceDetail);
+	System.out.println("++++plidAddDossier:"+plidAddDossier);
 	
 	String style = preferences.getValue("style","default");
 	
