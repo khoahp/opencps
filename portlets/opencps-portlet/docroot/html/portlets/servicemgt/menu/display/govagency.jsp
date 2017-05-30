@@ -29,6 +29,8 @@
 	String dossierMGTPortletName = StringPool.UNDERLINE + WebKeys.DOSSIER_MGT_PORTLET + StringPool.UNDERLINE;
 
 	String govAgencyCode = GetterUtil.getString(originRequest.getParameter(dossierMGTPortletName + ServiceDisplayTerms.GOVAGENCY_CODE));
+	
+	String selGovAgencyCode = Validator.isNotNull(govAgencyCode) ? govAgencyCode : preferences.getValue("selGovAgencyCode","");
 %>
 
 <div class="govagency-menu side-nav">
@@ -36,7 +38,7 @@
 		<ul>
 			<%
 				for (DictItem di : govAgencies) {
-					PortletURL filterURL = PortletURLFactoryUtil.create(request, ServiceUtil.SERVICE_PUBLIC_PORTLET_NAME, plid, PortletRequest.RENDER_PHASE);
+					PortletURL filterURL = PortletURLFactoryUtil.create(request, WebKeys.DOSSIER_MGT_PORTLET, plid, PortletRequest.RENDER_PHASE);
 					filterURL.setWindowState(LiferayWindowState.NORMAL);
 					filterURL.setPortletMode(LiferayPortletMode.VIEW);
 					filterURL.setParameter(ServiceDisplayTerms.GOVAGENCY_CODE, di.getItemCode());
@@ -47,7 +49,7 @@
 						css = "even";
 					}
 					
-					if(di.getItemCode().equals(govAgencyCode)) {
+					if(di.getItemCode().equals(selGovAgencyCode)) {
 						css += " active";
 					}
 			%>
