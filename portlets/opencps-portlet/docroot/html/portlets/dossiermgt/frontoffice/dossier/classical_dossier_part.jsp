@@ -93,7 +93,7 @@
 
 <div class="ocps-dossier-process">
 
-	<table class="table table-bordered fit-width">
+	<table class="table table-bordered fit-width table-striped">
 		<thead>
 			<tr>
 				<th><div class="text-center"><liferay-ui:message key="stt"/></div></th>
