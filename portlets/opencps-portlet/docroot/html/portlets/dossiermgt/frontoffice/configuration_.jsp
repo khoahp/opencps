@@ -92,9 +92,7 @@
 	
 	String templatesToDisplay_cfg = preferences.getValue("templatesToDisplay", "default");
 	
-	String dklr_v10_govAgencyCode = preferences.getValue("dklr_v10_govAgencyCode", StringPool.BLANK);
-	String dklr_v10_administrationCode = preferences.getValue("dklr_v10_administrationCode", StringPool.BLANK);
-	String dklr_v10_dynamicFormKeyPattern = preferences.getValue("dklr_v10_dynamicFormKeyPattern", StringPool.BLANK);
+	String selGovAgencyCode = preferences.getValue("selGovAgencyCode", StringPool.BLANK);
 %>
 
 
@@ -316,8 +314,8 @@
 					
 					<aui:input 
 						type="text" 
-						name="preferences--dklr_v10_govAgencyCode--"
-						value='<%= dklr_v10_govAgencyCode %>'
+						name="preferences--selGovAgencyCode--"
+						value='<%= selGovAgencyCode %>'
 					/>
 					
 					<aui:input 

@@ -32,7 +32,11 @@
  */
 %>
 <%
-	String govAgencyCode = ParamUtil.getString(request, ServiceDisplayTerms.GOVAGENCY_CODE,StringPool.BLANK);
+	String selGovAgencyCode = preferences.getValue("selGovAgencyCode", StringPool.BLANK);
+
+	String queryGovAgencyCode = ParamUtil.getString(request, ServiceDisplayTerms.GOVAGENCY_CODE,StringPool.BLANK);
+
+	String govAgencyCode = Validator.isNotNull(queryGovAgencyCode) ? queryGovAgencyCode : selGovAgencyCode;
 
 	PortletURL iteratorURL = renderResponse.createRenderURL();
 	iteratorURL.setParameter(ServiceDisplayTerms.GOVAGENCY_CODE, govAgencyCode);
