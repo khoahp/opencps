@@ -28,16 +28,17 @@
 <aui:nav-bar cssClass="opencps-toolbar custom-toolbar">
 	<aui:nav id="toolbarContainer"
 		cssClass="nav-display-style-buttons pull-left">
-
 	</aui:nav>
 	<aui:nav-bar-search cssClass="pull-left" style="width: 100%">
 		<div class="form-search">
 			<aui:form action="<%= searchUrl %>" method="post" name="fm">
 				<div class="toolbar_search_input">
 					<aui:row>
-						<aui:col width="30">
-							<aui:button disabled="true" cssClass="paymentBtnAll" type="button" onClick='<%= renderResponse.getNamespace() + \"addPaymentItems();\" %>' name="thanhToan" value="thanh-toan" ></aui:button>
-						</aui:col>
+						<c:if test="<%=!hidePaymentBtutton %>">
+							<aui:col width="30">
+								<aui:button disabled="true" cssClass="paymentBtnAll" type="button" onClick='<%= renderResponse.getNamespace() + \"addPaymentItems();\" %>' name="thanhToan" value="thanh-toan" ></aui:button>
+							</aui:col>
+						</c:if>
 						<aui:col width="35" cssClass="search-input select-box search-col">
 							<div class="select">
 							<aui:select name="paymentStatus" cssClass="search-input select-box select input100" label="">
