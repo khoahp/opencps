@@ -44,30 +44,12 @@
 	
 	String backURL = ParamUtil.getString(request, "backURL");
 	
-	ServiceConfig scf = null;
-	try {
-		scf = ServiceConfigLocalServiceUtil.getServiceConfigByG_S(scopeGroupId, serviceinfoId);
-	} catch(Exception e){
-		//
-	}
-	boolean serviceIsConfiged;
-	if(Validator.isNotNull(scf) && scf.getServiceLevel() >= 3){
-		serviceIsConfiged = true;
-	} else {
-		serviceIsConfiged = false;
-	}
 	
 	List<DictItem> listAdmin = new ArrayList<DictItem>();
 	List<ServiceConfig> listServiceConfig = new ArrayList<ServiceConfig>();
 	
 	try {
-		//Lay thong tin co quan thuc hien theo serviceConfigId tu man hinh tiep nhan ho so
-		if(Validator.isNotNull(scf)){
-			dictItem = PortletUtil.getDictItem(PortletPropsValues.DATAMGT_MASTERDATA_GOVERNMENT_AGENCY, scf.getGovAgencyCode(), scopeGroupId);
-			if(dictItem != null){
-				listAdmin.add(dictItem);
-			}
-		}
+		
 		//Lay thong tin co quan thuc hien tu dich vu cong END
 		
 		//Lay thong tin co quan thuc hien theo serviceinfoId tu man hinh thu tuc hanh chinh 
@@ -75,9 +57,12 @@
 			listServiceConfig = ServiceConfigLocalServiceUtil.getServiceConfigsByS_G(serviceinfoId, scopeGroupId);
 			if(Validator.isNotNull(listServiceConfig)){
 				for(ServiceConfig s: listServiceConfig){
-					dictItem = PortletUtil.getDictItem(PortletPropsValues.DATAMGT_MASTERDATA_GOVERNMENT_AGENCY, s.getGovAgencyCode(), scopeGroupId);
-					if(dictItem != null){
-						listAdmin.add(dictItem);
+					
+					if(s.getServiceLevel() >=3){
+						dictItem = PortletUtil.getDictItem(PortletPropsValues.DATAMGT_MASTERDATA_GOVERNMENT_AGENCY, s.getGovAgencyCode(), scopeGroupId);
+						if(dictItem != null){
+							listAdmin.add(dictItem);
+						}
 					}
 				}
 			}
@@ -90,15 +75,6 @@
 		//nothing to do
 	}
 	
-	long frontServicePlid = PortalUtil.getPlidFromPortletId(scopeGroupId, WebKeys.DOSSIER_MGT_PORTLET);
-
-	long plidSubmit = 0;
-	
-	if(Long.valueOf(plidRes) == 0) {
-		plidSubmit = frontServicePlid;
-	} else {
-		plidSubmit = Long.valueOf(plidRes);
-	}
 %>
 
 
@@ -106,13 +82,12 @@
 <liferay-portlet:renderURL 
  		var="renderURL" 
  		portletName='<%=WebKeys.DOSSIER_MGT_PORTLET %>' 
- 		plid="<%=plidSubmit %>"
+ 		plid="<%=plidAddDossier %>"
  		portletMode="VIEW"
  		windowState="<%=LiferayWindowState.NORMAL.toString() %>"> 
  		
  	<portlet:param name="mvcPath" value="/html/portlets/dossiermgt/frontoffice/edit_dossier.jsp"/> 
  	<portlet:param name="isEditDossier" value="<%=String.valueOf(true) %>"/> 
- 	<portlet:param name="<%=DossierDisplayTerms.SERVICE_CONFIG_ID %>" value="<%=String.valueOf(scf.getServiceConfigId()) %>"/>
  	<portlet:param name="backURL" value="<%=backURL %>"/>
  	<portlet:param name="<%=Constants.CMD %>" value="<%=Constants.ADD %>"/> 
  	
@@ -254,75 +229,93 @@
 				</tr>
 			</table>
 			
-			<aui:row>
-				<aui:col width="100">
-					<aui:select name="govAgencyCode" label="co-quan-thuc-hien" cssClass="submit-online input100">
-						<%
-							if(listAdmin!=null && !listAdmin.isEmpty()){
-								for(DictItem d : listAdmin){
-									%>
-										<aui:option value="<%=d.getItemCode() %>">
-											<%=d.getItemName(themeDisplay.getLocale(),true) %>
-										</aui:option>
-									<%
-								}
-							}
-						%>
-					</aui:select>
-				</aui:col>
-			</aui:row>
-			
-			<aui:row cssClass="serice-des">
-				<liferay-ui:message key="service-description-dvc"/>
-			</aui:row>
-				
-			<aui:row cssClass="des-detail">		
-				<c:choose>
-					<c:when test="<%=scf != null %>">
-						<c:choose>
-							<c:when test="<%=scf.getServiceInstruction().equalsIgnoreCase(StringPool.BLANK) %>">
+			<c:if test="<%=listAdmin!=null && !listAdmin.isEmpty() %>">
+				<aui:row>
+					<aui:col width="100">
+						<aui:select name="<%=DossierDisplayTerms.SERVICE_CONFIG_ID %>" label="co-quan-thuc-hien" cssClass="submit-online input100" showEmptyOption="<%= (listAdmin != null && listAdmin.size() > 1) %>">
+							<%
+									for(DictItem d : listAdmin){
+										ServiceConfig serviceConfig = ServiceConfigLocalServiceUtil.getServiceConfigByG_S_G(themeDisplay.getScopeGroupId(), serviceinfoId, d.getItemCode());
+										%>
+											<aui:option value="<%=serviceConfig.getServiceConfigId() %>">
+												<%=d.getItemName(themeDisplay.getLocale(),true) %>
+											</aui:option>
+										<%
+									}
 								
-							</c:when>
-							<c:otherwise>
-								<%= scf.getServiceInstruction() %>
-							</c:otherwise>
-						</c:choose>
-					</c:when>
-					<c:otherwise>
-						<liferay-ui:message key="no-config"/>
-					</c:otherwise>
-				</c:choose>	
-			</aui:row>
+							%>
+						</aui:select>
+					</aui:col>
+				</aui:row>
+			</c:if>
+			
+<%-- 			<aui:row cssClass="serice-des"> --%>
+<%-- 				<liferay-ui:message key="service-description-dvc"/> --%>
+<%-- 			</aui:row> --%>
 				
-			<c:if test="<%= serviceIsConfiged %>">
+<%-- 			<aui:row cssClass="des-detail">		 --%>
+<%-- 				<c:choose> --%>
+<%-- 					<c:when test="<%=scf != null %>"> --%>
+<%-- 						<c:choose> --%>
+<%-- 							<c:when test="<%=scf.getServiceInstruction().equalsIgnoreCase(StringPool.BLANK) %>"> --%>
+								
+<%-- 							</c:when> --%>
+<%-- 							<c:otherwise> --%>
+<%-- 								<%= scf.getServiceInstruction() %> --%>
+<%-- 							</c:otherwise> --%>
+<%-- 						</c:choose> --%>
+<%-- 					</c:when> --%>
+<%-- 					<c:otherwise> --%>
+<%-- 						<liferay-ui:message key="no-config"/> --%>
+<%-- 					</c:otherwise> --%>
+<%-- 				</c:choose>	 --%>
+<%-- 			</aui:row> --%>
+				
+			
 			
 				<aui:button-row>
-					<aui:button href="<%=backURL %>" cssClass="des-sub-button radius20" value='<%=LanguageUtil.get(themeDisplay.getLocale(), "back") %>'/>
-					<aui:button  cssClass="des-sub-button radius20" value="dossier-submit-online-temp" name="btn_des" href="<%=renderURL.toString() %>"></aui:button>
+					<aui:button href="<%=backURL %>" cssClass="des-sub-button radius20 back-icon" value='<%=LanguageUtil.get(themeDisplay.getLocale(), "back") %>'/>
+					<c:if test="<%= listAdmin!=null && !listAdmin.isEmpty() %>">
+						<% String jsFunc = renderResponse.getNamespace() + "selectServiceConfig();"; %>
+						<aui:button  cssClass="des-sub-button radius20 send-icon" value="dossier-submit-online-temp" name="btn_des" onClick="<%=jsFunc %>" ></aui:button>
+					</c:if>
 				</aui:button-row>
-			</c:if>
+			
 		</div>
 	</c:if>
 </div>
 
 <aui:script use="aui-base,liferay-portlet-url">
-	AUI().ready(function(A) {
+// 	AUI().ready(function(A) {
 		
-		var url = "<%=renderURL.toString() %>";
-		var govAgencyCodeSel = A.one("#<portlet:namespace/>govAgencyCode"); 
-
-		if(govAgencyCodeSel) {
+// 		if(govAgencyCodeSel) {
 			
-			govAgencyCodeSel.on('change',function() {
+// 			govAgencyCodeSel.on('change',function() {
 				
-				var renderUrlTest = Liferay.PortletURL.createURL(url);
+// 				var renderUrlTest = Liferay.PortletURL.createURL(url);
 				
-				renderUrlTest = renderUrlTest+'&<portlet:namespace/>govAgencyCode='+govAgencyCodeSel;
+// 				renderUrlTest = renderUrlTest+'&<portlet:namespace/>serviceConfigId='+serviceConfigIdSel;
 				
-				A.one("#<portlet:namespace/>btn_des").attr('href',renderUrlTest);
+// 				A.one("#<portlet:namespace/>btn_des").attr('href',renderUrlTest);
 				
-			});
-		}
+// 			});
+// 		}
 		
-	});
+// 	});
+	
+	Liferay.provide(window, '<portlet:namespace/>selectServiceConfig', function() {
+ 		var A = AUI();
+ 		
+ 		var serviceConfigIdSel = A.one("#<portlet:namespace/>serviceConfigId"); 
+ 		
+ 		if(serviceConfigIdSel.val() != '') {
+ 			var renderUrlTest = Liferay.PortletURL.createURL('<%=renderURL.toString() %>');
+		
+			renderUrlTest = renderUrlTest+'&_13_WAR_opencpsportlet_serviceConfigId='+serviceConfigIdSel.val();
+		
+			location.href=renderUrlTest;
+ 		} else {
+ 			alert(Liferay.Language.get('vui-long-chon-co-quan-thuc-hien'));
+ 		}
+ 	});
 </aui:script>

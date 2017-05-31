@@ -33,6 +33,9 @@
 	for (Layout pubLayout : pubLayouts) {
 		allLayout.add(pubLayout);
 	}
+	
+	System.out.println("++++config plidServiceDetail:"+plidServiceDetail);
+	System.out.println("++++config plidAddDossier:"+plidAddDossier);
 %>
 <liferay-ui:success key="potlet-config-saved" message="portlet-configuration-have-been-successfully-saved" />
 
@@ -47,6 +50,18 @@
 				for (Layout lout : allLayout) {
 			%>
 				<aui:option value="<%= lout.getPlid() %>" selected='<%= lout.getPlid() == plidServiceDetail %>'><%= lout.getName(locale) %></aui:option>
+			<%
+				}
+			%>
+		</aui:select>
+	</aui:row>
+	
+	<aui:row>
+		<aui:select name="plidAddDossier" id="plidServiceDetail" label="plid-add-dossier" showEmptyOption="<%= true %>">
+			<%
+				for (Layout lout : allLayout) {
+			%>
+				<aui:option value="<%= lout.getPlid() %>" selected='<%= lout.getPlid() == plidAddDossier %>'><%= lout.getName(locale) %></aui:option>
 			<%
 				}
 			%>

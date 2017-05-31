@@ -48,6 +48,8 @@ public class ConfigurationImpl implements ConfigurationAction {
 	    throws Exception {
 
 		String menuType = ParamUtil.getString(actionRequest, "menuType");
+		
+		String selGovAgencyCode = ParamUtil.getString(actionRequest, "selGovAgencyCode");
 
 		String portletResource =
 		    ParamUtil.getString(actionRequest, "portletResource");
@@ -57,6 +59,7 @@ public class ConfigurationImpl implements ConfigurationAction {
 		        actionRequest, portletResource);
 		
 		preferences.setValue("menuType", menuType);
+		preferences.setValue("selGovAgencyCode", selGovAgencyCode);
 		preferences.store();
 		
 		SessionMessages.add(actionRequest, "potlet-config-saved");

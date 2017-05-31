@@ -91,7 +91,7 @@
 			(lower(opencps_dossier.receptionNo) LIKE ? [$AND_OR_NULL_CHECK$])
 		AND
 				(opencps_payment_file.paymentStatus = ?)
-			ORDER BY opencps_payment_file.modifiedDate DESC
+			ORDER BY opencps_payment_file.paymentStatus ASC, opencps_payment_file.createDate DESC
 		]]>
 	</sql>
 	

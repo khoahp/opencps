@@ -92,9 +92,9 @@
 	
 	String templatesToDisplay_cfg = preferences.getValue("templatesToDisplay", "default");
 	
-	String dklr_v10_govAgencyCode = preferences.getValue("dklr_v10_govAgencyCode", StringPool.BLANK);
-	String dklr_v10_administrationCode = preferences.getValue("dklr_v10_administrationCode", StringPool.BLANK);
-	String dklr_v10_dynamicFormKeyPattern = preferences.getValue("dklr_v10_dynamicFormKeyPattern", StringPool.BLANK);
+	List<DictItem> govAgencies = DictItemLocalServiceUtil.findDictItemsByG_DC_S(scopeGroupId, PortletPropsValues.DATAMGT_MASTERDATA_GOVERNMENT_AGENCY);
+	
+	String selGovAgencyCode = preferences.getValue("selGovAgencyCode", StringPool.BLANK);
 %>
 
 
@@ -308,23 +308,16 @@
 					persistState="<%= true %>" 
 					title="dklr-v10-style"
 				>
-					<aui:input 
-						type="text" 
-						name="preferences--dklr_v10_administrationCode--"
-						value='<%= dklr_v10_administrationCode %>'
-					/>
-					
-					<aui:input 
-						type="text" 
-						name="preferences--dklr_v10_govAgencyCode--"
-						value='<%= dklr_v10_govAgencyCode %>'
-					/>
-					
-					<aui:input 
-						type="text" 
-						name="preferences--dklr_v10_dynamicFormKeyPattern--"
-						value='<%= dklr_v10_dynamicFormKeyPattern %>'
-					/>
+				
+					<aui:select name="preferences--selGovAgencyCode--" showEmptyOption="<%= true %>">
+						<%
+							for (DictItem di : govAgencies) {
+						%>
+							<aui:option selected="<%= selGovAgencyCode.equals(di.getItemCode()) %>" value="<%= di.getItemCode() %>" label="<%= di.getItemName(locale) %>"/>
+						<%
+							}
+						%>
+					</aui:select>
 				</liferay-ui:panel>
 			</liferay-ui:panel-container>
 		</c:when>
