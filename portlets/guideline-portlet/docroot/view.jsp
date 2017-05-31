@@ -30,7 +30,8 @@
 	long dossierId = GetterUtil.getLong(originalRequest.getParameter("_13_WAR_opencpsportlet_dossierId"));
 	
 	Dossier dossier = null;
-
+	
+	
 %>
 
 <c:if test='<%= pageArea.contentEquals("login") %>'>
@@ -42,18 +43,22 @@
 </c:if>
 	
 <c:if test='<%= pageArea.contentEquals("dossier") %>'>
-	<c:if test='<%= dossierId != 0 %>'>
-		<% 
-			
+	
+	<c:if test='<%= themeDisplay.getURLCurrent().toString().contains("/group/guest/nop-ho-so") %>'>
+		<img alt="" src='<%= renderRequest.getContextPath() + "/imgs/" + imgStepTwo %>'>
+	</c:if>
+	<c:if test='<%= !themeDisplay.getURLCurrent().toString().contains("/group/guest/nop-ho-so") %>'>
+		<c:if test='<%= dossierId != 0 %>'>
+			<% 
 				try {
 					dossier = DossierLocalServiceUtil.getDossier(dossierId);
 				} catch (Exception e) {}
-			
-		%>
- 		<c:if test='<%= Validator.isNotNull(dossier) && dossier.getDossierStatus().contentEquals("new") %>'>
-			<img alt="" src='<%= renderRequest.getContextPath() + "/imgs/" + imgStepThree %>'>
-
- 		</c:if>
+				
+			%>
+	 		<c:if test='<%= Validator.isNotNull(dossier) && dossier.getDossierStatus().contentEquals("new") %>'>
+				<img alt="" src='<%= renderRequest.getContextPath() + "/imgs/" + imgStepThree %>'>
+	 		</c:if>
+		</c:if>	
 	</c:if>
 </c:if>
 
