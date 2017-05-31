@@ -172,23 +172,16 @@
 	var needConfirnChangeView = false;
 	
 	Liferay.provide(window, 'updateDictPermissions', function(userId){
-		if (!Liferay.ThemeDisplay.isSignedIn()){
-			alert(Liferay.Language.get('please-login-and-try-again'));
-			return;
-		}
 		
 		if (selectedUserId == '0'){
 			alert(Liferay.Language.get('please-select-user-admin'));
 			return;
 		}
 		
-		var loadingMask = new A.LoadingMask(
-			{
-				'strings.loading': '<%= UnicodeLanguageUtil.get(pageContext, "...") %>',
-				target: A.one('#<portlet:namespace/>collection-detail')
-			}
-		);
-		loadingMask.show();
+		var loadingMask = loadingMaskBean('#<portlet:namespace/>collection-detail');
+		if (loadingMask){
+			loadingMask.show();
+		}
 		
 		var portletURL = Liferay.PortletURL.createURL('<%= PortletURLFactoryUtil.create(request, WebKeys.DATA_MANAGEMENT_ADMIN_PORTLET, themeDisplay.getPlid(), PortletRequest.ACTION_PHASE) %>');
 		portletURL.setParameter("javax.portlet.action", "updateDictPermissions");
@@ -275,11 +268,15 @@
 			    data: {},   
 			    on: {
 			        success: function(event, id, obj){
-			        	loadingMask.hide();
+			        	if (loadingMask){
+			        		loadingMask.hide();
+			        	}
 			        	alert(Liferay.Language.get('success'));
 					},
 			    	error: function(){
-			    		loadingMask.hide();
+			    		if (loadingMask){
+			    			loadingMask.hide();
+			    		}
 			    	}
 				}
 			}
@@ -287,10 +284,6 @@
 	},['aui-base','liferay-portlet-url','aui-io']);
 	
 	Liferay.provide(window, 'editPermission', function(collectionId){
-		if (!Liferay.ThemeDisplay.isSignedIn()){
-			alert(Liferay.Language.get('please-login-and-try-again'));
-			return;
-		}
 		
 		if (needConfirnChangeView){
 			if (!confirm(Liferay.Language.get('confirm-change-display'))){
@@ -303,13 +296,10 @@
 			A.one('.selected').removeClass("selected");
 		}
 		
-		var loadingMask = new A.LoadingMask(
-			{
-				'strings.loading': '<%= UnicodeLanguageUtil.get(pageContext, "...") %>',
-				target: A.one('#<portlet:namespace/>collection-detail')
-			}
-		);
-		loadingMask.show();
+		var loadingMask = loadingMaskBean('#<portlet:namespace/>collection-detail');
+		if (loadingMask){
+			loadingMask.show();
+		}
 		
 		// hide other component
 		if ($('.hide-when-edit-permission')){
@@ -328,7 +318,9 @@
 			    data: {},   
 			    on: {
 			        success: function(event, id, obj){
-			        	loadingMask.hide();
+			        	if (loadingMask){
+			        		loadingMask.hide();
+			        	}
 			        	
 						var instance = this;
 						var content = instance.get('responseData');
@@ -388,7 +380,9 @@
 						}
 					},
 			    	error: function(){
-			    		loadingMask.hide();
+			    		if (loadingMask){
+			    			loadingMask.hide();
+			    		}
 			    	}
 				}
 			}
@@ -457,18 +451,11 @@
 	});
 	
 	Liferay.provide(window, 'getDictPermissions', function(userId){
-		if (!Liferay.ThemeDisplay.isSignedIn()){
-			alert(Liferay.Language.get('please-login-and-try-again'));
-			return;
-		}
 		
-		var loadingMask = new A.LoadingMask(
-			{
-				'strings.loading': '<%= UnicodeLanguageUtil.get(pageContext, "...") %>',
-				target: A.one('#<portlet:namespace/>collection-permissions')
-			}
-		);
-		loadingMask.show();
+		var loadingMask = loadingMaskBean('#<portlet:namespace/>collection-permissions');
+		if (loadingMask){
+			loadingMask.show();
+		}
 		
 		var portletURL = Liferay.PortletURL.createURL('<%= PortletURLFactoryUtil.create(request, WebKeys.DATA_MANAGEMENT_ADMIN_PORTLET, themeDisplay.getPlid(), PortletRequest.RENDER_PHASE) %>');
 		portletURL.setParameter("mvcPath", "/html/portlets/data_management/admin/ajax/_get_dict_permissions.jsp");
@@ -486,7 +473,9 @@
 			    data: {},   
 			    on: {
 			        success: function(event, id, obj){
-			        	loadingMask.hide();
+			        	if (loadingMask){
+			        		loadingMask.hide();
+			        	}
 			        	
 						var instance = this;
 						var content = instance.get('responseData');
@@ -556,7 +545,9 @@
 						}
 					},
 			    	error: function(){
-			    		loadingMask.hide();
+			    		if (loadingMask){
+			    			loadingMask.hide();
+			    		}
 			    	}
 				}
 			}
@@ -564,18 +555,11 @@
 	},['aui-base','liferay-portlet-url','aui-io']);
 	
 	Liferay.provide(window, 'getUsers', function(name){
-		if (!Liferay.ThemeDisplay.isSignedIn()){
-			alert(Liferay.Language.get('please-login-and-try-again'));
-			return;
-		}
 		
-		var loadingMask = new A.LoadingMask(
-			{
-				'strings.loading': '<%= UnicodeLanguageUtil.get(pageContext, "...") %>',
-				target: A.one('#<portlet:namespace/>users-container')
-			}
-		);
-		loadingMask.show();
+		var loadingMask = loadingMaskBean('#<portlet:namespace/>users-container');
+		if (loadingMask){
+			loadingMask.show();
+		}
 		
 		var portletURL = Liferay.PortletURL.createURL('<%= PortletURLFactoryUtil.create(request, WebKeys.DATA_MANAGEMENT_ADMIN_PORTLET, themeDisplay.getPlid(), PortletRequest.RENDER_PHASE) %>');
 		portletURL.setParameter("mvcPath", "/html/portlets/data_management/admin/ajax/_get_users.jsp");
@@ -593,7 +577,9 @@
 			    data: {},   
 			    on: {
 			        success: function(event, id, obj){
-			        	loadingMask.hide();
+			        	if (loadingMask){
+			        		loadingMask.hide();
+			        	}
 			        	
 						var instance = this;
 						var content = instance.get('responseData');
@@ -619,7 +605,9 @@
 						}
 					},
 			    	error: function(){
-			    		loadingMask.hide();
+			    		if (loadingMask){
+			    			loadingMask.hide();
+			    		}
 			    	}
 				}
 			}
@@ -627,10 +615,6 @@
 	},['aui-base','liferay-portlet-url','aui-io']);
 	
 	Liferay.provide(window, 'getDictCollectionDetail', function(collectionId){
-		if (!Liferay.ThemeDisplay.isSignedIn()){
-			alert(Liferay.Language.get('please-login-and-try-again'));
-			return;
-		}
 		
 		// show other component
 		if ($('.hide-when-add-collection')){
@@ -647,13 +631,10 @@
 			needConfirnChangeView = false;
 		}
 		
-		var loadingMask = new A.LoadingMask(
-			{
-				'strings.loading': '<%= UnicodeLanguageUtil.get(pageContext, "...") %>',
-				target: A.one('#<portlet:namespace/>collection-detail')
-			}
-		);
-		loadingMask.show();
+		var loadingMask = loadingMaskBean('#<portlet:namespace/>collection-detail');
+		if (loadingMask){
+			loadingMask.show();
+		}
 		
 		var portletURL = Liferay.PortletURL.createURL('<%= PortletURLFactoryUtil.create(request, WebKeys.DATA_MANAGEMENT_ADMIN_PORTLET, themeDisplay.getPlid(), PortletRequest.RENDER_PHASE) %>');
 		portletURL.setParameter("mvcPath", "/html/portlets/data_management/admin/ajax/_dictcollection_detail.jsp");
@@ -668,7 +649,9 @@
 			    data: {},   
 			    on: {
 			        success: function(event, id, obj){
-			        	loadingMask.hide();
+			        	if (loadingMask){
+			        		loadingMask.hide();
+			        	}
 			        	
 						var instance = this;
 						var content = instance.get('responseData');
@@ -694,7 +677,9 @@
 						}
 					},
 			    	error: function(){
-			    		loadingMask.hide();
+			    		if (loadingMask){
+			    			loadingMask.hide();
+			    		}
 			    	}
 				}
 			}
@@ -702,18 +687,11 @@
 	},['aui-base','liferay-portlet-url','aui-io']);
 	
 	Liferay.provide(window, 'getDictItemsToolbar', function(dictCollectionId){
-		if (!Liferay.ThemeDisplay.isSignedIn()){
-			alert(Liferay.Language.get('please-login-and-try-again'));
-			return;
-		}
 		
-		var loadingMask = new A.LoadingMask(
-			{
-				'strings.loading': '<%= UnicodeLanguageUtil.get(pageContext, "...") %>',
-				target: A.one('#<portlet:namespace/>collection-detail')
-			}
-		);
-		loadingMask.show();
+		var loadingMask = loadingMaskBean('#<portlet:namespace/>collection-detail');
+		if (loadingMask){
+			loadingMask.show();
+		}
 		
 		var portletURL = Liferay.PortletURL.createURL('<%= PortletURLFactoryUtil.create(request, WebKeys.DATA_MANAGEMENT_ADMIN_PORTLET, themeDisplay.getPlid(), PortletRequest.RENDER_PHASE) %>');
 		portletURL.setParameter("mvcPath", "/html/portlets/data_management/admin/ajax/_dictitems_toolbar.jsp");
@@ -739,7 +717,9 @@
 			    data: {},   
 			    on: {
 			        success: function(event, id, obj){
-			        	loadingMask.hide();
+			        	if (loadingMask){
+			        		loadingMask.hide();
+			        	}
 			        	
 						var instance = this;
 						var items = instance.get('responseData');
@@ -780,7 +760,9 @@
 						
 					},
 			    	error: function(){
-			    		loadingMask.hide();
+			    		if (loadingMask){
+			    			loadingMask.hide();
+			    		}
 			    	}
 				}
 			}
@@ -788,10 +770,6 @@
 	},['aui-base','liferay-portlet-url','aui-io']);
 	
 	Liferay.provide(window, 'getDictItems', function(dictCollectionId, cur){
-		if (!Liferay.ThemeDisplay.isSignedIn()){
-			alert(Liferay.Language.get('please-login-and-try-again'));
-			return;
-		}
 		
 		if (needConfirnChangeView){
 			if (!confirm(Liferay.Language.get('confirm-change-display'))){
@@ -800,13 +778,10 @@
 			needConfirnChangeView = false;
 		}
 		
-		var loadingMask = new A.LoadingMask(
-			{
-				'strings.loading': '<%= UnicodeLanguageUtil.get(pageContext, "...") %>',
-				target: A.one('#<portlet:namespace/>dictItems_container')
-			}
-		);
-		loadingMask.show();
+		var loadingMask = loadingMaskBean('#<portlet:namespace/>dictItems_container');
+		if (loadingMask){
+			loadingMask.show();
+		}
 		
 		var iteratorURL = Liferay.PortletURL.createURL('<%=iteratorURL.toString()%>');
 		if (dictCollectionId){
@@ -835,7 +810,9 @@
 			    data: {},   
 			    on: {
 			        success: function(event, id, obj){
-			        	loadingMask.hide();
+			        	if (loadingMask){
+			        		loadingMask.hide();
+			        	}
 			        	
 						var instance = this;
 						var items = instance.get('responseData');
@@ -910,7 +887,9 @@
 						}
 					},
 			    	error: function(){
-			    		loadingMask.hide();
+			    		if (loadingMask){
+			    			loadingMask.hide();
+			    		}
 			    	}
 				}
 			}
@@ -918,18 +897,11 @@
 	},['aui-base','liferay-portlet-url','aui-io']);
 	
 	Liferay.provide(window, 'getDictCollections', function(collectionName){
-		if (!Liferay.ThemeDisplay.isSignedIn()){
-			alert(Liferay.Language.get('please-login-and-try-again'));
-			return;
-		}
 		
-		var loadingMask = new A.LoadingMask(
-			{
-				'strings.loading': '<%= UnicodeLanguageUtil.get(pageContext, "...") %>',
-				target: A.one('#<portlet:namespace/>collections-container')
-			}
-		);
-		loadingMask.show();
+		var loadingMask = loadingMaskBean('#<portlet:namespace/>collections-container');
+		if (loadingMask){
+			loadingMask.show();
+		}
 		
 		var portletURL = Liferay.PortletURL.createURL('<%= PortletURLFactoryUtil.create(request, WebKeys.DATA_MANAGEMENT_ADMIN_PORTLET, themeDisplay.getPlid(), PortletRequest.RENDER_PHASE) %>');
 		portletURL.setParameter("mvcPath", "/html/portlets/data_management/admin/ajax/_get_dictcollections.jsp");
@@ -944,7 +916,9 @@
 			    data: {},   
 			    on: {
 			        success: function(event, id, obj){
-			        	loadingMask.hide();
+			        	if (loadingMask){
+			        		loadingMask.hide();
+			        	}
 			        	
 						var instance = this;
 						var collections = instance.get('responseData');
@@ -981,7 +955,9 @@
 						
 					},
 			    	error: function(){
-			    		loadingMask.hide();
+			    		if (loadingMask){
+			    			loadingMask.hide();
+			    		}
 			    	}
 				}
 			}
@@ -989,10 +965,6 @@
 	},['aui-base','liferay-portlet-url','aui-io']);
 	
 	Liferay.provide(window, 'editDictCollection', function(collectionId){
-		if (!Liferay.ThemeDisplay.isSignedIn()){
-			alert(Liferay.Language.get('please-login-and-try-again'));
-			return;
-		}
 		
 		if (needConfirnChangeView){
 			if (!confirm(Liferay.Language.get('confirm-change-display'))){
@@ -1001,13 +973,10 @@
 		}
 		needConfirnChangeView = true;
 		
-		var loadingMask = new A.LoadingMask(
-			{
-				'strings.loading': '<%= UnicodeLanguageUtil.get(pageContext, "...") %>',
-				target: A.one('#<portlet:namespace/>collection-detail')
-			}
-		);
-		loadingMask.show();
+		var loadingMask = loadingMaskBean('#<portlet:namespace/>collection-detail');
+		if (loadingMask){
+			loadingMask.show();
+		}
 		
 		var portletURL = Liferay.PortletURL.createURL('<%= PortletURLFactoryUtil.create(request, WebKeys.DATA_MANAGEMENT_ADMIN_PORTLET, themeDisplay.getPlid(), PortletRequest.RENDER_PHASE) %>');
 		portletURL.setParameter("mvcPath", "/html/portlets/data_management/admin/ajax/_edit_dictcollection.jsp");
@@ -1030,7 +999,9 @@
 			    data: {},   
 			    on: {
 			        success: function(event, id, obj){
-			        	loadingMask.hide();
+			        	if (loadingMask){
+			        		loadingMask.hide();
+			        	}
 			        	
 						var instance = this;
 						var result = instance.get('responseData');
@@ -1099,7 +1070,9 @@
 						}
 					},
 			    	error: function(){
-			    		loadingMask.hide();
+			    		if (loadingMask){
+			    			loadingMask.hide();
+			    		}
 			    	}
 				}
 			}
@@ -1107,22 +1080,15 @@
 	},['aui-base','liferay-portlet-url','aui-io']);
 	
 	Liferay.provide(window, 'deleteDictCollection', function(collectionId){
-		if (!Liferay.ThemeDisplay.isSignedIn()){
-			alert(Liferay.Language.get('please-login-and-try-again'));
-			return;
-		}
 		
 		if (!confirm(Liferay.Language.get('confirm-change-display'))){
 			return;
 		}
 		
-		var loadingMask = new A.LoadingMask(
-			{
-				'strings.loading': '<%= UnicodeLanguageUtil.get(pageContext, "...") %>',
-				target: A.one('#<portlet:namespace/>collection-detail')
-			}
-		);
-		loadingMask.show();
+		var loadingMask = loadingMaskBean('#<portlet:namespace/>collection-detail');
+		if (loadingMask){
+			loadingMask.show();
+		}
 		
 		var portletURL = Liferay.PortletURL.createURL('<%= PortletURLFactoryUtil.create(request, WebKeys.DATA_MANAGEMENT_ADMIN_PORTLET, themeDisplay.getPlid(), PortletRequest.ACTION_PHASE) %>');
 		portletURL.setParameter("javax.portlet.action", "deleteDictCollection");
@@ -1139,7 +1105,9 @@
 			    data: {},   
 			    on: {
 			        success: function(event, id, obj){
-			        	loadingMask.hide();
+			        	if (loadingMask){
+			        		loadingMask.hide();
+			        	}
 			        	
 			        	getDictCollections('');
 			        	getDictCollectionDetail();
@@ -1151,7 +1119,9 @@
 			        	alert(Liferay.Language.get('success'));
 					},
 			    	error: function(){
-			    		loadingMask.hide();
+			    		if (loadingMask){
+			    			loadingMask.hide();
+			    		}
 			    	}
 				}
 			}
@@ -1159,21 +1129,14 @@
 	},['aui-base','liferay-portlet-url','aui-io']);
 	
 	Liferay.provide(window, 'editDictItem', function(itemId){
-		if (!Liferay.ThemeDisplay.isSignedIn()){
-			alert(Liferay.Language.get('please-login-and-try-again'));
-			return;
-		}
 		
 		needConfirnChangeView = true;
 		previousId = '';
 		
-		var loadingMask = new A.LoadingMask(
-			{
-				'strings.loading': '<%= UnicodeLanguageUtil.get(pageContext, "...") %>',
-				target: A.one('#<portlet:namespace/>collection-detail')
-			}
-		);
-		loadingMask.show();
+		var loadingMask = loadingMaskBean('#<portlet:namespace/>collection-detail');
+		if (loadingMask){
+			loadingMask.show();
+		}
 		
 		var portletURL = Liferay.PortletURL.createURL('<%= PortletURLFactoryUtil.create(request, WebKeys.DATA_MANAGEMENT_ADMIN_PORTLET, themeDisplay.getPlid(), PortletRequest.RENDER_PHASE) %>');
 		portletURL.setParameter("mvcPath", "/html/portlets/data_management/admin/ajax/_edit_dictitem.jsp");
@@ -1196,7 +1159,9 @@
 			    data: {},   
 			    on: {
 			        success: function(event, id, obj){
-			        	loadingMask.hide();
+			        	if (loadingMask){
+			        		loadingMask.hide();
+			        	}
 			        	
 						var instance = this;
 						var result = instance.get('responseData');
@@ -1286,7 +1251,9 @@
 						}
 					},
 			    	error: function(){
-			    		loadingMask.hide();
+			    		if (loadingMask){
+			    			loadingMask.hide();
+			    		}
 			    	}
 				}
 			}
@@ -1294,10 +1261,6 @@
 	},['aui-base','liferay-portlet-url','aui-io']);
 	
 	Liferay.provide(window, 'updateDictCollection', function(dictCollectionId){
-		if (!Liferay.ThemeDisplay.isSignedIn()){
-			alert(Liferay.Language.get('please-login-and-try-again'));
-			return;
-		}
 		
 		var portletURL = Liferay.PortletURL.createURL('<%= PortletURLFactoryUtil.create(request, WebKeys.DATA_MANAGEMENT_ADMIN_PORTLET, themeDisplay.getPlid(), PortletRequest.ACTION_PHASE) %>');
 		portletURL.setParameter("javax.portlet.action", "updateDictCollection");
@@ -1330,13 +1293,10 @@
     		return false;
     	}
     	
-    	var loadingMask = new A.LoadingMask(
-   			{
-   				'strings.loading': '<%= UnicodeLanguageUtil.get(pageContext, "...") %>',
-   				target: A.one('#<portlet:namespace/>collection-detail')
-   			}
-   		);
-   		loadingMask.show();
+   		var loadingMask = loadingMaskBean('#<portlet:namespace/>collection-detail');
+   		if (loadingMask){
+   			loadingMask.show();
+   		}
 		
 		A.io.request(
 			portletURL.toString(),
@@ -1352,7 +1312,9 @@
 			    on: {
 			        success: function(event, id, obj){
 			        	needConfirnChangeView = false;
-			        	loadingMask.hide();
+			        	if (loadingMask){
+			        		loadingMask.hide();
+			        	}
 			        	var collectionNameSearch = A.one('#<portlet:namespace/>collection-name') ? 
 								A.one('#<portlet:namespace/>collection-name').attr('value') : '';
 			        	getDictCollections(collectionNameSearch);
@@ -1362,7 +1324,9 @@
 						alert(Liferay.Language.get('update-dict-collection') + ' ' + collectionName + ' ' + Liferay.Language.get('success'));
 					},
 			    	error: function(){
-			    		loadingMask.hide();
+			    		if (loadingMask){
+			    			loadingMask.hide();
+			    		}
 			    		alert(Liferay.Language.get('error'));
 			    	}
 				}
@@ -1372,10 +1336,6 @@
 	},['aui-base','liferay-portlet-url','aui-io']);
 	
 	Liferay.provide(window, 'updateDictItem', function(dictItemId, dictCollectionId){
-		if (!Liferay.ThemeDisplay.isSignedIn()){
-			alert(Liferay.Language.get('please-login-and-try-again'));
-			return;
-		}
 		
 		var portletURL = Liferay.PortletURL.createURL('<%= PortletURLFactoryUtil.create(request, WebKeys.DATA_MANAGEMENT_ADMIN_PORTLET, themeDisplay.getPlid(), PortletRequest.ACTION_PHASE) %>');
 		portletURL.setParameter("javax.portlet.action", "updateDictItem");
@@ -1415,13 +1375,10 @@
     		return;
     	}
     	
-    	var loadingMask = new A.LoadingMask(
-   			{
-   				'strings.loading': '<%= UnicodeLanguageUtil.get(pageContext, "...") %>',
-   				target: A.one('#<portlet:namespace/>collection-detail')
-   			}
-   		);
-   		loadingMask.show();
+   		var loadingMask = loadingMaskBean('#<portlet:namespace/>collection-detail');
+   		if (loadingMask){
+   			loadingMask.show();
+   		}
 		
 		A.io.request(
 			portletURL.toString(),
@@ -1445,7 +1402,9 @@
 						}, 500);
 					},
 			    	error: function(){
-			    		loadingMask.hide();
+			    		if (loadingMask){
+			    			loadingMask.hide();
+			    		}
 			    		alert(Liferay.Language.get('error'));
 			    	}
 				}
@@ -1455,22 +1414,15 @@
 	},['aui-base','liferay-portlet-url','aui-io']);
 	
 	Liferay.provide(window, 'changeStatusItemToNoUse', function(dictItemId){
-		if (!Liferay.ThemeDisplay.isSignedIn()){
-			alert(Liferay.Language.get('please-login-and-try-again'));
-			return;
-		}
 		
 		var portletURL = Liferay.PortletURL.createURL('<%= PortletURLFactoryUtil.create(request, WebKeys.DATA_MANAGEMENT_ADMIN_PORTLET, themeDisplay.getPlid(), PortletRequest.ACTION_PHASE) %>');
 		portletURL.setParameter("javax.portlet.action", "changeStatusItemToNoUse");
 		portletURL.setWindowState('<%=WindowState.NORMAL%>');
 		
-    	var loadingMask = new A.LoadingMask(
-   			{
-   				'strings.loading': '<%= UnicodeLanguageUtil.get(pageContext, "...") %>',
-   				target: A.one('#<portlet:namespace/>collection-detail')
-   			}
-   		);
-   		loadingMask.show();
+   		var loadingMask = loadingMaskBean('#<portlet:namespace/>collection-detail');
+   		if (loadingMask){
+   			loadingMask.show();
+   		}
 		
 		A.io.request(
 			portletURL.toString(),
@@ -1487,7 +1439,9 @@
 						}, 500);
 					},
 			    	error: function(){
-			    		loadingMask.hide();
+			    		if (loadingMask){
+			    			loadingMask.hide();
+			    		}
 			    		alert(Liferay.Language.get('error'));
 			    	}
 				}
@@ -1497,22 +1451,15 @@
 	},['aui-base','liferay-portlet-url','aui-io']);
 	
 	Liferay.provide(window, 'deleteDictItem', function(dictItemId){
-		if (!Liferay.ThemeDisplay.isSignedIn()){
-			alert(Liferay.Language.get('please-login-and-try-again'));
-			return;
-		}
 		
 		var portletURL = Liferay.PortletURL.createURL('<%= PortletURLFactoryUtil.create(request, WebKeys.DATA_MANAGEMENT_ADMIN_PORTLET, themeDisplay.getPlid(), PortletRequest.ACTION_PHASE) %>');
 		portletURL.setParameter("javax.portlet.action", "deleteDictItem");
 		portletURL.setWindowState('<%=WindowState.NORMAL%>');
 		
-    	var loadingMask = new A.LoadingMask(
-   			{
-   				'strings.loading': '<%= UnicodeLanguageUtil.get(pageContext, "...") %>',
-   				target: A.one('#<portlet:namespace/>collection-detail')
-   			}
-   		);
-   		loadingMask.show();
+   		var loadingMask = loadingMaskBean('#<portlet:namespace/>collection-detail');
+   		if (loadingMask){
+   			loadingMask.show();
+   		}
 		
 		A.io.request(
 			portletURL.toString(),
@@ -1529,7 +1476,9 @@
 						}, 500);
 					},
 			    	error: function(){
-			    		loadingMask.hide();
+			    		if (loadingMask){
+			    			loadingMask.hide();
+			    		}
 			    		alert(Liferay.Language.get('error'));
 			    	}
 				}
@@ -1539,10 +1488,6 @@
 	},['aui-base','liferay-portlet-url','aui-io']);
 	
 	Liferay.provide(window, 'getSelectSibling', function(dictCollectionId, parentItemId, dictItemId){
-		if (!Liferay.ThemeDisplay.isSignedIn()){
-			alert(Liferay.Language.get('please-login-and-try-again'));
-			return;
-		}
 		
 		var getSelectSiblingURL = Liferay.PortletURL.createURL('<%= PortletURLFactoryUtil.create(request, WebKeys.DATA_MANAGEMENT_ADMIN_PORTLET, themeDisplay.getPlid(), PortletRequest.RENDER_PHASE) %>');
 		getSelectSiblingURL.setParameter("mvcPath", "/html/portlets/data_management/admin/ajax/_select_sibling.jsp");
@@ -1576,10 +1521,6 @@
 	var previousId = '';
 	
 	Liferay.provide(window, 'getDictItemsLinked', function(dictCollectionId, dictItemId){
-		if (!Liferay.ThemeDisplay.isSignedIn()){
-			alert(Liferay.Language.get('please-login-and-try-again'));
-			return;
-		}
 		
 		var getItemsLinkedURL = Liferay.PortletURL.createURL('<%= PortletURLFactoryUtil.create(request, WebKeys.DATA_MANAGEMENT_ADMIN_PORTLET, themeDisplay.getPlid(), PortletRequest.RENDER_PHASE) %>');
 		getItemsLinkedURL.setParameter("mvcPath", "/html/portlets/data_management/admin/ajax/_select_dictitems_type.jsp");
@@ -1637,30 +1578,6 @@
 								});
 							});
 						}
-						
-						// toggle expand
-						/* if ($('.expand-anchor')){
-							for (var i = 0; i < $('.expand-anchor').length; i++){
-								var colId = $('.expand-anchor')[i]['id'].replace(/^.+dictCollectionId_/, '');
-								$('#<portlet:namespace/>expandable_' + colId) ? 
-										$('#<portlet:namespace/>expandable_' + colId).slideToggle( "normal") : '';
-								if (A.one('#<portlet:namespace/>expand-anchor_dictCollectionId_' + colId)){
-									A.one('#<portlet:namespace/>expand-anchor_dictCollectionId_' + colId).on('click', function(){
-										var id = this['_node']['id'].replace(/^.+dictCollectionId_/, '');
-										$('#<portlet:namespace/>expandable_' + id) ?
-												$('#<portlet:namespace/>expandable_' + id).slideToggle( "normal") : '';
-										if (previousId.length > 0 && previousId != id && $('#<portlet:namespace/>expandable_' + previousId)){
-											$('#<portlet:namespace/>expandable_' + previousId).slideToggle("normal");
-										} 
-										if (previousId == id){
-											previousId = '';
-										} else {
-											previousId = id;
-										}
-									});
-								}
-							}
-						} */
 					},
 				}
 			}
@@ -1668,10 +1585,6 @@
 	},['aui-base','liferay-portlet-url','aui-io']);
 	
 	Liferay.provide(window, 'getParentDictItemsList', function(dictCollectionId, dictItemId, keyword){
-		if (!Liferay.ThemeDisplay.isSignedIn()){
-			alert(Liferay.Language.get('please-login-and-try-again'));
-			return;
-		}
 		
 		var portletURL = Liferay.PortletURL.createURL('<%= PortletURLFactoryUtil.create(request, WebKeys.DATA_MANAGEMENT_ADMIN_PORTLET, themeDisplay.getPlid(), PortletRequest.RENDER_PHASE) %>');
 		portletURL.setParameter("mvcPath", "/html/portlets/data_management/admin/ajax/_select_parent_dictitem.jsp");
@@ -1759,19 +1672,17 @@
 		);
 	},['aui-base','liferay-portlet-url','aui-io']);
 	
-	Liferay.provide(window, 'scrollWindow', function(){
-		var anchor = A.one('#<portlet:namespace/>anchor-scroll');
-		var y = anchor ? anchor.getY() : 100;
-		$("html, body").animate({ scrollTop: y - 100 }, "normal");
-	});
-	
-	var checkLogined = function(){
-		if (!Liferay.ThemeDisplay.isSignedIn()){
-			alert(Liferay.Language.get('please-login-and-try-again'));
-			return false;
-		}
-		return true;
-	}
+	function loadingMaskBean(target){
+		try {
+			return new A.LoadingMask(
+							{
+								'strings.loading': '<%= UnicodeLanguageUtil.get(pageContext, "...") %>',
+								target: A.one(target)
+							}
+						);
+		} catch (e){}
+		return undefined;
+	};
 </aui:script>
 
 <%!
