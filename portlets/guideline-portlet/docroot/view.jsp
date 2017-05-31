@@ -1,3 +1,5 @@
+<%@page import="org.opencps.dossiermgt.service.DossierLocalServiceUtil"%>
+<%@page import="org.opencps.dossiermgt.model.Dossier"%>
 <%
 /**
  * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
@@ -26,6 +28,8 @@
 	HttpServletRequest originalRequest = PortalUtil.getOriginalServletRequest(PortalUtil.getHttpServletRequest(renderRequest));
 	
 	long dossierId = GetterUtil.getLong(originalRequest.getParameter("_13_WAR_opencpsportlet_dossierId"));
+	
+	Dossier dossier = null;
 
 %>
 
@@ -39,11 +43,17 @@
 	
 <c:if test='<%= pageArea.contentEquals("dossier") %>'>
 	<c:if test='<%= dossierId != 0 %>'>
-		<img alt="" src='<%= renderRequest.getContextPath() + "/imgs/" + imgStepThree %>'>
-	</c:if>
-	
-	<c:if test='<%= dossierId == 0 %>'>
-		<img alt="" src='<%= renderRequest.getContextPath() + "/imgs/" + imgStepTwo %>'>
+		<% 
+			
+				try {
+					dossier = DossierLocalServiceUtil.getDossier(dossierId);
+				} catch (Exception e) {}
+			
+		%>
+ 		<c:if test='<%= Validator.isNotNull(dossier) && dossier.getDossierStatus().contentEquals("new") %>'>
+			<img alt="" src='<%= renderRequest.getContextPath() + "/imgs/" + imgStepThree %>'>
+
+ 		</c:if>
 	</c:if>
 </c:if>
 
