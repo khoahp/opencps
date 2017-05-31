@@ -180,8 +180,8 @@
 									</td>
 									<td>
 										<c:if test="<%=Validator.isNotNull(urlDownload) %>">
-											<a target="_blank" class="download-dossier-file" href="<%=urlDownload%>">
-												<i></i> <liferay-ui:message key="download-file-entry" />
+											<a target="_blank" class="button download-dossier-file" href="<%=urlDownload%>">
+												<i class="fa fa-download fa-lg"></i> 
 											</a>
 										</c:if>
 									</td>
@@ -337,8 +337,8 @@
 							</td>
 							<td>
 								<c:if test="<%=Validator.isNotNull(urlDownload) %>">
-									<a target="_blank" class="download-dossier-file" href="<%=urlDownload%>">
-										<i></i> <liferay-ui:message key="download-file-entry" />
+									<a target="_blank" class="button download-dossier-file" href="<%=urlDownload%>">
+										<i class="fa fa-download fa-lg"></i>
 									</a>
 								</c:if>
 							</td>
