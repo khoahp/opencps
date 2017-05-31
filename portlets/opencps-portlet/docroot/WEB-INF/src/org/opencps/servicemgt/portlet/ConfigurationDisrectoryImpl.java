@@ -53,9 +53,6 @@ public class ConfigurationDisrectoryImpl implements ConfigurationAction{
 		long plidServiceDetail = ParamUtil.getLong(actionRequest, "plidServiceDetail");
 		long plidAddDossier = ParamUtil.getLong(actionRequest, "plidAddDossier");
 		
-		_log.info("=====plidServiceDetail:"+plidServiceDetail);
-		_log.info("=====plidAddDossier:"+plidAddDossier);
-		
 		String style = ParamUtil.getString(actionRequest, "style", "default");
 		
 		boolean showListServiceTemplateFile = ParamUtil.getBoolean(actionRequest, "showListServiceTemplateFile", true);
