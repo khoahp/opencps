@@ -153,7 +153,7 @@
 						</aui:col>
 						<aui:col width="25" cssClass="search-col">
 							<aui:select name="<%=ServiceDisplayTerms.SERVICE_LEVEL %>" label="">
-								<aui:option value="0"><liferay-ui:message key="muc-do"/></aui:option>
+								<aui:option value="0"><liferay-ui:message key="chon-muc-do"/></aui:option>
 								<aui:option value="2" selected='<%=serviceLevel == 2 %>'><liferay-ui:message key="muc-do" /> 2</aui:option>
 								<aui:option value="3" selected='<%=serviceLevel == 3 %>'><liferay-ui:message key="muc-do" /> 3</aui:option>
 								<aui:option value="4" selected='<%=serviceLevel == 4 %>'><liferay-ui:message key="muc-do" /> 4</aui:option>
