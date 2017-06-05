@@ -55,8 +55,8 @@ import com.liferay.portal.util.PortalUtil;
 public class OCPSUserController {
 	
 	public static int GROUPID = 20182;
-	public static final String PORTAL_URL = "http://202.151.168.104:2180";
-	
+	public static final String PORTAL_URL = "http://dvc.sonla.gov.vn";
+	 
 	@GET
 	@Path("/forgot/user/{authcode: .*}/verify")
 	@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")

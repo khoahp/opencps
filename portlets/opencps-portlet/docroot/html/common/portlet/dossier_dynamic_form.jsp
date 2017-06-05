@@ -47,7 +47,6 @@
 <%@page import="org.opencps.util.WebKeys"%>
 
 <%@ include file="/init.jsp"%>
-
 <%
 	String signatureType = ParamUtil.getString(request, "signatureType");
 	String textPositionWithImageSign = ParamUtil.getString(request, "textPositionWithImageSign", "overlaps");
