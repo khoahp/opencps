@@ -1,3 +1,4 @@
+<%@page import="org.opencps.util.PortletPropsValues"%>
 <%
 /**
  * OpenCPS is the open source Core Public Services software
@@ -19,17 +20,33 @@
 
 <%@ include file="../init.jsp" %>
 
+<%
+String selGovAgencyCode = preferences.getValue("selGovAgencyCode","");
+
+List<DictItem> govAgencies = DictItemLocalServiceUtil.findDictItemsByG_DC_S(scopeGroupId, PortletPropsValues.DATAMGT_MASTERDATA_GOVERNMENT_AGENCY);
+%>
+
 <liferay-ui:success key="potlet-config-saved" message="portlet-configuration-have-been-successfully-saved" />
 
 <liferay-portlet:actionURL var="configurationActionURL" portletConfiguration="true"/>
 
 <aui:form action="<%=configurationActionURL%>" method="post" name="configurationForm">
 	<aui:select name="menuType" id="menuType">
-		<aui:option value="administrator" label="administrator"></aui:option>
-		<aui:option value="domain" label="domain"></aui:option>
-		<aui:option value="administrator_domain" label="administrator-domain"></aui:option>
+		<aui:option value="administrator" label="administrator" selected='<%= menuTye.equalsIgnoreCase("administrator") %>'></aui:option>
+		<aui:option value="domain" label="domain" selected='<%= menuTye.equalsIgnoreCase("domain") %>' ></aui:option>
+		<aui:option value="administrator_domain" label="administrator-domain" selected='<%= menuTye.equalsIgnoreCase("administrator_domain") %>'></aui:option>
+		<aui:option value="govagency" label="co-quan-thuc-hien" selected='<%= menuTye.equalsIgnoreCase("govagency") %>'></aui:option>
+	</aui:select>
+
+	<aui:select name="selGovAgencyCode" showEmptyOption="<%= true %>">
+		<% 
+			for(DictItem item : govAgencies) { 
+			
+			
+		%>
+			<aui:option selected='<%= selGovAgencyCode.equals(item.getItemCode()) %>' value="<%= item.getItemCode() %>" label="<%= item.getItemName(locale) %>" />
+		<% } %>
 	</aui:select>
 
 	<aui:button type="submit" name="Save" value="save"></aui:button>
-
 </aui:form>

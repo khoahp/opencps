@@ -26,6 +26,8 @@ import javax.portlet.PortletPreferences;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
 
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.portlet.ConfigurationAction;
 import com.liferay.portal.kernel.servlet.SessionMessages;
 import com.liferay.portal.kernel.util.ParamUtil;
@@ -37,6 +39,8 @@ import com.liferay.portlet.PortletPreferencesFactoryUtil;
  *
  */
 public class ConfigurationDisrectoryImpl implements ConfigurationAction{
+	
+	private static Log _log = LogFactoryUtil.getLog(ConfigurationDisrectoryImpl.class);
 
 	/* (non-Javadoc)
 	 * @see com.liferay.portal.kernel.portlet.ConfigurationAction#processAction(javax.portlet.PortletConfig, javax.portlet.ActionRequest, javax.portlet.ActionResponse)
@@ -47,6 +51,7 @@ public class ConfigurationDisrectoryImpl implements ConfigurationAction{
 		throws Exception {
 
 		long plidServiceDetail = ParamUtil.getLong(actionRequest, "plidServiceDetail");
+		long plidAddDossier = ParamUtil.getLong(actionRequest, "plidAddDossier");
 		
 		String style = ParamUtil.getString(actionRequest, "style", "default");
 		
@@ -60,6 +65,7 @@ public class ConfigurationDisrectoryImpl implements ConfigurationAction{
 		preferences.setValue("plidServiceDetail", String.valueOf(plidServiceDetail));
 		preferences.setValue("style", style);
 		preferences.setValue("showListServiceTemplateFile", String.valueOf(showListServiceTemplateFile));
+		preferences.setValue("plidAddDossier", String.valueOf(plidAddDossier));
 		
 		preferences.store();
 		

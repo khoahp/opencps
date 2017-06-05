@@ -64,6 +64,8 @@ Liferay.provide(window, 'buildTreeView', function(boundingBox, nameControl, data
 			                            		
 			                            		if(sub_val != '0'){
 				                            		elementOBJ.setStyle('display', 'block');
+				                            	} else {
+				                            		elementOBJ.setStyle('display', 'none');
 				                            	}
 			                            	}else{
 			                            		elementOBJ.setStyle('display', 'block');

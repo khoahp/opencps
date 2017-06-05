@@ -118,5 +118,7 @@
 	
 	String submitDossierButtonPage = preferences.getValue("submitDossierButtonPage", StringPool.BLANK);
 	boolean hideToptabs = GetterUtil.getBoolean(preferences.getValue("hideToptabs", "false"), false);
+	
+	long plIdAddDossier = GetterUtil.getLong(preferences.getValue("addDossierPage", "0"),0);
 %>
 

@@ -51,6 +51,8 @@ public class ServiceDisplayTerms extends DisplayTerms {
 	public static final String GROUP_ID = "groupId";
 	public static final String COMPANY_ID = "companyId";
 	public static final String SERVICE_LEVEL = "serviceLevel";
+	
+	public static final String GOVAGENCY_CODE = "govAgencyCode";
 
 	public static final String TEMPLATE_FILE_IDS =
 	    "templateSearchContainerPrimaryKeys";
@@ -112,6 +114,8 @@ public class ServiceDisplayTerms extends DisplayTerms {
 		if(intServiceLevel > 0) {
 			setServiceLevelId(intServiceLevel);
 		}
+		
+		govAgencyCode = ParamUtil.getString(request, GOVAGENCY_CODE);
 
 	}
 
@@ -522,6 +526,15 @@ public class ServiceDisplayTerms extends DisplayTerms {
 	protected String onlineUrl;
 	protected long groupId;
 	protected int serviceLevel;
+	protected String govAgencyCode;
+
+	public String getGovAgencyCode() {
+		return govAgencyCode;
+	}
+
+	public void setGovAgencyCode(String govAgencyCode) {
+		this.govAgencyCode = govAgencyCode;
+	}
 
 	/**
 	 * @return the fileTemplateIds
